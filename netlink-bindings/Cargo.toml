@@ -1,0 +1,46 @@
+[package]
+name = "netlink-bindings"
+version = "0.1.0"
+authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
+categories = [ "network-programming", "os", "api-bindings" ]
+repository = "https://github.com/one-d-wide/netlink-bindings"
+license = "GPL-2.0"
+edition = "2021"
+
+[[example]]
+name = "wireguard"
+required-features = [ "wireguard" ]
+
+[features]
+all = []
+
+conntrack = []
+# devlink = []
+# dpll = []
+# ethtool = []
+# fou = []
+# handshake = []
+# lockd = []
+# mptcp_pm = []
+# net-shaper = []
+# netdev = []
+# nfsd = []
+# nftables = []
+# nl80211 = []
+# nlctrl = []
+# ovpn = []
+# ovs_datapath = []
+# ovs_flow = []
+# ovs_vport = []
+rt-addr = []
+rt-link = []
+rt-neigh = []
+rt-route = []
+rt-rule = []
+tc = []
+# tcp_metrics = []
+# team = []
+wireguard = []
+
+[dev-dependencies]
+libc = "0.2"

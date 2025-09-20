@@ -1,0 +1,22802 @@
+#![doc = "Link configuration over rtnetlink."]
+#![allow(clippy::all)]
+#![allow(non_snake_case)]
+#![allow(unused_variables)]
+#![allow(irrefutable_let_patterns)]
+#![allow(unreachable_code)]
+#![allow(unreachable_patterns)]
+use crate::utils::*;
+pub const PROTONUM: u8 = 0u8;
+#[doc = "Original name: \"ifinfo-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Clone)]
+pub enum IfinfoFlags {
+    Up = 1 << 0,
+    Broadcast = 1 << 1,
+    Debug = 1 << 2,
+    Loopback = 1 << 3,
+    PointToPoint = 1 << 4,
+    NoTrailers = 1 << 5,
+    Running = 1 << 6,
+    NoArp = 1 << 7,
+    Promisc = 1 << 8,
+    AllMulti = 1 << 9,
+    Master = 1 << 10,
+    Slave = 1 << 11,
+    Multicast = 1 << 12,
+    Portsel = 1 << 13,
+    AutoMedia = 1 << 14,
+    Dynamic = 1 << 15,
+    LowerUp = 1 << 16,
+    Dormant = 1 << 17,
+    Echo = 1 << 18,
+}
+#[doc = "Original name: \"vlan-protocols\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum VlanProtocols {
+    _8021q = 33024,
+    _8021ad = 34984,
+}
+#[doc = "Original name: \"ipv4-devconf\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum Ipv4Devconf {
+    Forwarding = 0,
+    McForwarding = 1,
+    ProxyArp = 2,
+    AcceptRedirects = 3,
+    SecureRedirects = 4,
+    SendRedirects = 5,
+    SharedMedia = 6,
+    RpFilter = 7,
+    AcceptSourceRoute = 8,
+    BootpRelay = 9,
+    LogMartians = 10,
+    Tag = 11,
+    Arpfilter = 12,
+    MediumId = 13,
+    Noxfrm = 14,
+    Nopolicy = 15,
+    ForceIgmpVersion = 16,
+    ArpAnnounce = 17,
+    ArpIgnore = 18,
+    PromoteSecondaries = 19,
+    ArpAccept = 20,
+    ArpNotify = 21,
+    AcceptLocal = 22,
+    SrcVmark = 23,
+    ProxyArpPvlan = 24,
+    RouteLocalnet = 25,
+    Igmpv2UnsolicitedReportInterval = 26,
+    Igmpv3UnsolicitedReportInterval = 27,
+    IgnoreRoutesWithLinkdown = 28,
+    DropUnicastInL2Multicast = 29,
+    DropGratuitousArp = 30,
+    BcForwarding = 31,
+    ArpEvictNocarrier = 32,
+}
+#[doc = "Original name: \"ipv6-devconf\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum Ipv6Devconf {
+    Forwarding = 0,
+    Hoplimit = 1,
+    Mtu6 = 2,
+    AcceptRa = 3,
+    AcceptRedirects = 4,
+    Autoconf = 5,
+    DadTransmits = 6,
+    RtrSolicits = 7,
+    RtrSolicitInterval = 8,
+    RtrSolicitDelay = 9,
+    UseTempaddr = 10,
+    TempValidLft = 11,
+    TempPreferedLft = 12,
+    RegenMaxRetry = 13,
+    MaxDesyncFactor = 14,
+    MaxAddresses = 15,
+    ForceMldVersion = 16,
+    AcceptRaDefrtr = 17,
+    AcceptRaPinfo = 18,
+    AcceptRaRtrPref = 19,
+    RtrProbeInterval = 20,
+    AcceptRaRtInfoMaxPlen = 21,
+    ProxyNdp = 22,
+    OptimisticDad = 23,
+    AcceptSourceRoute = 24,
+    McForwarding = 25,
+    DisableIpv6 = 26,
+    AcceptDad = 27,
+    ForceTllao = 28,
+    NdiscNotify = 29,
+    Mldv1UnsolicitedReportInterval = 30,
+    Mldv2UnsolicitedReportInterval = 31,
+    SuppressFragNdisc = 32,
+    AcceptRaFromLocal = 33,
+    UseOptimistic = 34,
+    AcceptRaMtu = 35,
+    StableSecret = 36,
+    UseOifAddrsOnly = 37,
+    AcceptRaMinHopLimit = 38,
+    IgnoreRoutesWithLinkdown = 39,
+    DropUnicastInL2Multicast = 40,
+    DropUnsolicitedNa = 41,
+    KeepAddrOnDown = 42,
+    RtrSolicitMaxInterval = 43,
+    Seg6Enabled = 44,
+    Seg6RequireHmac = 45,
+    EnhancedDad = 46,
+    AddrGenMode = 47,
+    DisablePolicy = 48,
+    AcceptRaRtInfoMinPlen = 49,
+    NdiscTclass = 50,
+    RplSegEnabled = 51,
+    RaDefrtrMetric = 52,
+    Ioam6Enabled = 53,
+    Ioam6Id = 54,
+    Ioam6IdWide = 55,
+    NdiscEvictNocarrier = 56,
+    AcceptUntrackedNa = 57,
+}
+#[doc = "Original name: \"ifla-icmp6-stats\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum IflaIcmp6Stats {
+    Num = 0,
+    Inmsgs = 1,
+    Inerrors = 2,
+    Outmsgs = 3,
+    Outerrors = 4,
+    Csumerrors = 5,
+    Ratelimithost = 6,
+}
+#[doc = "Original name: \"ifla-inet6-stats\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum IflaInet6Stats {
+    Num = 0,
+    Inpkts = 1,
+    Inoctets = 2,
+    Indelivers = 3,
+    Outforwdatagrams = 4,
+    Outpkts = 5,
+    Outoctets = 6,
+    Inhdrerrors = 7,
+    Intoobigerrors = 8,
+    Innoroutes = 9,
+    Inaddrerrors = 10,
+    Inunknownprotos = 11,
+    Intruncatedpkts = 12,
+    Indiscards = 13,
+    Outdiscards = 14,
+    Outnoroutes = 15,
+    Reasmtimeout = 16,
+    Reasmreqds = 17,
+    Reasmoks = 18,
+    Reasmfails = 19,
+    Fragoks = 20,
+    Fragfails = 21,
+    Fragcreates = 22,
+    Inmcastpkts = 23,
+    Outmcastpkts = 24,
+    Inbcastpkts = 25,
+    Outbcastpkts = 26,
+    Inmcastoctets = 27,
+    Outmcastoctets = 28,
+    Inbcastoctets = 29,
+    Outbcastoctets = 30,
+    Csumerrors = 31,
+    Noectpkts = 32,
+    Ect1Pkts = 33,
+    Ect0Pkts = 34,
+    Cepkts = 35,
+    ReasmOverlaps = 36,
+}
+#[doc = "Original name: \"vlan-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Clone)]
+pub enum VlanFlags {
+    ReorderHdr = 1 << 0,
+    Gvrp = 1 << 1,
+    LooseBinding = 1 << 2,
+    Mvrp = 1 << 3,
+    BridgeBinding = 1 << 4,
+}
+#[doc = "Original name: \"ifla-vf-link-state-enum\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum IflaVfLinkStateEnum {
+    Auto = 0,
+    Enable = 1,
+    Disable = 2,
+}
+#[doc = "Original name: \"rtext-filter\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Clone)]
+pub enum RtextFilter {
+    Vf = 1 << 0,
+    Brvlan = 1 << 1,
+    BrvlanCompressed = 1 << 2,
+    SkipStats = 1 << 3,
+    Mrp = 1 << 4,
+    CfmConfig = 1 << 5,
+    CfmStatus = 1 << 6,
+    Mst = 1 << 7,
+}
+#[doc = "Original name: \"netkit-policy\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum NetkitPolicy {
+    Forward = 0,
+    Blackhole = 2,
+}
+#[doc = "Original name: \"netkit-mode\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum NetkitMode {
+    L2 = 0,
+    L3 = 1,
+}
+#[doc = "Original name: \"netkit-scrub\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum NetkitScrub {
+    None = 0,
+    Default = 1,
+}
+#[doc = "Original name: \"ovpn-mode\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Clone)]
+pub enum OvpnMode {
+    P2p = 0,
+    Mp = 1,
+}
+#[doc = "Original name: \"link-attrs\""]
+#[derive(Clone)]
+pub enum LinkAttrs<'a> {
+    Address(&'a [u8]),
+    Broadcast(&'a [u8]),
+    Ifname(&'a CStr),
+    Mtu(u32),
+    Link(u32),
+    Qdisc(&'a CStr),
+    Stats(PushRtnlLinkStats),
+    Cost(&'a CStr),
+    Priority(&'a CStr),
+    Master(u32),
+    Wireless(&'a CStr),
+    Protinfo(&'a CStr),
+    Txqlen(u32),
+    Map(PushRtnlLinkIfmap),
+    Weight(u32),
+    Operstate(u8),
+    Linkmode(u8),
+    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    NetNsPid(u32),
+    Ifalias(&'a CStr),
+    NumVf(u32),
+    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    Stats64(PushRtnlLinkStats64),
+    VfPorts(Iterable<'a, VfPortsAttrs>),
+    PortSelf(Iterable<'a, PortSelfAttrs>),
+    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    Group(u32),
+    NetNsFd(u32),
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    ExtMask(u32),
+    Promiscuity(u32),
+    NumTxQueues(u32),
+    NumRxQueues(u32),
+    Carrier(u8),
+    PhysPortId(&'a [u8]),
+    CarrierChanges(u32),
+    PhysSwitchId(&'a [u8]),
+    LinkNetnsid(i32),
+    PhysPortName(&'a CStr),
+    ProtoDown(u8),
+    GsoMaxSegs(u32),
+    GsoMaxSize(u32),
+    Pad(&'a [u8]),
+    Xdp(Iterable<'a, XdpAttrs>),
+    Event(u32),
+    NewNetnsid(i32),
+    TargetNetnsid(i32),
+    CarrierUpCount(u32),
+    CarrierDownCount(u32),
+    NewIfindex(i32),
+    MinMtu(u32),
+    MaxMtu(u32),
+    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    AltIfname(&'a CStr),
+    PermAddress(&'a [u8]),
+    ProtoDownReason(&'a CStr),
+    ParentDevName(&'a CStr),
+    ParentDevBusName(&'a CStr),
+    GroMaxSize(u32),
+    TsoMaxSize(u32),
+    TsoMaxSegs(u32),
+    Allmulti(u32),
+    DevlinkPort(&'a [u8]),
+    GsoIpv4MaxSize(u32),
+    GroIpv4MaxSize(u32),
+    DpllPin(Iterable<'a, LinkDpllPinAttrs>),
+    #[doc = "EDT offload horizon supported by the device (in nsec)."]
+    MaxPacingOffloadHorizon(u32),
+    NetnsImmutable(u8),
+}
+impl<'a> Iterable<'a, LinkAttrs<'a>> {
+    pub fn get_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Address(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Mtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_qdisc(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Qdisc(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stats(&self) -> Option<PushRtnlLinkStats> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_cost(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Cost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_priority(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Priority(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_master(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Master(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_wireless(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Wireless(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_protinfo(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Protinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_txqlen(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Txqlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_map(&self) -> Option<PushRtnlLinkIfmap> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Map(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_weight(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Weight(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_operstate(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Operstate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkmode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Linkmode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkinfo(&self) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Linkinfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_net_ns_pid(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NetNsPid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifalias(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Ifalias(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_vf(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NumVf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vfinfo_list(&self) -> Iterable<'a, VfinfoListAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::VfinfoList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_stats64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Stats64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vf_ports(&self) -> Iterable<'a, VfPortsAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::VfPorts(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_port_self(&self) -> Iterable<'a, PortSelfAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::PortSelf(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Iterable<'a, AfSpecAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::AfSpec(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_group(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Group(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_net_ns_fd(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NetNsFd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn get_ext_mask(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::ExtMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_promiscuity(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Promiscuity(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_tx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NumTxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_rx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NumRxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Carrier(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::PhysPortId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_changes(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::CarrierChanges(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_switch_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::PhysSwitchId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::LinkNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::PhysPortName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::ProtoDown(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::GsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::GsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_xdp(&self) -> Iterable<'a, XdpAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Xdp(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_event(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Event(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NewNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_up_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::CarrierUpCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_down_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::CarrierDownCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_ifindex(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NewIfindex(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_min_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::MinMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_max_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::MaxMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_prop_list(&self) -> Iterable<'a, PropListLinkAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::PropList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_alt_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::AltIfname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_perm_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::PermAddress(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down_reason(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::ProtoDownReason(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::ParentDevName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_bus_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::ParentDevBusName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::GroMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::TsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::TsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_allmulti(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::Allmulti(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_devlink_port(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::DevlinkPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::GsoIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::GroIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_dpll_pin(&self) -> Iterable<'a, LinkDpllPinAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::DpllPin(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    #[doc = "EDT offload horizon supported by the device (in nsec)."]
+    pub fn get_max_pacing_offload_horizon(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::MaxPacingOffloadHorizon(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_netns_immutable(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkAttrs::NetnsImmutable(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
+    type Item = Result<LinkAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkAttrs::Address({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkAttrs::Broadcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkAttrs::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkAttrs::Mtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkAttrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkAttrs::Qdisc({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkAttrs::Stats({
+                    let res = PushRtnlLinkStats::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkAttrs::Cost({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkAttrs::Priority({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkAttrs::Master({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkAttrs::Wireless({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkAttrs::Protinfo({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkAttrs::Txqlen({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkAttrs::Map({
+                    let res = PushRtnlLinkIfmap::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkAttrs::Weight({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkAttrs::Operstate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkAttrs::Linkmode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkAttrs::Linkinfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkAttrs::NetNsPid({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkAttrs::Ifalias({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkAttrs::NumVf({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => LinkAttrs::VfinfoList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => LinkAttrs::Stats64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => LinkAttrs::VfPorts({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => LinkAttrs::PortSelf({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => LinkAttrs::AfSpec({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => LinkAttrs::Group({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => LinkAttrs::NetNsFd({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => LinkAttrs::ExtMask({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => LinkAttrs::Promiscuity({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => LinkAttrs::NumTxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => LinkAttrs::NumRxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                33u16 => LinkAttrs::Carrier({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                34u16 => LinkAttrs::PhysPortId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => LinkAttrs::CarrierChanges({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                36u16 => LinkAttrs::PhysSwitchId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => LinkAttrs::LinkNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => LinkAttrs::PhysPortName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => LinkAttrs::ProtoDown({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => LinkAttrs::GsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => LinkAttrs::GsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => LinkAttrs::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => LinkAttrs::Xdp({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                44u16 => LinkAttrs::Event({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                45u16 => LinkAttrs::NewNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => LinkAttrs::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                47u16 => LinkAttrs::CarrierUpCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                48u16 => LinkAttrs::CarrierDownCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                49u16 => LinkAttrs::NewIfindex({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                50u16 => LinkAttrs::MinMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                51u16 => LinkAttrs::MaxMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                52u16 => LinkAttrs::PropList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                53u16 => LinkAttrs::AltIfname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                54u16 => LinkAttrs::PermAddress({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                55u16 => LinkAttrs::ProtoDownReason({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                56u16 => LinkAttrs::ParentDevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                57u16 => LinkAttrs::ParentDevBusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                58u16 => LinkAttrs::GroMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                59u16 => LinkAttrs::TsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                60u16 => LinkAttrs::TsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                61u16 => LinkAttrs::Allmulti({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                62u16 => LinkAttrs::DevlinkPort({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                63u16 => LinkAttrs::GsoIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                64u16 => LinkAttrs::GroIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                65u16 => LinkAttrs::DpllPin({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                66u16 => LinkAttrs::MaxPacingOffloadHorizon({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                67u16 => LinkAttrs::NetnsImmutable({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkAttrs",
+            r#type.and_then(|t| LinkAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkAttrs::Address(val) => fmt.field("Address", &val),
+                LinkAttrs::Broadcast(val) => fmt.field("Broadcast", &val),
+                LinkAttrs::Ifname(val) => fmt.field("Ifname", &val),
+                LinkAttrs::Mtu(val) => fmt.field("Mtu", &val),
+                LinkAttrs::Link(val) => fmt.field("Link", &val),
+                LinkAttrs::Qdisc(val) => fmt.field("Qdisc", &val),
+                LinkAttrs::Stats(val) => fmt.field("Stats", &val),
+                LinkAttrs::Cost(val) => fmt.field("Cost", &val),
+                LinkAttrs::Priority(val) => fmt.field("Priority", &val),
+                LinkAttrs::Master(val) => fmt.field("Master", &val),
+                LinkAttrs::Wireless(val) => fmt.field("Wireless", &val),
+                LinkAttrs::Protinfo(val) => fmt.field("Protinfo", &val),
+                LinkAttrs::Txqlen(val) => fmt.field("Txqlen", &val),
+                LinkAttrs::Map(val) => fmt.field("Map", &val),
+                LinkAttrs::Weight(val) => fmt.field("Weight", &val),
+                LinkAttrs::Operstate(val) => fmt.field("Operstate", &val),
+                LinkAttrs::Linkmode(val) => fmt.field("Linkmode", &val),
+                LinkAttrs::Linkinfo(val) => fmt.field("Linkinfo", &val),
+                LinkAttrs::NetNsPid(val) => fmt.field("NetNsPid", &val),
+                LinkAttrs::Ifalias(val) => fmt.field("Ifalias", &val),
+                LinkAttrs::NumVf(val) => fmt.field("NumVf", &val),
+                LinkAttrs::VfinfoList(val) => fmt.field("VfinfoList", &val),
+                LinkAttrs::Stats64(val) => fmt.field("Stats64", &val),
+                LinkAttrs::VfPorts(val) => fmt.field("VfPorts", &val),
+                LinkAttrs::PortSelf(val) => fmt.field("PortSelf", &val),
+                LinkAttrs::AfSpec(val) => fmt.field("AfSpec", &val),
+                LinkAttrs::Group(val) => fmt.field("Group", &val),
+                LinkAttrs::NetNsFd(val) => fmt.field("NetNsFd", &val),
+                LinkAttrs::ExtMask(val) => fmt.field("ExtMask", &val),
+                LinkAttrs::Promiscuity(val) => fmt.field("Promiscuity", &val),
+                LinkAttrs::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
+                LinkAttrs::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
+                LinkAttrs::Carrier(val) => fmt.field("Carrier", &val),
+                LinkAttrs::PhysPortId(val) => fmt.field("PhysPortId", &val),
+                LinkAttrs::CarrierChanges(val) => fmt.field("CarrierChanges", &val),
+                LinkAttrs::PhysSwitchId(val) => fmt.field("PhysSwitchId", &val),
+                LinkAttrs::LinkNetnsid(val) => fmt.field("LinkNetnsid", &val),
+                LinkAttrs::PhysPortName(val) => fmt.field("PhysPortName", &val),
+                LinkAttrs::ProtoDown(val) => fmt.field("ProtoDown", &val),
+                LinkAttrs::GsoMaxSegs(val) => fmt.field("GsoMaxSegs", &val),
+                LinkAttrs::GsoMaxSize(val) => fmt.field("GsoMaxSize", &val),
+                LinkAttrs::Pad(val) => fmt.field("Pad", &val),
+                LinkAttrs::Xdp(val) => fmt.field("Xdp", &val),
+                LinkAttrs::Event(val) => fmt.field("Event", &val),
+                LinkAttrs::NewNetnsid(val) => fmt.field("NewNetnsid", &val),
+                LinkAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                LinkAttrs::CarrierUpCount(val) => fmt.field("CarrierUpCount", &val),
+                LinkAttrs::CarrierDownCount(val) => fmt.field("CarrierDownCount", &val),
+                LinkAttrs::NewIfindex(val) => fmt.field("NewIfindex", &val),
+                LinkAttrs::MinMtu(val) => fmt.field("MinMtu", &val),
+                LinkAttrs::MaxMtu(val) => fmt.field("MaxMtu", &val),
+                LinkAttrs::PropList(val) => fmt.field("PropList", &val),
+                LinkAttrs::AltIfname(val) => fmt.field("AltIfname", &val),
+                LinkAttrs::PermAddress(val) => fmt.field("PermAddress", &val),
+                LinkAttrs::ProtoDownReason(val) => fmt.field("ProtoDownReason", &val),
+                LinkAttrs::ParentDevName(val) => fmt.field("ParentDevName", &val),
+                LinkAttrs::ParentDevBusName(val) => fmt.field("ParentDevBusName", &val),
+                LinkAttrs::GroMaxSize(val) => fmt.field("GroMaxSize", &val),
+                LinkAttrs::TsoMaxSize(val) => fmt.field("TsoMaxSize", &val),
+                LinkAttrs::TsoMaxSegs(val) => fmt.field("TsoMaxSegs", &val),
+                LinkAttrs::Allmulti(val) => fmt.field("Allmulti", &val),
+                LinkAttrs::DevlinkPort(val) => fmt.field("DevlinkPort", &val),
+                LinkAttrs::GsoIpv4MaxSize(val) => fmt.field("GsoIpv4MaxSize", &val),
+                LinkAttrs::GroIpv4MaxSize(val) => fmt.field("GroIpv4MaxSize", &val),
+                LinkAttrs::DpllPin(val) => fmt.field("DpllPin", &val),
+                LinkAttrs::MaxPacingOffloadHorizon(val) => {
+                    fmt.field("MaxPacingOffloadHorizon", &val)
+                }
+                LinkAttrs::NetnsImmutable(val) => fmt.field("NetnsImmutable", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"prop-list-link-attrs\""]
+#[derive(Clone)]
+pub enum PropListLinkAttrs<'a> {
+    AltIfname(&'a CStr),
+}
+impl<'a> Iterable<'a, PropListLinkAttrs<'a>> {
+    pub fn get_alt_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let PropListLinkAttrs::AltIfname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> PropListLinkAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, PropListLinkAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "AltIfname",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, PropListLinkAttrs<'a>> {
+    type Item = Result<PropListLinkAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => PropListLinkAttrs::AltIfname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "PropListLinkAttrs",
+            r#type.and_then(|t| PropListLinkAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, PropListLinkAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("PropListLinkAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                PropListLinkAttrs::AltIfname(val) => fmt.field("AltIfname", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"af-spec-attrs\""]
+#[derive(Clone)]
+pub enum AfSpecAttrs<'a> {
+    Inet(Iterable<'a, IflaAttrs<'a>>),
+    Inet6(Iterable<'a, Ifla6Attrs<'a>>),
+    Mctp(Iterable<'a, MctpAttrs>),
+}
+impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
+    pub fn get_inet(&self) -> Iterable<'a, IflaAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let AfSpecAttrs::Inet(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_inet6(&self) -> Iterable<'a, Ifla6Attrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let AfSpecAttrs::Inet6(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_mctp(&self) -> Iterable<'a, MctpAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let AfSpecAttrs::Mctp(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+}
+impl<'a> AfSpecAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, AfSpecAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            2u16 => "Inet",
+            10u16 => "Inet6",
+            45u16 => "Mctp",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, AfSpecAttrs<'a>> {
+    type Item = Result<AfSpecAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                2u16 => AfSpecAttrs::Inet({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => AfSpecAttrs::Inet6({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                45u16 => AfSpecAttrs::Mctp({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "AfSpecAttrs",
+            r#type.and_then(|t| AfSpecAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, AfSpecAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("AfSpecAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                AfSpecAttrs::Inet(val) => fmt.field("Inet", &val),
+                AfSpecAttrs::Inet6(val) => fmt.field("Inet6", &val),
+                AfSpecAttrs::Mctp(val) => fmt.field("Mctp", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"vfinfo-list-attrs\""]
+#[derive(Clone)]
+pub enum VfinfoListAttrs<'a> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    Info(Iterable<'a, VfinfoAttrs<'a>>),
+}
+impl<'a> Iterable<'a, VfinfoListAttrs<'a>> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_info(
+        &self,
+    ) -> MultiAttrIterable<Self, VfinfoListAttrs<'a>, Iterable<'a, VfinfoAttrs<'a>>> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let VfinfoListAttrs::Info(val) = variant {
+                Some(val)
+            } else {
+                None
+            }
+        })
+    }
+}
+impl<'a> VfinfoListAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, VfinfoListAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Info",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, VfinfoListAttrs<'a>> {
+    type Item = Result<VfinfoListAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => VfinfoListAttrs::Info({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "VfinfoListAttrs",
+            r#type.and_then(|t| VfinfoListAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, VfinfoListAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("VfinfoListAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                VfinfoListAttrs::Info(val) => fmt.field("Info", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"vfinfo-attrs\""]
+#[derive(Clone)]
+pub enum VfinfoAttrs<'a> {
+    Mac(PushIflaVfMac),
+    Vlan(PushIflaVfVlan),
+    TxRate(PushIflaVfTxRate),
+    Spoofchk(PushIflaVfSpoofchk),
+    LinkState(PushIflaVfLinkState),
+    Rate(PushIflaVfRate),
+    RssQueryEn(PushIflaVfRssQueryEn),
+    Stats(Iterable<'a, VfStatsAttrs<'a>>),
+    Trust(PushIflaVfTrust),
+    IbNodeGuid(PushIflaVfGuid),
+    IbPortGuid(PushIflaVfGuid),
+    VlanList(Iterable<'a, VfVlanAttrs>),
+    Broadcast(&'a [u8]),
+}
+impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
+    pub fn get_mac(&self) -> Option<PushIflaVfMac> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Mac(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan(&self) -> Option<PushIflaVfVlan> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Vlan(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tx_rate(&self) -> Option<PushIflaVfTxRate> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::TxRate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_spoofchk(&self) -> Option<PushIflaVfSpoofchk> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Spoofchk(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_state(&self) -> Option<PushIflaVfLinkState> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::LinkState(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_rate(&self) -> Option<PushIflaVfRate> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Rate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_rss_query_en(&self) -> Option<PushIflaVfRssQueryEn> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::RssQueryEn(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stats(&self) -> Iterable<'a, VfStatsAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Stats(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_trust(&self) -> Option<PushIflaVfTrust> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Trust(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ib_node_guid(&self) -> Option<PushIflaVfGuid> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::IbNodeGuid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ib_port_guid(&self) -> Option<PushIflaVfGuid> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::IbPortGuid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_list(&self) -> Iterable<'a, VfVlanAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::VlanList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfinfoAttrs::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> VfinfoAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, VfinfoAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Mac",
+            2u16 => "Vlan",
+            3u16 => "TxRate",
+            4u16 => "Spoofchk",
+            5u16 => "LinkState",
+            6u16 => "Rate",
+            7u16 => "RssQueryEn",
+            8u16 => "Stats",
+            9u16 => "Trust",
+            10u16 => "IbNodeGuid",
+            11u16 => "IbPortGuid",
+            12u16 => "VlanList",
+            13u16 => "Broadcast",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
+    type Item = Result<VfinfoAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => VfinfoAttrs::Mac({
+                    let res = PushIflaVfMac::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => VfinfoAttrs::Vlan({
+                    let res = PushIflaVfVlan::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => VfinfoAttrs::TxRate({
+                    let res = PushIflaVfTxRate::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => VfinfoAttrs::Spoofchk({
+                    let res = PushIflaVfSpoofchk::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => VfinfoAttrs::LinkState({
+                    let res = PushIflaVfLinkState::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => VfinfoAttrs::Rate({
+                    let res = PushIflaVfRate::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => VfinfoAttrs::RssQueryEn({
+                    let res = PushIflaVfRssQueryEn::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => VfinfoAttrs::Stats({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => VfinfoAttrs::Trust({
+                    let res = PushIflaVfTrust::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => VfinfoAttrs::IbNodeGuid({
+                    let res = PushIflaVfGuid::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => VfinfoAttrs::IbPortGuid({
+                    let res = PushIflaVfGuid::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => VfinfoAttrs::VlanList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => VfinfoAttrs::Broadcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "VfinfoAttrs",
+            r#type.and_then(|t| VfinfoAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, VfinfoAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("VfinfoAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                VfinfoAttrs::Mac(val) => fmt.field("Mac", &val),
+                VfinfoAttrs::Vlan(val) => fmt.field("Vlan", &val),
+                VfinfoAttrs::TxRate(val) => fmt.field("TxRate", &val),
+                VfinfoAttrs::Spoofchk(val) => fmt.field("Spoofchk", &val),
+                VfinfoAttrs::LinkState(val) => fmt.field("LinkState", &val),
+                VfinfoAttrs::Rate(val) => fmt.field("Rate", &val),
+                VfinfoAttrs::RssQueryEn(val) => fmt.field("RssQueryEn", &val),
+                VfinfoAttrs::Stats(val) => fmt.field("Stats", &val),
+                VfinfoAttrs::Trust(val) => fmt.field("Trust", &val),
+                VfinfoAttrs::IbNodeGuid(val) => fmt.field("IbNodeGuid", &val),
+                VfinfoAttrs::IbPortGuid(val) => fmt.field("IbPortGuid", &val),
+                VfinfoAttrs::VlanList(val) => fmt.field("VlanList", &val),
+                VfinfoAttrs::Broadcast(val) => fmt.field("Broadcast", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"vf-stats-attrs\""]
+#[derive(Clone)]
+pub enum VfStatsAttrs<'a> {
+    RxPackets(u64),
+    TxPackets(u64),
+    RxBytes(u64),
+    TxBytes(u64),
+    Broadcast(u64),
+    Multicast(u64),
+    Pad(&'a [u8]),
+    RxDropped(u64),
+    TxDropped(u64),
+}
+impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
+    pub fn get_rx_packets(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::RxPackets(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tx_packets(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::TxPackets(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_rx_bytes(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::RxBytes(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tx_bytes(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::TxBytes(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_broadcast(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_multicast(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::Multicast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_rx_dropped(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::RxDropped(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tx_dropped(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let VfStatsAttrs::TxDropped(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> VfStatsAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, VfStatsAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            0u16 => "RxPackets",
+            1u16 => "TxPackets",
+            2u16 => "RxBytes",
+            3u16 => "TxBytes",
+            4u16 => "Broadcast",
+            5u16 => "Multicast",
+            6u16 => "Pad",
+            7u16 => "RxDropped",
+            8u16 => "TxDropped",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, VfStatsAttrs<'a>> {
+    type Item = Result<VfStatsAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0u16 => VfStatsAttrs::RxPackets({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                1u16 => VfStatsAttrs::TxPackets({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => VfStatsAttrs::RxBytes({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => VfStatsAttrs::TxBytes({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => VfStatsAttrs::Broadcast({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => VfStatsAttrs::Multicast({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => VfStatsAttrs::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => VfStatsAttrs::RxDropped({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => VfStatsAttrs::TxDropped({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "VfStatsAttrs",
+            r#type.and_then(|t| VfStatsAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, VfStatsAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("VfStatsAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                VfStatsAttrs::RxPackets(val) => fmt.field("RxPackets", &val),
+                VfStatsAttrs::TxPackets(val) => fmt.field("TxPackets", &val),
+                VfStatsAttrs::RxBytes(val) => fmt.field("RxBytes", &val),
+                VfStatsAttrs::TxBytes(val) => fmt.field("TxBytes", &val),
+                VfStatsAttrs::Broadcast(val) => fmt.field("Broadcast", &val),
+                VfStatsAttrs::Multicast(val) => fmt.field("Multicast", &val),
+                VfStatsAttrs::Pad(val) => fmt.field("Pad", &val),
+                VfStatsAttrs::RxDropped(val) => fmt.field("RxDropped", &val),
+                VfStatsAttrs::TxDropped(val) => fmt.field("TxDropped", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"vf-vlan-attrs\""]
+#[derive(Clone)]
+pub enum VfVlanAttrs {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    Info(PushIflaVfVlanInfo),
+}
+impl<'a> Iterable<'a, VfVlanAttrs> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_info(&self) -> MultiAttrIterable<Self, VfVlanAttrs, PushIflaVfVlanInfo> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let VfVlanAttrs::Info(val) = variant {
+                Some(val)
+            } else {
+                None
+            }
+        })
+    }
+}
+impl VfVlanAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, VfVlanAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Info",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, VfVlanAttrs> {
+    type Item = Result<VfVlanAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => VfVlanAttrs::Info({
+                    let res = PushIflaVfVlanInfo::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "VfVlanAttrs",
+            r#type.and_then(|t| VfVlanAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, VfVlanAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("VfVlanAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                VfVlanAttrs::Info(val) => fmt.field("Info", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"vf-ports-attrs\""]
+#[derive(Clone)]
+pub enum VfPortsAttrs {}
+impl<'a> Iterable<'a, VfPortsAttrs> {}
+impl VfPortsAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, VfPortsAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        None
+    }
+}
+impl Iterator for Iterable<'_, VfPortsAttrs> {
+    type Item = Result<VfPortsAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "VfPortsAttrs",
+            r#type.and_then(|t| VfPortsAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, VfPortsAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("VfPortsAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"port-self-attrs\""]
+#[derive(Clone)]
+pub enum PortSelfAttrs {}
+impl<'a> Iterable<'a, PortSelfAttrs> {}
+impl PortSelfAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, PortSelfAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        None
+    }
+}
+impl Iterator for Iterable<'_, PortSelfAttrs> {
+    type Item = Result<PortSelfAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "PortSelfAttrs",
+            r#type.and_then(|t| PortSelfAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, PortSelfAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("PortSelfAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoAttrs<'a> {
+    Kind(&'a CStr),
+    Data(LinkinfoDataMsg<'a>),
+    Xstats(&'a [u8]),
+    SlaveKind(&'a CStr),
+    SlaveData(LinkinfoMemberDataMsg<'a>),
+}
+impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
+    pub fn get_kind(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoAttrs::Kind(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_data(&self) -> Option<LinkinfoDataMsg<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoAttrs::Data(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_xstats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoAttrs::Xstats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_slave_kind(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoAttrs::SlaveKind(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_slave_data(&self) -> Option<LinkinfoMemberDataMsg<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoAttrs::SlaveData(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+#[doc = "Original name: \"linkinfo-data-msg\""]
+#[derive(Debug, Clone)]
+pub enum LinkinfoDataMsg<'a> {
+    Bond(Iterable<'a, LinkinfoBondAttrs<'a>>),
+    Bridge(Iterable<'a, LinkinfoBridgeAttrs<'a>>),
+    Erspan(Iterable<'a, LinkinfoGreAttrs<'a>>),
+    Gre(Iterable<'a, LinkinfoGreAttrs<'a>>),
+    Gretap(Iterable<'a, LinkinfoGreAttrs<'a>>),
+    Ip6gre(Iterable<'a, LinkinfoGre6Attrs<'a>>),
+    Geneve(Iterable<'a, LinkinfoGeneveAttrs<'a>>),
+    Ipip(Iterable<'a, LinkinfoIptunAttrs<'a>>),
+    Ip6tnl(Iterable<'a, LinkinfoIp6tnlAttrs<'a>>),
+    Sit(Iterable<'a, LinkinfoIptunAttrs<'a>>),
+    Tun(Iterable<'a, LinkinfoTunAttrs>),
+    Vlan(Iterable<'a, LinkinfoVlanAttrs<'a>>),
+    Vrf(Iterable<'a, LinkinfoVrfAttrs>),
+    Vti(Iterable<'a, LinkinfoVtiAttrs<'a>>),
+    Vti6(Iterable<'a, LinkinfoVti6Attrs<'a>>),
+    Netkit(Iterable<'a, LinkinfoNetkitAttrs<'a>>),
+    Ovpn(Iterable<'a, LinkinfoOvpnAttrs>),
+}
+impl<'a> LinkinfoDataMsg<'a> {
+    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: *const u8) -> Option<Self> {
+        match selector.to_bytes() {
+            b"bond" => Some(LinkinfoDataMsg::Bond(Iterable::with_loc(buf, loc))),
+            b"bridge" => Some(LinkinfoDataMsg::Bridge(Iterable::with_loc(buf, loc))),
+            b"erspan" => Some(LinkinfoDataMsg::Erspan(Iterable::with_loc(buf, loc))),
+            b"gre" => Some(LinkinfoDataMsg::Gre(Iterable::with_loc(buf, loc))),
+            b"gretap" => Some(LinkinfoDataMsg::Gretap(Iterable::with_loc(buf, loc))),
+            b"ip6gre" => Some(LinkinfoDataMsg::Ip6gre(Iterable::with_loc(buf, loc))),
+            b"geneve" => Some(LinkinfoDataMsg::Geneve(Iterable::with_loc(buf, loc))),
+            b"ipip" => Some(LinkinfoDataMsg::Ipip(Iterable::with_loc(buf, loc))),
+            b"ip6tnl" => Some(LinkinfoDataMsg::Ip6tnl(Iterable::with_loc(buf, loc))),
+            b"sit" => Some(LinkinfoDataMsg::Sit(Iterable::with_loc(buf, loc))),
+            b"tun" => Some(LinkinfoDataMsg::Tun(Iterable::with_loc(buf, loc))),
+            b"vlan" => Some(LinkinfoDataMsg::Vlan(Iterable::with_loc(buf, loc))),
+            b"vrf" => Some(LinkinfoDataMsg::Vrf(Iterable::with_loc(buf, loc))),
+            b"vti" => Some(LinkinfoDataMsg::Vti(Iterable::with_loc(buf, loc))),
+            b"vti6" => Some(LinkinfoDataMsg::Vti6(Iterable::with_loc(buf, loc))),
+            b"netkit" => Some(LinkinfoDataMsg::Netkit(Iterable::with_loc(buf, loc))),
+            b"ovpn" => Some(LinkinfoDataMsg::Ovpn(Iterable::with_loc(buf, loc))),
+            _ => None,
+        }
+    }
+}
+#[doc = "Original name: \"linkinfo-member-data-msg\""]
+#[derive(Debug, Clone)]
+pub enum LinkinfoMemberDataMsg<'a> {
+    Bridge(Iterable<'a, LinkinfoBrportAttrs<'a>>),
+    Bond(Iterable<'a, BondSlaveAttrs<'a>>),
+}
+impl<'a> LinkinfoMemberDataMsg<'a> {
+    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: *const u8) -> Option<Self> {
+        match selector.to_bytes() {
+            b"bridge" => Some(LinkinfoMemberDataMsg::Bridge(Iterable::with_loc(buf, loc))),
+            b"bond" => Some(LinkinfoMemberDataMsg::Bond(Iterable::with_loc(buf, loc))),
+            _ => None,
+        }
+    }
+}
+impl<'a> LinkinfoAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Kind",
+            2u16 => "Data",
+            3u16 => "Xstats",
+            4u16 => "SlaveKind",
+            5u16 => "SlaveData",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoAttrs<'a>> {
+    type Item = Result<LinkinfoAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoAttrs::Kind({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoAttrs::Data({
+                    let res = {
+                        let Some(selector) = self.get_kind() else {
+                            break;
+                        };
+                        LinkinfoDataMsg::select_with_loc(selector, next, self.orig_loc)
+                    };
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoAttrs::Xstats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoAttrs::SlaveKind({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoAttrs::SlaveData({
+                    let res = {
+                        let Some(selector) = self.get_slave_kind() else {
+                            break;
+                        };
+                        LinkinfoMemberDataMsg::select_with_loc(selector, next, self.orig_loc)
+                    };
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoAttrs",
+            r#type.and_then(|t| LinkinfoAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoAttrs::Kind(val) => fmt.field("Kind", &val),
+                LinkinfoAttrs::Data(val) => fmt.field("Data", &val),
+                LinkinfoAttrs::Xstats(val) => fmt.field("Xstats", &val),
+                LinkinfoAttrs::SlaveKind(val) => fmt.field("SlaveKind", &val),
+                LinkinfoAttrs::SlaveData(val) => fmt.field("SlaveData", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-bond-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoBondAttrs<'a> {
+    Mode(u8),
+    ActiveSlave(u32),
+    Miimon(u32),
+    Updelay(u32),
+    Downdelay(u32),
+    UseCarrier(u8),
+    ArpInterval(u32),
+    ArpIpTarget(Iterable<'a, std::net::Ipv4Addr>),
+    ArpValidate(u32),
+    ArpAllTargets(u32),
+    Primary(u32),
+    PrimaryReselect(u8),
+    FailOverMac(u8),
+    XmitHashPolicy(u8),
+    ResendIgmp(u32),
+    NumPeerNotif(u8),
+    AllSlavesActive(u8),
+    MinLinks(u32),
+    LpInterval(u32),
+    PacketsPerSlave(u32),
+    AdLacpRate(u8),
+    AdSelect(u8),
+    AdInfo(Iterable<'a, BondAdInfoAttrs<'a>>),
+    AdActorSysPrio(u16),
+    AdUserPortKey(u16),
+    AdActorSystem(&'a [u8]),
+    TlbDynamicLb(u8),
+    PeerNotifDelay(u32),
+    AdLacpActive(u8),
+    MissedMax(u8),
+    NsIp6Target(Iterable<'a, &'a [u8]>),
+    CoupledControl(u8),
+}
+impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
+    pub fn get_mode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::Mode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_active_slave(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::ActiveSlave(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_miimon(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::Miimon(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_updelay(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::Updelay(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_downdelay(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::Downdelay(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_use_carrier(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::UseCarrier(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_arp_interval(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::ArpInterval(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_arp_ip_target(
+        &self,
+    ) -> ArrayIterable<Iterable<'a, std::net::Ipv4Addr>, std::net::Ipv4Addr> {
+        for attr in self.clone() {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::ArpIpTarget(val) = attr {
+                return ArrayIterable::new(val);
+            }
+        }
+        ArrayIterable::new(Iterable::new(&[]))
+    }
+    pub fn get_arp_validate(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::ArpValidate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_arp_all_targets(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::ArpAllTargets(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_primary(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::Primary(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_primary_reselect(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::PrimaryReselect(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fail_over_mac(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::FailOverMac(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_xmit_hash_policy(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::XmitHashPolicy(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_resend_igmp(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::ResendIgmp(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_peer_notif(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::NumPeerNotif(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_all_slaves_active(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AllSlavesActive(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_min_links(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::MinLinks(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_lp_interval(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::LpInterval(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_packets_per_slave(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::PacketsPerSlave(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_lacp_rate(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdLacpRate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_select(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdSelect(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_info(&self) -> Iterable<'a, BondAdInfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdInfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_ad_actor_sys_prio(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdActorSysPrio(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_user_port_key(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdUserPortKey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_actor_system(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdActorSystem(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tlb_dynamic_lb(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::TlbDynamicLb(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_peer_notif_delay(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::PeerNotifDelay(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_lacp_active(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::AdLacpActive(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_missed_max(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::MissedMax(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ns_ip6_target(&self) -> ArrayIterable<Iterable<'a, &'a [u8]>, &'a [u8]> {
+        for attr in self.clone() {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::NsIp6Target(val) = attr {
+                return ArrayIterable::new(val);
+            }
+        }
+        ArrayIterable::new(Iterable::new(&[]))
+    }
+    pub fn get_coupled_control(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBondAttrs::CoupledControl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> Iterator for Iterable<'a, std::net::Ipv4Addr> {
+    type Item = Result<std::net::Ipv4Addr, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            {
+                let Some(res) = parse_be_u32(next).map(Ipv4Addr::from_bits) else {
+                    break;
+                };
+                return Some(Ok(res));
+            }
+        }
+        Some(Err(self.error_context(
+            "std :: net :: Ipv4Addr",
+            None,
+            self.buf.as_ptr().wrapping_add(self.pos),
+        )))
+    }
+}
+impl<'a> Iterator for Iterable<'a, &'a [u8]> {
+    type Item = Result<&'a [u8], ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            {
+                let Some(res) = Some(next) else { break };
+                return Some(Ok(res));
+            }
+        }
+        Some(Err(self.error_context(
+            "& 'a [u8]",
+            None,
+            self.buf.as_ptr().wrapping_add(self.pos),
+        )))
+    }
+}
+impl<'a> LinkinfoBondAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoBondAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Mode",
+            2u16 => "ActiveSlave",
+            3u16 => "Miimon",
+            4u16 => "Updelay",
+            5u16 => "Downdelay",
+            6u16 => "UseCarrier",
+            7u16 => "ArpInterval",
+            8u16 => "ArpIpTarget",
+            9u16 => "ArpValidate",
+            10u16 => "ArpAllTargets",
+            11u16 => "Primary",
+            12u16 => "PrimaryReselect",
+            13u16 => "FailOverMac",
+            14u16 => "XmitHashPolicy",
+            15u16 => "ResendIgmp",
+            16u16 => "NumPeerNotif",
+            17u16 => "AllSlavesActive",
+            18u16 => "MinLinks",
+            19u16 => "LpInterval",
+            20u16 => "PacketsPerSlave",
+            21u16 => "AdLacpRate",
+            22u16 => "AdSelect",
+            23u16 => "AdInfo",
+            24u16 => "AdActorSysPrio",
+            25u16 => "AdUserPortKey",
+            26u16 => "AdActorSystem",
+            27u16 => "TlbDynamicLb",
+            28u16 => "PeerNotifDelay",
+            29u16 => "AdLacpActive",
+            30u16 => "MissedMax",
+            31u16 => "NsIp6Target",
+            32u16 => "CoupledControl",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
+    type Item = Result<LinkinfoBondAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoBondAttrs::Mode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoBondAttrs::ActiveSlave({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoBondAttrs::Miimon({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoBondAttrs::Updelay({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoBondAttrs::Downdelay({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoBondAttrs::UseCarrier({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoBondAttrs::ArpInterval({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoBondAttrs::ArpIpTarget({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoBondAttrs::ArpValidate({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoBondAttrs::ArpAllTargets({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoBondAttrs::Primary({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoBondAttrs::PrimaryReselect({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoBondAttrs::FailOverMac({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoBondAttrs::XmitHashPolicy({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoBondAttrs::ResendIgmp({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoBondAttrs::NumPeerNotif({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkinfoBondAttrs::AllSlavesActive({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoBondAttrs::MinLinks({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkinfoBondAttrs::LpInterval({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkinfoBondAttrs::PacketsPerSlave({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkinfoBondAttrs::AdLacpRate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => LinkinfoBondAttrs::AdSelect({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => LinkinfoBondAttrs::AdInfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => LinkinfoBondAttrs::AdActorSysPrio({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => LinkinfoBondAttrs::AdUserPortKey({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => LinkinfoBondAttrs::AdActorSystem({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => LinkinfoBondAttrs::TlbDynamicLb({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => LinkinfoBondAttrs::PeerNotifDelay({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => LinkinfoBondAttrs::AdLacpActive({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => LinkinfoBondAttrs::MissedMax({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => LinkinfoBondAttrs::NsIp6Target({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => LinkinfoBondAttrs::CoupledControl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoBondAttrs",
+            r#type.and_then(|t| LinkinfoBondAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, std::net::Ipv4Addr> {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_list().entries(self.clone()).finish()
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, &'a [u8]> {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_list().entries(self.clone()).finish()
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBondAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoBondAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoBondAttrs::Mode(val) => fmt.field("Mode", &val),
+                LinkinfoBondAttrs::ActiveSlave(val) => fmt.field("ActiveSlave", &val),
+                LinkinfoBondAttrs::Miimon(val) => fmt.field("Miimon", &val),
+                LinkinfoBondAttrs::Updelay(val) => fmt.field("Updelay", &val),
+                LinkinfoBondAttrs::Downdelay(val) => fmt.field("Downdelay", &val),
+                LinkinfoBondAttrs::UseCarrier(val) => fmt.field("UseCarrier", &val),
+                LinkinfoBondAttrs::ArpInterval(val) => fmt.field("ArpInterval", &val),
+                LinkinfoBondAttrs::ArpIpTarget(val) => fmt.field("ArpIpTarget", &val),
+                LinkinfoBondAttrs::ArpValidate(val) => fmt.field("ArpValidate", &val),
+                LinkinfoBondAttrs::ArpAllTargets(val) => fmt.field("ArpAllTargets", &val),
+                LinkinfoBondAttrs::Primary(val) => fmt.field("Primary", &val),
+                LinkinfoBondAttrs::PrimaryReselect(val) => fmt.field("PrimaryReselect", &val),
+                LinkinfoBondAttrs::FailOverMac(val) => fmt.field("FailOverMac", &val),
+                LinkinfoBondAttrs::XmitHashPolicy(val) => fmt.field("XmitHashPolicy", &val),
+                LinkinfoBondAttrs::ResendIgmp(val) => fmt.field("ResendIgmp", &val),
+                LinkinfoBondAttrs::NumPeerNotif(val) => fmt.field("NumPeerNotif", &val),
+                LinkinfoBondAttrs::AllSlavesActive(val) => fmt.field("AllSlavesActive", &val),
+                LinkinfoBondAttrs::MinLinks(val) => fmt.field("MinLinks", &val),
+                LinkinfoBondAttrs::LpInterval(val) => fmt.field("LpInterval", &val),
+                LinkinfoBondAttrs::PacketsPerSlave(val) => fmt.field("PacketsPerSlave", &val),
+                LinkinfoBondAttrs::AdLacpRate(val) => fmt.field("AdLacpRate", &val),
+                LinkinfoBondAttrs::AdSelect(val) => fmt.field("AdSelect", &val),
+                LinkinfoBondAttrs::AdInfo(val) => fmt.field("AdInfo", &val),
+                LinkinfoBondAttrs::AdActorSysPrio(val) => fmt.field("AdActorSysPrio", &val),
+                LinkinfoBondAttrs::AdUserPortKey(val) => fmt.field("AdUserPortKey", &val),
+                LinkinfoBondAttrs::AdActorSystem(val) => fmt.field("AdActorSystem", &val),
+                LinkinfoBondAttrs::TlbDynamicLb(val) => fmt.field("TlbDynamicLb", &val),
+                LinkinfoBondAttrs::PeerNotifDelay(val) => fmt.field("PeerNotifDelay", &val),
+                LinkinfoBondAttrs::AdLacpActive(val) => fmt.field("AdLacpActive", &val),
+                LinkinfoBondAttrs::MissedMax(val) => fmt.field("MissedMax", &val),
+                LinkinfoBondAttrs::NsIp6Target(val) => fmt.field("NsIp6Target", &val),
+                LinkinfoBondAttrs::CoupledControl(val) => fmt.field("CoupledControl", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"bond-ad-info-attrs\""]
+#[derive(Clone)]
+pub enum BondAdInfoAttrs<'a> {
+    Aggregator(u16),
+    NumPorts(u16),
+    ActorKey(u16),
+    PartnerKey(u16),
+    PartnerMac(&'a [u8]),
+}
+impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
+    pub fn get_aggregator(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondAdInfoAttrs::Aggregator(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_ports(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondAdInfoAttrs::NumPorts(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_actor_key(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondAdInfoAttrs::ActorKey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_partner_key(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondAdInfoAttrs::PartnerKey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_partner_mac(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondAdInfoAttrs::PartnerMac(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> BondAdInfoAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, BondAdInfoAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Aggregator",
+            2u16 => "NumPorts",
+            3u16 => "ActorKey",
+            4u16 => "PartnerKey",
+            5u16 => "PartnerMac",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, BondAdInfoAttrs<'a>> {
+    type Item = Result<BondAdInfoAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => BondAdInfoAttrs::Aggregator({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => BondAdInfoAttrs::NumPorts({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => BondAdInfoAttrs::ActorKey({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => BondAdInfoAttrs::PartnerKey({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => BondAdInfoAttrs::PartnerMac({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "BondAdInfoAttrs",
+            r#type.and_then(|t| BondAdInfoAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, BondAdInfoAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("BondAdInfoAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                BondAdInfoAttrs::Aggregator(val) => fmt.field("Aggregator", &val),
+                BondAdInfoAttrs::NumPorts(val) => fmt.field("NumPorts", &val),
+                BondAdInfoAttrs::ActorKey(val) => fmt.field("ActorKey", &val),
+                BondAdInfoAttrs::PartnerKey(val) => fmt.field("PartnerKey", &val),
+                BondAdInfoAttrs::PartnerMac(val) => fmt.field("PartnerMac", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"bond-slave-attrs\""]
+#[derive(Clone)]
+pub enum BondSlaveAttrs<'a> {
+    State(u8),
+    MiiStatus(u8),
+    LinkFailureCount(u32),
+    PermHwaddr(&'a [u8]),
+    QueueId(u16),
+    AdAggregatorId(u16),
+    AdActorOperPortState(u8),
+    AdPartnerOperPortState(u16),
+    Prio(u32),
+}
+impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
+    pub fn get_state(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::State(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mii_status(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::MiiStatus(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_failure_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::LinkFailureCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_perm_hwaddr(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::PermHwaddr(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_queue_id(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::QueueId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_aggregator_id(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::AdAggregatorId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_actor_oper_port_state(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::AdActorOperPortState(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ad_partner_oper_port_state(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::AdPartnerOperPortState(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_prio(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let BondSlaveAttrs::Prio(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> BondSlaveAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, BondSlaveAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "State",
+            2u16 => "MiiStatus",
+            3u16 => "LinkFailureCount",
+            4u16 => "PermHwaddr",
+            5u16 => "QueueId",
+            6u16 => "AdAggregatorId",
+            7u16 => "AdActorOperPortState",
+            8u16 => "AdPartnerOperPortState",
+            9u16 => "Prio",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, BondSlaveAttrs<'a>> {
+    type Item = Result<BondSlaveAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => BondSlaveAttrs::State({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => BondSlaveAttrs::MiiStatus({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => BondSlaveAttrs::LinkFailureCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => BondSlaveAttrs::PermHwaddr({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => BondSlaveAttrs::QueueId({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => BondSlaveAttrs::AdAggregatorId({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => BondSlaveAttrs::AdActorOperPortState({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => BondSlaveAttrs::AdPartnerOperPortState({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => BondSlaveAttrs::Prio({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "BondSlaveAttrs",
+            r#type.and_then(|t| BondSlaveAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, BondSlaveAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("BondSlaveAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                BondSlaveAttrs::State(val) => fmt.field("State", &val),
+                BondSlaveAttrs::MiiStatus(val) => fmt.field("MiiStatus", &val),
+                BondSlaveAttrs::LinkFailureCount(val) => fmt.field("LinkFailureCount", &val),
+                BondSlaveAttrs::PermHwaddr(val) => fmt.field("PermHwaddr", &val),
+                BondSlaveAttrs::QueueId(val) => fmt.field("QueueId", &val),
+                BondSlaveAttrs::AdAggregatorId(val) => fmt.field("AdAggregatorId", &val),
+                BondSlaveAttrs::AdActorOperPortState(val) => {
+                    fmt.field("AdActorOperPortState", &val)
+                }
+                BondSlaveAttrs::AdPartnerOperPortState(val) => {
+                    fmt.field("AdPartnerOperPortState", &val)
+                }
+                BondSlaveAttrs::Prio(val) => fmt.field("Prio", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-bridge-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoBridgeAttrs<'a> {
+    ForwardDelay(u32),
+    HelloTime(u32),
+    MaxAge(u32),
+    AgeingTime(u32),
+    StpState(u32),
+    Priority(u16),
+    VlanFiltering(u8),
+    VlanProtocol(u16),
+    GroupFwdMask(u16),
+    RootId(PushIflaBridgeId),
+    BridgeId(PushIflaBridgeId),
+    RootPort(u16),
+    RootPathCost(u32),
+    TopologyChange(u8),
+    TopologyChangeDetected(u8),
+    HelloTimer(u64),
+    TcnTimer(u64),
+    TopologyChangeTimer(u64),
+    GcTimer(u64),
+    GroupAddr(&'a [u8]),
+    FdbFlush(&'a [u8]),
+    McastRouter(u8),
+    McastSnooping(u8),
+    McastQueryUseIfaddr(u8),
+    McastQuerier(u8),
+    McastHashElasticity(u32),
+    McastHashMax(u32),
+    McastLastMemberCnt(u32),
+    McastStartupQueryCnt(u32),
+    McastLastMemberIntvl(u64),
+    McastMembershipIntvl(u64),
+    McastQuerierIntvl(u64),
+    McastQueryIntvl(u64),
+    McastQueryResponseIntvl(u64),
+    McastStartupQueryIntvl(u64),
+    NfCallIptables(u8),
+    NfCallIp6tables(u8),
+    NfCallArptables(u8),
+    VlanDefaultPvid(u16),
+    Pad(&'a [u8]),
+    VlanStatsEnabled(u8),
+    McastStatsEnabled(u8),
+    McastIgmpVersion(u8),
+    McastMldVersion(u8),
+    VlanStatsPerPort(u8),
+    MultiBoolopt(PushBrBooloptMulti),
+    McastQuerierState(&'a [u8]),
+    FdbNLearned(u32),
+    FdbMaxLearned(u32),
+}
+impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+    pub fn get_forward_delay(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::ForwardDelay(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_hello_time(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::HelloTime(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_max_age(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::MaxAge(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ageing_time(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::AgeingTime(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stp_state(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::StpState(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_priority(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::Priority(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_filtering(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::VlanFiltering(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_protocol(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::VlanProtocol(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_group_fwd_mask(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::GroupFwdMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_root_id(&self) -> Option<PushIflaBridgeId> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::RootId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_bridge_id(&self) -> Option<PushIflaBridgeId> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::BridgeId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_root_port(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::RootPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_root_path_cost(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::RootPathCost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_topology_change(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::TopologyChange(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_topology_change_detected(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::TopologyChangeDetected(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_hello_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::HelloTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tcn_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::TcnTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_topology_change_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::TopologyChangeTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gc_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::GcTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_group_addr(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::GroupAddr(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fdb_flush(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::FdbFlush(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_router(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastRouter(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_snooping(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastSnooping(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_query_use_ifaddr(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastQueryUseIfaddr(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_querier(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastQuerier(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_hash_elasticity(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastHashElasticity(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_hash_max(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastHashMax(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_last_member_cnt(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastLastMemberCnt(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_startup_query_cnt(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastStartupQueryCnt(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_last_member_intvl(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastLastMemberIntvl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_membership_intvl(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastMembershipIntvl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_querier_intvl(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastQuerierIntvl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_query_intvl(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastQueryIntvl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_query_response_intvl(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastQueryResponseIntvl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_startup_query_intvl(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastStartupQueryIntvl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_nf_call_iptables(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::NfCallIptables(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_nf_call_ip6tables(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::NfCallIp6tables(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_nf_call_arptables(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::NfCallArptables(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_default_pvid(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::VlanDefaultPvid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_stats_enabled(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::VlanStatsEnabled(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_stats_enabled(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastStatsEnabled(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_igmp_version(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastIgmpVersion(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_mld_version(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastMldVersion(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_stats_per_port(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::VlanStatsPerPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_multi_boolopt(&self) -> Option<PushBrBooloptMulti> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::MultiBoolopt(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_querier_state(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::McastQuerierState(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fdb_n_learned(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::FdbNLearned(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fdb_max_learned(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBridgeAttrs::FdbMaxLearned(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoBridgeAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "ForwardDelay",
+            2u16 => "HelloTime",
+            3u16 => "MaxAge",
+            4u16 => "AgeingTime",
+            5u16 => "StpState",
+            6u16 => "Priority",
+            7u16 => "VlanFiltering",
+            8u16 => "VlanProtocol",
+            9u16 => "GroupFwdMask",
+            10u16 => "RootId",
+            11u16 => "BridgeId",
+            12u16 => "RootPort",
+            13u16 => "RootPathCost",
+            14u16 => "TopologyChange",
+            15u16 => "TopologyChangeDetected",
+            16u16 => "HelloTimer",
+            17u16 => "TcnTimer",
+            18u16 => "TopologyChangeTimer",
+            19u16 => "GcTimer",
+            20u16 => "GroupAddr",
+            21u16 => "FdbFlush",
+            22u16 => "McastRouter",
+            23u16 => "McastSnooping",
+            24u16 => "McastQueryUseIfaddr",
+            25u16 => "McastQuerier",
+            26u16 => "McastHashElasticity",
+            27u16 => "McastHashMax",
+            28u16 => "McastLastMemberCnt",
+            29u16 => "McastStartupQueryCnt",
+            30u16 => "McastLastMemberIntvl",
+            31u16 => "McastMembershipIntvl",
+            32u16 => "McastQuerierIntvl",
+            33u16 => "McastQueryIntvl",
+            34u16 => "McastQueryResponseIntvl",
+            35u16 => "McastStartupQueryIntvl",
+            36u16 => "NfCallIptables",
+            37u16 => "NfCallIp6tables",
+            38u16 => "NfCallArptables",
+            39u16 => "VlanDefaultPvid",
+            40u16 => "Pad",
+            41u16 => "VlanStatsEnabled",
+            42u16 => "McastStatsEnabled",
+            43u16 => "McastIgmpVersion",
+            44u16 => "McastMldVersion",
+            45u16 => "VlanStatsPerPort",
+            46u16 => "MultiBoolopt",
+            47u16 => "McastQuerierState",
+            48u16 => "FdbNLearned",
+            49u16 => "FdbMaxLearned",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+    type Item = Result<LinkinfoBridgeAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoBridgeAttrs::ForwardDelay({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoBridgeAttrs::HelloTime({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoBridgeAttrs::MaxAge({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoBridgeAttrs::AgeingTime({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoBridgeAttrs::StpState({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoBridgeAttrs::Priority({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoBridgeAttrs::VlanFiltering({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoBridgeAttrs::VlanProtocol({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoBridgeAttrs::GroupFwdMask({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoBridgeAttrs::RootId({
+                    let res = PushIflaBridgeId::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoBridgeAttrs::BridgeId({
+                    let res = PushIflaBridgeId::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoBridgeAttrs::RootPort({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoBridgeAttrs::RootPathCost({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoBridgeAttrs::TopologyChange({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoBridgeAttrs::TopologyChangeDetected({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoBridgeAttrs::HelloTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkinfoBridgeAttrs::TcnTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoBridgeAttrs::TopologyChangeTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkinfoBridgeAttrs::GcTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkinfoBridgeAttrs::GroupAddr({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkinfoBridgeAttrs::FdbFlush({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => LinkinfoBridgeAttrs::McastRouter({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => LinkinfoBridgeAttrs::McastSnooping({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => LinkinfoBridgeAttrs::McastQueryUseIfaddr({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => LinkinfoBridgeAttrs::McastQuerier({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => LinkinfoBridgeAttrs::McastHashElasticity({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => LinkinfoBridgeAttrs::McastHashMax({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => LinkinfoBridgeAttrs::McastLastMemberCnt({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => LinkinfoBridgeAttrs::McastStartupQueryCnt({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => LinkinfoBridgeAttrs::McastLastMemberIntvl({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => LinkinfoBridgeAttrs::McastMembershipIntvl({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => LinkinfoBridgeAttrs::McastQuerierIntvl({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                33u16 => LinkinfoBridgeAttrs::McastQueryIntvl({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                34u16 => LinkinfoBridgeAttrs::McastQueryResponseIntvl({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => LinkinfoBridgeAttrs::McastStartupQueryIntvl({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                36u16 => LinkinfoBridgeAttrs::NfCallIptables({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => LinkinfoBridgeAttrs::NfCallIp6tables({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => LinkinfoBridgeAttrs::NfCallArptables({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => LinkinfoBridgeAttrs::VlanDefaultPvid({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => LinkinfoBridgeAttrs::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => LinkinfoBridgeAttrs::VlanStatsEnabled({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => LinkinfoBridgeAttrs::McastStatsEnabled({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => LinkinfoBridgeAttrs::McastIgmpVersion({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                44u16 => LinkinfoBridgeAttrs::McastMldVersion({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                45u16 => LinkinfoBridgeAttrs::VlanStatsPerPort({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => LinkinfoBridgeAttrs::MultiBoolopt({
+                    let res = PushBrBooloptMulti::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                47u16 => LinkinfoBridgeAttrs::McastQuerierState({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                48u16 => LinkinfoBridgeAttrs::FdbNLearned({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                49u16 => LinkinfoBridgeAttrs::FdbMaxLearned({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoBridgeAttrs",
+            r#type.and_then(|t| LinkinfoBridgeAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoBridgeAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoBridgeAttrs::ForwardDelay(val) => fmt.field("ForwardDelay", &val),
+                LinkinfoBridgeAttrs::HelloTime(val) => fmt.field("HelloTime", &val),
+                LinkinfoBridgeAttrs::MaxAge(val) => fmt.field("MaxAge", &val),
+                LinkinfoBridgeAttrs::AgeingTime(val) => fmt.field("AgeingTime", &val),
+                LinkinfoBridgeAttrs::StpState(val) => fmt.field("StpState", &val),
+                LinkinfoBridgeAttrs::Priority(val) => fmt.field("Priority", &val),
+                LinkinfoBridgeAttrs::VlanFiltering(val) => fmt.field("VlanFiltering", &val),
+                LinkinfoBridgeAttrs::VlanProtocol(val) => fmt.field("VlanProtocol", &val),
+                LinkinfoBridgeAttrs::GroupFwdMask(val) => fmt.field("GroupFwdMask", &val),
+                LinkinfoBridgeAttrs::RootId(val) => fmt.field("RootId", &val),
+                LinkinfoBridgeAttrs::BridgeId(val) => fmt.field("BridgeId", &val),
+                LinkinfoBridgeAttrs::RootPort(val) => fmt.field("RootPort", &val),
+                LinkinfoBridgeAttrs::RootPathCost(val) => fmt.field("RootPathCost", &val),
+                LinkinfoBridgeAttrs::TopologyChange(val) => fmt.field("TopologyChange", &val),
+                LinkinfoBridgeAttrs::TopologyChangeDetected(val) => {
+                    fmt.field("TopologyChangeDetected", &val)
+                }
+                LinkinfoBridgeAttrs::HelloTimer(val) => fmt.field("HelloTimer", &val),
+                LinkinfoBridgeAttrs::TcnTimer(val) => fmt.field("TcnTimer", &val),
+                LinkinfoBridgeAttrs::TopologyChangeTimer(val) => {
+                    fmt.field("TopologyChangeTimer", &val)
+                }
+                LinkinfoBridgeAttrs::GcTimer(val) => fmt.field("GcTimer", &val),
+                LinkinfoBridgeAttrs::GroupAddr(val) => fmt.field("GroupAddr", &val),
+                LinkinfoBridgeAttrs::FdbFlush(val) => fmt.field("FdbFlush", &val),
+                LinkinfoBridgeAttrs::McastRouter(val) => fmt.field("McastRouter", &val),
+                LinkinfoBridgeAttrs::McastSnooping(val) => fmt.field("McastSnooping", &val),
+                LinkinfoBridgeAttrs::McastQueryUseIfaddr(val) => {
+                    fmt.field("McastQueryUseIfaddr", &val)
+                }
+                LinkinfoBridgeAttrs::McastQuerier(val) => fmt.field("McastQuerier", &val),
+                LinkinfoBridgeAttrs::McastHashElasticity(val) => {
+                    fmt.field("McastHashElasticity", &val)
+                }
+                LinkinfoBridgeAttrs::McastHashMax(val) => fmt.field("McastHashMax", &val),
+                LinkinfoBridgeAttrs::McastLastMemberCnt(val) => {
+                    fmt.field("McastLastMemberCnt", &val)
+                }
+                LinkinfoBridgeAttrs::McastStartupQueryCnt(val) => {
+                    fmt.field("McastStartupQueryCnt", &val)
+                }
+                LinkinfoBridgeAttrs::McastLastMemberIntvl(val) => {
+                    fmt.field("McastLastMemberIntvl", &val)
+                }
+                LinkinfoBridgeAttrs::McastMembershipIntvl(val) => {
+                    fmt.field("McastMembershipIntvl", &val)
+                }
+                LinkinfoBridgeAttrs::McastQuerierIntvl(val) => fmt.field("McastQuerierIntvl", &val),
+                LinkinfoBridgeAttrs::McastQueryIntvl(val) => fmt.field("McastQueryIntvl", &val),
+                LinkinfoBridgeAttrs::McastQueryResponseIntvl(val) => {
+                    fmt.field("McastQueryResponseIntvl", &val)
+                }
+                LinkinfoBridgeAttrs::McastStartupQueryIntvl(val) => {
+                    fmt.field("McastStartupQueryIntvl", &val)
+                }
+                LinkinfoBridgeAttrs::NfCallIptables(val) => fmt.field("NfCallIptables", &val),
+                LinkinfoBridgeAttrs::NfCallIp6tables(val) => fmt.field("NfCallIp6tables", &val),
+                LinkinfoBridgeAttrs::NfCallArptables(val) => fmt.field("NfCallArptables", &val),
+                LinkinfoBridgeAttrs::VlanDefaultPvid(val) => fmt.field("VlanDefaultPvid", &val),
+                LinkinfoBridgeAttrs::Pad(val) => fmt.field("Pad", &val),
+                LinkinfoBridgeAttrs::VlanStatsEnabled(val) => fmt.field("VlanStatsEnabled", &val),
+                LinkinfoBridgeAttrs::McastStatsEnabled(val) => fmt.field("McastStatsEnabled", &val),
+                LinkinfoBridgeAttrs::McastIgmpVersion(val) => fmt.field("McastIgmpVersion", &val),
+                LinkinfoBridgeAttrs::McastMldVersion(val) => fmt.field("McastMldVersion", &val),
+                LinkinfoBridgeAttrs::VlanStatsPerPort(val) => fmt.field("VlanStatsPerPort", &val),
+                LinkinfoBridgeAttrs::MultiBoolopt(val) => fmt.field("MultiBoolopt", &val),
+                LinkinfoBridgeAttrs::McastQuerierState(val) => fmt.field("McastQuerierState", &val),
+                LinkinfoBridgeAttrs::FdbNLearned(val) => fmt.field("FdbNLearned", &val),
+                LinkinfoBridgeAttrs::FdbMaxLearned(val) => fmt.field("FdbMaxLearned", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-brport-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoBrportAttrs<'a> {
+    State(u8),
+    Priority(u16),
+    Cost(u32),
+    Mode(()),
+    Guard(()),
+    Protect(()),
+    FastLeave(()),
+    Learning(()),
+    UnicastFlood(()),
+    Proxyarp(()),
+    LearningSync(()),
+    ProxyarpWifi(()),
+    RootId(PushIflaBridgeId),
+    BridgeId(PushIflaBridgeId),
+    DesignatedPort(u16),
+    DesignatedCost(u16),
+    Id(u16),
+    No(u16),
+    TopologyChangeAck(u8),
+    ConfigPending(u8),
+    MessageAgeTimer(u64),
+    ForwardDelayTimer(u64),
+    HoldTimer(u64),
+    Flush(()),
+    MulticastRouter(u8),
+    Pad(&'a [u8]),
+    McastFlood(()),
+    McastToUcast(()),
+    VlanTunnel(()),
+    BcastFlood(()),
+    GroupFwdMask(u16),
+    NeighSuppress(()),
+    Isolated(()),
+    BackupPort(u32),
+    MrpRingOpen(()),
+    MrpInOpen(()),
+    McastEhtHostsLimit(u32),
+    McastEhtHostsCnt(u32),
+    Locked(()),
+    Mab(()),
+    McastNGroups(u32),
+    McastMaxGroups(u32),
+    NeighVlanSuppress(()),
+    BackupNhid(u32),
+}
+impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
+    pub fn get_state(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::State(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_priority(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Priority(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_cost(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Cost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mode(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Mode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_guard(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Guard(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_protect(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Protect(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fast_leave(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::FastLeave(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_learning(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Learning(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_unicast_flood(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::UnicastFlood(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proxyarp(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Proxyarp(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_learning_sync(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::LearningSync(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proxyarp_wifi(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::ProxyarpWifi(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_root_id(&self) -> Option<PushIflaBridgeId> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::RootId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_bridge_id(&self) -> Option<PushIflaBridgeId> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::BridgeId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_designated_port(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::DesignatedPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_designated_cost(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::DesignatedCost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_id(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Id(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_no(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::No(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_topology_change_ack(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::TopologyChangeAck(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_config_pending(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::ConfigPending(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_message_age_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::MessageAgeTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_forward_delay_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::ForwardDelayTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_hold_timer(&self) -> Option<u64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::HoldTimer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flush(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Flush(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_multicast_router(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::MulticastRouter(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_flood(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::McastFlood(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_to_ucast(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::McastToUcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vlan_tunnel(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::VlanTunnel(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_bcast_flood(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::BcastFlood(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_group_fwd_mask(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::GroupFwdMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_neigh_suppress(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::NeighSuppress(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_isolated(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Isolated(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_backup_port(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::BackupPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mrp_ring_open(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::MrpRingOpen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mrp_in_open(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::MrpInOpen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_eht_hosts_limit(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::McastEhtHostsLimit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_eht_hosts_cnt(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::McastEhtHostsCnt(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_locked(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Locked(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mab(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::Mab(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_n_groups(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::McastNGroups(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast_max_groups(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::McastMaxGroups(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_neigh_vlan_suppress(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::NeighVlanSuppress(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_backup_nhid(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoBrportAttrs::BackupNhid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoBrportAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoBrportAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "State",
+            2u16 => "Priority",
+            3u16 => "Cost",
+            4u16 => "Mode",
+            5u16 => "Guard",
+            6u16 => "Protect",
+            7u16 => "FastLeave",
+            8u16 => "Learning",
+            9u16 => "UnicastFlood",
+            10u16 => "Proxyarp",
+            11u16 => "LearningSync",
+            12u16 => "ProxyarpWifi",
+            13u16 => "RootId",
+            14u16 => "BridgeId",
+            15u16 => "DesignatedPort",
+            16u16 => "DesignatedCost",
+            17u16 => "Id",
+            18u16 => "No",
+            19u16 => "TopologyChangeAck",
+            20u16 => "ConfigPending",
+            21u16 => "MessageAgeTimer",
+            22u16 => "ForwardDelayTimer",
+            23u16 => "HoldTimer",
+            24u16 => "Flush",
+            25u16 => "MulticastRouter",
+            26u16 => "Pad",
+            27u16 => "McastFlood",
+            28u16 => "McastToUcast",
+            29u16 => "VlanTunnel",
+            30u16 => "BcastFlood",
+            31u16 => "GroupFwdMask",
+            32u16 => "NeighSuppress",
+            33u16 => "Isolated",
+            34u16 => "BackupPort",
+            35u16 => "MrpRingOpen",
+            36u16 => "MrpInOpen",
+            37u16 => "McastEhtHostsLimit",
+            38u16 => "McastEhtHostsCnt",
+            39u16 => "Locked",
+            40u16 => "Mab",
+            41u16 => "McastNGroups",
+            42u16 => "McastMaxGroups",
+            43u16 => "NeighVlanSuppress",
+            44u16 => "BackupNhid",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoBrportAttrs<'a>> {
+    type Item = Result<LinkinfoBrportAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoBrportAttrs::State({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoBrportAttrs::Priority({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoBrportAttrs::Cost({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoBrportAttrs::Mode(()),
+                5u16 => LinkinfoBrportAttrs::Guard(()),
+                6u16 => LinkinfoBrportAttrs::Protect(()),
+                7u16 => LinkinfoBrportAttrs::FastLeave(()),
+                8u16 => LinkinfoBrportAttrs::Learning(()),
+                9u16 => LinkinfoBrportAttrs::UnicastFlood(()),
+                10u16 => LinkinfoBrportAttrs::Proxyarp(()),
+                11u16 => LinkinfoBrportAttrs::LearningSync(()),
+                12u16 => LinkinfoBrportAttrs::ProxyarpWifi(()),
+                13u16 => LinkinfoBrportAttrs::RootId({
+                    let res = PushIflaBridgeId::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoBrportAttrs::BridgeId({
+                    let res = PushIflaBridgeId::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoBrportAttrs::DesignatedPort({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoBrportAttrs::DesignatedCost({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkinfoBrportAttrs::Id({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoBrportAttrs::No({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkinfoBrportAttrs::TopologyChangeAck({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkinfoBrportAttrs::ConfigPending({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkinfoBrportAttrs::MessageAgeTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => LinkinfoBrportAttrs::ForwardDelayTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => LinkinfoBrportAttrs::HoldTimer({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => LinkinfoBrportAttrs::Flush(()),
+                25u16 => LinkinfoBrportAttrs::MulticastRouter({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => LinkinfoBrportAttrs::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => LinkinfoBrportAttrs::McastFlood(()),
+                28u16 => LinkinfoBrportAttrs::McastToUcast(()),
+                29u16 => LinkinfoBrportAttrs::VlanTunnel(()),
+                30u16 => LinkinfoBrportAttrs::BcastFlood(()),
+                31u16 => LinkinfoBrportAttrs::GroupFwdMask({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => LinkinfoBrportAttrs::NeighSuppress(()),
+                33u16 => LinkinfoBrportAttrs::Isolated(()),
+                34u16 => LinkinfoBrportAttrs::BackupPort({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => LinkinfoBrportAttrs::MrpRingOpen(()),
+                36u16 => LinkinfoBrportAttrs::MrpInOpen(()),
+                37u16 => LinkinfoBrportAttrs::McastEhtHostsLimit({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => LinkinfoBrportAttrs::McastEhtHostsCnt({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => LinkinfoBrportAttrs::Locked(()),
+                40u16 => LinkinfoBrportAttrs::Mab(()),
+                41u16 => LinkinfoBrportAttrs::McastNGroups({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => LinkinfoBrportAttrs::McastMaxGroups({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => LinkinfoBrportAttrs::NeighVlanSuppress(()),
+                44u16 => LinkinfoBrportAttrs::BackupNhid({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoBrportAttrs",
+            r#type.and_then(|t| LinkinfoBrportAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBrportAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoBrportAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoBrportAttrs::State(val) => fmt.field("State", &val),
+                LinkinfoBrportAttrs::Priority(val) => fmt.field("Priority", &val),
+                LinkinfoBrportAttrs::Cost(val) => fmt.field("Cost", &val),
+                LinkinfoBrportAttrs::Mode(val) => fmt.field("Mode", &val),
+                LinkinfoBrportAttrs::Guard(val) => fmt.field("Guard", &val),
+                LinkinfoBrportAttrs::Protect(val) => fmt.field("Protect", &val),
+                LinkinfoBrportAttrs::FastLeave(val) => fmt.field("FastLeave", &val),
+                LinkinfoBrportAttrs::Learning(val) => fmt.field("Learning", &val),
+                LinkinfoBrportAttrs::UnicastFlood(val) => fmt.field("UnicastFlood", &val),
+                LinkinfoBrportAttrs::Proxyarp(val) => fmt.field("Proxyarp", &val),
+                LinkinfoBrportAttrs::LearningSync(val) => fmt.field("LearningSync", &val),
+                LinkinfoBrportAttrs::ProxyarpWifi(val) => fmt.field("ProxyarpWifi", &val),
+                LinkinfoBrportAttrs::RootId(val) => fmt.field("RootId", &val),
+                LinkinfoBrportAttrs::BridgeId(val) => fmt.field("BridgeId", &val),
+                LinkinfoBrportAttrs::DesignatedPort(val) => fmt.field("DesignatedPort", &val),
+                LinkinfoBrportAttrs::DesignatedCost(val) => fmt.field("DesignatedCost", &val),
+                LinkinfoBrportAttrs::Id(val) => fmt.field("Id", &val),
+                LinkinfoBrportAttrs::No(val) => fmt.field("No", &val),
+                LinkinfoBrportAttrs::TopologyChangeAck(val) => fmt.field("TopologyChangeAck", &val),
+                LinkinfoBrportAttrs::ConfigPending(val) => fmt.field("ConfigPending", &val),
+                LinkinfoBrportAttrs::MessageAgeTimer(val) => fmt.field("MessageAgeTimer", &val),
+                LinkinfoBrportAttrs::ForwardDelayTimer(val) => fmt.field("ForwardDelayTimer", &val),
+                LinkinfoBrportAttrs::HoldTimer(val) => fmt.field("HoldTimer", &val),
+                LinkinfoBrportAttrs::Flush(val) => fmt.field("Flush", &val),
+                LinkinfoBrportAttrs::MulticastRouter(val) => fmt.field("MulticastRouter", &val),
+                LinkinfoBrportAttrs::Pad(val) => fmt.field("Pad", &val),
+                LinkinfoBrportAttrs::McastFlood(val) => fmt.field("McastFlood", &val),
+                LinkinfoBrportAttrs::McastToUcast(val) => fmt.field("McastToUcast", &val),
+                LinkinfoBrportAttrs::VlanTunnel(val) => fmt.field("VlanTunnel", &val),
+                LinkinfoBrportAttrs::BcastFlood(val) => fmt.field("BcastFlood", &val),
+                LinkinfoBrportAttrs::GroupFwdMask(val) => fmt.field("GroupFwdMask", &val),
+                LinkinfoBrportAttrs::NeighSuppress(val) => fmt.field("NeighSuppress", &val),
+                LinkinfoBrportAttrs::Isolated(val) => fmt.field("Isolated", &val),
+                LinkinfoBrportAttrs::BackupPort(val) => fmt.field("BackupPort", &val),
+                LinkinfoBrportAttrs::MrpRingOpen(val) => fmt.field("MrpRingOpen", &val),
+                LinkinfoBrportAttrs::MrpInOpen(val) => fmt.field("MrpInOpen", &val),
+                LinkinfoBrportAttrs::McastEhtHostsLimit(val) => {
+                    fmt.field("McastEhtHostsLimit", &val)
+                }
+                LinkinfoBrportAttrs::McastEhtHostsCnt(val) => fmt.field("McastEhtHostsCnt", &val),
+                LinkinfoBrportAttrs::Locked(val) => fmt.field("Locked", &val),
+                LinkinfoBrportAttrs::Mab(val) => fmt.field("Mab", &val),
+                LinkinfoBrportAttrs::McastNGroups(val) => fmt.field("McastNGroups", &val),
+                LinkinfoBrportAttrs::McastMaxGroups(val) => fmt.field("McastMaxGroups", &val),
+                LinkinfoBrportAttrs::NeighVlanSuppress(val) => fmt.field("NeighVlanSuppress", &val),
+                LinkinfoBrportAttrs::BackupNhid(val) => fmt.field("BackupNhid", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-gre-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoGreAttrs<'a> {
+    Link(u32),
+    Iflags(u16),
+    Oflags(u16),
+    Ikey(u32),
+    Okey(u32),
+    Local(&'a [u8]),
+    Remote(&'a [u8]),
+    Ttl(u8),
+    Tos(u8),
+    Pmtudisc(u8),
+    EncapLimit(u8),
+    Flowinfo(u32),
+    Flags(u32),
+    EncapType(u16),
+    EncapFlags(u16),
+    EncapSport(u16),
+    EncapDport(u16),
+    CollectMetadata(()),
+    IgnoreDf(u8),
+    Fwmark(u32),
+    ErspanIndex(u32),
+    ErspanVer(u8),
+    ErspanDir(u8),
+    ErspanHwid(u16),
+}
+impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_iflags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Iflags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_oflags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Oflags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ikey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Ikey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_okey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Okey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_local(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Local(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ttl(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Ttl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tos(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Tos(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pmtudisc(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Pmtudisc(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_limit(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::EncapLimit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flowinfo(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Flowinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flags(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_type(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::EncapType(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_flags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::EncapFlags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_sport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::EncapSport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_dport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::EncapDport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_collect_metadata(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::CollectMetadata(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ignore_df(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::IgnoreDf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fwmark(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::Fwmark(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_index(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::ErspanIndex(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_ver(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::ErspanVer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_dir(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::ErspanDir(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_hwid(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGreAttrs::ErspanHwid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoGreAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoGreAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link",
+            2u16 => "Iflags",
+            3u16 => "Oflags",
+            4u16 => "Ikey",
+            5u16 => "Okey",
+            6u16 => "Local",
+            7u16 => "Remote",
+            8u16 => "Ttl",
+            9u16 => "Tos",
+            10u16 => "Pmtudisc",
+            11u16 => "EncapLimit",
+            12u16 => "Flowinfo",
+            13u16 => "Flags",
+            14u16 => "EncapType",
+            15u16 => "EncapFlags",
+            16u16 => "EncapSport",
+            17u16 => "EncapDport",
+            18u16 => "CollectMetadata",
+            19u16 => "IgnoreDf",
+            20u16 => "Fwmark",
+            21u16 => "ErspanIndex",
+            22u16 => "ErspanVer",
+            23u16 => "ErspanDir",
+            24u16 => "ErspanHwid",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoGreAttrs<'a>> {
+    type Item = Result<LinkinfoGreAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoGreAttrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoGreAttrs::Iflags({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoGreAttrs::Oflags({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoGreAttrs::Ikey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoGreAttrs::Okey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoGreAttrs::Local({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoGreAttrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoGreAttrs::Ttl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoGreAttrs::Tos({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoGreAttrs::Pmtudisc({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoGreAttrs::EncapLimit({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoGreAttrs::Flowinfo({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoGreAttrs::Flags({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoGreAttrs::EncapType({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoGreAttrs::EncapFlags({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoGreAttrs::EncapSport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkinfoGreAttrs::EncapDport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoGreAttrs::CollectMetadata(()),
+                19u16 => LinkinfoGreAttrs::IgnoreDf({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkinfoGreAttrs::Fwmark({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkinfoGreAttrs::ErspanIndex({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => LinkinfoGreAttrs::ErspanVer({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => LinkinfoGreAttrs::ErspanDir({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => LinkinfoGreAttrs::ErspanHwid({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoGreAttrs",
+            r#type.and_then(|t| LinkinfoGreAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGreAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoGreAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoGreAttrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoGreAttrs::Iflags(val) => fmt.field("Iflags", &val),
+                LinkinfoGreAttrs::Oflags(val) => fmt.field("Oflags", &val),
+                LinkinfoGreAttrs::Ikey(val) => fmt.field("Ikey", &val),
+                LinkinfoGreAttrs::Okey(val) => fmt.field("Okey", &val),
+                LinkinfoGreAttrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoGreAttrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoGreAttrs::Ttl(val) => fmt.field("Ttl", &val),
+                LinkinfoGreAttrs::Tos(val) => fmt.field("Tos", &val),
+                LinkinfoGreAttrs::Pmtudisc(val) => fmt.field("Pmtudisc", &val),
+                LinkinfoGreAttrs::EncapLimit(val) => fmt.field("EncapLimit", &val),
+                LinkinfoGreAttrs::Flowinfo(val) => fmt.field("Flowinfo", &val),
+                LinkinfoGreAttrs::Flags(val) => fmt.field("Flags", &val),
+                LinkinfoGreAttrs::EncapType(val) => fmt.field("EncapType", &val),
+                LinkinfoGreAttrs::EncapFlags(val) => fmt.field("EncapFlags", &val),
+                LinkinfoGreAttrs::EncapSport(val) => fmt.field("EncapSport", &val),
+                LinkinfoGreAttrs::EncapDport(val) => fmt.field("EncapDport", &val),
+                LinkinfoGreAttrs::CollectMetadata(val) => fmt.field("CollectMetadata", &val),
+                LinkinfoGreAttrs::IgnoreDf(val) => fmt.field("IgnoreDf", &val),
+                LinkinfoGreAttrs::Fwmark(val) => fmt.field("Fwmark", &val),
+                LinkinfoGreAttrs::ErspanIndex(val) => fmt.field("ErspanIndex", &val),
+                LinkinfoGreAttrs::ErspanVer(val) => fmt.field("ErspanVer", &val),
+                LinkinfoGreAttrs::ErspanDir(val) => fmt.field("ErspanDir", &val),
+                LinkinfoGreAttrs::ErspanHwid(val) => fmt.field("ErspanHwid", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-gre6-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoGre6Attrs<'a> {
+    Link(u32),
+    Iflags(u16),
+    Oflags(u16),
+    Ikey(u32),
+    Okey(u32),
+    Local(&'a [u8]),
+    Remote(&'a [u8]),
+    Ttl(u8),
+    EncapLimit(u8),
+    Flowinfo(u32),
+    Flags(u32),
+    EncapType(u16),
+    EncapFlags(u16),
+    EncapSport(u16),
+    EncapDport(u16),
+    CollectMetadata(()),
+    Fwmark(u32),
+    ErspanIndex(u32),
+    ErspanVer(u8),
+    ErspanDir(u8),
+    ErspanHwid(u16),
+}
+impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_iflags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Iflags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_oflags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Oflags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ikey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Ikey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_okey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Okey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_local(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Local(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ttl(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Ttl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_limit(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::EncapLimit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flowinfo(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Flowinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flags(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_type(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::EncapType(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_flags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::EncapFlags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_sport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::EncapSport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_dport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::EncapDport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_collect_metadata(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::CollectMetadata(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fwmark(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::Fwmark(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_index(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::ErspanIndex(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_ver(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::ErspanVer(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_dir(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::ErspanDir(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_erspan_hwid(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGre6Attrs::ErspanHwid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoGre6Attrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoGre6Attrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link",
+            2u16 => "Iflags",
+            3u16 => "Oflags",
+            4u16 => "Ikey",
+            5u16 => "Okey",
+            6u16 => "Local",
+            7u16 => "Remote",
+            8u16 => "Ttl",
+            9u16 => "EncapLimit",
+            10u16 => "Flowinfo",
+            11u16 => "Flags",
+            12u16 => "EncapType",
+            13u16 => "EncapFlags",
+            14u16 => "EncapSport",
+            15u16 => "EncapDport",
+            16u16 => "CollectMetadata",
+            17u16 => "Fwmark",
+            18u16 => "ErspanIndex",
+            19u16 => "ErspanVer",
+            20u16 => "ErspanDir",
+            21u16 => "ErspanHwid",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoGre6Attrs<'a>> {
+    type Item = Result<LinkinfoGre6Attrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoGre6Attrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoGre6Attrs::Iflags({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoGre6Attrs::Oflags({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoGre6Attrs::Ikey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoGre6Attrs::Okey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoGre6Attrs::Local({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoGre6Attrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoGre6Attrs::Ttl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoGre6Attrs::EncapLimit({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoGre6Attrs::Flowinfo({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoGre6Attrs::Flags({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoGre6Attrs::EncapType({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoGre6Attrs::EncapFlags({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoGre6Attrs::EncapSport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoGre6Attrs::EncapDport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoGre6Attrs::CollectMetadata(()),
+                17u16 => LinkinfoGre6Attrs::Fwmark({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoGre6Attrs::ErspanIndex({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkinfoGre6Attrs::ErspanVer({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkinfoGre6Attrs::ErspanDir({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkinfoGre6Attrs::ErspanHwid({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoGre6Attrs",
+            r#type.and_then(|t| LinkinfoGre6Attrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGre6Attrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoGre6Attrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoGre6Attrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoGre6Attrs::Iflags(val) => fmt.field("Iflags", &val),
+                LinkinfoGre6Attrs::Oflags(val) => fmt.field("Oflags", &val),
+                LinkinfoGre6Attrs::Ikey(val) => fmt.field("Ikey", &val),
+                LinkinfoGre6Attrs::Okey(val) => fmt.field("Okey", &val),
+                LinkinfoGre6Attrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoGre6Attrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoGre6Attrs::Ttl(val) => fmt.field("Ttl", &val),
+                LinkinfoGre6Attrs::EncapLimit(val) => fmt.field("EncapLimit", &val),
+                LinkinfoGre6Attrs::Flowinfo(val) => fmt.field("Flowinfo", &val),
+                LinkinfoGre6Attrs::Flags(val) => fmt.field("Flags", &val),
+                LinkinfoGre6Attrs::EncapType(val) => fmt.field("EncapType", &val),
+                LinkinfoGre6Attrs::EncapFlags(val) => fmt.field("EncapFlags", &val),
+                LinkinfoGre6Attrs::EncapSport(val) => fmt.field("EncapSport", &val),
+                LinkinfoGre6Attrs::EncapDport(val) => fmt.field("EncapDport", &val),
+                LinkinfoGre6Attrs::CollectMetadata(val) => fmt.field("CollectMetadata", &val),
+                LinkinfoGre6Attrs::Fwmark(val) => fmt.field("Fwmark", &val),
+                LinkinfoGre6Attrs::ErspanIndex(val) => fmt.field("ErspanIndex", &val),
+                LinkinfoGre6Attrs::ErspanVer(val) => fmt.field("ErspanVer", &val),
+                LinkinfoGre6Attrs::ErspanDir(val) => fmt.field("ErspanDir", &val),
+                LinkinfoGre6Attrs::ErspanHwid(val) => fmt.field("ErspanHwid", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-vti-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoVtiAttrs<'a> {
+    Link(u32),
+    Ikey(u32),
+    Okey(u32),
+    Local(&'a [u8]),
+    Remote(&'a [u8]),
+    Fwmark(u32),
+}
+impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVtiAttrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ikey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVtiAttrs::Ikey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_okey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVtiAttrs::Okey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_local(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVtiAttrs::Local(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVtiAttrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fwmark(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVtiAttrs::Fwmark(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoVtiAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoVtiAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link",
+            2u16 => "Ikey",
+            3u16 => "Okey",
+            4u16 => "Local",
+            5u16 => "Remote",
+            6u16 => "Fwmark",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoVtiAttrs<'a>> {
+    type Item = Result<LinkinfoVtiAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoVtiAttrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoVtiAttrs::Ikey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoVtiAttrs::Okey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoVtiAttrs::Local({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoVtiAttrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoVtiAttrs::Fwmark({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoVtiAttrs",
+            r#type.and_then(|t| LinkinfoVtiAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVtiAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoVtiAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoVtiAttrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoVtiAttrs::Ikey(val) => fmt.field("Ikey", &val),
+                LinkinfoVtiAttrs::Okey(val) => fmt.field("Okey", &val),
+                LinkinfoVtiAttrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoVtiAttrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoVtiAttrs::Fwmark(val) => fmt.field("Fwmark", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-vti6-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoVti6Attrs<'a> {
+    Link(u32),
+    Ikey(u32),
+    Okey(u32),
+    Local(&'a [u8]),
+    Remote(&'a [u8]),
+    Fwmark(u32),
+}
+impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVti6Attrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ikey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVti6Attrs::Ikey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_okey(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVti6Attrs::Okey(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_local(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVti6Attrs::Local(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVti6Attrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fwmark(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVti6Attrs::Fwmark(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoVti6Attrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoVti6Attrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link",
+            2u16 => "Ikey",
+            3u16 => "Okey",
+            4u16 => "Local",
+            5u16 => "Remote",
+            6u16 => "Fwmark",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoVti6Attrs<'a>> {
+    type Item = Result<LinkinfoVti6Attrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoVti6Attrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoVti6Attrs::Ikey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoVti6Attrs::Okey({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoVti6Attrs::Local({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoVti6Attrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoVti6Attrs::Fwmark({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoVti6Attrs",
+            r#type.and_then(|t| LinkinfoVti6Attrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVti6Attrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoVti6Attrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoVti6Attrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoVti6Attrs::Ikey(val) => fmt.field("Ikey", &val),
+                LinkinfoVti6Attrs::Okey(val) => fmt.field("Okey", &val),
+                LinkinfoVti6Attrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoVti6Attrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoVti6Attrs::Fwmark(val) => fmt.field("Fwmark", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-geneve-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoGeneveAttrs<'a> {
+    Id(u32),
+    Remote(&'a [u8]),
+    Ttl(u8),
+    Tos(u8),
+    Port(u16),
+    CollectMetadata(()),
+    Remote6(&'a [u8]),
+    UdpCsum(u8),
+    UdpZeroCsum6Tx(u8),
+    UdpZeroCsum6Rx(u8),
+    Label(u32),
+    TtlInherit(u8),
+    Df(u8),
+    InnerProtoInherit(()),
+    PortRange(PushIflaGenevePortRange),
+}
+impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+    pub fn get_id(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Id(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ttl(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Ttl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tos(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Tos(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_port(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Port(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_collect_metadata(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::CollectMetadata(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote6(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Remote6(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_udp_csum(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::UdpCsum(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_udp_zero_csum6_tx(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::UdpZeroCsum6Tx(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_udp_zero_csum6_rx(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::UdpZeroCsum6Rx(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_label(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Label(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ttl_inherit(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::TtlInherit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_df(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::Df(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_inner_proto_inherit(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::InnerProtoInherit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_port_range(&self) -> Option<PushIflaGenevePortRange> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoGeneveAttrs::PortRange(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoGeneveAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Id",
+            2u16 => "Remote",
+            3u16 => "Ttl",
+            4u16 => "Tos",
+            5u16 => "Port",
+            6u16 => "CollectMetadata",
+            7u16 => "Remote6",
+            8u16 => "UdpCsum",
+            9u16 => "UdpZeroCsum6Tx",
+            10u16 => "UdpZeroCsum6Rx",
+            11u16 => "Label",
+            12u16 => "TtlInherit",
+            13u16 => "Df",
+            14u16 => "InnerProtoInherit",
+            15u16 => "PortRange",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+    type Item = Result<LinkinfoGeneveAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoGeneveAttrs::Id({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoGeneveAttrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoGeneveAttrs::Ttl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoGeneveAttrs::Tos({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoGeneveAttrs::Port({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoGeneveAttrs::CollectMetadata(()),
+                7u16 => LinkinfoGeneveAttrs::Remote6({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoGeneveAttrs::UdpCsum({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoGeneveAttrs::UdpZeroCsum6Tx({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoGeneveAttrs::UdpZeroCsum6Rx({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoGeneveAttrs::Label({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoGeneveAttrs::TtlInherit({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoGeneveAttrs::Df({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoGeneveAttrs::InnerProtoInherit(()),
+                15u16 => LinkinfoGeneveAttrs::PortRange({
+                    let res = PushIflaGenevePortRange::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoGeneveAttrs",
+            r#type.and_then(|t| LinkinfoGeneveAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoGeneveAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoGeneveAttrs::Id(val) => fmt.field("Id", &val),
+                LinkinfoGeneveAttrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoGeneveAttrs::Ttl(val) => fmt.field("Ttl", &val),
+                LinkinfoGeneveAttrs::Tos(val) => fmt.field("Tos", &val),
+                LinkinfoGeneveAttrs::Port(val) => fmt.field("Port", &val),
+                LinkinfoGeneveAttrs::CollectMetadata(val) => fmt.field("CollectMetadata", &val),
+                LinkinfoGeneveAttrs::Remote6(val) => fmt.field("Remote6", &val),
+                LinkinfoGeneveAttrs::UdpCsum(val) => fmt.field("UdpCsum", &val),
+                LinkinfoGeneveAttrs::UdpZeroCsum6Tx(val) => fmt.field("UdpZeroCsum6Tx", &val),
+                LinkinfoGeneveAttrs::UdpZeroCsum6Rx(val) => fmt.field("UdpZeroCsum6Rx", &val),
+                LinkinfoGeneveAttrs::Label(val) => fmt.field("Label", &val),
+                LinkinfoGeneveAttrs::TtlInherit(val) => fmt.field("TtlInherit", &val),
+                LinkinfoGeneveAttrs::Df(val) => fmt.field("Df", &val),
+                LinkinfoGeneveAttrs::InnerProtoInherit(val) => fmt.field("InnerProtoInherit", &val),
+                LinkinfoGeneveAttrs::PortRange(val) => fmt.field("PortRange", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-iptun-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoIptunAttrs<'a> {
+    Link(u32),
+    Local(&'a [u8]),
+    Remote(&'a [u8]),
+    Ttl(u8),
+    Tos(u8),
+    EncapLimit(u8),
+    Flowinfo(u32),
+    Flags(u16),
+    Proto(u8),
+    Pmtudisc(u8),
+    _6rdPrefix(&'a [u8]),
+    _6rdRelayPrefix(&'a [u8]),
+    _6rdPrefixlen(u16),
+    _6rdRelayPrefixlen(u16),
+    EncapType(u16),
+    EncapFlags(u16),
+    EncapSport(u16),
+    EncapDport(u16),
+    CollectMetadata(()),
+    Fwmark(u32),
+}
+impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_local(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Local(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ttl(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Ttl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tos(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Tos(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_limit(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::EncapLimit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flowinfo(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Flowinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Proto(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pmtudisc(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Pmtudisc(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_6rd_prefix(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::_6rdPrefix(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_6rd_relay_prefix(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::_6rdRelayPrefix(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_6rd_prefixlen(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::_6rdPrefixlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_6rd_relay_prefixlen(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::_6rdRelayPrefixlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_type(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::EncapType(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_flags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::EncapFlags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_sport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::EncapSport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_dport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::EncapDport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_collect_metadata(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::CollectMetadata(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fwmark(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIptunAttrs::Fwmark(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoIptunAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoIptunAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link",
+            2u16 => "Local",
+            3u16 => "Remote",
+            4u16 => "Ttl",
+            5u16 => "Tos",
+            6u16 => "EncapLimit",
+            7u16 => "Flowinfo",
+            8u16 => "Flags",
+            9u16 => "Proto",
+            10u16 => "Pmtudisc",
+            11u16 => "6rdPrefix",
+            12u16 => "6rdRelayPrefix",
+            13u16 => "6rdPrefixlen",
+            14u16 => "6rdRelayPrefixlen",
+            15u16 => "EncapType",
+            16u16 => "EncapFlags",
+            17u16 => "EncapSport",
+            18u16 => "EncapDport",
+            19u16 => "CollectMetadata",
+            20u16 => "Fwmark",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoIptunAttrs<'a>> {
+    type Item = Result<LinkinfoIptunAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoIptunAttrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoIptunAttrs::Local({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoIptunAttrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoIptunAttrs::Ttl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoIptunAttrs::Tos({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoIptunAttrs::EncapLimit({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoIptunAttrs::Flowinfo({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoIptunAttrs::Flags({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoIptunAttrs::Proto({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoIptunAttrs::Pmtudisc({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoIptunAttrs::_6rdPrefix({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoIptunAttrs::_6rdRelayPrefix({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoIptunAttrs::_6rdPrefixlen({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoIptunAttrs::_6rdRelayPrefixlen({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoIptunAttrs::EncapType({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoIptunAttrs::EncapFlags({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkinfoIptunAttrs::EncapSport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoIptunAttrs::EncapDport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkinfoIptunAttrs::CollectMetadata(()),
+                20u16 => LinkinfoIptunAttrs::Fwmark({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoIptunAttrs",
+            r#type.and_then(|t| LinkinfoIptunAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoIptunAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoIptunAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoIptunAttrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoIptunAttrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoIptunAttrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoIptunAttrs::Ttl(val) => fmt.field("Ttl", &val),
+                LinkinfoIptunAttrs::Tos(val) => fmt.field("Tos", &val),
+                LinkinfoIptunAttrs::EncapLimit(val) => fmt.field("EncapLimit", &val),
+                LinkinfoIptunAttrs::Flowinfo(val) => fmt.field("Flowinfo", &val),
+                LinkinfoIptunAttrs::Flags(val) => fmt.field("Flags", &val),
+                LinkinfoIptunAttrs::Proto(val) => fmt.field("Proto", &val),
+                LinkinfoIptunAttrs::Pmtudisc(val) => fmt.field("Pmtudisc", &val),
+                LinkinfoIptunAttrs::_6rdPrefix(val) => fmt.field("_6rdPrefix", &val),
+                LinkinfoIptunAttrs::_6rdRelayPrefix(val) => fmt.field("_6rdRelayPrefix", &val),
+                LinkinfoIptunAttrs::_6rdPrefixlen(val) => fmt.field("_6rdPrefixlen", &val),
+                LinkinfoIptunAttrs::_6rdRelayPrefixlen(val) => {
+                    fmt.field("_6rdRelayPrefixlen", &val)
+                }
+                LinkinfoIptunAttrs::EncapType(val) => fmt.field("EncapType", &val),
+                LinkinfoIptunAttrs::EncapFlags(val) => fmt.field("EncapFlags", &val),
+                LinkinfoIptunAttrs::EncapSport(val) => fmt.field("EncapSport", &val),
+                LinkinfoIptunAttrs::EncapDport(val) => fmt.field("EncapDport", &val),
+                LinkinfoIptunAttrs::CollectMetadata(val) => fmt.field("CollectMetadata", &val),
+                LinkinfoIptunAttrs::Fwmark(val) => fmt.field("Fwmark", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-ip6tnl-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoIp6tnlAttrs<'a> {
+    Link(u32),
+    Local(&'a [u8]),
+    Remote(&'a [u8]),
+    Ttl(u8),
+    EncapLimit(u8),
+    Flowinfo(u32),
+    Flags(u32),
+    Proto(u8),
+    EncapType(u16),
+    EncapFlags(u16),
+    EncapSport(u16),
+    EncapDport(u16),
+    CollectMetadata(()),
+    Fwmark(u32),
+}
+impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_local(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Local(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_remote(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Remote(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ttl(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Ttl(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_limit(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::EncapLimit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flowinfo(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Flowinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flags(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Proto(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_type(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::EncapType(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_flags(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::EncapFlags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_sport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::EncapSport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_encap_dport(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::EncapDport(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_collect_metadata(&self) -> Option<()> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::CollectMetadata(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_fwmark(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoIp6tnlAttrs::Fwmark(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoIp6tnlAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link",
+            2u16 => "Local",
+            3u16 => "Remote",
+            4u16 => "Ttl",
+            5u16 => "EncapLimit",
+            6u16 => "Flowinfo",
+            7u16 => "Flags",
+            8u16 => "Proto",
+            9u16 => "EncapType",
+            10u16 => "EncapFlags",
+            11u16 => "EncapSport",
+            12u16 => "EncapDport",
+            13u16 => "CollectMetadata",
+            14u16 => "Fwmark",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+    type Item = Result<LinkinfoIp6tnlAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoIp6tnlAttrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoIp6tnlAttrs::Local({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoIp6tnlAttrs::Remote({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoIp6tnlAttrs::Ttl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoIp6tnlAttrs::EncapLimit({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoIp6tnlAttrs::Flowinfo({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoIp6tnlAttrs::Flags({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoIp6tnlAttrs::Proto({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoIp6tnlAttrs::EncapType({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoIp6tnlAttrs::EncapFlags({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoIp6tnlAttrs::EncapSport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoIp6tnlAttrs::EncapDport({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoIp6tnlAttrs::CollectMetadata(()),
+                14u16 => LinkinfoIp6tnlAttrs::Fwmark({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoIp6tnlAttrs",
+            r#type.and_then(|t| LinkinfoIp6tnlAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoIp6tnlAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoIp6tnlAttrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoIp6tnlAttrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoIp6tnlAttrs::Remote(val) => fmt.field("Remote", &val),
+                LinkinfoIp6tnlAttrs::Ttl(val) => fmt.field("Ttl", &val),
+                LinkinfoIp6tnlAttrs::EncapLimit(val) => fmt.field("EncapLimit", &val),
+                LinkinfoIp6tnlAttrs::Flowinfo(val) => fmt.field("Flowinfo", &val),
+                LinkinfoIp6tnlAttrs::Flags(val) => fmt.field("Flags", &val),
+                LinkinfoIp6tnlAttrs::Proto(val) => fmt.field("Proto", &val),
+                LinkinfoIp6tnlAttrs::EncapType(val) => fmt.field("EncapType", &val),
+                LinkinfoIp6tnlAttrs::EncapFlags(val) => fmt.field("EncapFlags", &val),
+                LinkinfoIp6tnlAttrs::EncapSport(val) => fmt.field("EncapSport", &val),
+                LinkinfoIp6tnlAttrs::EncapDport(val) => fmt.field("EncapDport", &val),
+                LinkinfoIp6tnlAttrs::CollectMetadata(val) => fmt.field("CollectMetadata", &val),
+                LinkinfoIp6tnlAttrs::Fwmark(val) => fmt.field("Fwmark", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-tun-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoTunAttrs {
+    Owner(u32),
+    Group(u32),
+    Type(u8),
+    Pi(u8),
+    VnetHdr(u8),
+    Persist(u8),
+    MultiQueue(u8),
+    NumQueues(u32),
+    NumDisabledQueues(u32),
+}
+impl<'a> Iterable<'a, LinkinfoTunAttrs> {
+    pub fn get_owner(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::Owner(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_group(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::Group(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_type(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::Type(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pi(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::Pi(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vnet_hdr(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::VnetHdr(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_persist(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::Persist(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_multi_queue(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::MultiQueue(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::NumQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_disabled_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoTunAttrs::NumDisabledQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl LinkinfoTunAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkinfoTunAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Owner",
+            2u16 => "Group",
+            3u16 => "Type",
+            4u16 => "Pi",
+            5u16 => "VnetHdr",
+            6u16 => "Persist",
+            7u16 => "MultiQueue",
+            8u16 => "NumQueues",
+            9u16 => "NumDisabledQueues",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, LinkinfoTunAttrs> {
+    type Item = Result<LinkinfoTunAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoTunAttrs::Owner({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoTunAttrs::Group({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoTunAttrs::Type({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoTunAttrs::Pi({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoTunAttrs::VnetHdr({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoTunAttrs::Persist({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoTunAttrs::MultiQueue({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoTunAttrs::NumQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoTunAttrs::NumDisabledQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoTunAttrs",
+            r#type.and_then(|t| LinkinfoTunAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, LinkinfoTunAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoTunAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoTunAttrs::Owner(val) => fmt.field("Owner", &val),
+                LinkinfoTunAttrs::Group(val) => fmt.field("Group", &val),
+                LinkinfoTunAttrs::Type(val) => fmt.field("Type", &val),
+                LinkinfoTunAttrs::Pi(val) => fmt.field("Pi", &val),
+                LinkinfoTunAttrs::VnetHdr(val) => fmt.field("VnetHdr", &val),
+                LinkinfoTunAttrs::Persist(val) => fmt.field("Persist", &val),
+                LinkinfoTunAttrs::MultiQueue(val) => fmt.field("MultiQueue", &val),
+                LinkinfoTunAttrs::NumQueues(val) => fmt.field("NumQueues", &val),
+                LinkinfoTunAttrs::NumDisabledQueues(val) => fmt.field("NumDisabledQueues", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-vlan-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoVlanAttrs<'a> {
+    Id(u16),
+    Flags(PushIflaVlanFlags),
+    EgressQos(Iterable<'a, IflaVlanQos>),
+    IngressQos(Iterable<'a, IflaVlanQos>),
+    #[doc = "Associated type: \"VlanProtocols\" (enum)"]
+    Protocol(u16),
+}
+impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
+    pub fn get_id(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVlanAttrs::Id(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flags(&self) -> Option<PushIflaVlanFlags> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVlanAttrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_egress_qos(&self) -> Iterable<'a, IflaVlanQos> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVlanAttrs::EgressQos(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_ingress_qos(&self) -> Iterable<'a, IflaVlanQos> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVlanAttrs::IngressQos(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    #[doc = "Associated type: \"VlanProtocols\" (enum)"]
+    pub fn get_protocol(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVlanAttrs::Protocol(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoVlanAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoVlanAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Id",
+            2u16 => "Flags",
+            3u16 => "EgressQos",
+            4u16 => "IngressQos",
+            5u16 => "Protocol",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoVlanAttrs<'a>> {
+    type Item = Result<LinkinfoVlanAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoVlanAttrs::Id({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoVlanAttrs::Flags({
+                    let res = PushIflaVlanFlags::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoVlanAttrs::EgressQos({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoVlanAttrs::IngressQos({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoVlanAttrs::Protocol({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoVlanAttrs",
+            r#type.and_then(|t| LinkinfoVlanAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVlanAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoVlanAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoVlanAttrs::Id(val) => fmt.field("Id", &val),
+                LinkinfoVlanAttrs::Flags(val) => fmt.field("Flags", &val),
+                LinkinfoVlanAttrs::EgressQos(val) => fmt.field("EgressQos", &val),
+                LinkinfoVlanAttrs::IngressQos(val) => fmt.field("IngressQos", &val),
+                LinkinfoVlanAttrs::Protocol(val) => fmt.field("Protocol", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"ifla-vlan-qos\""]
+#[derive(Clone)]
+pub enum IflaVlanQos {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    Mapping(PushIflaVlanQosMapping),
+}
+impl<'a> Iterable<'a, IflaVlanQos> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_mapping(&self) -> MultiAttrIterable<Self, IflaVlanQos, PushIflaVlanQosMapping> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let IflaVlanQos::Mapping(val) = variant {
+                Some(val)
+            } else {
+                None
+            }
+        })
+    }
+}
+impl IflaVlanQos {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, IflaVlanQos> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Mapping",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, IflaVlanQos> {
+    type Item = Result<IflaVlanQos, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => IflaVlanQos::Mapping({
+                    let res = PushIflaVlanQosMapping::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "IflaVlanQos",
+            r#type.and_then(|t| IflaVlanQos::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, IflaVlanQos> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("IflaVlanQos");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                IflaVlanQos::Mapping(val) => fmt.field("Mapping", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-vrf-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoVrfAttrs {
+    Table(u32),
+}
+impl<'a> Iterable<'a, LinkinfoVrfAttrs> {
+    pub fn get_table(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoVrfAttrs::Table(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl LinkinfoVrfAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkinfoVrfAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Table",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, LinkinfoVrfAttrs> {
+    type Item = Result<LinkinfoVrfAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoVrfAttrs::Table({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoVrfAttrs",
+            r#type.and_then(|t| LinkinfoVrfAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, LinkinfoVrfAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoVrfAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoVrfAttrs::Table(val) => fmt.field("Table", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"xdp-attrs\""]
+#[derive(Clone)]
+pub enum XdpAttrs {
+    Fd(i32),
+    Attached(u8),
+    Flags(u32),
+    ProgId(u32),
+    DrvProgId(u32),
+    SkbProgId(u32),
+    HwProgId(u32),
+    ExpectedFd(i32),
+}
+impl<'a> Iterable<'a, XdpAttrs> {
+    pub fn get_fd(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::Fd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_attached(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::Attached(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_flags(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_prog_id(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::ProgId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_drv_prog_id(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::DrvProgId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_skb_prog_id(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::SkbProgId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_hw_prog_id(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::HwProgId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_expected_fd(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let XdpAttrs::ExpectedFd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl XdpAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, XdpAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Fd",
+            2u16 => "Attached",
+            3u16 => "Flags",
+            4u16 => "ProgId",
+            5u16 => "DrvProgId",
+            6u16 => "SkbProgId",
+            7u16 => "HwProgId",
+            8u16 => "ExpectedFd",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, XdpAttrs> {
+    type Item = Result<XdpAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => XdpAttrs::Fd({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => XdpAttrs::Attached({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => XdpAttrs::Flags({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => XdpAttrs::ProgId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => XdpAttrs::DrvProgId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => XdpAttrs::SkbProgId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => XdpAttrs::HwProgId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => XdpAttrs::ExpectedFd({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "XdpAttrs",
+            r#type.and_then(|t| XdpAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, XdpAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("XdpAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                XdpAttrs::Fd(val) => fmt.field("Fd", &val),
+                XdpAttrs::Attached(val) => fmt.field("Attached", &val),
+                XdpAttrs::Flags(val) => fmt.field("Flags", &val),
+                XdpAttrs::ProgId(val) => fmt.field("ProgId", &val),
+                XdpAttrs::DrvProgId(val) => fmt.field("DrvProgId", &val),
+                XdpAttrs::SkbProgId(val) => fmt.field("SkbProgId", &val),
+                XdpAttrs::HwProgId(val) => fmt.field("HwProgId", &val),
+                XdpAttrs::ExpectedFd(val) => fmt.field("ExpectedFd", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"ifla-attrs\""]
+#[derive(Clone)]
+pub enum IflaAttrs<'a> {
+    #[doc = "u32 indexed by ipv4-devconf - 1 on output, on input it's a nest"]
+    Conf(&'a [u8]),
+}
+impl<'a> Iterable<'a, IflaAttrs<'a>> {
+    #[doc = "u32 indexed by ipv4-devconf - 1 on output, on input it's a nest"]
+    pub fn get_conf(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let IflaAttrs::Conf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> IflaAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, IflaAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Conf",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, IflaAttrs<'a>> {
+    type Item = Result<IflaAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => IflaAttrs::Conf({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "IflaAttrs",
+            r#type.and_then(|t| IflaAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, IflaAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("IflaAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                IflaAttrs::Conf(val) => fmt.field("Conf", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"ifla6-attrs\""]
+#[derive(Clone)]
+pub enum Ifla6Attrs<'a> {
+    Flags(u32),
+    #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it's a nest"]
+    Conf(&'a [u8]),
+    Stats(&'a [u8]),
+    Mcast(&'a [u8]),
+    Cacheinfo(PushIflaCacheinfo),
+    Icmp6stats(&'a [u8]),
+    Token(&'a [u8]),
+    AddrGenMode(u8),
+    RaMtu(u32),
+}
+impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
+    pub fn get_flags(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Flags(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it's a nest"]
+    pub fn get_conf(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Conf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Mcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_cacheinfo(&self) -> Option<PushIflaCacheinfo> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Cacheinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_icmp6stats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Icmp6stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_token(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::Token(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_addr_gen_mode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::AddrGenMode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ra_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let Ifla6Attrs::RaMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> Ifla6Attrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, Ifla6Attrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Flags",
+            2u16 => "Conf",
+            3u16 => "Stats",
+            4u16 => "Mcast",
+            5u16 => "Cacheinfo",
+            6u16 => "Icmp6stats",
+            7u16 => "Token",
+            8u16 => "AddrGenMode",
+            9u16 => "RaMtu",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, Ifla6Attrs<'a>> {
+    type Item = Result<Ifla6Attrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => Ifla6Attrs::Flags({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => Ifla6Attrs::Conf({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => Ifla6Attrs::Stats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => Ifla6Attrs::Mcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => Ifla6Attrs::Cacheinfo({
+                    let res = PushIflaCacheinfo::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => Ifla6Attrs::Icmp6stats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => Ifla6Attrs::Token({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => Ifla6Attrs::AddrGenMode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => Ifla6Attrs::RaMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "Ifla6Attrs",
+            r#type.and_then(|t| Ifla6Attrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, Ifla6Attrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("Ifla6Attrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                Ifla6Attrs::Flags(val) => fmt.field("Flags", &val),
+                Ifla6Attrs::Conf(val) => fmt.field("Conf", &val),
+                Ifla6Attrs::Stats(val) => fmt.field("Stats", &val),
+                Ifla6Attrs::Mcast(val) => fmt.field("Mcast", &val),
+                Ifla6Attrs::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
+                Ifla6Attrs::Icmp6stats(val) => fmt.field("Icmp6stats", &val),
+                Ifla6Attrs::Token(val) => fmt.field("Token", &val),
+                Ifla6Attrs::AddrGenMode(val) => fmt.field("AddrGenMode", &val),
+                Ifla6Attrs::RaMtu(val) => fmt.field("RaMtu", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"mctp-attrs\""]
+#[derive(Clone)]
+pub enum MctpAttrs {
+    Net(u32),
+    PhysBinding(u8),
+}
+impl<'a> Iterable<'a, MctpAttrs> {
+    pub fn get_net(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let MctpAttrs::Net(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_binding(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let MctpAttrs::PhysBinding(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl MctpAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, MctpAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Net",
+            2u16 => "PhysBinding",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, MctpAttrs> {
+    type Item = Result<MctpAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => MctpAttrs::Net({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => MctpAttrs::PhysBinding({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "MctpAttrs",
+            r#type.and_then(|t| MctpAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, MctpAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("MctpAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                MctpAttrs::Net(val) => fmt.field("Net", &val),
+                MctpAttrs::PhysBinding(val) => fmt.field("PhysBinding", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"stats-attrs\""]
+#[derive(Clone)]
+pub enum StatsAttrs<'a> {
+    Link64(PushRtnlLinkStats64),
+    LinkXstats(&'a [u8]),
+    LinkXstatsSlave(&'a [u8]),
+    LinkOffloadXstats(Iterable<'a, LinkOffloadXstats<'a>>),
+    AfSpec(&'a [u8]),
+}
+impl<'a> Iterable<'a, StatsAttrs<'a>> {
+    pub fn get_link_64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let StatsAttrs::Link64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_xstats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let StatsAttrs::LinkXstats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_xstats_slave(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let StatsAttrs::LinkXstatsSlave(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_offload_xstats(&self) -> Iterable<'a, LinkOffloadXstats<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let StatsAttrs::LinkOffloadXstats(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let StatsAttrs::AfSpec(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> StatsAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, StatsAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link64",
+            2u16 => "LinkXstats",
+            3u16 => "LinkXstatsSlave",
+            4u16 => "LinkOffloadXstats",
+            5u16 => "AfSpec",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, StatsAttrs<'a>> {
+    type Item = Result<StatsAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => StatsAttrs::Link64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => StatsAttrs::LinkXstats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => StatsAttrs::LinkXstatsSlave({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => StatsAttrs::LinkOffloadXstats({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => StatsAttrs::AfSpec({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "StatsAttrs",
+            r#type.and_then(|t| StatsAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, StatsAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("StatsAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                StatsAttrs::Link64(val) => fmt.field("Link64", &val),
+                StatsAttrs::LinkXstats(val) => fmt.field("LinkXstats", &val),
+                StatsAttrs::LinkXstatsSlave(val) => fmt.field("LinkXstatsSlave", &val),
+                StatsAttrs::LinkOffloadXstats(val) => fmt.field("LinkOffloadXstats", &val),
+                StatsAttrs::AfSpec(val) => fmt.field("AfSpec", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"link-offload-xstats\""]
+#[derive(Clone)]
+pub enum LinkOffloadXstats<'a> {
+    CpuHit(&'a [u8]),
+    HwSInfo(Iterable<'a, Iterable<'a, HwSInfoOne>>),
+    L3Stats(&'a [u8]),
+}
+impl<'a> Iterable<'a, LinkOffloadXstats<'a>> {
+    pub fn get_cpu_hit(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkOffloadXstats::CpuHit(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_hw_s_info(
+        &self,
+    ) -> ArrayIterable<Iterable<'a, Iterable<'a, HwSInfoOne>>, Iterable<'a, HwSInfoOne>> {
+        for attr in self.clone() {
+            let Ok(attr) = attr else { break };
+            if let LinkOffloadXstats::HwSInfo(val) = attr {
+                return ArrayIterable::new(val);
+            }
+        }
+        ArrayIterable::new(Iterable::new(&[]))
+    }
+    pub fn get_l3_stats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkOffloadXstats::L3Stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> HwSInfoOne {
+    pub fn new_array(buf: &'a [u8]) -> Iterable<'a, Iterable<'a, HwSInfoOne>> {
+        Iterable::new(buf)
+    }
+}
+impl<'a> Iterator for Iterable<'a, Iterable<'a, HwSInfoOne>> {
+    type Item = Result<Iterable<'a, HwSInfoOne>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            {
+                return Some(Ok(Iterable::with_loc(next, self.orig_loc)));
+            }
+        }
+        Some(Err(self.error_context(
+            "HwSInfoOne",
+            None,
+            self.buf.as_ptr().wrapping_add(self.pos),
+        )))
+    }
+}
+impl<'a> LinkOffloadXstats<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkOffloadXstats<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "CpuHit",
+            2u16 => "HwSInfo",
+            3u16 => "L3Stats",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkOffloadXstats<'a>> {
+    type Item = Result<LinkOffloadXstats<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkOffloadXstats::CpuHit({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkOffloadXstats::HwSInfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkOffloadXstats::L3Stats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkOffloadXstats",
+            r#type.and_then(|t| LinkOffloadXstats::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, Iterable<'a, HwSInfoOne>> {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_list()
+            .entries(self.clone().map(FlattenErrorContext))
+            .finish()
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkOffloadXstats<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkOffloadXstats");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkOffloadXstats::CpuHit(val) => fmt.field("CpuHit", &val),
+                LinkOffloadXstats::HwSInfo(val) => fmt.field("HwSInfo", &val),
+                LinkOffloadXstats::L3Stats(val) => fmt.field("L3Stats", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"hw-s-info-one\""]
+#[derive(Clone)]
+pub enum HwSInfoOne {
+    Request(u8),
+    Used(u8),
+}
+impl<'a> Iterable<'a, HwSInfoOne> {
+    pub fn get_request(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let HwSInfoOne::Request(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_used(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let HwSInfoOne::Used(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl HwSInfoOne {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, HwSInfoOne> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Request",
+            2u16 => "Used",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, HwSInfoOne> {
+    type Item = Result<HwSInfoOne, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => HwSInfoOne::Request({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => HwSInfoOne::Used({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "HwSInfoOne",
+            r#type.and_then(|t| HwSInfoOne::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, HwSInfoOne> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("HwSInfoOne");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                HwSInfoOne::Request(val) => fmt.field("Request", &val),
+                HwSInfoOne::Used(val) => fmt.field("Used", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"link-dpll-pin-attrs\""]
+#[derive(Clone)]
+pub enum LinkDpllPinAttrs {
+    Id(u32),
+}
+impl<'a> Iterable<'a, LinkDpllPinAttrs> {
+    pub fn get_id(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkDpllPinAttrs::Id(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl LinkDpllPinAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkDpllPinAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Id",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, LinkDpllPinAttrs> {
+    type Item = Result<LinkDpllPinAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkDpllPinAttrs::Id({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkDpllPinAttrs",
+            r#type.and_then(|t| LinkDpllPinAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, LinkDpllPinAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkDpllPinAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkDpllPinAttrs::Id(val) => fmt.field("Id", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-netkit-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoNetkitAttrs<'a> {
+    PeerInfo(&'a [u8]),
+    Primary(u8),
+    #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
+    Policy(u32),
+    #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
+    PeerPolicy(u32),
+    #[doc = "Associated type: \"NetkitMode\" (enum)"]
+    Mode(u32),
+    #[doc = "Associated type: \"NetkitScrub\" (enum)"]
+    Scrub(u32),
+    #[doc = "Associated type: \"NetkitScrub\" (enum)"]
+    PeerScrub(u32),
+    Headroom(u16),
+    Tailroom(u16),
+}
+impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+    pub fn get_peer_info(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::PeerInfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_primary(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::Primary(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
+    pub fn get_policy(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::Policy(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
+    pub fn get_peer_policy(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::PeerPolicy(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"NetkitMode\" (enum)"]
+    pub fn get_mode(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::Mode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"NetkitScrub\" (enum)"]
+    pub fn get_scrub(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::Scrub(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"NetkitScrub\" (enum)"]
+    pub fn get_peer_scrub(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::PeerScrub(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_headroom(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::Headroom(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tailroom(&self) -> Option<u16> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoNetkitAttrs::Tailroom(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> LinkinfoNetkitAttrs<'a> {
+    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "PeerInfo",
+            2u16 => "Primary",
+            3u16 => "Policy",
+            4u16 => "PeerPolicy",
+            5u16 => "Mode",
+            6u16 => "Scrub",
+            7u16 => "PeerScrub",
+            8u16 => "Headroom",
+            9u16 => "Tailroom",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+    type Item = Result<LinkinfoNetkitAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoNetkitAttrs::PeerInfo({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoNetkitAttrs::Primary({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoNetkitAttrs::Policy({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoNetkitAttrs::PeerPolicy({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoNetkitAttrs::Mode({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoNetkitAttrs::Scrub({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoNetkitAttrs::PeerScrub({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoNetkitAttrs::Headroom({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoNetkitAttrs::Tailroom({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoNetkitAttrs",
+            r#type.and_then(|t| LinkinfoNetkitAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoNetkitAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoNetkitAttrs::PeerInfo(val) => fmt.field("PeerInfo", &val),
+                LinkinfoNetkitAttrs::Primary(val) => fmt.field("Primary", &val),
+                LinkinfoNetkitAttrs::Policy(val) => fmt.field("Policy", &val),
+                LinkinfoNetkitAttrs::PeerPolicy(val) => fmt.field("PeerPolicy", &val),
+                LinkinfoNetkitAttrs::Mode(val) => fmt.field("Mode", &val),
+                LinkinfoNetkitAttrs::Scrub(val) => fmt.field("Scrub", &val),
+                LinkinfoNetkitAttrs::PeerScrub(val) => fmt.field("PeerScrub", &val),
+                LinkinfoNetkitAttrs::Headroom(val) => fmt.field("Headroom", &val),
+                LinkinfoNetkitAttrs::Tailroom(val) => fmt.field("Tailroom", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Original name: \"linkinfo-ovpn-attrs\""]
+#[derive(Clone)]
+pub enum LinkinfoOvpnAttrs {
+    #[doc = "Associated type: \"OvpnMode\" (enum)"]
+    Mode(u8),
+}
+impl<'a> Iterable<'a, LinkinfoOvpnAttrs> {
+    #[doc = "Associated type: \"OvpnMode\" (enum)"]
+    pub fn get_mode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let LinkinfoOvpnAttrs::Mode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl LinkinfoOvpnAttrs {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkinfoOvpnAttrs> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Mode",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, LinkinfoOvpnAttrs> {
+    type Item = Result<LinkinfoOvpnAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoOvpnAttrs::Mode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "LinkinfoOvpnAttrs",
+            r#type.and_then(|t| LinkinfoOvpnAttrs::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, LinkinfoOvpnAttrs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoOvpnAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoOvpnAttrs::Mode(val) => fmt.field("Mode", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+pub struct PushLinkAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_qdisc(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            6u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_stats(mut self, value: PushRtnlLinkStats) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_cost(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            8u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_priority(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            9u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_master(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_wireless(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            11u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_protinfo(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            12u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_txqlen(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_map(mut self, value: PushRtnlLinkIfmap) -> Self {
+        push_header(self.as_rec_mut(), 14u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_weight(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_operstate(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_linkmode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_linkinfo(mut self) -> PushLinkinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 18u16);
+        PushLinkinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_net_ns_pid(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ifalias(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            20u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_num_vf(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_vfinfo_list(mut self) -> PushVfinfoListAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 22u16);
+        PushVfinfoListAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_stats64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 23u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_vf_ports(mut self) -> PushVfPortsAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 24u16);
+        PushVfPortsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_port_self(mut self) -> PushPortSelfAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 25u16);
+        PushPortSelfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_af_spec(mut self) -> PushAfSpecAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 26u16);
+        PushAfSpecAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_group(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_net_ns_fd(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn push_ext_mask(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_promiscuity(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_tx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_rx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 33u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 34u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_carrier_changes(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 35u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_switch_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 36u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            38u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_proto_down(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 39u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 40u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 42u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_xdp(mut self) -> PushXdpAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 43u16);
+        PushXdpAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_event(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 44u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 45u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_up_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 47u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_down_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 48u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_ifindex(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 49u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_min_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 50u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_max_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 51u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_prop_list(mut self) -> PushPropListLinkAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 52u16);
+        PushPropListLinkAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_alt_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            53u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_perm_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 54u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_proto_down_reason(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            55u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            56u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            57u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_gro_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 58u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 59u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 60u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_allmulti(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 61u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_devlink_port(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 62u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_gso_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 63u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gro_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 64u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_dpll_pin(mut self) -> PushLinkDpllPinAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 65u16);
+        PushLinkDpllPinAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "EDT offload horizon supported by the device (in nsec)."]
+    pub fn push_max_pacing_offload_horizon(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 66u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_netns_immutable(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 67u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushPropListLinkAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushPropListLinkAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushPropListLinkAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_alt_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushPropListLinkAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushAfSpecAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushAfSpecAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushAfSpecAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn nested_inet(mut self) -> PushIflaAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushIflaAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_inet6(mut self) -> PushIfla6Attrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 10u16);
+        PushIfla6Attrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_mctp(mut self) -> PushMctpAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 45u16);
+        PushMctpAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+}
+impl<Prev: Rec> Drop for PushAfSpecAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushVfinfoListAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushVfinfoListAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushVfinfoListAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn nested_info(mut self) -> PushVfinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 1u16);
+        PushVfinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+}
+impl<Prev: Rec> Drop for PushVfinfoListAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushVfinfoAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushVfinfoAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushVfinfoAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_mac(mut self, value: PushIflaVfMac) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_vlan(mut self, value: PushIflaVfVlan) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_tx_rate(mut self, value: PushIflaVfTxRate) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_spoofchk(mut self, value: PushIflaVfSpoofchk) -> Self {
+        push_header(self.as_rec_mut(), 4u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_link_state(mut self, value: PushIflaVfLinkState) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_rate(mut self, value: PushIflaVfRate) -> Self {
+        push_header(self.as_rec_mut(), 6u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_rss_query_en(mut self, value: PushIflaVfRssQueryEn) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_stats(mut self) -> PushVfStatsAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 8u16);
+        PushVfStatsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_trust(mut self, value: PushIflaVfTrust) -> Self {
+        push_header(self.as_rec_mut(), 9u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_ib_node_guid(mut self, value: PushIflaVfGuid) -> Self {
+        push_header(self.as_rec_mut(), 10u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_ib_port_guid(mut self, value: PushIflaVfGuid) -> Self {
+        push_header(self.as_rec_mut(), 11u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_vlan_list(mut self) -> PushVfVlanAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 12u16);
+        PushVfVlanAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 13u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushVfinfoAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushVfStatsAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushVfStatsAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushVfStatsAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_rx_packets(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 0u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_packets(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rx_bytes(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_bytes(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_broadcast(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_multicast(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 6u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_rx_dropped(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_dropped(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushVfStatsAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushVfVlanAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushVfVlanAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushVfVlanAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn push_info(mut self, value: PushIflaVfVlanInfo) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushVfVlanAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushVfPortsAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushVfPortsAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushVfPortsAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushVfPortsAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushPortSelfAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushPortSelfAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushPortSelfAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushPortSelfAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_kind(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_bond(mut self) -> PushLinkinfoBondAttrs<Self> {
+        self = self.push_kind(c"bond");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoBondAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_bridge(mut self) -> PushLinkinfoBridgeAttrs<Self> {
+        self = self.push_kind(c"bridge");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoBridgeAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_erspan(mut self) -> PushLinkinfoGreAttrs<Self> {
+        self = self.push_kind(c"erspan");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoGreAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_gre(mut self) -> PushLinkinfoGreAttrs<Self> {
+        self = self.push_kind(c"gre");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoGreAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_gretap(mut self) -> PushLinkinfoGreAttrs<Self> {
+        self = self.push_kind(c"gretap");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoGreAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_ip6gre(mut self) -> PushLinkinfoGre6Attrs<Self> {
+        self = self.push_kind(c"ip6gre");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoGre6Attrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_geneve(mut self) -> PushLinkinfoGeneveAttrs<Self> {
+        self = self.push_kind(c"geneve");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoGeneveAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_ipip(mut self) -> PushLinkinfoIptunAttrs<Self> {
+        self = self.push_kind(c"ipip");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoIptunAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_ip6tnl(mut self) -> PushLinkinfoIp6tnlAttrs<Self> {
+        self = self.push_kind(c"ip6tnl");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoIp6tnlAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_sit(mut self) -> PushLinkinfoIptunAttrs<Self> {
+        self = self.push_kind(c"sit");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoIptunAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_tun(mut self) -> PushLinkinfoTunAttrs<Self> {
+        self = self.push_kind(c"tun");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoTunAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_vlan(mut self) -> PushLinkinfoVlanAttrs<Self> {
+        self = self.push_kind(c"vlan");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoVlanAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_vrf(mut self) -> PushLinkinfoVrfAttrs<Self> {
+        self = self.push_kind(c"vrf");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoVrfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_vti(mut self) -> PushLinkinfoVtiAttrs<Self> {
+        self = self.push_kind(c"vti");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoVtiAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_vti6(mut self) -> PushLinkinfoVti6Attrs<Self> {
+        self = self.push_kind(c"vti6");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoVti6Attrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_netkit(mut self) -> PushLinkinfoNetkitAttrs<Self> {
+        self = self.push_kind(c"netkit");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoNetkitAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_data_ovpn(mut self) -> PushLinkinfoOvpnAttrs<Self> {
+        self = self.push_kind(c"ovpn");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushLinkinfoOvpnAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_xstats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_slave_kind(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            4u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_slave_data_bridge(mut self) -> PushLinkinfoBrportAttrs<Self> {
+        self = self.push_slave_kind(c"bridge");
+        let header_offset = push_nested_header(self.as_rec_mut(), 5u16);
+        PushLinkinfoBrportAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_slave_data_bond(mut self) -> PushBondSlaveAttrs<Self> {
+        self = self.push_slave_kind(c"bond");
+        let header_offset = push_nested_header(self.as_rec_mut(), 5u16);
+        PushBondSlaveAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoBondAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoBondAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+pub struct PushArrayU32<Prev: Rec> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+    pub(crate) counter: u16,
+}
+impl<Prev: Rec> Rec for PushArrayU32<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushArrayU32<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+            counter: 0,
+        }
+    }
+    pub fn end_array(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn entry(mut self, value: std::net::Ipv4Addr) -> Self {
+        let index = self.counter;
+        self.counter += 1;
+        push_header(self.as_rec_mut(), index, 4 as u16);
+        self.as_rec_mut().extend(&value.to_bits().to_be_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushArrayU32<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushArrayBinary<Prev: Rec> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+    pub(crate) counter: u16,
+}
+impl<Prev: Rec> Rec for PushArrayBinary<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushArrayBinary<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+            counter: 0,
+        }
+    }
+    pub fn end_array(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn entry(mut self, value: &[u8]) -> Self {
+        let index = self.counter;
+        self.counter += 1;
+        push_header(self.as_rec_mut(), index, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushArrayBinary<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+impl<Prev: Rec> PushLinkinfoBondAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_mode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_active_slave(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_miimon(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_updelay(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_downdelay(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_use_carrier(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_arp_interval(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn array_arp_ip_target(mut self) -> PushArrayU32<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 8u16);
+        PushArrayU32 {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+            counter: 0,
+        }
+    }
+    pub fn push_arp_validate(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_arp_all_targets(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_primary(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_primary_reselect(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_fail_over_mac(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_xmit_hash_policy(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_resend_igmp(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_peer_notif(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_all_slaves_active(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_min_links(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 18u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_lp_interval(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_packets_per_slave(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 20u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_lacp_rate(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_select(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 22u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_ad_info(mut self) -> PushBondAdInfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 23u16);
+        PushBondAdInfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_ad_actor_sys_prio(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 24u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_user_port_key(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 25u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_actor_system(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 26u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_tlb_dynamic_lb(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_peer_notif_delay(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_lacp_active(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_missed_max(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn array_ns_ip6_target(mut self) -> PushArrayBinary<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 31u16);
+        PushArrayBinary {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+            counter: 0,
+        }
+    }
+    pub fn push_coupled_control(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoBondAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushBondAdInfoAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushBondAdInfoAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushBondAdInfoAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_aggregator(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_ports(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_actor_key(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_partner_key(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_partner_mac(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushBondAdInfoAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushBondSlaveAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushBondSlaveAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushBondSlaveAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_state(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mii_status(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_link_failure_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_perm_hwaddr(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 4u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_queue_id(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_aggregator_id(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_actor_oper_port_state(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ad_partner_oper_port_state(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_prio(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushBondSlaveAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoBridgeAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoBridgeAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoBridgeAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_forward_delay(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_hello_time(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_max_age(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ageing_time(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_stp_state(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_priority(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_vlan_filtering(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_vlan_protocol(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_group_fwd_mask(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_root_id(mut self, value: PushIflaBridgeId) -> Self {
+        push_header(self.as_rec_mut(), 10u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_bridge_id(mut self, value: PushIflaBridgeId) -> Self {
+        push_header(self.as_rec_mut(), 11u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_root_port(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_root_path_cost(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_topology_change(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_topology_change_detected(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_hello_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tcn_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_topology_change_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 18u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gc_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_group_addr(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 20u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_fdb_flush(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 21u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_mcast_router(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 22u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_snooping(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 23u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_query_use_ifaddr(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 24u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_querier(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 25u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_hash_elasticity(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 26u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_hash_max(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_last_member_cnt(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_startup_query_cnt(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_last_member_intvl(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_membership_intvl(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_querier_intvl(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_query_intvl(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 33u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_query_response_intvl(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 34u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_startup_query_intvl(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 35u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_nf_call_iptables(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 36u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_nf_call_ip6tables(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_nf_call_arptables(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 38u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_vlan_default_pvid(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 39u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 40u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_vlan_stats_enabled(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_stats_enabled(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 42u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_igmp_version(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 43u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_mld_version(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 44u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_vlan_stats_per_port(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 45u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_multi_boolopt(mut self, value: PushBrBooloptMulti) -> Self {
+        push_header(self.as_rec_mut(), 46u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_mcast_querier_state(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 47u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_fdb_n_learned(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 48u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_fdb_max_learned(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 49u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoBridgeAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoBrportAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoBrportAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoBrportAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_state(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_priority(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_cost(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mode(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 0 as u16);
+        self
+    }
+    pub fn push_guard(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 0 as u16);
+        self
+    }
+    pub fn push_protect(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 0 as u16);
+        self
+    }
+    pub fn push_fast_leave(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 0 as u16);
+        self
+    }
+    pub fn push_learning(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 0 as u16);
+        self
+    }
+    pub fn push_unicast_flood(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 0 as u16);
+        self
+    }
+    pub fn push_proxyarp(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 0 as u16);
+        self
+    }
+    pub fn push_learning_sync(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 0 as u16);
+        self
+    }
+    pub fn push_proxyarp_wifi(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 0 as u16);
+        self
+    }
+    pub fn push_root_id(mut self, value: PushIflaBridgeId) -> Self {
+        push_header(self.as_rec_mut(), 13u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_bridge_id(mut self, value: PushIflaBridgeId) -> Self {
+        push_header(self.as_rec_mut(), 14u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_designated_port(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_designated_cost(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_id(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_no(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 18u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_topology_change_ack(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_config_pending(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 20u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_message_age_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_forward_delay_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 22u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_hold_timer(mut self, value: u64) -> Self {
+        push_header(self.as_rec_mut(), 23u16, 8 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flush(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 24u16, 0 as u16);
+        self
+    }
+    pub fn push_multicast_router(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 25u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 26u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_mcast_flood(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 0 as u16);
+        self
+    }
+    pub fn push_mcast_to_ucast(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 0 as u16);
+        self
+    }
+    pub fn push_vlan_tunnel(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 0 as u16);
+        self
+    }
+    pub fn push_bcast_flood(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 0 as u16);
+        self
+    }
+    pub fn push_group_fwd_mask(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_neigh_suppress(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 0 as u16);
+        self
+    }
+    pub fn push_isolated(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 33u16, 0 as u16);
+        self
+    }
+    pub fn push_backup_port(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 34u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mrp_ring_open(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 35u16, 0 as u16);
+        self
+    }
+    pub fn push_mrp_in_open(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 36u16, 0 as u16);
+        self
+    }
+    pub fn push_mcast_eht_hosts_limit(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_eht_hosts_cnt(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 38u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_locked(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 39u16, 0 as u16);
+        self
+    }
+    pub fn push_mab(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 40u16, 0 as u16);
+        self
+    }
+    pub fn push_mcast_n_groups(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_mcast_max_groups(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 42u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_neigh_vlan_suppress(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 43u16, 0 as u16);
+        self
+    }
+    pub fn push_backup_nhid(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 44u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoBrportAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoGreAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoGreAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoGreAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_iflags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_oflags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_ikey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_okey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 6u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ttl(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tos(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pmtudisc(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_limit(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flowinfo(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_type(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_flags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_sport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_encap_dport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_collect_metadata(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 18u16, 0 as u16);
+        self
+    }
+    pub fn push_ignore_df(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_fwmark(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 20u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_index(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_ver(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 22u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_dir(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 23u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_hwid(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 24u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoGreAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoGre6Attrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoGre6Attrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoGre6Attrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_iflags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_oflags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_ikey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_okey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 6u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ttl(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_limit(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flowinfo(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_type(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_flags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_sport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_encap_dport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_collect_metadata(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 0 as u16);
+        self
+    }
+    pub fn push_fwmark(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_index(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 18u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_ver(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_dir(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 20u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_erspan_hwid(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoGre6Attrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoVtiAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoVtiAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoVtiAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ikey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_okey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 4u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_fwmark(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoVtiAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoVti6Attrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoVti6Attrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoVti6Attrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ikey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_okey(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 4u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_fwmark(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoVti6Attrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoGeneveAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoGeneveAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoGeneveAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_id(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ttl(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tos(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_port(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_collect_metadata(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 0 as u16);
+        self
+    }
+    pub fn push_remote6(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_udp_csum(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_udp_zero_csum6_tx(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_udp_zero_csum6_rx(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_label(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_ttl_inherit(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_df(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_inner_proto_inherit(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 0 as u16);
+        self
+    }
+    pub fn push_port_range(mut self, value: PushIflaGenevePortRange) -> Self {
+        push_header(self.as_rec_mut(), 15u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoGeneveAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoIptunAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoIptunAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoIptunAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ttl(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tos(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_limit(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flowinfo(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_flags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_proto(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pmtudisc(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_6rd_prefix(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 11u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_6rd_relay_prefix(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 12u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_6rd_prefixlen(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_6rd_relay_prefixlen(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_type(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_flags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_sport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_encap_dport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 18u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_collect_metadata(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 0 as u16);
+        self
+    }
+    pub fn push_fwmark(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 20u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoIptunAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoIp6tnlAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoIp6tnlAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoIp6tnlAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_remote(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ttl(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_limit(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flowinfo(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_proto(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_type(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_flags(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_encap_sport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_encap_dport(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 12u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_collect_metadata(mut self, value: ()) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 0 as u16);
+        self
+    }
+    pub fn push_fwmark(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoIp6tnlAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoTunAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoTunAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoTunAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_owner(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_group(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_type(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pi(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_vnet_hdr(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_persist(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_multi_queue(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_disabled_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoTunAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoVlanAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoVlanAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoVlanAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_id(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flags(mut self, value: PushIflaVlanFlags) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_egress_qos(mut self) -> PushIflaVlanQos<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 3u16);
+        PushIflaVlanQos {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_ingress_qos(mut self) -> PushIflaVlanQos<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        PushIflaVlanQos {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Associated type: \"VlanProtocols\" (enum)"]
+    pub fn push_protocol(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoVlanAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushIflaVlanQos<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushIflaVlanQos<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushIflaVlanQos<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn push_mapping(mut self, value: PushIflaVlanQosMapping) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushIflaVlanQos<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoVrfAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoVrfAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoVrfAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_table(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoVrfAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushXdpAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushXdpAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushXdpAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_fd(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_attached(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_prog_id(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_drv_prog_id(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_skb_prog_id(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_hw_prog_id(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_expected_fd(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushXdpAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushIflaAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushIflaAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushIflaAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "u32 indexed by ipv4-devconf - 1 on output, on input it's a nest"]
+    pub fn push_conf(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushIflaAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushIfla6Attrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushIfla6Attrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushIfla6Attrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it's a nest"]
+    pub fn push_conf(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_stats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_mcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 4u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_cacheinfo(mut self, value: PushIflaCacheinfo) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_icmp6stats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 6u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_token(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_addr_gen_mode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ra_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushIfla6Attrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushMctpAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushMctpAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushMctpAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_net(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_binding(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushMctpAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushStatsAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushStatsAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushStatsAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link_64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_link_xstats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_xstats_slave(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_link_offload_xstats(mut self) -> PushLinkOffloadXstats<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        PushLinkOffloadXstats {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_af_spec(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushStatsAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkOffloadXstats<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkOffloadXstats<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+pub struct PushArrayHwSInfoOne<Prev: Rec> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+    pub(crate) counter: u16,
+}
+impl<Prev: Rec> Rec for PushArrayHwSInfoOne<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushArrayHwSInfoOne<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+            counter: 0,
+        }
+    }
+    pub fn end_array(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn entry_nested(mut self) -> PushHwSInfoOne<Self> {
+        let index = self.counter;
+        self.counter += 1;
+        let header_offset = push_nested_header(self.as_rec_mut(), index);
+        PushHwSInfoOne {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+}
+impl<Prev: Rec> Drop for PushArrayHwSInfoOne<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+impl<Prev: Rec> PushLinkOffloadXstats<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_cpu_hit(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn array_hw_s_info(mut self) -> PushArrayHwSInfoOne<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushArrayHwSInfoOne {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+            counter: 0,
+        }
+    }
+    pub fn push_l3_stats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkOffloadXstats<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushHwSInfoOne<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushHwSInfoOne<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushHwSInfoOne<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_request(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_used(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushHwSInfoOne<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkDpllPinAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkDpllPinAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkDpllPinAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_id(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkDpllPinAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoNetkitAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoNetkitAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoNetkitAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_peer_info(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_primary(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
+    pub fn push_policy(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
+    pub fn push_peer_policy(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"NetkitMode\" (enum)"]
+    pub fn push_mode(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"NetkitScrub\" (enum)"]
+    pub fn push_scrub(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 6u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"NetkitScrub\" (enum)"]
+    pub fn push_peer_scrub(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 7u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_headroom(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tailroom(mut self, value: u16) -> Self {
+        push_header(self.as_rec_mut(), 9u16, 2 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoNetkitAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushLinkinfoOvpnAttrs<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushLinkinfoOvpnAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushLinkinfoOvpnAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "Associated type: \"OvpnMode\" (enum)"]
+    pub fn push_mode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushLinkinfoOvpnAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Original name: \"rtgenmsg\""]
+#[derive(Clone)]
+pub struct PushRtgenmsg {
+    buf: [u8; 1usize],
+}
+impl PushRtgenmsg {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        1usize
+    }
+    pub fn family(&self) -> u8 {
+        parse_u8(&self.buf[0usize..1usize]).unwrap()
+    }
+    pub fn set_family(&mut self, value: u8) {
+        self.buf[0usize..1usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushRtgenmsg {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("Rtgenmsg")
+            .field("family", &self.family())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifinfomsg\""]
+#[derive(Clone)]
+pub struct PushIfinfomsg {
+    buf: [u8; 16usize],
+}
+impl PushIfinfomsg {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        16usize
+    }
+    pub fn ifi_family(&self) -> u8 {
+        parse_u8(&self.buf[0usize..1usize]).unwrap()
+    }
+    pub fn set_ifi_family(&mut self, value: u8) {
+        self.buf[0usize..1usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn ifi_type(&self) -> u16 {
+        parse_u16(&self.buf[2usize..4usize]).unwrap()
+    }
+    pub fn set_ifi_type(&mut self, value: u16) {
+        self.buf[2usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn ifi_index(&self) -> i32 {
+        parse_i32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_ifi_index(&mut self, value: i32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    #[doc = "Associated type: \"IfinfoFlags\" (1 bit per enumeration)"]
+    pub fn ifi_flags(&self) -> u32 {
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
+    }
+    #[doc = "Associated type: \"IfinfoFlags\" (1 bit per enumeration)"]
+    pub fn set_ifi_flags(&mut self, value: u32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn ifi_change(&self) -> u32 {
+        parse_u32(&self.buf[12usize..16usize]).unwrap()
+    }
+    pub fn set_ifi_change(&mut self, value: u32) {
+        self.buf[12usize..16usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIfinfomsg {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("Ifinfomsg")
+            .field("ifi_family", &self.ifi_family())
+            .field("ifi_type", &self.ifi_type())
+            .field("ifi_index", &self.ifi_index())
+            .field("ifi_flags", &self.ifi_flags())
+            .field("ifi_change", &self.ifi_change())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-bridge-id\""]
+#[derive(Clone)]
+pub struct PushIflaBridgeId {
+    buf: [u8; 2usize],
+}
+impl PushIflaBridgeId {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        2usize
+    }
+    pub fn prio(&self) -> u16 {
+        parse_u16(&self.buf[0usize..2usize]).unwrap()
+    }
+    pub fn set_prio(&mut self, value: u16) {
+        self.buf[0usize..2usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn addr(&self) -> [u8; 6usize] {
+        self.buf[2usize..8usize].try_into().unwrap()
+    }
+    pub fn set_addr(&mut self, value: [u8; 6usize]) {
+        self.buf[2usize..8usize].copy_from_slice(&value)
+    }
+}
+impl std::fmt::Debug for PushIflaBridgeId {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaBridgeId")
+            .field("prio", &self.prio())
+            .field("addr", &self.addr())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-cacheinfo\""]
+#[derive(Clone)]
+pub struct PushIflaCacheinfo {
+    buf: [u8; 16usize],
+}
+impl PushIflaCacheinfo {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        16usize
+    }
+    pub fn max_reasm_len(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_max_reasm_len(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tstamp(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_tstamp(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn reachable_time(&self) -> i32 {
+        parse_i32(&self.buf[8usize..12usize]).unwrap()
+    }
+    pub fn set_reachable_time(&mut self, value: i32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn retrans_time(&self) -> u32 {
+        parse_u32(&self.buf[12usize..16usize]).unwrap()
+    }
+    pub fn set_retrans_time(&mut self, value: u32) {
+        self.buf[12usize..16usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaCacheinfo {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaCacheinfo")
+            .field("max_reasm_len", &self.max_reasm_len())
+            .field("tstamp", &self.tstamp())
+            .field("reachable_time", &self.reachable_time())
+            .field("retrans_time", &self.retrans_time())
+            .finish()
+    }
+}
+#[doc = "Original name: \"rtnl-link-stats\""]
+#[derive(Clone)]
+pub struct PushRtnlLinkStats {
+    buf: [u8; 96usize],
+}
+impl PushRtnlLinkStats {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        96usize
+    }
+    pub fn rx_packets(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_rx_packets(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_packets(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_tx_packets(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_bytes(&self) -> u32 {
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
+    }
+    pub fn set_rx_bytes(&mut self, value: u32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_bytes(&self) -> u32 {
+        parse_u32(&self.buf[12usize..16usize]).unwrap()
+    }
+    pub fn set_tx_bytes(&mut self, value: u32) {
+        self.buf[12usize..16usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_errors(&self) -> u32 {
+        parse_u32(&self.buf[16usize..20usize]).unwrap()
+    }
+    pub fn set_rx_errors(&mut self, value: u32) {
+        self.buf[16usize..20usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_errors(&self) -> u32 {
+        parse_u32(&self.buf[20usize..24usize]).unwrap()
+    }
+    pub fn set_tx_errors(&mut self, value: u32) {
+        self.buf[20usize..24usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_dropped(&self) -> u32 {
+        parse_u32(&self.buf[24usize..28usize]).unwrap()
+    }
+    pub fn set_rx_dropped(&mut self, value: u32) {
+        self.buf[24usize..28usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_dropped(&self) -> u32 {
+        parse_u32(&self.buf[28usize..32usize]).unwrap()
+    }
+    pub fn set_tx_dropped(&mut self, value: u32) {
+        self.buf[28usize..32usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn multicast(&self) -> u32 {
+        parse_u32(&self.buf[32usize..36usize]).unwrap()
+    }
+    pub fn set_multicast(&mut self, value: u32) {
+        self.buf[32usize..36usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn collisions(&self) -> u32 {
+        parse_u32(&self.buf[36usize..40usize]).unwrap()
+    }
+    pub fn set_collisions(&mut self, value: u32) {
+        self.buf[36usize..40usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_length_errors(&self) -> u32 {
+        parse_u32(&self.buf[40usize..44usize]).unwrap()
+    }
+    pub fn set_rx_length_errors(&mut self, value: u32) {
+        self.buf[40usize..44usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_over_errors(&self) -> u32 {
+        parse_u32(&self.buf[44usize..48usize]).unwrap()
+    }
+    pub fn set_rx_over_errors(&mut self, value: u32) {
+        self.buf[44usize..48usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_crc_errors(&self) -> u32 {
+        parse_u32(&self.buf[48usize..52usize]).unwrap()
+    }
+    pub fn set_rx_crc_errors(&mut self, value: u32) {
+        self.buf[48usize..52usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_frame_errors(&self) -> u32 {
+        parse_u32(&self.buf[52usize..56usize]).unwrap()
+    }
+    pub fn set_rx_frame_errors(&mut self, value: u32) {
+        self.buf[52usize..56usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_fifo_errors(&self) -> u32 {
+        parse_u32(&self.buf[56usize..60usize]).unwrap()
+    }
+    pub fn set_rx_fifo_errors(&mut self, value: u32) {
+        self.buf[56usize..60usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_missed_errors(&self) -> u32 {
+        parse_u32(&self.buf[60usize..64usize]).unwrap()
+    }
+    pub fn set_rx_missed_errors(&mut self, value: u32) {
+        self.buf[60usize..64usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_aborted_errors(&self) -> u32 {
+        parse_u32(&self.buf[64usize..68usize]).unwrap()
+    }
+    pub fn set_tx_aborted_errors(&mut self, value: u32) {
+        self.buf[64usize..68usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_carrier_errors(&self) -> u32 {
+        parse_u32(&self.buf[68usize..72usize]).unwrap()
+    }
+    pub fn set_tx_carrier_errors(&mut self, value: u32) {
+        self.buf[68usize..72usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_fifo_errors(&self) -> u32 {
+        parse_u32(&self.buf[72usize..76usize]).unwrap()
+    }
+    pub fn set_tx_fifo_errors(&mut self, value: u32) {
+        self.buf[72usize..76usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_heartbeat_errors(&self) -> u32 {
+        parse_u32(&self.buf[76usize..80usize]).unwrap()
+    }
+    pub fn set_tx_heartbeat_errors(&mut self, value: u32) {
+        self.buf[76usize..80usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_window_errors(&self) -> u32 {
+        parse_u32(&self.buf[80usize..84usize]).unwrap()
+    }
+    pub fn set_tx_window_errors(&mut self, value: u32) {
+        self.buf[80usize..84usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_compressed(&self) -> u32 {
+        parse_u32(&self.buf[84usize..88usize]).unwrap()
+    }
+    pub fn set_rx_compressed(&mut self, value: u32) {
+        self.buf[84usize..88usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_compressed(&self) -> u32 {
+        parse_u32(&self.buf[88usize..92usize]).unwrap()
+    }
+    pub fn set_tx_compressed(&mut self, value: u32) {
+        self.buf[88usize..92usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_nohandler(&self) -> u32 {
+        parse_u32(&self.buf[92usize..96usize]).unwrap()
+    }
+    pub fn set_rx_nohandler(&mut self, value: u32) {
+        self.buf[92usize..96usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushRtnlLinkStats {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("RtnlLinkStats")
+            .field("rx_packets", &self.rx_packets())
+            .field("tx_packets", &self.tx_packets())
+            .field("rx_bytes", &self.rx_bytes())
+            .field("tx_bytes", &self.tx_bytes())
+            .field("rx_errors", &self.rx_errors())
+            .field("tx_errors", &self.tx_errors())
+            .field("rx_dropped", &self.rx_dropped())
+            .field("tx_dropped", &self.tx_dropped())
+            .field("multicast", &self.multicast())
+            .field("collisions", &self.collisions())
+            .field("rx_length_errors", &self.rx_length_errors())
+            .field("rx_over_errors", &self.rx_over_errors())
+            .field("rx_crc_errors", &self.rx_crc_errors())
+            .field("rx_frame_errors", &self.rx_frame_errors())
+            .field("rx_fifo_errors", &self.rx_fifo_errors())
+            .field("rx_missed_errors", &self.rx_missed_errors())
+            .field("tx_aborted_errors", &self.tx_aborted_errors())
+            .field("tx_carrier_errors", &self.tx_carrier_errors())
+            .field("tx_fifo_errors", &self.tx_fifo_errors())
+            .field("tx_heartbeat_errors", &self.tx_heartbeat_errors())
+            .field("tx_window_errors", &self.tx_window_errors())
+            .field("rx_compressed", &self.rx_compressed())
+            .field("tx_compressed", &self.tx_compressed())
+            .field("rx_nohandler", &self.rx_nohandler())
+            .finish()
+    }
+}
+#[doc = "Original name: \"rtnl-link-stats64\""]
+#[derive(Clone)]
+pub struct PushRtnlLinkStats64 {
+    buf: [u8; 200usize],
+}
+impl PushRtnlLinkStats64 {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        200usize
+    }
+    pub fn rx_packets(&self) -> u64 {
+        parse_u64(&self.buf[0usize..8usize]).unwrap()
+    }
+    pub fn set_rx_packets(&mut self, value: u64) {
+        self.buf[0usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_packets(&self) -> u64 {
+        parse_u64(&self.buf[8usize..16usize]).unwrap()
+    }
+    pub fn set_tx_packets(&mut self, value: u64) {
+        self.buf[8usize..16usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_bytes(&self) -> u64 {
+        parse_u64(&self.buf[16usize..24usize]).unwrap()
+    }
+    pub fn set_rx_bytes(&mut self, value: u64) {
+        self.buf[16usize..24usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_bytes(&self) -> u64 {
+        parse_u64(&self.buf[24usize..32usize]).unwrap()
+    }
+    pub fn set_tx_bytes(&mut self, value: u64) {
+        self.buf[24usize..32usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_errors(&self) -> u64 {
+        parse_u64(&self.buf[32usize..40usize]).unwrap()
+    }
+    pub fn set_rx_errors(&mut self, value: u64) {
+        self.buf[32usize..40usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_errors(&self) -> u64 {
+        parse_u64(&self.buf[40usize..48usize]).unwrap()
+    }
+    pub fn set_tx_errors(&mut self, value: u64) {
+        self.buf[40usize..48usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_dropped(&self) -> u64 {
+        parse_u64(&self.buf[48usize..56usize]).unwrap()
+    }
+    pub fn set_rx_dropped(&mut self, value: u64) {
+        self.buf[48usize..56usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_dropped(&self) -> u64 {
+        parse_u64(&self.buf[56usize..64usize]).unwrap()
+    }
+    pub fn set_tx_dropped(&mut self, value: u64) {
+        self.buf[56usize..64usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn multicast(&self) -> u64 {
+        parse_u64(&self.buf[64usize..72usize]).unwrap()
+    }
+    pub fn set_multicast(&mut self, value: u64) {
+        self.buf[64usize..72usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn collisions(&self) -> u64 {
+        parse_u64(&self.buf[72usize..80usize]).unwrap()
+    }
+    pub fn set_collisions(&mut self, value: u64) {
+        self.buf[72usize..80usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_length_errors(&self) -> u64 {
+        parse_u64(&self.buf[80usize..88usize]).unwrap()
+    }
+    pub fn set_rx_length_errors(&mut self, value: u64) {
+        self.buf[80usize..88usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_over_errors(&self) -> u64 {
+        parse_u64(&self.buf[88usize..96usize]).unwrap()
+    }
+    pub fn set_rx_over_errors(&mut self, value: u64) {
+        self.buf[88usize..96usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_crc_errors(&self) -> u64 {
+        parse_u64(&self.buf[96usize..104usize]).unwrap()
+    }
+    pub fn set_rx_crc_errors(&mut self, value: u64) {
+        self.buf[96usize..104usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_frame_errors(&self) -> u64 {
+        parse_u64(&self.buf[104usize..112usize]).unwrap()
+    }
+    pub fn set_rx_frame_errors(&mut self, value: u64) {
+        self.buf[104usize..112usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_fifo_errors(&self) -> u64 {
+        parse_u64(&self.buf[112usize..120usize]).unwrap()
+    }
+    pub fn set_rx_fifo_errors(&mut self, value: u64) {
+        self.buf[112usize..120usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_missed_errors(&self) -> u64 {
+        parse_u64(&self.buf[120usize..128usize]).unwrap()
+    }
+    pub fn set_rx_missed_errors(&mut self, value: u64) {
+        self.buf[120usize..128usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_aborted_errors(&self) -> u64 {
+        parse_u64(&self.buf[128usize..136usize]).unwrap()
+    }
+    pub fn set_tx_aborted_errors(&mut self, value: u64) {
+        self.buf[128usize..136usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_carrier_errors(&self) -> u64 {
+        parse_u64(&self.buf[136usize..144usize]).unwrap()
+    }
+    pub fn set_tx_carrier_errors(&mut self, value: u64) {
+        self.buf[136usize..144usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_fifo_errors(&self) -> u64 {
+        parse_u64(&self.buf[144usize..152usize]).unwrap()
+    }
+    pub fn set_tx_fifo_errors(&mut self, value: u64) {
+        self.buf[144usize..152usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_heartbeat_errors(&self) -> u64 {
+        parse_u64(&self.buf[152usize..160usize]).unwrap()
+    }
+    pub fn set_tx_heartbeat_errors(&mut self, value: u64) {
+        self.buf[152usize..160usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_window_errors(&self) -> u64 {
+        parse_u64(&self.buf[160usize..168usize]).unwrap()
+    }
+    pub fn set_tx_window_errors(&mut self, value: u64) {
+        self.buf[160usize..168usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_compressed(&self) -> u64 {
+        parse_u64(&self.buf[168usize..176usize]).unwrap()
+    }
+    pub fn set_rx_compressed(&mut self, value: u64) {
+        self.buf[168usize..176usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn tx_compressed(&self) -> u64 {
+        parse_u64(&self.buf[176usize..184usize]).unwrap()
+    }
+    pub fn set_tx_compressed(&mut self, value: u64) {
+        self.buf[176usize..184usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_nohandler(&self) -> u64 {
+        parse_u64(&self.buf[184usize..192usize]).unwrap()
+    }
+    pub fn set_rx_nohandler(&mut self, value: u64) {
+        self.buf[184usize..192usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rx_otherhost_dropped(&self) -> u64 {
+        parse_u64(&self.buf[192usize..200usize]).unwrap()
+    }
+    pub fn set_rx_otherhost_dropped(&mut self, value: u64) {
+        self.buf[192usize..200usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushRtnlLinkStats64 {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("RtnlLinkStats64")
+            .field("rx_packets", &self.rx_packets())
+            .field("tx_packets", &self.tx_packets())
+            .field("rx_bytes", &self.rx_bytes())
+            .field("tx_bytes", &self.tx_bytes())
+            .field("rx_errors", &self.rx_errors())
+            .field("tx_errors", &self.tx_errors())
+            .field("rx_dropped", &self.rx_dropped())
+            .field("tx_dropped", &self.tx_dropped())
+            .field("multicast", &self.multicast())
+            .field("collisions", &self.collisions())
+            .field("rx_length_errors", &self.rx_length_errors())
+            .field("rx_over_errors", &self.rx_over_errors())
+            .field("rx_crc_errors", &self.rx_crc_errors())
+            .field("rx_frame_errors", &self.rx_frame_errors())
+            .field("rx_fifo_errors", &self.rx_fifo_errors())
+            .field("rx_missed_errors", &self.rx_missed_errors())
+            .field("tx_aborted_errors", &self.tx_aborted_errors())
+            .field("tx_carrier_errors", &self.tx_carrier_errors())
+            .field("tx_fifo_errors", &self.tx_fifo_errors())
+            .field("tx_heartbeat_errors", &self.tx_heartbeat_errors())
+            .field("tx_window_errors", &self.tx_window_errors())
+            .field("rx_compressed", &self.rx_compressed())
+            .field("tx_compressed", &self.tx_compressed())
+            .field("rx_nohandler", &self.rx_nohandler())
+            .field("rx_otherhost_dropped", &self.rx_otherhost_dropped())
+            .finish()
+    }
+}
+#[doc = "Original name: \"rtnl-link-ifmap\""]
+#[derive(Clone)]
+pub struct PushRtnlLinkIfmap {
+    buf: [u8; 28usize],
+}
+impl PushRtnlLinkIfmap {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        28usize
+    }
+    pub fn mem_start(&self) -> u64 {
+        parse_u64(&self.buf[0usize..8usize]).unwrap()
+    }
+    pub fn set_mem_start(&mut self, value: u64) {
+        self.buf[0usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn mem_end(&self) -> u64 {
+        parse_u64(&self.buf[8usize..16usize]).unwrap()
+    }
+    pub fn set_mem_end(&mut self, value: u64) {
+        self.buf[8usize..16usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn base_addr(&self) -> u64 {
+        parse_u64(&self.buf[16usize..24usize]).unwrap()
+    }
+    pub fn set_base_addr(&mut self, value: u64) {
+        self.buf[16usize..24usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn irq(&self) -> u16 {
+        parse_u16(&self.buf[24usize..26usize]).unwrap()
+    }
+    pub fn set_irq(&mut self, value: u16) {
+        self.buf[24usize..26usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn dma(&self) -> u8 {
+        parse_u8(&self.buf[26usize..27usize]).unwrap()
+    }
+    pub fn set_dma(&mut self, value: u8) {
+        self.buf[26usize..27usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn port(&self) -> u8 {
+        parse_u8(&self.buf[27usize..28usize]).unwrap()
+    }
+    pub fn set_port(&mut self, value: u8) {
+        self.buf[27usize..28usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushRtnlLinkIfmap {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("RtnlLinkIfmap")
+            .field("mem_start", &self.mem_start())
+            .field("mem_end", &self.mem_end())
+            .field("base_addr", &self.base_addr())
+            .field("irq", &self.irq())
+            .field("dma", &self.dma())
+            .field("port", &self.port())
+            .finish()
+    }
+}
+#[doc = "Original name: \"br-boolopt-multi\""]
+#[derive(Clone)]
+pub struct PushBrBooloptMulti {
+    buf: [u8; 8usize],
+}
+impl PushBrBooloptMulti {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn optval(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_optval(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn optmask(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_optmask(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushBrBooloptMulti {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("BrBooloptMulti")
+            .field("optval", &self.optval())
+            .field("optmask", &self.optmask())
+            .finish()
+    }
+}
+#[doc = "Original name: \"if-stats-msg\""]
+#[derive(Clone)]
+pub struct PushIfStatsMsg {
+    buf: [u8; 12usize],
+}
+impl PushIfStatsMsg {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        12usize
+    }
+    pub fn family(&self) -> u8 {
+        parse_u8(&self.buf[0usize..1usize]).unwrap()
+    }
+    pub fn set_family(&mut self, value: u8) {
+        self.buf[0usize..1usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn ifindex(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_ifindex(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn filter_mask(&self) -> u32 {
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
+    }
+    pub fn set_filter_mask(&mut self, value: u32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIfStatsMsg {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IfStatsMsg")
+            .field("family", &self.family())
+            .field("ifindex", &self.ifindex())
+            .field("filter_mask", &self.filter_mask())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vlan-flags\""]
+#[derive(Clone)]
+pub struct PushIflaVlanFlags {
+    buf: [u8; 8usize],
+}
+impl PushIflaVlanFlags {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    #[doc = "Associated type: \"VlanFlags\" (1 bit per enumeration)"]
+    pub fn flags(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    #[doc = "Associated type: \"VlanFlags\" (1 bit per enumeration)"]
+    pub fn set_flags(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn mask(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_mask(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVlanFlags {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVlanFlags")
+            .field("flags", &self.flags())
+            .field("mask", &self.mask())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vlan-qos-mapping\""]
+#[derive(Clone)]
+pub struct PushIflaVlanQosMapping {
+    buf: [u8; 8usize],
+}
+impl PushIflaVlanQosMapping {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn from(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_from(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn to(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_to(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVlanQosMapping {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVlanQosMapping")
+            .field("from", &self.from())
+            .field("to", &self.to())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-geneve-port-range\""]
+#[derive(Clone)]
+pub struct PushIflaGenevePortRange {
+    buf: [u8; 4usize],
+}
+impl PushIflaGenevePortRange {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        4usize
+    }
+    pub fn low(&self) -> u16 {
+        parse_be_u16(&self.buf[0usize..2usize]).unwrap()
+    }
+    pub fn set_low(&mut self, value: u16) {
+        self.buf[0usize..2usize].copy_from_slice(&value.to_be_bytes())
+    }
+    pub fn high(&self) -> u16 {
+        parse_be_u16(&self.buf[2usize..4usize]).unwrap()
+    }
+    pub fn set_high(&mut self, value: u16) {
+        self.buf[2usize..4usize].copy_from_slice(&value.to_be_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaGenevePortRange {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaGenevePortRange")
+            .field("low", &self.low())
+            .field("high", &self.high())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-mac\""]
+#[derive(Clone)]
+pub struct PushIflaVfMac {
+    buf: [u8; 4usize],
+}
+impl PushIflaVfMac {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        4usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn mac(&self) -> [u8; 32usize] {
+        self.buf[4usize..36usize].try_into().unwrap()
+    }
+    pub fn set_mac(&mut self, value: [u8; 32usize]) {
+        self.buf[4usize..36usize].copy_from_slice(&value)
+    }
+}
+impl std::fmt::Debug for PushIflaVfMac {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfMac")
+            .field("vf", &self.vf())
+            .field("mac", &self.mac())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-vlan\""]
+#[derive(Clone)]
+pub struct PushIflaVfVlan {
+    buf: [u8; 12usize],
+}
+impl PushIflaVfVlan {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        12usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn vlan(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_vlan(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn qos(&self) -> u32 {
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
+    }
+    pub fn set_qos(&mut self, value: u32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfVlan {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfVlan")
+            .field("vf", &self.vf())
+            .field("vlan", &self.vlan())
+            .field("qos", &self.qos())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-tx-rate\""]
+#[derive(Clone)]
+pub struct PushIflaVfTxRate {
+    buf: [u8; 8usize],
+}
+impl PushIflaVfTxRate {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn rate(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_rate(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfTxRate {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfTxRate")
+            .field("vf", &self.vf())
+            .field("rate", &self.rate())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-spoofchk\""]
+#[derive(Clone)]
+pub struct PushIflaVfSpoofchk {
+    buf: [u8; 8usize],
+}
+impl PushIflaVfSpoofchk {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn setting(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_setting(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfSpoofchk {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfSpoofchk")
+            .field("vf", &self.vf())
+            .field("setting", &self.setting())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-link-state\""]
+#[derive(Clone)]
+pub struct PushIflaVfLinkState {
+    buf: [u8; 8usize],
+}
+impl PushIflaVfLinkState {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    #[doc = "Associated type: \"IflaVfLinkStateEnum\" (enum)"]
+    pub fn link_state(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    #[doc = "Associated type: \"IflaVfLinkStateEnum\" (enum)"]
+    pub fn set_link_state(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfLinkState {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfLinkState")
+            .field("vf", &self.vf())
+            .field("link_state", &self.link_state())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-rate\""]
+#[derive(Clone)]
+pub struct PushIflaVfRate {
+    buf: [u8; 12usize],
+}
+impl PushIflaVfRate {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        12usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn min_tx_rate(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_min_tx_rate(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn max_tx_rate(&self) -> u32 {
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
+    }
+    pub fn set_max_tx_rate(&mut self, value: u32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfRate {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfRate")
+            .field("vf", &self.vf())
+            .field("min_tx_rate", &self.min_tx_rate())
+            .field("max_tx_rate", &self.max_tx_rate())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-rss-query-en\""]
+#[derive(Clone)]
+pub struct PushIflaVfRssQueryEn {
+    buf: [u8; 8usize],
+}
+impl PushIflaVfRssQueryEn {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn setting(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_setting(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfRssQueryEn {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfRssQueryEn")
+            .field("vf", &self.vf())
+            .field("setting", &self.setting())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-trust\""]
+#[derive(Clone)]
+pub struct PushIflaVfTrust {
+    buf: [u8; 8usize],
+}
+impl PushIflaVfTrust {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        8usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn setting(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_setting(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfTrust {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfTrust")
+            .field("vf", &self.vf())
+            .field("setting", &self.setting())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-guid\""]
+#[derive(Clone)]
+pub struct PushIflaVfGuid {
+    buf: [u8; 12usize],
+}
+impl PushIflaVfGuid {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        12usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn guid(&self) -> u64 {
+        parse_u64(&self.buf[4usize..12usize]).unwrap()
+    }
+    pub fn set_guid(&mut self, value: u64) {
+        self.buf[4usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfGuid {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfGuid")
+            .field("vf", &self.vf())
+            .field("guid", &self.guid())
+            .finish()
+    }
+}
+#[doc = "Original name: \"ifla-vf-vlan-info\""]
+#[derive(Clone)]
+pub struct PushIflaVfVlanInfo {
+    buf: [u8; 16usize],
+}
+impl PushIflaVfVlanInfo {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self {
+            buf: [0u8; Self::len()],
+        }
+    }
+    #[doc = "Copy from contents from other slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self { buf })
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        &self.buf
+    }
+    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+        &mut self.buf
+    }
+    pub const fn len() -> usize {
+        16usize
+    }
+    pub fn vf(&self) -> u32 {
+        parse_u32(&self.buf[0usize..4usize]).unwrap()
+    }
+    pub fn set_vf(&mut self, value: u32) {
+        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn vlan(&self) -> u32 {
+        parse_u32(&self.buf[4usize..8usize]).unwrap()
+    }
+    pub fn set_vlan(&mut self, value: u32) {
+        self.buf[4usize..8usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn qos(&self) -> u32 {
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
+    }
+    pub fn set_qos(&mut self, value: u32) {
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
+    }
+    pub fn vlan_proto(&self) -> u32 {
+        parse_u32(&self.buf[12usize..16usize]).unwrap()
+    }
+    pub fn set_vlan_proto(&mut self, value: u32) {
+        self.buf[12usize..16usize].copy_from_slice(&value.to_ne_bytes())
+    }
+}
+impl std::fmt::Debug for PushIflaVfVlanInfo {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfVlanInfo")
+            .field("vf", &self.vf())
+            .field("vlan", &self.vlan())
+            .field("qos", &self.qos())
+            .field("vlan_proto", &self.vlan_proto())
+            .finish()
+    }
+}
+#[doc = "Create a new link."]
+pub struct PushOpNewlinkDoRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpNewlinkDoRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpNewlinkDoRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_txqlen(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_operstate(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_linkmode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_linkinfo(mut self) -> PushLinkinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 18u16);
+        PushLinkinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_net_ns_pid(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_af_spec(mut self) -> PushAfSpecAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 26u16);
+        PushAfSpecAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_group(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_net_ns_fd(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_tx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_rx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_link_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 40u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gro_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 58u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 63u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gro_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 64u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpNewlinkDoRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Create a new link."]
+#[doc = "Original name: \"OpNewlinkDoRequest\""]
+#[derive(Clone)]
+pub enum OpNewlinkDoRequest<'a> {
+    Address(&'a [u8]),
+    Broadcast(&'a [u8]),
+    Ifname(&'a CStr),
+    Mtu(u32),
+    Txqlen(u32),
+    Operstate(u8),
+    Linkmode(u8),
+    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    NetNsPid(u32),
+    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    Group(u32),
+    NetNsFd(u32),
+    NumTxQueues(u32),
+    NumRxQueues(u32),
+    LinkNetnsid(i32),
+    GsoMaxSegs(u32),
+    GsoMaxSize(u32),
+    TargetNetnsid(i32),
+    GroMaxSize(u32),
+    GsoIpv4MaxSize(u32),
+    GroIpv4MaxSize(u32),
+}
+impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
+    pub fn get_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Address(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Mtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_txqlen(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Txqlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_operstate(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Operstate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkmode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Linkmode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkinfo(&self) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Linkinfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_net_ns_pid(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::NetNsPid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_af_spec(&self) -> Iterable<'a, AfSpecAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::AfSpec(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_group(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::Group(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_net_ns_fd(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::NetNsFd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_tx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::NumTxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_rx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::NumRxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::LinkNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::GsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::GsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::GroMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::GsoIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpNewlinkDoRequest::GroIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpNewlinkDoRequest<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpNewlinkDoRequest<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
+    type Item = Result<OpNewlinkDoRequest<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => OpNewlinkDoRequest::Address({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpNewlinkDoRequest::Broadcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => OpNewlinkDoRequest::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => OpNewlinkDoRequest::Mtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => OpNewlinkDoRequest::Txqlen({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => OpNewlinkDoRequest::Operstate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => OpNewlinkDoRequest::Linkmode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => OpNewlinkDoRequest::Linkinfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => OpNewlinkDoRequest::NetNsPid({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => OpNewlinkDoRequest::AfSpec({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => OpNewlinkDoRequest::Group({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => OpNewlinkDoRequest::NetNsFd({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => OpNewlinkDoRequest::NumTxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => OpNewlinkDoRequest::NumRxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => OpNewlinkDoRequest::LinkNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => OpNewlinkDoRequest::GsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => OpNewlinkDoRequest::GsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => OpNewlinkDoRequest::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                58u16 => OpNewlinkDoRequest::GroMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                63u16 => OpNewlinkDoRequest::GsoIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                64u16 => OpNewlinkDoRequest::GroIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpNewlinkDoRequest",
+            r#type.and_then(|t| OpNewlinkDoRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpNewlinkDoRequest<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpNewlinkDoRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpNewlinkDoRequest::Address(val) => fmt.field("Address", &val),
+                OpNewlinkDoRequest::Broadcast(val) => fmt.field("Broadcast", &val),
+                OpNewlinkDoRequest::Ifname(val) => fmt.field("Ifname", &val),
+                OpNewlinkDoRequest::Mtu(val) => fmt.field("Mtu", &val),
+                OpNewlinkDoRequest::Txqlen(val) => fmt.field("Txqlen", &val),
+                OpNewlinkDoRequest::Operstate(val) => fmt.field("Operstate", &val),
+                OpNewlinkDoRequest::Linkmode(val) => fmt.field("Linkmode", &val),
+                OpNewlinkDoRequest::Linkinfo(val) => fmt.field("Linkinfo", &val),
+                OpNewlinkDoRequest::NetNsPid(val) => fmt.field("NetNsPid", &val),
+                OpNewlinkDoRequest::AfSpec(val) => fmt.field("AfSpec", &val),
+                OpNewlinkDoRequest::Group(val) => fmt.field("Group", &val),
+                OpNewlinkDoRequest::NetNsFd(val) => fmt.field("NetNsFd", &val),
+                OpNewlinkDoRequest::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
+                OpNewlinkDoRequest::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
+                OpNewlinkDoRequest::LinkNetnsid(val) => fmt.field("LinkNetnsid", &val),
+                OpNewlinkDoRequest::GsoMaxSegs(val) => fmt.field("GsoMaxSegs", &val),
+                OpNewlinkDoRequest::GsoMaxSize(val) => fmt.field("GsoMaxSize", &val),
+                OpNewlinkDoRequest::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                OpNewlinkDoRequest::GroMaxSize(val) => fmt.field("GroMaxSize", &val),
+                OpNewlinkDoRequest::GsoIpv4MaxSize(val) => fmt.field("GsoIpv4MaxSize", &val),
+                OpNewlinkDoRequest::GroIpv4MaxSize(val) => fmt.field("GroIpv4MaxSize", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Create a new link."]
+pub struct PushOpNewlinkDoReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpNewlinkDoReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpNewlinkDoReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushOpNewlinkDoReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Create a new link."]
+#[doc = "Original name: \"OpNewlinkDoReply\""]
+#[derive(Clone)]
+pub enum OpNewlinkDoReply {}
+impl<'a> Iterable<'a, OpNewlinkDoReply> {}
+impl OpNewlinkDoReply {
+    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, Iterable<'_, OpNewlinkDoReply>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, OpNewlinkDoReply> {
+    type Item = Result<OpNewlinkDoReply, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpNewlinkDoReply",
+            r#type.and_then(|t| OpNewlinkDoReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, OpNewlinkDoReply> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpNewlinkDoReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Delete an existing link."]
+pub struct PushOpDellinkDoRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpDellinkDoRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpDellinkDoRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpDellinkDoRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Delete an existing link."]
+#[doc = "Original name: \"OpDellinkDoRequest\""]
+#[derive(Clone)]
+pub enum OpDellinkDoRequest<'a> {
+    Ifname(&'a CStr),
+}
+impl<'a> Iterable<'a, OpDellinkDoRequest<'a>> {
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpDellinkDoRequest::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpDellinkDoRequest<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpDellinkDoRequest<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpDellinkDoRequest<'a>> {
+    type Item = Result<OpDellinkDoRequest<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                3u16 => OpDellinkDoRequest::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpDellinkDoRequest",
+            r#type.and_then(|t| OpDellinkDoRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpDellinkDoRequest<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpDellinkDoRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpDellinkDoRequest::Ifname(val) => fmt.field("Ifname", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Delete an existing link."]
+pub struct PushOpDellinkDoReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpDellinkDoReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpDellinkDoReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushOpDellinkDoReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Delete an existing link."]
+#[doc = "Original name: \"OpDellinkDoReply\""]
+#[derive(Clone)]
+pub enum OpDellinkDoReply {}
+impl<'a> Iterable<'a, OpDellinkDoReply> {}
+impl OpDellinkDoReply {
+    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, Iterable<'_, OpDellinkDoReply>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, OpDellinkDoReply> {
+    type Item = Result<OpDellinkDoReply, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpDellinkDoReply",
+            r#type.and_then(|t| OpDellinkDoReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, OpDellinkDoReply> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpDellinkDoReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump information about a link."]
+pub struct PushOpGetlinkDumpRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetlinkDumpRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetlinkDumpRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_master(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_linkinfo(mut self) -> PushLinkinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 18u16);
+        PushLinkinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn push_ext_mask(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetlinkDumpRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump information about a link."]
+#[doc = "Original name: \"OpGetlinkDumpRequest\""]
+#[derive(Clone)]
+pub enum OpGetlinkDumpRequest<'a> {
+    Master(u32),
+    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    ExtMask(u32),
+    TargetNetnsid(i32),
+}
+impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
+    pub fn get_master(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpRequest::Master(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkinfo(&self) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpRequest::Linkinfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn get_ext_mask(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpRequest::ExtMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpRequest::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpGetlinkDumpRequest<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDumpRequest<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpGetlinkDumpRequest<'a>> {
+    type Item = Result<OpGetlinkDumpRequest<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                10u16 => OpGetlinkDumpRequest::Master({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => OpGetlinkDumpRequest::Linkinfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => OpGetlinkDumpRequest::ExtMask({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => OpGetlinkDumpRequest::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetlinkDumpRequest",
+            r#type.and_then(|t| OpGetlinkDumpRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpRequest<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetlinkDumpRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpGetlinkDumpRequest::Master(val) => fmt.field("Master", &val),
+                OpGetlinkDumpRequest::Linkinfo(val) => fmt.field("Linkinfo", &val),
+                OpGetlinkDumpRequest::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDumpRequest::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump information about a link."]
+pub struct PushOpGetlinkDumpReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetlinkDumpReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetlinkDumpReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_qdisc(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            6u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_stats(mut self, value: PushRtnlLinkStats) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_cost(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            8u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_priority(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            9u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_master(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_wireless(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            11u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_protinfo(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            12u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_txqlen(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_map(mut self, value: PushRtnlLinkIfmap) -> Self {
+        push_header(self.as_rec_mut(), 14u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_weight(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_operstate(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_linkmode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_linkinfo(mut self) -> PushLinkinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 18u16);
+        PushLinkinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_net_ns_pid(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ifalias(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            20u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_num_vf(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_vfinfo_list(mut self) -> PushVfinfoListAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 22u16);
+        PushVfinfoListAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_stats64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 23u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_vf_ports(mut self) -> PushVfPortsAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 24u16);
+        PushVfPortsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_port_self(mut self) -> PushPortSelfAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 25u16);
+        PushPortSelfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_af_spec(mut self) -> PushAfSpecAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 26u16);
+        PushAfSpecAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_group(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_net_ns_fd(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn push_ext_mask(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_promiscuity(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_tx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_rx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 33u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 34u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_carrier_changes(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 35u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_switch_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 36u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            38u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_proto_down(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 39u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 40u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 42u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_xdp(mut self) -> PushXdpAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 43u16);
+        PushXdpAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_event(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 44u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 45u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_up_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 47u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_down_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 48u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_ifindex(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 49u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_min_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 50u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_max_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 51u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_prop_list(mut self) -> PushPropListLinkAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 52u16);
+        PushPropListLinkAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_perm_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 54u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_proto_down_reason(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            55u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            56u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            57u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_gro_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 58u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 59u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 60u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_allmulti(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 61u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_devlink_port(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 62u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_gso_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 63u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gro_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 64u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetlinkDumpReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump information about a link."]
+#[doc = "Original name: \"OpGetlinkDumpReply\""]
+#[derive(Clone)]
+pub enum OpGetlinkDumpReply<'a> {
+    Address(&'a [u8]),
+    Broadcast(&'a [u8]),
+    Ifname(&'a CStr),
+    Mtu(u32),
+    Link(u32),
+    Qdisc(&'a CStr),
+    Stats(PushRtnlLinkStats),
+    Cost(&'a CStr),
+    Priority(&'a CStr),
+    Master(u32),
+    Wireless(&'a CStr),
+    Protinfo(&'a CStr),
+    Txqlen(u32),
+    Map(PushRtnlLinkIfmap),
+    Weight(u32),
+    Operstate(u8),
+    Linkmode(u8),
+    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    NetNsPid(u32),
+    Ifalias(&'a CStr),
+    NumVf(u32),
+    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    Stats64(PushRtnlLinkStats64),
+    VfPorts(Iterable<'a, VfPortsAttrs>),
+    PortSelf(Iterable<'a, PortSelfAttrs>),
+    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    Group(u32),
+    NetNsFd(u32),
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    ExtMask(u32),
+    Promiscuity(u32),
+    NumTxQueues(u32),
+    NumRxQueues(u32),
+    Carrier(u8),
+    PhysPortId(&'a [u8]),
+    CarrierChanges(u32),
+    PhysSwitchId(&'a [u8]),
+    LinkNetnsid(i32),
+    PhysPortName(&'a CStr),
+    ProtoDown(u8),
+    GsoMaxSegs(u32),
+    GsoMaxSize(u32),
+    Pad(&'a [u8]),
+    Xdp(Iterable<'a, XdpAttrs>),
+    Event(u32),
+    NewNetnsid(i32),
+    TargetNetnsid(i32),
+    CarrierUpCount(u32),
+    CarrierDownCount(u32),
+    NewIfindex(i32),
+    MinMtu(u32),
+    MaxMtu(u32),
+    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PermAddress(&'a [u8]),
+    ProtoDownReason(&'a CStr),
+    ParentDevName(&'a CStr),
+    ParentDevBusName(&'a CStr),
+    GroMaxSize(u32),
+    TsoMaxSize(u32),
+    TsoMaxSegs(u32),
+    Allmulti(u32),
+    DevlinkPort(&'a [u8]),
+    GsoIpv4MaxSize(u32),
+    GroIpv4MaxSize(u32),
+}
+impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
+    pub fn get_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Address(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Mtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_qdisc(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Qdisc(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stats(&self) -> Option<PushRtnlLinkStats> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_cost(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Cost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_priority(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Priority(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_master(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Master(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_wireless(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Wireless(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_protinfo(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Protinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_txqlen(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Txqlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_map(&self) -> Option<PushRtnlLinkIfmap> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Map(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_weight(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Weight(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_operstate(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Operstate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkmode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Linkmode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkinfo(&self) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Linkinfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_net_ns_pid(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NetNsPid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifalias(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Ifalias(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_vf(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NumVf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vfinfo_list(&self) -> Iterable<'a, VfinfoListAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::VfinfoList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_stats64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Stats64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vf_ports(&self) -> Iterable<'a, VfPortsAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::VfPorts(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_port_self(&self) -> Iterable<'a, PortSelfAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::PortSelf(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Iterable<'a, AfSpecAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::AfSpec(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_group(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Group(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_net_ns_fd(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NetNsFd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn get_ext_mask(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::ExtMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_promiscuity(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Promiscuity(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_tx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NumTxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_rx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NumRxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Carrier(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::PhysPortId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_changes(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::CarrierChanges(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_switch_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::PhysSwitchId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::LinkNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::PhysPortName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::ProtoDown(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::GsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::GsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_xdp(&self) -> Iterable<'a, XdpAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Xdp(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_event(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Event(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NewNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_up_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::CarrierUpCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_down_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::CarrierDownCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_ifindex(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::NewIfindex(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_min_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::MinMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_max_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::MaxMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_prop_list(&self) -> Iterable<'a, PropListLinkAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::PropList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_perm_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::PermAddress(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down_reason(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::ProtoDownReason(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::ParentDevName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_bus_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::ParentDevBusName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::GroMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::TsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::TsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_allmulti(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::Allmulti(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_devlink_port(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::DevlinkPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::GsoIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDumpReply::GroIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpGetlinkDumpReply<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDumpReply<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
+    type Item = Result<OpGetlinkDumpReply<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => OpGetlinkDumpReply::Address({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpGetlinkDumpReply::Broadcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => OpGetlinkDumpReply::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => OpGetlinkDumpReply::Mtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => OpGetlinkDumpReply::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => OpGetlinkDumpReply::Qdisc({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => OpGetlinkDumpReply::Stats({
+                    let res = PushRtnlLinkStats::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => OpGetlinkDumpReply::Cost({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => OpGetlinkDumpReply::Priority({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => OpGetlinkDumpReply::Master({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => OpGetlinkDumpReply::Wireless({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => OpGetlinkDumpReply::Protinfo({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => OpGetlinkDumpReply::Txqlen({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => OpGetlinkDumpReply::Map({
+                    let res = PushRtnlLinkIfmap::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => OpGetlinkDumpReply::Weight({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => OpGetlinkDumpReply::Operstate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => OpGetlinkDumpReply::Linkmode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => OpGetlinkDumpReply::Linkinfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => OpGetlinkDumpReply::NetNsPid({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => OpGetlinkDumpReply::Ifalias({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => OpGetlinkDumpReply::NumVf({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => OpGetlinkDumpReply::VfinfoList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => OpGetlinkDumpReply::Stats64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => OpGetlinkDumpReply::VfPorts({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => OpGetlinkDumpReply::PortSelf({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => OpGetlinkDumpReply::AfSpec({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => OpGetlinkDumpReply::Group({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => OpGetlinkDumpReply::NetNsFd({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => OpGetlinkDumpReply::ExtMask({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => OpGetlinkDumpReply::Promiscuity({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => OpGetlinkDumpReply::NumTxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => OpGetlinkDumpReply::NumRxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                33u16 => OpGetlinkDumpReply::Carrier({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                34u16 => OpGetlinkDumpReply::PhysPortId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => OpGetlinkDumpReply::CarrierChanges({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                36u16 => OpGetlinkDumpReply::PhysSwitchId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => OpGetlinkDumpReply::LinkNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => OpGetlinkDumpReply::PhysPortName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => OpGetlinkDumpReply::ProtoDown({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => OpGetlinkDumpReply::GsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => OpGetlinkDumpReply::GsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => OpGetlinkDumpReply::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => OpGetlinkDumpReply::Xdp({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                44u16 => OpGetlinkDumpReply::Event({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                45u16 => OpGetlinkDumpReply::NewNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => OpGetlinkDumpReply::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                47u16 => OpGetlinkDumpReply::CarrierUpCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                48u16 => OpGetlinkDumpReply::CarrierDownCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                49u16 => OpGetlinkDumpReply::NewIfindex({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                50u16 => OpGetlinkDumpReply::MinMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                51u16 => OpGetlinkDumpReply::MaxMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                52u16 => OpGetlinkDumpReply::PropList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                54u16 => OpGetlinkDumpReply::PermAddress({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                55u16 => OpGetlinkDumpReply::ProtoDownReason({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                56u16 => OpGetlinkDumpReply::ParentDevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                57u16 => OpGetlinkDumpReply::ParentDevBusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                58u16 => OpGetlinkDumpReply::GroMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                59u16 => OpGetlinkDumpReply::TsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                60u16 => OpGetlinkDumpReply::TsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                61u16 => OpGetlinkDumpReply::Allmulti({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                62u16 => OpGetlinkDumpReply::DevlinkPort({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                63u16 => OpGetlinkDumpReply::GsoIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                64u16 => OpGetlinkDumpReply::GroIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetlinkDumpReply",
+            r#type.and_then(|t| OpGetlinkDumpReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpReply<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetlinkDumpReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpGetlinkDumpReply::Address(val) => fmt.field("Address", &val),
+                OpGetlinkDumpReply::Broadcast(val) => fmt.field("Broadcast", &val),
+                OpGetlinkDumpReply::Ifname(val) => fmt.field("Ifname", &val),
+                OpGetlinkDumpReply::Mtu(val) => fmt.field("Mtu", &val),
+                OpGetlinkDumpReply::Link(val) => fmt.field("Link", &val),
+                OpGetlinkDumpReply::Qdisc(val) => fmt.field("Qdisc", &val),
+                OpGetlinkDumpReply::Stats(val) => fmt.field("Stats", &val),
+                OpGetlinkDumpReply::Cost(val) => fmt.field("Cost", &val),
+                OpGetlinkDumpReply::Priority(val) => fmt.field("Priority", &val),
+                OpGetlinkDumpReply::Master(val) => fmt.field("Master", &val),
+                OpGetlinkDumpReply::Wireless(val) => fmt.field("Wireless", &val),
+                OpGetlinkDumpReply::Protinfo(val) => fmt.field("Protinfo", &val),
+                OpGetlinkDumpReply::Txqlen(val) => fmt.field("Txqlen", &val),
+                OpGetlinkDumpReply::Map(val) => fmt.field("Map", &val),
+                OpGetlinkDumpReply::Weight(val) => fmt.field("Weight", &val),
+                OpGetlinkDumpReply::Operstate(val) => fmt.field("Operstate", &val),
+                OpGetlinkDumpReply::Linkmode(val) => fmt.field("Linkmode", &val),
+                OpGetlinkDumpReply::Linkinfo(val) => fmt.field("Linkinfo", &val),
+                OpGetlinkDumpReply::NetNsPid(val) => fmt.field("NetNsPid", &val),
+                OpGetlinkDumpReply::Ifalias(val) => fmt.field("Ifalias", &val),
+                OpGetlinkDumpReply::NumVf(val) => fmt.field("NumVf", &val),
+                OpGetlinkDumpReply::VfinfoList(val) => fmt.field("VfinfoList", &val),
+                OpGetlinkDumpReply::Stats64(val) => fmt.field("Stats64", &val),
+                OpGetlinkDumpReply::VfPorts(val) => fmt.field("VfPorts", &val),
+                OpGetlinkDumpReply::PortSelf(val) => fmt.field("PortSelf", &val),
+                OpGetlinkDumpReply::AfSpec(val) => fmt.field("AfSpec", &val),
+                OpGetlinkDumpReply::Group(val) => fmt.field("Group", &val),
+                OpGetlinkDumpReply::NetNsFd(val) => fmt.field("NetNsFd", &val),
+                OpGetlinkDumpReply::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDumpReply::Promiscuity(val) => fmt.field("Promiscuity", &val),
+                OpGetlinkDumpReply::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
+                OpGetlinkDumpReply::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
+                OpGetlinkDumpReply::Carrier(val) => fmt.field("Carrier", &val),
+                OpGetlinkDumpReply::PhysPortId(val) => fmt.field("PhysPortId", &val),
+                OpGetlinkDumpReply::CarrierChanges(val) => fmt.field("CarrierChanges", &val),
+                OpGetlinkDumpReply::PhysSwitchId(val) => fmt.field("PhysSwitchId", &val),
+                OpGetlinkDumpReply::LinkNetnsid(val) => fmt.field("LinkNetnsid", &val),
+                OpGetlinkDumpReply::PhysPortName(val) => fmt.field("PhysPortName", &val),
+                OpGetlinkDumpReply::ProtoDown(val) => fmt.field("ProtoDown", &val),
+                OpGetlinkDumpReply::GsoMaxSegs(val) => fmt.field("GsoMaxSegs", &val),
+                OpGetlinkDumpReply::GsoMaxSize(val) => fmt.field("GsoMaxSize", &val),
+                OpGetlinkDumpReply::Pad(val) => fmt.field("Pad", &val),
+                OpGetlinkDumpReply::Xdp(val) => fmt.field("Xdp", &val),
+                OpGetlinkDumpReply::Event(val) => fmt.field("Event", &val),
+                OpGetlinkDumpReply::NewNetnsid(val) => fmt.field("NewNetnsid", &val),
+                OpGetlinkDumpReply::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                OpGetlinkDumpReply::CarrierUpCount(val) => fmt.field("CarrierUpCount", &val),
+                OpGetlinkDumpReply::CarrierDownCount(val) => fmt.field("CarrierDownCount", &val),
+                OpGetlinkDumpReply::NewIfindex(val) => fmt.field("NewIfindex", &val),
+                OpGetlinkDumpReply::MinMtu(val) => fmt.field("MinMtu", &val),
+                OpGetlinkDumpReply::MaxMtu(val) => fmt.field("MaxMtu", &val),
+                OpGetlinkDumpReply::PropList(val) => fmt.field("PropList", &val),
+                OpGetlinkDumpReply::PermAddress(val) => fmt.field("PermAddress", &val),
+                OpGetlinkDumpReply::ProtoDownReason(val) => fmt.field("ProtoDownReason", &val),
+                OpGetlinkDumpReply::ParentDevName(val) => fmt.field("ParentDevName", &val),
+                OpGetlinkDumpReply::ParentDevBusName(val) => fmt.field("ParentDevBusName", &val),
+                OpGetlinkDumpReply::GroMaxSize(val) => fmt.field("GroMaxSize", &val),
+                OpGetlinkDumpReply::TsoMaxSize(val) => fmt.field("TsoMaxSize", &val),
+                OpGetlinkDumpReply::TsoMaxSegs(val) => fmt.field("TsoMaxSegs", &val),
+                OpGetlinkDumpReply::Allmulti(val) => fmt.field("Allmulti", &val),
+                OpGetlinkDumpReply::DevlinkPort(val) => fmt.field("DevlinkPort", &val),
+                OpGetlinkDumpReply::GsoIpv4MaxSize(val) => fmt.field("GsoIpv4MaxSize", &val),
+                OpGetlinkDumpReply::GroIpv4MaxSize(val) => fmt.field("GroIpv4MaxSize", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump information about a link."]
+pub struct PushOpGetlinkDoRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetlinkDoRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetlinkDoRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn push_ext_mask(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_alt_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            53u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetlinkDoRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump information about a link."]
+#[doc = "Original name: \"OpGetlinkDoRequest\""]
+#[derive(Clone)]
+pub enum OpGetlinkDoRequest<'a> {
+    Ifname(&'a CStr),
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    ExtMask(u32),
+    TargetNetnsid(i32),
+    AltIfname(&'a CStr),
+}
+impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoRequest::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn get_ext_mask(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoRequest::ExtMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoRequest::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_alt_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoRequest::AltIfname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpGetlinkDoRequest<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDoRequest<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpGetlinkDoRequest<'a>> {
+    type Item = Result<OpGetlinkDoRequest<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                3u16 => OpGetlinkDoRequest::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => OpGetlinkDoRequest::ExtMask({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => OpGetlinkDoRequest::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                53u16 => OpGetlinkDoRequest::AltIfname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetlinkDoRequest",
+            r#type.and_then(|t| OpGetlinkDoRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoRequest<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetlinkDoRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpGetlinkDoRequest::Ifname(val) => fmt.field("Ifname", &val),
+                OpGetlinkDoRequest::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDoRequest::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                OpGetlinkDoRequest::AltIfname(val) => fmt.field("AltIfname", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump information about a link."]
+pub struct PushOpGetlinkDoReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetlinkDoReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetlinkDoReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_qdisc(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            6u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_stats(mut self, value: PushRtnlLinkStats) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_cost(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            8u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_priority(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            9u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_master(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_wireless(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            11u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_protinfo(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            12u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_txqlen(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_map(mut self, value: PushRtnlLinkIfmap) -> Self {
+        push_header(self.as_rec_mut(), 14u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_weight(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_operstate(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_linkmode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_linkinfo(mut self) -> PushLinkinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 18u16);
+        PushLinkinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_net_ns_pid(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ifalias(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            20u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_num_vf(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_vfinfo_list(mut self) -> PushVfinfoListAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 22u16);
+        PushVfinfoListAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_stats64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 23u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_vf_ports(mut self) -> PushVfPortsAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 24u16);
+        PushVfPortsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_port_self(mut self) -> PushPortSelfAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 25u16);
+        PushPortSelfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_af_spec(mut self) -> PushAfSpecAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 26u16);
+        PushAfSpecAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_group(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_net_ns_fd(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn push_ext_mask(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_promiscuity(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_tx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_rx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 33u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 34u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_carrier_changes(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 35u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_switch_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 36u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            38u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_proto_down(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 39u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 40u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 42u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_xdp(mut self) -> PushXdpAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 43u16);
+        PushXdpAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_event(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 44u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 45u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_up_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 47u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_down_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 48u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_ifindex(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 49u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_min_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 50u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_max_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 51u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_prop_list(mut self) -> PushPropListLinkAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 52u16);
+        PushPropListLinkAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_perm_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 54u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_proto_down_reason(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            55u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            56u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            57u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_gro_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 58u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 59u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 60u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_allmulti(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 61u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_devlink_port(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 62u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_gso_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 63u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gro_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 64u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetlinkDoReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump information about a link."]
+#[doc = "Original name: \"OpGetlinkDoReply\""]
+#[derive(Clone)]
+pub enum OpGetlinkDoReply<'a> {
+    Address(&'a [u8]),
+    Broadcast(&'a [u8]),
+    Ifname(&'a CStr),
+    Mtu(u32),
+    Link(u32),
+    Qdisc(&'a CStr),
+    Stats(PushRtnlLinkStats),
+    Cost(&'a CStr),
+    Priority(&'a CStr),
+    Master(u32),
+    Wireless(&'a CStr),
+    Protinfo(&'a CStr),
+    Txqlen(u32),
+    Map(PushRtnlLinkIfmap),
+    Weight(u32),
+    Operstate(u8),
+    Linkmode(u8),
+    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    NetNsPid(u32),
+    Ifalias(&'a CStr),
+    NumVf(u32),
+    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    Stats64(PushRtnlLinkStats64),
+    VfPorts(Iterable<'a, VfPortsAttrs>),
+    PortSelf(Iterable<'a, PortSelfAttrs>),
+    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    Group(u32),
+    NetNsFd(u32),
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    ExtMask(u32),
+    Promiscuity(u32),
+    NumTxQueues(u32),
+    NumRxQueues(u32),
+    Carrier(u8),
+    PhysPortId(&'a [u8]),
+    CarrierChanges(u32),
+    PhysSwitchId(&'a [u8]),
+    LinkNetnsid(i32),
+    PhysPortName(&'a CStr),
+    ProtoDown(u8),
+    GsoMaxSegs(u32),
+    GsoMaxSize(u32),
+    Pad(&'a [u8]),
+    Xdp(Iterable<'a, XdpAttrs>),
+    Event(u32),
+    NewNetnsid(i32),
+    TargetNetnsid(i32),
+    CarrierUpCount(u32),
+    CarrierDownCount(u32),
+    NewIfindex(i32),
+    MinMtu(u32),
+    MaxMtu(u32),
+    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PermAddress(&'a [u8]),
+    ProtoDownReason(&'a CStr),
+    ParentDevName(&'a CStr),
+    ParentDevBusName(&'a CStr),
+    GroMaxSize(u32),
+    TsoMaxSize(u32),
+    TsoMaxSegs(u32),
+    Allmulti(u32),
+    DevlinkPort(&'a [u8]),
+    GsoIpv4MaxSize(u32),
+    GroIpv4MaxSize(u32),
+}
+impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
+    pub fn get_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Address(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Mtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_qdisc(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Qdisc(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stats(&self) -> Option<PushRtnlLinkStats> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_cost(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Cost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_priority(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Priority(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_master(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Master(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_wireless(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Wireless(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_protinfo(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Protinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_txqlen(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Txqlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_map(&self) -> Option<PushRtnlLinkIfmap> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Map(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_weight(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Weight(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_operstate(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Operstate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkmode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Linkmode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkinfo(&self) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Linkinfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_net_ns_pid(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NetNsPid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifalias(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Ifalias(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_vf(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NumVf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vfinfo_list(&self) -> Iterable<'a, VfinfoListAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::VfinfoList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_stats64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Stats64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vf_ports(&self) -> Iterable<'a, VfPortsAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::VfPorts(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_port_self(&self) -> Iterable<'a, PortSelfAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::PortSelf(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Iterable<'a, AfSpecAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::AfSpec(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_group(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Group(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_net_ns_fd(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NetNsFd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn get_ext_mask(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::ExtMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_promiscuity(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Promiscuity(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_tx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NumTxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_rx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NumRxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Carrier(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::PhysPortId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_changes(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::CarrierChanges(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_switch_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::PhysSwitchId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::LinkNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::PhysPortName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::ProtoDown(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::GsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::GsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_xdp(&self) -> Iterable<'a, XdpAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Xdp(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_event(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Event(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NewNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_up_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::CarrierUpCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_down_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::CarrierDownCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_ifindex(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::NewIfindex(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_min_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::MinMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_max_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::MaxMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_prop_list(&self) -> Iterable<'a, PropListLinkAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::PropList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_perm_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::PermAddress(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down_reason(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::ProtoDownReason(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::ParentDevName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_bus_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::ParentDevBusName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::GroMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::TsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::TsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_allmulti(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::Allmulti(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_devlink_port(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::DevlinkPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::GsoIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetlinkDoReply::GroIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpGetlinkDoReply<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDoReply<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
+    type Item = Result<OpGetlinkDoReply<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => OpGetlinkDoReply::Address({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpGetlinkDoReply::Broadcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => OpGetlinkDoReply::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => OpGetlinkDoReply::Mtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => OpGetlinkDoReply::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => OpGetlinkDoReply::Qdisc({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => OpGetlinkDoReply::Stats({
+                    let res = PushRtnlLinkStats::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => OpGetlinkDoReply::Cost({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => OpGetlinkDoReply::Priority({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => OpGetlinkDoReply::Master({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => OpGetlinkDoReply::Wireless({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => OpGetlinkDoReply::Protinfo({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => OpGetlinkDoReply::Txqlen({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => OpGetlinkDoReply::Map({
+                    let res = PushRtnlLinkIfmap::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => OpGetlinkDoReply::Weight({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => OpGetlinkDoReply::Operstate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => OpGetlinkDoReply::Linkmode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => OpGetlinkDoReply::Linkinfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => OpGetlinkDoReply::NetNsPid({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => OpGetlinkDoReply::Ifalias({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => OpGetlinkDoReply::NumVf({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => OpGetlinkDoReply::VfinfoList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => OpGetlinkDoReply::Stats64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => OpGetlinkDoReply::VfPorts({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => OpGetlinkDoReply::PortSelf({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => OpGetlinkDoReply::AfSpec({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => OpGetlinkDoReply::Group({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => OpGetlinkDoReply::NetNsFd({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => OpGetlinkDoReply::ExtMask({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => OpGetlinkDoReply::Promiscuity({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => OpGetlinkDoReply::NumTxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => OpGetlinkDoReply::NumRxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                33u16 => OpGetlinkDoReply::Carrier({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                34u16 => OpGetlinkDoReply::PhysPortId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => OpGetlinkDoReply::CarrierChanges({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                36u16 => OpGetlinkDoReply::PhysSwitchId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => OpGetlinkDoReply::LinkNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => OpGetlinkDoReply::PhysPortName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => OpGetlinkDoReply::ProtoDown({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => OpGetlinkDoReply::GsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => OpGetlinkDoReply::GsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => OpGetlinkDoReply::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => OpGetlinkDoReply::Xdp({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                44u16 => OpGetlinkDoReply::Event({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                45u16 => OpGetlinkDoReply::NewNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => OpGetlinkDoReply::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                47u16 => OpGetlinkDoReply::CarrierUpCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                48u16 => OpGetlinkDoReply::CarrierDownCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                49u16 => OpGetlinkDoReply::NewIfindex({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                50u16 => OpGetlinkDoReply::MinMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                51u16 => OpGetlinkDoReply::MaxMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                52u16 => OpGetlinkDoReply::PropList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                54u16 => OpGetlinkDoReply::PermAddress({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                55u16 => OpGetlinkDoReply::ProtoDownReason({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                56u16 => OpGetlinkDoReply::ParentDevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                57u16 => OpGetlinkDoReply::ParentDevBusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                58u16 => OpGetlinkDoReply::GroMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                59u16 => OpGetlinkDoReply::TsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                60u16 => OpGetlinkDoReply::TsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                61u16 => OpGetlinkDoReply::Allmulti({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                62u16 => OpGetlinkDoReply::DevlinkPort({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                63u16 => OpGetlinkDoReply::GsoIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                64u16 => OpGetlinkDoReply::GroIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetlinkDoReply",
+            r#type.and_then(|t| OpGetlinkDoReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoReply<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetlinkDoReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpGetlinkDoReply::Address(val) => fmt.field("Address", &val),
+                OpGetlinkDoReply::Broadcast(val) => fmt.field("Broadcast", &val),
+                OpGetlinkDoReply::Ifname(val) => fmt.field("Ifname", &val),
+                OpGetlinkDoReply::Mtu(val) => fmt.field("Mtu", &val),
+                OpGetlinkDoReply::Link(val) => fmt.field("Link", &val),
+                OpGetlinkDoReply::Qdisc(val) => fmt.field("Qdisc", &val),
+                OpGetlinkDoReply::Stats(val) => fmt.field("Stats", &val),
+                OpGetlinkDoReply::Cost(val) => fmt.field("Cost", &val),
+                OpGetlinkDoReply::Priority(val) => fmt.field("Priority", &val),
+                OpGetlinkDoReply::Master(val) => fmt.field("Master", &val),
+                OpGetlinkDoReply::Wireless(val) => fmt.field("Wireless", &val),
+                OpGetlinkDoReply::Protinfo(val) => fmt.field("Protinfo", &val),
+                OpGetlinkDoReply::Txqlen(val) => fmt.field("Txqlen", &val),
+                OpGetlinkDoReply::Map(val) => fmt.field("Map", &val),
+                OpGetlinkDoReply::Weight(val) => fmt.field("Weight", &val),
+                OpGetlinkDoReply::Operstate(val) => fmt.field("Operstate", &val),
+                OpGetlinkDoReply::Linkmode(val) => fmt.field("Linkmode", &val),
+                OpGetlinkDoReply::Linkinfo(val) => fmt.field("Linkinfo", &val),
+                OpGetlinkDoReply::NetNsPid(val) => fmt.field("NetNsPid", &val),
+                OpGetlinkDoReply::Ifalias(val) => fmt.field("Ifalias", &val),
+                OpGetlinkDoReply::NumVf(val) => fmt.field("NumVf", &val),
+                OpGetlinkDoReply::VfinfoList(val) => fmt.field("VfinfoList", &val),
+                OpGetlinkDoReply::Stats64(val) => fmt.field("Stats64", &val),
+                OpGetlinkDoReply::VfPorts(val) => fmt.field("VfPorts", &val),
+                OpGetlinkDoReply::PortSelf(val) => fmt.field("PortSelf", &val),
+                OpGetlinkDoReply::AfSpec(val) => fmt.field("AfSpec", &val),
+                OpGetlinkDoReply::Group(val) => fmt.field("Group", &val),
+                OpGetlinkDoReply::NetNsFd(val) => fmt.field("NetNsFd", &val),
+                OpGetlinkDoReply::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDoReply::Promiscuity(val) => fmt.field("Promiscuity", &val),
+                OpGetlinkDoReply::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
+                OpGetlinkDoReply::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
+                OpGetlinkDoReply::Carrier(val) => fmt.field("Carrier", &val),
+                OpGetlinkDoReply::PhysPortId(val) => fmt.field("PhysPortId", &val),
+                OpGetlinkDoReply::CarrierChanges(val) => fmt.field("CarrierChanges", &val),
+                OpGetlinkDoReply::PhysSwitchId(val) => fmt.field("PhysSwitchId", &val),
+                OpGetlinkDoReply::LinkNetnsid(val) => fmt.field("LinkNetnsid", &val),
+                OpGetlinkDoReply::PhysPortName(val) => fmt.field("PhysPortName", &val),
+                OpGetlinkDoReply::ProtoDown(val) => fmt.field("ProtoDown", &val),
+                OpGetlinkDoReply::GsoMaxSegs(val) => fmt.field("GsoMaxSegs", &val),
+                OpGetlinkDoReply::GsoMaxSize(val) => fmt.field("GsoMaxSize", &val),
+                OpGetlinkDoReply::Pad(val) => fmt.field("Pad", &val),
+                OpGetlinkDoReply::Xdp(val) => fmt.field("Xdp", &val),
+                OpGetlinkDoReply::Event(val) => fmt.field("Event", &val),
+                OpGetlinkDoReply::NewNetnsid(val) => fmt.field("NewNetnsid", &val),
+                OpGetlinkDoReply::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                OpGetlinkDoReply::CarrierUpCount(val) => fmt.field("CarrierUpCount", &val),
+                OpGetlinkDoReply::CarrierDownCount(val) => fmt.field("CarrierDownCount", &val),
+                OpGetlinkDoReply::NewIfindex(val) => fmt.field("NewIfindex", &val),
+                OpGetlinkDoReply::MinMtu(val) => fmt.field("MinMtu", &val),
+                OpGetlinkDoReply::MaxMtu(val) => fmt.field("MaxMtu", &val),
+                OpGetlinkDoReply::PropList(val) => fmt.field("PropList", &val),
+                OpGetlinkDoReply::PermAddress(val) => fmt.field("PermAddress", &val),
+                OpGetlinkDoReply::ProtoDownReason(val) => fmt.field("ProtoDownReason", &val),
+                OpGetlinkDoReply::ParentDevName(val) => fmt.field("ParentDevName", &val),
+                OpGetlinkDoReply::ParentDevBusName(val) => fmt.field("ParentDevBusName", &val),
+                OpGetlinkDoReply::GroMaxSize(val) => fmt.field("GroMaxSize", &val),
+                OpGetlinkDoReply::TsoMaxSize(val) => fmt.field("TsoMaxSize", &val),
+                OpGetlinkDoReply::TsoMaxSegs(val) => fmt.field("TsoMaxSegs", &val),
+                OpGetlinkDoReply::Allmulti(val) => fmt.field("Allmulti", &val),
+                OpGetlinkDoReply::DevlinkPort(val) => fmt.field("DevlinkPort", &val),
+                OpGetlinkDoReply::GsoIpv4MaxSize(val) => fmt.field("GsoIpv4MaxSize", &val),
+                OpGetlinkDoReply::GroIpv4MaxSize(val) => fmt.field("GroIpv4MaxSize", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Set information about a link."]
+pub struct PushOpSetlinkDoRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpSetlinkDoRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpSetlinkDoRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_ifname(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 4u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 5u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_qdisc(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            6u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_stats(mut self, value: PushRtnlLinkStats) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_cost(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            8u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_priority(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            9u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_master(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_wireless(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            11u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_protinfo(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            12u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_txqlen(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_map(mut self, value: PushRtnlLinkIfmap) -> Self {
+        push_header(self.as_rec_mut(), 14u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_weight(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 15u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_operstate(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 16u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_linkmode(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 17u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_linkinfo(mut self) -> PushLinkinfoAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 18u16);
+        PushLinkinfoAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_net_ns_pid(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 19u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ifalias(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            20u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_num_vf(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 21u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_vfinfo_list(mut self) -> PushVfinfoListAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 22u16);
+        PushVfinfoListAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_stats64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 23u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn nested_vf_ports(mut self) -> PushVfPortsAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 24u16);
+        PushVfPortsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_port_self(mut self) -> PushPortSelfAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 25u16);
+        PushPortSelfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_af_spec(mut self) -> PushAfSpecAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 26u16);
+        PushAfSpecAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_group(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 27u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_net_ns_fd(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 28u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn push_ext_mask(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 29u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_promiscuity(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 30u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_tx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 31u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_num_rx_queues(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 32u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 33u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 34u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_carrier_changes(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 35u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_switch_id(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 36u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 37u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_phys_port_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            38u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_proto_down(mut self, value: u8) -> Self {
+        push_header(self.as_rec_mut(), 39u16, 1 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 40u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 41u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 42u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_xdp(mut self) -> PushXdpAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 43u16);
+        PushXdpAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_event(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 44u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 45u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 46u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_up_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 47u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_carrier_down_count(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 48u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_new_ifindex(mut self, value: i32) -> Self {
+        push_header(self.as_rec_mut(), 49u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_min_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 50u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_max_mtu(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 51u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_prop_list(mut self) -> PushPropListLinkAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 52u16);
+        PushPropListLinkAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_perm_address(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 54u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_proto_down_reason(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            55u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            56u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_parent_dev_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            57u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_gro_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 58u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 59u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tso_max_segs(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 60u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_allmulti(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 61u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_devlink_port(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 62u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_gso_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 63u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gro_ipv4_max_size(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 64u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpSetlinkDoRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Set information about a link."]
+#[doc = "Original name: \"OpSetlinkDoRequest\""]
+#[derive(Clone)]
+pub enum OpSetlinkDoRequest<'a> {
+    Address(&'a [u8]),
+    Broadcast(&'a [u8]),
+    Ifname(&'a CStr),
+    Mtu(u32),
+    Link(u32),
+    Qdisc(&'a CStr),
+    Stats(PushRtnlLinkStats),
+    Cost(&'a CStr),
+    Priority(&'a CStr),
+    Master(u32),
+    Wireless(&'a CStr),
+    Protinfo(&'a CStr),
+    Txqlen(u32),
+    Map(PushRtnlLinkIfmap),
+    Weight(u32),
+    Operstate(u8),
+    Linkmode(u8),
+    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    NetNsPid(u32),
+    Ifalias(&'a CStr),
+    NumVf(u32),
+    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    Stats64(PushRtnlLinkStats64),
+    VfPorts(Iterable<'a, VfPortsAttrs>),
+    PortSelf(Iterable<'a, PortSelfAttrs>),
+    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    Group(u32),
+    NetNsFd(u32),
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    ExtMask(u32),
+    Promiscuity(u32),
+    NumTxQueues(u32),
+    NumRxQueues(u32),
+    Carrier(u8),
+    PhysPortId(&'a [u8]),
+    CarrierChanges(u32),
+    PhysSwitchId(&'a [u8]),
+    LinkNetnsid(i32),
+    PhysPortName(&'a CStr),
+    ProtoDown(u8),
+    GsoMaxSegs(u32),
+    GsoMaxSize(u32),
+    Pad(&'a [u8]),
+    Xdp(Iterable<'a, XdpAttrs>),
+    Event(u32),
+    NewNetnsid(i32),
+    TargetNetnsid(i32),
+    CarrierUpCount(u32),
+    CarrierDownCount(u32),
+    NewIfindex(i32),
+    MinMtu(u32),
+    MaxMtu(u32),
+    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PermAddress(&'a [u8]),
+    ProtoDownReason(&'a CStr),
+    ParentDevName(&'a CStr),
+    ParentDevBusName(&'a CStr),
+    GroMaxSize(u32),
+    TsoMaxSize(u32),
+    TsoMaxSegs(u32),
+    Allmulti(u32),
+    DevlinkPort(&'a [u8]),
+    GsoIpv4MaxSize(u32),
+    GroIpv4MaxSize(u32),
+}
+impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
+    pub fn get_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Address(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Broadcast(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifname(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Ifname(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Mtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Link(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_qdisc(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Qdisc(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_stats(&self) -> Option<PushRtnlLinkStats> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Stats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_cost(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Cost(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_priority(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Priority(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_master(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Master(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_wireless(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Wireless(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_protinfo(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Protinfo(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_txqlen(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Txqlen(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_map(&self) -> Option<PushRtnlLinkIfmap> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Map(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_weight(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Weight(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_operstate(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Operstate(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkmode(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Linkmode(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_linkinfo(&self) -> Iterable<'a, LinkinfoAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Linkinfo(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_net_ns_pid(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NetNsPid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_ifalias(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Ifalias(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_vf(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NumVf(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vfinfo_list(&self) -> Iterable<'a, VfinfoListAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::VfinfoList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_stats64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Stats64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_vf_ports(&self) -> Iterable<'a, VfPortsAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::VfPorts(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_port_self(&self) -> Iterable<'a, PortSelfAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::PortSelf(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Iterable<'a, AfSpecAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::AfSpec(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_group(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Group(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_net_ns_fd(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NetNsFd(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
+    pub fn get_ext_mask(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::ExtMask(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_promiscuity(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Promiscuity(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_tx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NumTxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_num_rx_queues(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NumRxQueues(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Carrier(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::PhysPortId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_changes(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::CarrierChanges(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_switch_id(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::PhysSwitchId(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::LinkNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_phys_port_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::PhysPortName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down(&self) -> Option<u8> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::ProtoDown(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::GsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::GsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_pad(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Pad(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_xdp(&self) -> Iterable<'a, XdpAttrs> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Xdp(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_event(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Event(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NewNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_target_netnsid(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::TargetNetnsid(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_up_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::CarrierUpCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_carrier_down_count(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::CarrierDownCount(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_new_ifindex(&self) -> Option<i32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::NewIfindex(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_min_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::MinMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_max_mtu(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::MaxMtu(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_prop_list(&self) -> Iterable<'a, PropListLinkAttrs<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::PropList(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_perm_address(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::PermAddress(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_proto_down_reason(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::ProtoDownReason(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::ParentDevName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_parent_dev_bus_name(&self) -> Option<&'a CStr> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::ParentDevBusName(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::GroMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::TsoMaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_tso_max_segs(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::TsoMaxSegs(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_allmulti(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::Allmulti(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_devlink_port(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::DevlinkPort(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gso_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::GsoIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_gro_ipv4_max_size(&self) -> Option<u32> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpSetlinkDoRequest::GroIpv4MaxSize(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpSetlinkDoRequest<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpSetlinkDoRequest<'a>>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
+    type Item = Result<OpSetlinkDoRequest<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => OpSetlinkDoRequest::Address({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpSetlinkDoRequest::Broadcast({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => OpSetlinkDoRequest::Ifname({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => OpSetlinkDoRequest::Mtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => OpSetlinkDoRequest::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => OpSetlinkDoRequest::Qdisc({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => OpSetlinkDoRequest::Stats({
+                    let res = PushRtnlLinkStats::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => OpSetlinkDoRequest::Cost({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => OpSetlinkDoRequest::Priority({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => OpSetlinkDoRequest::Master({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => OpSetlinkDoRequest::Wireless({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => OpSetlinkDoRequest::Protinfo({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => OpSetlinkDoRequest::Txqlen({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => OpSetlinkDoRequest::Map({
+                    let res = PushRtnlLinkIfmap::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => OpSetlinkDoRequest::Weight({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => OpSetlinkDoRequest::Operstate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => OpSetlinkDoRequest::Linkmode({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => OpSetlinkDoRequest::Linkinfo({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => OpSetlinkDoRequest::NetNsPid({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => OpSetlinkDoRequest::Ifalias({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => OpSetlinkDoRequest::NumVf({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => OpSetlinkDoRequest::VfinfoList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => OpSetlinkDoRequest::Stats64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => OpSetlinkDoRequest::VfPorts({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => OpSetlinkDoRequest::PortSelf({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => OpSetlinkDoRequest::AfSpec({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => OpSetlinkDoRequest::Group({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => OpSetlinkDoRequest::NetNsFd({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => OpSetlinkDoRequest::ExtMask({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => OpSetlinkDoRequest::Promiscuity({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => OpSetlinkDoRequest::NumTxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => OpSetlinkDoRequest::NumRxQueues({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                33u16 => OpSetlinkDoRequest::Carrier({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                34u16 => OpSetlinkDoRequest::PhysPortId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => OpSetlinkDoRequest::CarrierChanges({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                36u16 => OpSetlinkDoRequest::PhysSwitchId({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => OpSetlinkDoRequest::LinkNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => OpSetlinkDoRequest::PhysPortName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => OpSetlinkDoRequest::ProtoDown({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => OpSetlinkDoRequest::GsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => OpSetlinkDoRequest::GsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => OpSetlinkDoRequest::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => OpSetlinkDoRequest::Xdp({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                44u16 => OpSetlinkDoRequest::Event({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                45u16 => OpSetlinkDoRequest::NewNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                46u16 => OpSetlinkDoRequest::TargetNetnsid({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                47u16 => OpSetlinkDoRequest::CarrierUpCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                48u16 => OpSetlinkDoRequest::CarrierDownCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                49u16 => OpSetlinkDoRequest::NewIfindex({
+                    let res = parse_i32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                50u16 => OpSetlinkDoRequest::MinMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                51u16 => OpSetlinkDoRequest::MaxMtu({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                52u16 => OpSetlinkDoRequest::PropList({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                54u16 => OpSetlinkDoRequest::PermAddress({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                55u16 => OpSetlinkDoRequest::ProtoDownReason({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                56u16 => OpSetlinkDoRequest::ParentDevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                57u16 => OpSetlinkDoRequest::ParentDevBusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                58u16 => OpSetlinkDoRequest::GroMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                59u16 => OpSetlinkDoRequest::TsoMaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                60u16 => OpSetlinkDoRequest::TsoMaxSegs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                61u16 => OpSetlinkDoRequest::Allmulti({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                62u16 => OpSetlinkDoRequest::DevlinkPort({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                63u16 => OpSetlinkDoRequest::GsoIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                64u16 => OpSetlinkDoRequest::GroIpv4MaxSize({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpSetlinkDoRequest",
+            r#type.and_then(|t| OpSetlinkDoRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpSetlinkDoRequest<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpSetlinkDoRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpSetlinkDoRequest::Address(val) => fmt.field("Address", &val),
+                OpSetlinkDoRequest::Broadcast(val) => fmt.field("Broadcast", &val),
+                OpSetlinkDoRequest::Ifname(val) => fmt.field("Ifname", &val),
+                OpSetlinkDoRequest::Mtu(val) => fmt.field("Mtu", &val),
+                OpSetlinkDoRequest::Link(val) => fmt.field("Link", &val),
+                OpSetlinkDoRequest::Qdisc(val) => fmt.field("Qdisc", &val),
+                OpSetlinkDoRequest::Stats(val) => fmt.field("Stats", &val),
+                OpSetlinkDoRequest::Cost(val) => fmt.field("Cost", &val),
+                OpSetlinkDoRequest::Priority(val) => fmt.field("Priority", &val),
+                OpSetlinkDoRequest::Master(val) => fmt.field("Master", &val),
+                OpSetlinkDoRequest::Wireless(val) => fmt.field("Wireless", &val),
+                OpSetlinkDoRequest::Protinfo(val) => fmt.field("Protinfo", &val),
+                OpSetlinkDoRequest::Txqlen(val) => fmt.field("Txqlen", &val),
+                OpSetlinkDoRequest::Map(val) => fmt.field("Map", &val),
+                OpSetlinkDoRequest::Weight(val) => fmt.field("Weight", &val),
+                OpSetlinkDoRequest::Operstate(val) => fmt.field("Operstate", &val),
+                OpSetlinkDoRequest::Linkmode(val) => fmt.field("Linkmode", &val),
+                OpSetlinkDoRequest::Linkinfo(val) => fmt.field("Linkinfo", &val),
+                OpSetlinkDoRequest::NetNsPid(val) => fmt.field("NetNsPid", &val),
+                OpSetlinkDoRequest::Ifalias(val) => fmt.field("Ifalias", &val),
+                OpSetlinkDoRequest::NumVf(val) => fmt.field("NumVf", &val),
+                OpSetlinkDoRequest::VfinfoList(val) => fmt.field("VfinfoList", &val),
+                OpSetlinkDoRequest::Stats64(val) => fmt.field("Stats64", &val),
+                OpSetlinkDoRequest::VfPorts(val) => fmt.field("VfPorts", &val),
+                OpSetlinkDoRequest::PortSelf(val) => fmt.field("PortSelf", &val),
+                OpSetlinkDoRequest::AfSpec(val) => fmt.field("AfSpec", &val),
+                OpSetlinkDoRequest::Group(val) => fmt.field("Group", &val),
+                OpSetlinkDoRequest::NetNsFd(val) => fmt.field("NetNsFd", &val),
+                OpSetlinkDoRequest::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpSetlinkDoRequest::Promiscuity(val) => fmt.field("Promiscuity", &val),
+                OpSetlinkDoRequest::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
+                OpSetlinkDoRequest::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
+                OpSetlinkDoRequest::Carrier(val) => fmt.field("Carrier", &val),
+                OpSetlinkDoRequest::PhysPortId(val) => fmt.field("PhysPortId", &val),
+                OpSetlinkDoRequest::CarrierChanges(val) => fmt.field("CarrierChanges", &val),
+                OpSetlinkDoRequest::PhysSwitchId(val) => fmt.field("PhysSwitchId", &val),
+                OpSetlinkDoRequest::LinkNetnsid(val) => fmt.field("LinkNetnsid", &val),
+                OpSetlinkDoRequest::PhysPortName(val) => fmt.field("PhysPortName", &val),
+                OpSetlinkDoRequest::ProtoDown(val) => fmt.field("ProtoDown", &val),
+                OpSetlinkDoRequest::GsoMaxSegs(val) => fmt.field("GsoMaxSegs", &val),
+                OpSetlinkDoRequest::GsoMaxSize(val) => fmt.field("GsoMaxSize", &val),
+                OpSetlinkDoRequest::Pad(val) => fmt.field("Pad", &val),
+                OpSetlinkDoRequest::Xdp(val) => fmt.field("Xdp", &val),
+                OpSetlinkDoRequest::Event(val) => fmt.field("Event", &val),
+                OpSetlinkDoRequest::NewNetnsid(val) => fmt.field("NewNetnsid", &val),
+                OpSetlinkDoRequest::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                OpSetlinkDoRequest::CarrierUpCount(val) => fmt.field("CarrierUpCount", &val),
+                OpSetlinkDoRequest::CarrierDownCount(val) => fmt.field("CarrierDownCount", &val),
+                OpSetlinkDoRequest::NewIfindex(val) => fmt.field("NewIfindex", &val),
+                OpSetlinkDoRequest::MinMtu(val) => fmt.field("MinMtu", &val),
+                OpSetlinkDoRequest::MaxMtu(val) => fmt.field("MaxMtu", &val),
+                OpSetlinkDoRequest::PropList(val) => fmt.field("PropList", &val),
+                OpSetlinkDoRequest::PermAddress(val) => fmt.field("PermAddress", &val),
+                OpSetlinkDoRequest::ProtoDownReason(val) => fmt.field("ProtoDownReason", &val),
+                OpSetlinkDoRequest::ParentDevName(val) => fmt.field("ParentDevName", &val),
+                OpSetlinkDoRequest::ParentDevBusName(val) => fmt.field("ParentDevBusName", &val),
+                OpSetlinkDoRequest::GroMaxSize(val) => fmt.field("GroMaxSize", &val),
+                OpSetlinkDoRequest::TsoMaxSize(val) => fmt.field("TsoMaxSize", &val),
+                OpSetlinkDoRequest::TsoMaxSegs(val) => fmt.field("TsoMaxSegs", &val),
+                OpSetlinkDoRequest::Allmulti(val) => fmt.field("Allmulti", &val),
+                OpSetlinkDoRequest::DevlinkPort(val) => fmt.field("DevlinkPort", &val),
+                OpSetlinkDoRequest::GsoIpv4MaxSize(val) => fmt.field("GsoIpv4MaxSize", &val),
+                OpSetlinkDoRequest::GroIpv4MaxSize(val) => fmt.field("GroIpv4MaxSize", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Set information about a link."]
+pub struct PushOpSetlinkDoReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpSetlinkDoReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpSetlinkDoReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfinfomsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushOpSetlinkDoReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Set information about a link."]
+#[doc = "Original name: \"OpSetlinkDoReply\""]
+#[derive(Clone)]
+pub enum OpSetlinkDoReply {}
+impl<'a> Iterable<'a, OpSetlinkDoReply> {}
+impl OpSetlinkDoReply {
+    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, Iterable<'_, OpSetlinkDoReply>) {
+        let mut header = PushIfinfomsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Address",
+            2u16 => "Broadcast",
+            3u16 => "Ifname",
+            4u16 => "Mtu",
+            5u16 => "Link",
+            6u16 => "Qdisc",
+            7u16 => "Stats",
+            8u16 => "Cost",
+            9u16 => "Priority",
+            10u16 => "Master",
+            11u16 => "Wireless",
+            12u16 => "Protinfo",
+            13u16 => "Txqlen",
+            14u16 => "Map",
+            15u16 => "Weight",
+            16u16 => "Operstate",
+            17u16 => "Linkmode",
+            18u16 => "Linkinfo",
+            19u16 => "NetNsPid",
+            20u16 => "Ifalias",
+            21u16 => "NumVf",
+            22u16 => "VfinfoList",
+            23u16 => "Stats64",
+            24u16 => "VfPorts",
+            25u16 => "PortSelf",
+            26u16 => "AfSpec",
+            27u16 => "Group",
+            28u16 => "NetNsFd",
+            29u16 => "ExtMask",
+            30u16 => "Promiscuity",
+            31u16 => "NumTxQueues",
+            32u16 => "NumRxQueues",
+            33u16 => "Carrier",
+            34u16 => "PhysPortId",
+            35u16 => "CarrierChanges",
+            36u16 => "PhysSwitchId",
+            37u16 => "LinkNetnsid",
+            38u16 => "PhysPortName",
+            39u16 => "ProtoDown",
+            40u16 => "GsoMaxSegs",
+            41u16 => "GsoMaxSize",
+            42u16 => "Pad",
+            43u16 => "Xdp",
+            44u16 => "Event",
+            45u16 => "NewNetnsid",
+            46u16 => "TargetNetnsid",
+            47u16 => "CarrierUpCount",
+            48u16 => "CarrierDownCount",
+            49u16 => "NewIfindex",
+            50u16 => "MinMtu",
+            51u16 => "MaxMtu",
+            52u16 => "PropList",
+            53u16 => "AltIfname",
+            54u16 => "PermAddress",
+            55u16 => "ProtoDownReason",
+            56u16 => "ParentDevName",
+            57u16 => "ParentDevBusName",
+            58u16 => "GroMaxSize",
+            59u16 => "TsoMaxSize",
+            60u16 => "TsoMaxSegs",
+            61u16 => "Allmulti",
+            62u16 => "DevlinkPort",
+            63u16 => "GsoIpv4MaxSize",
+            64u16 => "GroIpv4MaxSize",
+            65u16 => "DpllPin",
+            66u16 => "MaxPacingOffloadHorizon",
+            67u16 => "NetnsImmutable",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, OpSetlinkDoReply> {
+    type Item = Result<OpSetlinkDoReply, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpSetlinkDoReply",
+            r#type.and_then(|t| OpSetlinkDoReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, OpSetlinkDoReply> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpSetlinkDoReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump link stats."]
+pub struct PushOpGetstatsDumpRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetstatsDumpRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetstatsDumpRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfStatsMsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetstatsDumpRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump link stats."]
+#[doc = "Original name: \"OpGetstatsDumpRequest\""]
+#[derive(Clone)]
+pub enum OpGetstatsDumpRequest {}
+impl<'a> Iterable<'a, OpGetstatsDumpRequest> {}
+impl OpGetstatsDumpRequest {
+    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, Iterable<'_, OpGetstatsDumpRequest>) {
+        let mut header = PushIfStatsMsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link64",
+            2u16 => "LinkXstats",
+            3u16 => "LinkXstatsSlave",
+            4u16 => "LinkOffloadXstats",
+            5u16 => "AfSpec",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, OpGetstatsDumpRequest> {
+    type Item = Result<OpGetstatsDumpRequest, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetstatsDumpRequest",
+            r#type.and_then(|t| OpGetstatsDumpRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, OpGetstatsDumpRequest> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetstatsDumpRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump link stats."]
+pub struct PushOpGetstatsDumpReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetstatsDumpReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetstatsDumpReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfStatsMsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link_64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_link_xstats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_xstats_slave(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_link_offload_xstats(mut self) -> PushLinkOffloadXstats<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        PushLinkOffloadXstats {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_af_spec(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetstatsDumpReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump link stats."]
+#[doc = "Original name: \"OpGetstatsDumpReply\""]
+#[derive(Clone)]
+pub enum OpGetstatsDumpReply<'a> {
+    Link64(PushRtnlLinkStats64),
+    LinkXstats(&'a [u8]),
+    LinkXstatsSlave(&'a [u8]),
+    LinkOffloadXstats(Iterable<'a, LinkOffloadXstats<'a>>),
+    AfSpec(&'a [u8]),
+}
+impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
+    pub fn get_link_64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDumpReply::Link64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_xstats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDumpReply::LinkXstats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_xstats_slave(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDumpReply::LinkXstatsSlave(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_offload_xstats(&self) -> Iterable<'a, LinkOffloadXstats<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDumpReply::LinkOffloadXstats(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDumpReply::AfSpec(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpGetstatsDumpReply<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, Iterable<'a, OpGetstatsDumpReply<'a>>) {
+        let mut header = PushIfStatsMsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link64",
+            2u16 => "LinkXstats",
+            3u16 => "LinkXstatsSlave",
+            4u16 => "LinkOffloadXstats",
+            5u16 => "AfSpec",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpGetstatsDumpReply<'a>> {
+    type Item = Result<OpGetstatsDumpReply<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => OpGetstatsDumpReply::Link64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpGetstatsDumpReply::LinkXstats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => OpGetstatsDumpReply::LinkXstatsSlave({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => OpGetstatsDumpReply::LinkOffloadXstats({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => OpGetstatsDumpReply::AfSpec({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetstatsDumpReply",
+            r#type.and_then(|t| OpGetstatsDumpReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpGetstatsDumpReply<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetstatsDumpReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpGetstatsDumpReply::Link64(val) => fmt.field("Link64", &val),
+                OpGetstatsDumpReply::LinkXstats(val) => fmt.field("LinkXstats", &val),
+                OpGetstatsDumpReply::LinkXstatsSlave(val) => fmt.field("LinkXstatsSlave", &val),
+                OpGetstatsDumpReply::LinkOffloadXstats(val) => fmt.field("LinkOffloadXstats", &val),
+                OpGetstatsDumpReply::AfSpec(val) => fmt.field("AfSpec", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump link stats."]
+pub struct PushOpGetstatsDoRequest<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetstatsDoRequest<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetstatsDoRequest<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfStatsMsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetstatsDoRequest<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump link stats."]
+#[doc = "Original name: \"OpGetstatsDoRequest\""]
+#[derive(Clone)]
+pub enum OpGetstatsDoRequest {}
+impl<'a> Iterable<'a, OpGetstatsDoRequest> {}
+impl OpGetstatsDoRequest {
+    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, Iterable<'_, OpGetstatsDoRequest>) {
+        let mut header = PushIfStatsMsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link64",
+            2u16 => "LinkXstats",
+            3u16 => "LinkXstatsSlave",
+            4u16 => "LinkOffloadXstats",
+            5u16 => "AfSpec",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl Iterator for Iterable<'_, OpGetstatsDoRequest> {
+    type Item = Result<OpGetstatsDoRequest, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetstatsDoRequest",
+            r#type.and_then(|t| OpGetstatsDoRequest::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, OpGetstatsDoRequest> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetstatsDoRequest");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+#[doc = "Get / dump link stats."]
+pub struct PushOpGetstatsDoReply<Prev: Rec> {
+    prev: Option<Prev>,
+    header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushOpGetstatsDoReply<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushOpGetstatsDoReply<Prev> {
+    pub fn new(mut prev: Prev, header: &PushIfStatsMsg) -> Self {
+        prev.as_rec_mut().extend(header.as_slice());
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_link_64(mut self, value: PushRtnlLinkStats64) -> Self {
+        push_header(self.as_rec_mut(), 1u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_link_xstats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn push_link_xstats_slave(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+    pub fn nested_link_offload_xstats(mut self) -> PushLinkOffloadXstats<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        PushLinkOffloadXstats {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_af_spec(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.len() as u16);
+        self.as_rec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushOpGetstatsDoReply<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get / dump link stats."]
+#[doc = "Original name: \"OpGetstatsDoReply\""]
+#[derive(Clone)]
+pub enum OpGetstatsDoReply<'a> {
+    Link64(PushRtnlLinkStats64),
+    LinkXstats(&'a [u8]),
+    LinkXstatsSlave(&'a [u8]),
+    LinkOffloadXstats(Iterable<'a, LinkOffloadXstats<'a>>),
+    AfSpec(&'a [u8]),
+}
+impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
+    pub fn get_link_64(&self) -> Option<PushRtnlLinkStats64> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDoReply::Link64(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_xstats(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDoReply::LinkXstats(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_xstats_slave(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDoReply::LinkXstatsSlave(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+    pub fn get_link_offload_xstats(&self) -> Iterable<'a, LinkOffloadXstats<'a>> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDoReply::LinkOffloadXstats(val) = attr {
+                return val;
+            }
+        }
+        Iterable::new(&[])
+    }
+    pub fn get_af_spec(&self) -> Option<&'a [u8]> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            let Ok(attr) = attr else { break };
+            if let OpGetstatsDoReply::AfSpec(val) = attr {
+                return Some(val);
+            }
+        }
+        None
+    }
+}
+impl<'a> OpGetstatsDoReply<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, Iterable<'a, OpGetstatsDoReply<'a>>) {
+        let mut header = PushIfStatsMsg::new();
+        header
+            .as_mut_slice()
+            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+        (
+            header,
+            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr()),
+        )
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Link64",
+            2u16 => "LinkXstats",
+            3u16 => "LinkXstatsSlave",
+            4u16 => "LinkOffloadXstats",
+            5u16 => "AfSpec",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+impl<'a> Iterator for Iterable<'a, OpGetstatsDoReply<'a>> {
+    type Item = Result<OpGetstatsDoReply<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => OpGetstatsDoReply::Link64({
+                    let res = PushRtnlLinkStats64::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpGetstatsDoReply::LinkXstats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => OpGetstatsDoReply::LinkXstatsSlave({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => OpGetstatsDoReply::LinkOffloadXstats({
+                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => OpGetstatsDoReply::AfSpec({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                0 => break,
+                n => break,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "OpGetstatsDoReply",
+            r#type.and_then(|t| OpGetstatsDoReply::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for Iterable<'a, OpGetstatsDoReply<'a>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("OpGetstatsDoReply");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                OpGetstatsDoReply::Link64(val) => fmt.field("Link64", &val),
+                OpGetstatsDoReply::LinkXstats(val) => fmt.field("LinkXstats", &val),
+                OpGetstatsDoReply::LinkXstatsSlave(val) => fmt.field("LinkXstatsSlave", &val),
+                OpGetstatsDoReply::LinkOffloadXstats(val) => fmt.field("LinkOffloadXstats", &val),
+                OpGetstatsDoReply::AfSpec(val) => fmt.field("AfSpec", &val),
+            };
+        }
+        fmt.finish()
+    }
+}

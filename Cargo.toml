@@ -1,0 +1,7 @@
+[workspace]
+resolver = "3"
+members = [ "netlink-bindings", "codegen" ]
+
+[patch.crates-io]
+# TODO: Remove when argh is updated past 0.1.13 
+argh = { git = "https://github.com/one-d-wide/argh.git", branch = "improve_usage" }

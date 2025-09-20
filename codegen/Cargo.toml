@@ -1,0 +1,23 @@
+[package]
+name = "netlink-codegen"
+version = "0.1.0"
+authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
+categories = [ "network-programming", "os", "api-bindings" ]
+repository = "https://github.com/one-d-wide/netlink-bindings"
+license = "GPL-2.0"
+edition = "2021"
+default-run = "codegen"
+
+[[bin]]
+name = "codegen"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1", features = [ "serde_derive" ] }
+serde-aux = "4"
+serde_yaml = "0.9.34-deprecated"
+quote = "1"
+proc-macro2 = "1"
+syn = "2"
+
+argh = { version = "0", default-features = false, features = [ "help" ] }
