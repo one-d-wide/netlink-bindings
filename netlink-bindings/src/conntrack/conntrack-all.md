@@ -529,6 +529,7 @@ PushOpGetDoReply::new(&mut vec)
 
     // helper name
     .push_help_name(val) // &CStr
+    .push_help_name_bytes(val) // &[u8]
   .end_nested()
   .nested_nat_src()
     .push_nat_v4_minip(val) // u32
@@ -637,6 +638,7 @@ PushOpGetDoReply::new(&mut vec)
   .push_zone(val) // u16
   .nested_secctx()
     .push_secctx_name(val) // &CStr
+    .push_secctx_name_bytes(val) // &[u8]
   .end_nested()
   .push_labels(val) // &[u8]
   .nested_synproxy()
@@ -1914,6 +1916,7 @@ PushOpGetDumpReply::new(&mut vec)
 
     // helper name
     .push_help_name(val) // &CStr
+    .push_help_name_bytes(val) // &[u8]
   .end_nested()
   .nested_nat_src()
     .push_nat_v4_minip(val) // u32
@@ -2022,6 +2025,7 @@ PushOpGetDumpReply::new(&mut vec)
   .push_zone(val) // u16
   .nested_secctx()
     .push_secctx_name(val) // &CStr
+    .push_secctx_name_bytes(val) // &[u8]
   .end_nested()
   .push_labels(val) // &[u8]
   .nested_synproxy()

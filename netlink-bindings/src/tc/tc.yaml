@@ -4074,6 +4074,7 @@ operations:
       do:
         request:
           value: 37
+          attributes: *create-params
     -
       name: getqdisc
       doc: Get / dump tc qdisc information.

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = [ "netlink-bindings", "codegen" ]
+members = [ "netlink-bindings", "netlink-socket", "reverse-lookup", "codegen" ]
 
 [patch.crates-io]
 # TODO: Remove when argh is updated past 0.1.13 

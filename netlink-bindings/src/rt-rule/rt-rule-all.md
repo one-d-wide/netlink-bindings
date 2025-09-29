@@ -6,7 +6,9 @@
 ```rust
 PushOpNewruleDoRequest::new(&mut vec)
   .push_iifname(val) // &CStr
+  .push_iifname_bytes(val) // &[u8]
   .push_oifname(val) // &CStr
+  .push_oifname_bytes(val) // &[u8]
   .push_priority(val) // u32
   .push_fwmark(val) // u32
   .push_flow(val) // u32
@@ -99,7 +101,9 @@ let iter = OpNewruleDoReply::new(buf);
 ```rust
 PushOpDelruleDoRequest::new(&mut vec)
   .push_iifname(val) // &CStr
+  .push_iifname_bytes(val) // &[u8]
   .push_oifname(val) // &CStr
+  .push_oifname_bytes(val) // &[u8]
   .push_priority(val) // u32
   .push_fwmark(val) // u32
   .push_flow(val) // u32
@@ -227,7 +231,9 @@ attrs.get_dscp_mask(); // u8
 ```rust
 PushOpGetruleDumpReply::new(&mut vec)
   .push_iifname(val) // &CStr
+  .push_iifname_bytes(val) // &[u8]
   .push_oifname(val) // &CStr
+  .push_oifname_bytes(val) // &[u8]
   .push_priority(val) // u32
   .push_fwmark(val) // u32
   .push_flow(val) // u32

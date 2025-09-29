@@ -1,12 +1,18 @@
 #![doc = "Netlink raw family for tc qdisc, chain, class and filter configuration over rtnetlink."]
 #![allow(clippy::all)]
+#![allow(unused_imports)]
+#![allow(unused_assignments)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::consts;
 use crate::utils::*;
-pub const PROTONUM: u8 = 0u8;
+use crate::{NetlinkRequest, Protocol};
+pub const PROTONAME: &CStr = c"tc";
+pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"cls-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Clone)]
 pub enum ClsFlags {
@@ -74,181 +80,165 @@ pub enum Attrs<'a> {
     ExtWarnMsg(&'a CStr),
 }
 impl<'a> Iterable<'a, Attrs<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Kind(val) = attr {
-                return Some(val);
+            if let Attrs::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Options(val) = attr {
-                return Some(val);
+            if let Attrs::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Stats(val) = attr {
-                return Some(val);
+            if let Attrs::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Xstats(val) = attr {
-                return Some(val);
+            if let Attrs::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Rate(val) = attr {
-                return Some(val);
+            if let Attrs::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Fcnt(val) = attr {
-                return Some(val);
+            if let Attrs::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Stats2(val) = attr {
-                return val;
+            if let Attrs::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("Attrs", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Stab(val) = attr {
-                return val;
+            if let Attrs::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("Attrs", "Stab"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Pad(val) = attr {
-                return Some(val);
+            if let Attrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Pad"))
     }
-    pub fn get_dump_invisible(&self) -> Option<()> {
+    pub fn get_dump_invisible(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::DumpInvisible(val) = attr {
-                return Some(val);
+            if let Attrs::DumpInvisible(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "DumpInvisible"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::Chain(val) = attr {
-                return Some(val);
+            if let Attrs::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "Chain"))
     }
-    pub fn get_hw_offload(&self) -> Option<u8> {
+    pub fn get_hw_offload(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::HwOffload(val) = attr {
-                return Some(val);
+            if let Attrs::HwOffload(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "HwOffload"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::IngressBlock(val) = attr {
-                return Some(val);
+            if let Attrs::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::EgressBlock(val) = attr {
-                return Some(val);
+            if let Attrs::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "EgressBlock"))
     }
-    pub fn get_dump_flags(&self) -> Option<PushBuiltinBitfield32> {
+    pub fn get_dump_flags(&self) -> Result<PushBuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::DumpFlags(val) = attr {
-                return Some(val);
+            if let Attrs::DumpFlags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "DumpFlags"))
     }
-    pub fn get_ext_warn_msg(&self) -> Option<&'a CStr> {
+    pub fn get_ext_warn_msg(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Attrs::ExtWarnMsg(val) = attr {
-                return Some(val);
+            if let Attrs::ExtWarnMsg(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Attrs", "ExtWarnMsg"))
     }
 }
 #[doc = "Original name: \"options-msg\""]
@@ -299,7 +289,7 @@ pub enum OptionsMsg<'a> {
     U32(Iterable<'a, U32Attrs<'a>>),
 }
 impl<'a> OptionsMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: *const u8) -> Option<Self> {
+    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
             b"basic" => Some(OptionsMsg::Basic(Iterable::with_loc(buf, loc))),
             b"bpf" => Some(OptionsMsg::Bpf(Iterable::with_loc(buf, loc))),
@@ -367,7 +357,7 @@ pub enum TcaStatsAppMsg<'a> {
     Sfq(PushTcSfqXstats),
 }
 impl<'a> TcaStatsAppMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: *const u8) -> Option<Self> {
+    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
             b"cake" => Some(TcaStatsAppMsg::Cake(Iterable::with_loc(buf, loc))),
             b"choke" => Some(TcaStatsAppMsg::Choke(PushTcChokeXstats::new_from_slice(
@@ -440,9 +430,7 @@ impl<'a> Iterator for Iterable<'a, Attrs<'a>> {
                 }),
                 2u16 => Attrs::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -455,9 +443,7 @@ impl<'a> Iterator for Iterable<'a, Attrs<'a>> {
                 }),
                 4u16 => Attrs::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -566,6 +552,133 @@ impl<'a> std::fmt::Debug for Iterable<'a, Attrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, Attrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("Attrs", offset));
+            return (stack, missing_type.and_then(|t| Attrs::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                Attrs::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                Attrs::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                Attrs::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                Attrs::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                Attrs::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                Attrs::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                Attrs::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                Attrs::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                Attrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                Attrs::DumpInvisible(val) => {
+                    if last_off == offset {
+                        stack.push(("DumpInvisible", last_off));
+                        break;
+                    }
+                }
+                Attrs::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                Attrs::HwOffload(val) => {
+                    if last_off == offset {
+                        stack.push(("HwOffload", last_off));
+                        break;
+                    }
+                }
+                Attrs::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                Attrs::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                Attrs::DumpFlags(val) => {
+                    if last_off == offset {
+                        stack.push(("DumpFlags", last_off));
+                        break;
+                    }
+                }
+                Attrs::ExtWarnMsg(val) => {
+                    if last_off == offset {
+                        stack.push(("ExtWarnMsg", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("Attrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"act-attrs\""]
 #[derive(Clone)]
 pub enum ActAttrs<'a> {
@@ -581,115 +694,105 @@ pub enum ActAttrs<'a> {
     InHwCount(u32),
 }
 impl<'a> Iterable<'a, ActAttrs<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Kind(val) = attr {
-                return Some(val);
+            if let ActAttrs::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "Kind"))
     }
-    pub fn get_options(&self) -> Option<ActOptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<ActOptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Options(val) = attr {
-                return Some(val);
+            if let ActAttrs::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "Options"))
     }
-    pub fn get_index(&self) -> Option<u32> {
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Index(val) = attr {
-                return Some(val);
+            if let ActAttrs::Index(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "Index"))
     }
-    pub fn get_stats(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Stats(val) = attr {
-                return val;
+            if let ActAttrs::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ActAttrs", "Stats"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "Pad"))
     }
-    pub fn get_cookie(&self) -> Option<&'a [u8]> {
+    pub fn get_cookie(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Cookie(val) = attr {
-                return Some(val);
+            if let ActAttrs::Cookie(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "Cookie"))
     }
-    pub fn get_flags(&self) -> Option<PushBuiltinBitfield32> {
+    pub fn get_flags(&self) -> Result<PushBuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::Flags(val) = attr {
-                return Some(val);
+            if let ActAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "Flags"))
     }
-    pub fn get_hw_stats(&self) -> Option<PushBuiltinBitfield32> {
+    pub fn get_hw_stats(&self) -> Result<PushBuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::HwStats(val) = attr {
-                return Some(val);
+            if let ActAttrs::HwStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "HwStats"))
     }
-    pub fn get_used_hw_stats(&self) -> Option<PushBuiltinBitfield32> {
+    pub fn get_used_hw_stats(&self) -> Result<PushBuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::UsedHwStats(val) = attr {
-                return Some(val);
+            if let ActAttrs::UsedHwStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "UsedHwStats"))
     }
-    pub fn get_in_hw_count(&self) -> Option<u32> {
+    pub fn get_in_hw_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActAttrs::InHwCount(val) = attr {
-                return Some(val);
+            if let ActAttrs::InHwCount(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActAttrs", "InHwCount"))
     }
 }
 #[doc = "Original name: \"act-options-msg\""]
@@ -716,7 +819,7 @@ pub enum ActOptionsMsg<'a> {
     Vlan(Iterable<'a, ActVlanAttrs<'a>>),
 }
 impl<'a> ActOptionsMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: *const u8) -> Option<Self> {
+    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
             b"bpf" => Some(ActOptionsMsg::Bpf(Iterable::with_loc(buf, loc))),
             b"connmark" => Some(ActOptionsMsg::Connmark(Iterable::with_loc(buf, loc))),
@@ -780,9 +883,7 @@ impl<'a> Iterator for Iterable<'a, ActAttrs<'a>> {
                 }),
                 2u16 => ActAttrs::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         ActOptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -869,6 +970,100 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActAttrs::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::Stats(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ActAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::Cookie(val) => {
+                    if last_off == offset {
+                        stack.push(("Cookie", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::HwStats(val) => {
+                    if last_off == offset {
+                        stack.push(("HwStats", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::UsedHwStats(val) => {
+                    if last_off == offset {
+                        stack.push(("UsedHwStats", last_off));
+                        break;
+                    }
+                }
+                ActAttrs::InHwCount(val) => {
+                    if last_off == offset {
+                        stack.push(("InHwCount", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"act-bpf-attrs\""]
 #[derive(Clone)]
 pub enum ActBpfAttrs<'a> {
@@ -883,104 +1078,95 @@ pub enum ActBpfAttrs<'a> {
     Id(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActBpfAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Parms"))
     }
-    pub fn get_ops_len(&self) -> Option<u16> {
+    pub fn get_ops_len(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::OpsLen(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::OpsLen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "OpsLen"))
     }
-    pub fn get_ops(&self) -> Option<&'a [u8]> {
+    pub fn get_ops(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Ops(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Ops(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Ops"))
     }
-    pub fn get_fd(&self) -> Option<u32> {
+    pub fn get_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Fd(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Fd(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Fd"))
     }
-    pub fn get_name(&self) -> Option<&'a CStr> {
+    pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Name(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Name(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Name"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Pad"))
     }
-    pub fn get_tag(&self) -> Option<&'a [u8]> {
+    pub fn get_tag(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Tag(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Tag(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Tag"))
     }
-    pub fn get_id(&self) -> Option<&'a [u8]> {
+    pub fn get_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActBpfAttrs::Id(val) = attr {
-                return Some(val);
+            if let ActBpfAttrs::Id(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActBpfAttrs", "Id"))
     }
 }
 impl<'a> ActBpfAttrs<'a> {
@@ -1099,6 +1285,93 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActBpfAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActBpfAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActBpfAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActBpfAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActBpfAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::OpsLen(val) => {
+                    if last_off == offset {
+                        stack.push(("OpsLen", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Ops(val) => {
+                    if last_off == offset {
+                        stack.push(("Ops", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Fd(val) => {
+                    if last_off == offset {
+                        stack.push(("Fd", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Name(val) => {
+                    if last_off == offset {
+                        stack.push(("Name", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Tag(val) => {
+                    if last_off == offset {
+                        stack.push(("Tag", last_off));
+                        break;
+                    }
+                }
+                ActBpfAttrs::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActBpfAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-connmark-attrs\""]
 #[derive(Clone)]
 pub enum ActConnmarkAttrs<'a> {
@@ -1107,38 +1380,35 @@ pub enum ActConnmarkAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActConnmarkAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActConnmarkAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActConnmarkAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActConnmarkAttrs", "Parms"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActConnmarkAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActConnmarkAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActConnmarkAttrs", "Tm"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActConnmarkAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActConnmarkAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActConnmarkAttrs", "Pad"))
     }
 }
 impl<'a> ActConnmarkAttrs<'a> {
@@ -1215,6 +1485,57 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActConnmarkAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActConnmarkAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActConnmarkAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActConnmarkAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActConnmarkAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActConnmarkAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActConnmarkAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActConnmarkAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-csum-attrs\""]
 #[derive(Clone)]
 pub enum ActCsumAttrs<'a> {
@@ -1223,38 +1544,35 @@ pub enum ActCsumAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActCsumAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCsumAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActCsumAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCsumAttrs", "Parms"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCsumAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActCsumAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCsumAttrs", "Tm"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCsumAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActCsumAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCsumAttrs", "Pad"))
     }
 }
 impl<'a> ActCsumAttrs<'a> {
@@ -1331,6 +1649,57 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActCsumAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActCsumAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActCsumAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActCsumAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActCsumAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActCsumAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActCsumAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActCsumAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-ct-attrs\""]
 #[derive(Clone)]
 pub enum ActCtAttrs<'a> {
@@ -1354,203 +1723,185 @@ pub enum ActCtAttrs<'a> {
     HelperProto(u8),
 }
 impl<'a> Iterable<'a, ActCtAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Parms"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Tm"))
     }
-    pub fn get_action(&self) -> Option<u16> {
+    pub fn get_action(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Action(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Action(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Action"))
     }
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Zone(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Zone"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Mark(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Mark"))
     }
-    pub fn get_mark_mask(&self) -> Option<u32> {
+    pub fn get_mark_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::MarkMask(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::MarkMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "MarkMask"))
     }
-    pub fn get_labels(&self) -> Option<&'a [u8]> {
+    pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Labels(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Labels(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Labels"))
     }
-    pub fn get_labels_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_labels_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::LabelsMask(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::LabelsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "LabelsMask"))
     }
-    pub fn get_nat_ipv4_min(&self) -> Option<u32> {
+    pub fn get_nat_ipv4_min(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::NatIpv4Min(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::NatIpv4Min(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "NatIpv4Min"))
     }
-    pub fn get_nat_ipv4_max(&self) -> Option<u32> {
+    pub fn get_nat_ipv4_max(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::NatIpv4Max(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::NatIpv4Max(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "NatIpv4Max"))
     }
-    pub fn get_nat_ipv6_min(&self) -> Option<&'a [u8]> {
+    pub fn get_nat_ipv6_min(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::NatIpv6Min(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::NatIpv6Min(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "NatIpv6Min"))
     }
-    pub fn get_nat_ipv6_max(&self) -> Option<&'a [u8]> {
+    pub fn get_nat_ipv6_max(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::NatIpv6Max(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::NatIpv6Max(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "NatIpv6Max"))
     }
-    pub fn get_nat_port_min(&self) -> Option<u16> {
+    pub fn get_nat_port_min(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::NatPortMin(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::NatPortMin(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "NatPortMin"))
     }
-    pub fn get_nat_port_max(&self) -> Option<u16> {
+    pub fn get_nat_port_max(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::NatPortMax(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::NatPortMax(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "NatPortMax"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "Pad"))
     }
-    pub fn get_helper_name(&self) -> Option<&'a CStr> {
+    pub fn get_helper_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::HelperName(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::HelperName(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "HelperName"))
     }
-    pub fn get_helper_family(&self) -> Option<u8> {
+    pub fn get_helper_family(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::HelperFamily(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::HelperFamily(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "HelperFamily"))
     }
-    pub fn get_helper_proto(&self) -> Option<u8> {
+    pub fn get_helper_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtAttrs::HelperProto(val) = attr {
-                return Some(val);
+            if let ActCtAttrs::HelperProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtAttrs", "HelperProto"))
     }
 }
 impl<'a> ActCtAttrs<'a> {
@@ -1732,6 +2083,147 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActCtAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActCtAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActCtAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActCtAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActCtAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::Action(val) => {
+                    if last_off == offset {
+                        stack.push(("Action", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::MarkMask(val) => {
+                    if last_off == offset {
+                        stack.push(("MarkMask", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::Labels(val) => {
+                    if last_off == offset {
+                        stack.push(("Labels", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::LabelsMask(val) => {
+                    if last_off == offset {
+                        stack.push(("LabelsMask", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::NatIpv4Min(val) => {
+                    if last_off == offset {
+                        stack.push(("NatIpv4Min", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::NatIpv4Max(val) => {
+                    if last_off == offset {
+                        stack.push(("NatIpv4Max", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::NatIpv6Min(val) => {
+                    if last_off == offset {
+                        stack.push(("NatIpv6Min", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::NatIpv6Max(val) => {
+                    if last_off == offset {
+                        stack.push(("NatIpv6Max", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::NatPortMin(val) => {
+                    if last_off == offset {
+                        stack.push(("NatPortMin", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::NatPortMax(val) => {
+                    if last_off == offset {
+                        stack.push(("NatPortMax", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::HelperName(val) => {
+                    if last_off == offset {
+                        stack.push(("HelperName", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::HelperFamily(val) => {
+                    if last_off == offset {
+                        stack.push(("HelperFamily", last_off));
+                        break;
+                    }
+                }
+                ActCtAttrs::HelperProto(val) => {
+                    if last_off == offset {
+                        stack.push(("HelperProto", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActCtAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-ctinfo-attrs\""]
 #[derive(Clone)]
 pub enum ActCtinfoAttrs<'a> {
@@ -1747,115 +2239,105 @@ pub enum ActCtinfoAttrs<'a> {
     StatsCpmarkSet(u64),
 }
 impl<'a> Iterable<'a, ActCtinfoAttrs<'a>> {
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "Pad"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "Tm"))
     }
-    pub fn get_act(&self) -> Option<&'a [u8]> {
+    pub fn get_act(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::Act(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::Act(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "Act"))
     }
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::Zone(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "Zone"))
     }
-    pub fn get_parms_dscp_mask(&self) -> Option<u32> {
+    pub fn get_parms_dscp_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::ParmsDscpMask(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::ParmsDscpMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "ParmsDscpMask"))
     }
-    pub fn get_parms_dscp_statemask(&self) -> Option<u32> {
+    pub fn get_parms_dscp_statemask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::ParmsDscpStatemask(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::ParmsDscpStatemask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "ParmsDscpStatemask"))
     }
-    pub fn get_parms_cpmark_mask(&self) -> Option<u32> {
+    pub fn get_parms_cpmark_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::ParmsCpmarkMask(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::ParmsCpmarkMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "ParmsCpmarkMask"))
     }
-    pub fn get_stats_dscp_set(&self) -> Option<u64> {
+    pub fn get_stats_dscp_set(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::StatsDscpSet(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::StatsDscpSet(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "StatsDscpSet"))
     }
-    pub fn get_stats_dscp_error(&self) -> Option<u64> {
+    pub fn get_stats_dscp_error(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::StatsDscpError(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::StatsDscpError(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "StatsDscpError"))
     }
-    pub fn get_stats_cpmark_set(&self) -> Option<u64> {
+    pub fn get_stats_cpmark_set(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActCtinfoAttrs::StatsCpmarkSet(val) = attr {
-                return Some(val);
+            if let ActCtinfoAttrs::StatsCpmarkSet(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActCtinfoAttrs", "StatsCpmarkSet"))
     }
 }
 impl<'a> ActCtinfoAttrs<'a> {
@@ -1981,6 +2463,99 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActCtinfoAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActCtinfoAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActCtinfoAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActCtinfoAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActCtinfoAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::Act(val) => {
+                    if last_off == offset {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::ParmsDscpMask(val) => {
+                    if last_off == offset {
+                        stack.push(("ParmsDscpMask", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::ParmsDscpStatemask(val) => {
+                    if last_off == offset {
+                        stack.push(("ParmsDscpStatemask", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::ParmsCpmarkMask(val) => {
+                    if last_off == offset {
+                        stack.push(("ParmsCpmarkMask", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::StatsDscpSet(val) => {
+                    if last_off == offset {
+                        stack.push(("StatsDscpSet", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::StatsDscpError(val) => {
+                    if last_off == offset {
+                        stack.push(("StatsDscpError", last_off));
+                        break;
+                    }
+                }
+                ActCtinfoAttrs::StatsCpmarkSet(val) => {
+                    if last_off == offset {
+                        stack.push(("StatsCpmarkSet", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActCtinfoAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-gate-attrs\""]
 #[derive(Clone)]
 pub enum ActGateAttrs<'a> {
@@ -1996,115 +2571,105 @@ pub enum ActGateAttrs<'a> {
     Clockid(i32),
 }
 impl<'a> Iterable<'a, ActGateAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "Parms"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "Pad"))
     }
-    pub fn get_priority(&self) -> Option<i32> {
+    pub fn get_priority(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::Priority(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "Priority"))
     }
-    pub fn get_entry_list(&self) -> Option<&'a [u8]> {
+    pub fn get_entry_list(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::EntryList(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::EntryList(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "EntryList"))
     }
-    pub fn get_base_time(&self) -> Option<u64> {
+    pub fn get_base_time(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::BaseTime(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::BaseTime(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "BaseTime"))
     }
-    pub fn get_cycle_time(&self) -> Option<u64> {
+    pub fn get_cycle_time(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::CycleTime(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::CycleTime(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "CycleTime"))
     }
-    pub fn get_cycle_time_ext(&self) -> Option<u64> {
+    pub fn get_cycle_time_ext(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::CycleTimeExt(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::CycleTimeExt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "CycleTimeExt"))
     }
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::Flags(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "Flags"))
     }
-    pub fn get_clockid(&self) -> Option<i32> {
+    pub fn get_clockid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGateAttrs::Clockid(val) = attr {
-                return Some(val);
+            if let ActGateAttrs::Clockid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGateAttrs", "Clockid"))
     }
 }
 impl<'a> ActGateAttrs<'a> {
@@ -2230,6 +2795,99 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActGateAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActGateAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActGateAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActGateAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActGateAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::EntryList(val) => {
+                    if last_off == offset {
+                        stack.push(("EntryList", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::BaseTime(val) => {
+                    if last_off == offset {
+                        stack.push(("BaseTime", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::CycleTime(val) => {
+                    if last_off == offset {
+                        stack.push(("CycleTime", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::CycleTimeExt(val) => {
+                    if last_off == offset {
+                        stack.push(("CycleTimeExt", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                ActGateAttrs::Clockid(val) => {
+                    if last_off == offset {
+                        stack.push(("Clockid", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActGateAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-ife-attrs\""]
 #[derive(Clone)]
 pub enum ActIfeAttrs<'a> {
@@ -2242,82 +2900,75 @@ pub enum ActIfeAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActIfeAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Parms"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Tm"))
     }
-    pub fn get_dmac(&self) -> Option<&'a [u8]> {
+    pub fn get_dmac(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Dmac(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Dmac(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Dmac"))
     }
-    pub fn get_smac(&self) -> Option<&'a [u8]> {
+    pub fn get_smac(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Smac(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Smac(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Smac"))
     }
-    pub fn get_type(&self) -> Option<u16> {
+    pub fn get_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Type(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Type(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Type"))
     }
-    pub fn get_metalst(&self) -> Option<&'a [u8]> {
+    pub fn get_metalst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Metalst(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Metalst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Metalst"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActIfeAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActIfeAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActIfeAttrs", "Pad"))
     }
 }
 impl<'a> ActIfeAttrs<'a> {
@@ -2422,6 +3073,81 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActIfeAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActIfeAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActIfeAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActIfeAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActIfeAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActIfeAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActIfeAttrs::Dmac(val) => {
+                    if last_off == offset {
+                        stack.push(("Dmac", last_off));
+                        break;
+                    }
+                }
+                ActIfeAttrs::Smac(val) => {
+                    if last_off == offset {
+                        stack.push(("Smac", last_off));
+                        break;
+                    }
+                }
+                ActIfeAttrs::Type(val) => {
+                    if last_off == offset {
+                        stack.push(("Type", last_off));
+                        break;
+                    }
+                }
+                ActIfeAttrs::Metalst(val) => {
+                    if last_off == offset {
+                        stack.push(("Metalst", last_off));
+                        break;
+                    }
+                }
+                ActIfeAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActIfeAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-mirred-attrs\""]
 #[derive(Clone)]
 pub enum ActMirredAttrs<'a> {
@@ -2431,49 +3157,45 @@ pub enum ActMirredAttrs<'a> {
     Blockid(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActMirredAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMirredAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActMirredAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMirredAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMirredAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActMirredAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMirredAttrs", "Parms"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMirredAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActMirredAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMirredAttrs", "Pad"))
     }
-    pub fn get_blockid(&self) -> Option<&'a [u8]> {
+    pub fn get_blockid(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMirredAttrs::Blockid(val) = attr {
-                return Some(val);
+            if let ActMirredAttrs::Blockid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMirredAttrs", "Blockid"))
     }
 }
 impl<'a> ActMirredAttrs<'a> {
@@ -2557,6 +3279,63 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActMirredAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActMirredAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActMirredAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActMirredAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActMirredAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActMirredAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActMirredAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActMirredAttrs::Blockid(val) => {
+                    if last_off == offset {
+                        stack.push(("Blockid", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActMirredAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-mpls-attrs\""]
 #[derive(Clone)]
 pub enum ActMplsAttrs<'a> {
@@ -2570,93 +3349,85 @@ pub enum ActMplsAttrs<'a> {
     Bos(u8),
 }
 impl<'a> Iterable<'a, ActMplsAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<PushTcMpls> {
+    pub fn get_parms(&self) -> Result<PushTcMpls, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Parms"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Pad"))
     }
-    pub fn get_proto(&self) -> Option<u16> {
+    pub fn get_proto(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Proto(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Proto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Proto"))
     }
-    pub fn get_label(&self) -> Option<u32> {
+    pub fn get_label(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Label(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Label(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Label"))
     }
-    pub fn get_tc(&self) -> Option<u8> {
+    pub fn get_tc(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Tc(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Tc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Tc"))
     }
-    pub fn get_ttl(&self) -> Option<u8> {
+    pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Ttl(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Ttl(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Ttl"))
     }
-    pub fn get_bos(&self) -> Option<u8> {
+    pub fn get_bos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActMplsAttrs::Bos(val) = attr {
-                return Some(val);
+            if let ActMplsAttrs::Bos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActMplsAttrs", "Bos"))
     }
 }
 impl<'a> ActMplsAttrs<'a> {
@@ -2768,6 +3539,87 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActMplsAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActMplsAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActMplsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActMplsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActMplsAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Proto(val) => {
+                    if last_off == offset {
+                        stack.push(("Proto", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Label(val) => {
+                    if last_off == offset {
+                        stack.push(("Label", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Tc(val) => {
+                    if last_off == offset {
+                        stack.push(("Tc", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Ttl(val) => {
+                    if last_off == offset {
+                        stack.push(("Ttl", last_off));
+                        break;
+                    }
+                }
+                ActMplsAttrs::Bos(val) => {
+                    if last_off == offset {
+                        stack.push(("Bos", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActMplsAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-nat-attrs\""]
 #[derive(Clone)]
 pub enum ActNatAttrs<'a> {
@@ -2776,38 +3628,35 @@ pub enum ActNatAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActNatAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActNatAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActNatAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActNatAttrs", "Parms"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActNatAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActNatAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActNatAttrs", "Tm"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActNatAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActNatAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActNatAttrs", "Pad"))
     }
 }
 impl<'a> ActNatAttrs<'a> {
@@ -2884,6 +3733,57 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActNatAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActNatAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActNatAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActNatAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActNatAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActNatAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActNatAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActNatAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-pedit-attrs\""]
 #[derive(Clone)]
 pub enum ActPeditAttrs<'a> {
@@ -2895,71 +3795,65 @@ pub enum ActPeditAttrs<'a> {
     KeyEx(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActPeditAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActPeditAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActPeditAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActPeditAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<PushTcPeditSel> {
+    pub fn get_parms(&self) -> Result<PushTcPeditSel, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActPeditAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActPeditAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActPeditAttrs", "Parms"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActPeditAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActPeditAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActPeditAttrs", "Pad"))
     }
-    pub fn get_parms_ex(&self) -> Option<&'a [u8]> {
+    pub fn get_parms_ex(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActPeditAttrs::ParmsEx(val) = attr {
-                return Some(val);
+            if let ActPeditAttrs::ParmsEx(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActPeditAttrs", "ParmsEx"))
     }
-    pub fn get_keys_ex(&self) -> Option<&'a [u8]> {
+    pub fn get_keys_ex(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActPeditAttrs::KeysEx(val) = attr {
-                return Some(val);
+            if let ActPeditAttrs::KeysEx(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActPeditAttrs", "KeysEx"))
     }
-    pub fn get_key_ex(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ex(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActPeditAttrs::KeyEx(val) = attr {
-                return Some(val);
+            if let ActPeditAttrs::KeyEx(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActPeditAttrs", "KeyEx"))
     }
 }
 impl<'a> ActPeditAttrs<'a> {
@@ -3057,6 +3951,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActPeditAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActPeditAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActPeditAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActPeditAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActPeditAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActPeditAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActPeditAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActPeditAttrs::ParmsEx(val) => {
+                    if last_off == offset {
+                        stack.push(("ParmsEx", last_off));
+                        break;
+                    }
+                }
+                ActPeditAttrs::KeysEx(val) => {
+                    if last_off == offset {
+                        stack.push(("KeysEx", last_off));
+                        break;
+                    }
+                }
+                ActPeditAttrs::KeyEx(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEx", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActPeditAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-simple-attrs\""]
 #[derive(Clone)]
 pub enum ActSimpleAttrs<'a> {
@@ -3066,49 +4029,45 @@ pub enum ActSimpleAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActSimpleAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSimpleAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActSimpleAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSimpleAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSimpleAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActSimpleAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSimpleAttrs", "Parms"))
     }
-    pub fn get_data(&self) -> Option<&'a [u8]> {
+    pub fn get_data(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSimpleAttrs::Data(val) = attr {
-                return Some(val);
+            if let ActSimpleAttrs::Data(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSimpleAttrs", "Data"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSimpleAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActSimpleAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSimpleAttrs", "Pad"))
     }
 }
 impl<'a> ActSimpleAttrs<'a> {
@@ -3192,6 +4151,63 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActSimpleAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActSimpleAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActSimpleAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActSimpleAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActSimpleAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActSimpleAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActSimpleAttrs::Data(val) => {
+                    if last_off == offset {
+                        stack.push(("Data", last_off));
+                        break;
+                    }
+                }
+                ActSimpleAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActSimpleAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-skbedit-attrs\""]
 #[derive(Clone)]
 pub enum ActSkbeditAttrs<'a> {
@@ -3207,115 +4223,105 @@ pub enum ActSkbeditAttrs<'a> {
     QueueMappingMax(u16),
 }
 impl<'a> Iterable<'a, ActSkbeditAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Parms"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Priority(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Priority"))
     }
-    pub fn get_queue_mapping(&self) -> Option<u16> {
+    pub fn get_queue_mapping(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::QueueMapping(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::QueueMapping(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "QueueMapping"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Mark(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Mark"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Pad"))
     }
-    pub fn get_ptype(&self) -> Option<u16> {
+    pub fn get_ptype(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Ptype(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Ptype(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Ptype"))
     }
-    pub fn get_mask(&self) -> Option<u32> {
+    pub fn get_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Mask(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Mask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Mask"))
     }
-    pub fn get_flags(&self) -> Option<u64> {
+    pub fn get_flags(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::Flags(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "Flags"))
     }
-    pub fn get_queue_mapping_max(&self) -> Option<u16> {
+    pub fn get_queue_mapping_max(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbeditAttrs::QueueMappingMax(val) = attr {
-                return Some(val);
+            if let ActSkbeditAttrs::QueueMappingMax(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbeditAttrs", "QueueMappingMax"))
     }
 }
 impl<'a> ActSkbeditAttrs<'a> {
@@ -3441,6 +4447,99 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActSkbeditAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActSkbeditAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActSkbeditAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActSkbeditAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActSkbeditAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::QueueMapping(val) => {
+                    if last_off == offset {
+                        stack.push(("QueueMapping", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Ptype(val) => {
+                    if last_off == offset {
+                        stack.push(("Ptype", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Mask(val) => {
+                    if last_off == offset {
+                        stack.push(("Mask", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                ActSkbeditAttrs::QueueMappingMax(val) => {
+                    if last_off == offset {
+                        stack.push(("QueueMappingMax", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActSkbeditAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-skbmod-attrs\""]
 #[derive(Clone)]
 pub enum ActSkbmodAttrs<'a> {
@@ -3452,71 +4551,65 @@ pub enum ActSkbmodAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActSkbmodAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbmodAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActSkbmodAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbmodAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbmodAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActSkbmodAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbmodAttrs", "Parms"))
     }
-    pub fn get_dmac(&self) -> Option<&'a [u8]> {
+    pub fn get_dmac(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbmodAttrs::Dmac(val) = attr {
-                return Some(val);
+            if let ActSkbmodAttrs::Dmac(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbmodAttrs", "Dmac"))
     }
-    pub fn get_smac(&self) -> Option<&'a [u8]> {
+    pub fn get_smac(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbmodAttrs::Smac(val) = attr {
-                return Some(val);
+            if let ActSkbmodAttrs::Smac(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbmodAttrs", "Smac"))
     }
-    pub fn get_etype(&self) -> Option<&'a [u8]> {
+    pub fn get_etype(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbmodAttrs::Etype(val) = attr {
-                return Some(val);
+            if let ActSkbmodAttrs::Etype(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbmodAttrs", "Etype"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSkbmodAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActSkbmodAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSkbmodAttrs", "Pad"))
     }
 }
 impl<'a> ActSkbmodAttrs<'a> {
@@ -3614,6 +4707,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActSkbmodAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActSkbmodAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActSkbmodAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActSkbmodAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActSkbmodAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActSkbmodAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActSkbmodAttrs::Dmac(val) => {
+                    if last_off == offset {
+                        stack.push(("Dmac", last_off));
+                        break;
+                    }
+                }
+                ActSkbmodAttrs::Smac(val) => {
+                    if last_off == offset {
+                        stack.push(("Smac", last_off));
+                        break;
+                    }
+                }
+                ActSkbmodAttrs::Etype(val) => {
+                    if last_off == offset {
+                        stack.push(("Etype", last_off));
+                        break;
+                    }
+                }
+                ActSkbmodAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActSkbmodAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-tunnel-key-attrs\""]
 #[derive(Clone)]
 pub enum ActTunnelKeyAttrs<'a> {
@@ -3633,159 +4795,145 @@ pub enum ActTunnelKeyAttrs<'a> {
     NoFrag(()),
 }
 impl<'a> Iterable<'a, ActTunnelKeyAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "Parms"))
     }
-    pub fn get_enc_ipv4_src(&self) -> Option<u32> {
+    pub fn get_enc_ipv4_src(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncIpv4Src(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncIpv4Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncIpv4Src"))
     }
-    pub fn get_enc_ipv4_dst(&self) -> Option<u32> {
+    pub fn get_enc_ipv4_dst(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncIpv4Dst(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncIpv4Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncIpv4Dst"))
     }
-    pub fn get_enc_ipv6_src(&self) -> Option<&'a [u8]> {
+    pub fn get_enc_ipv6_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncIpv6Src(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncIpv6Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncIpv6Src"))
     }
-    pub fn get_enc_ipv6_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_enc_ipv6_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncIpv6Dst(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncIpv6Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncIpv6Dst"))
     }
-    pub fn get_enc_key_id(&self) -> Option<u64> {
+    pub fn get_enc_key_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncKeyId(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncKeyId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncKeyId"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "Pad"))
     }
-    pub fn get_enc_dst_port(&self) -> Option<u16> {
+    pub fn get_enc_dst_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncDstPort(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncDstPort(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncDstPort"))
     }
-    pub fn get_no_csum(&self) -> Option<u8> {
+    pub fn get_no_csum(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::NoCsum(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::NoCsum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "NoCsum"))
     }
-    pub fn get_enc_opts(&self) -> Option<&'a [u8]> {
+    pub fn get_enc_opts(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncOpts(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncOpts(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncOpts"))
     }
-    pub fn get_enc_tos(&self) -> Option<u8> {
+    pub fn get_enc_tos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncTos(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncTos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncTos"))
     }
-    pub fn get_enc_ttl(&self) -> Option<u8> {
+    pub fn get_enc_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::EncTtl(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::EncTtl(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "EncTtl"))
     }
-    pub fn get_no_frag(&self) -> Option<()> {
+    pub fn get_no_frag(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActTunnelKeyAttrs::NoFrag(val) = attr {
-                return Some(val);
+            if let ActTunnelKeyAttrs::NoFrag(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActTunnelKeyAttrs", "NoFrag"))
     }
 }
 impl<'a> ActTunnelKeyAttrs<'a> {
@@ -3935,6 +5083,123 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActTunnelKeyAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActTunnelKeyAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActTunnelKeyAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActTunnelKeyAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActTunnelKeyAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncIpv4Src(val) => {
+                    if last_off == offset {
+                        stack.push(("EncIpv4Src", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncIpv4Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("EncIpv4Dst", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncIpv6Src(val) => {
+                    if last_off == offset {
+                        stack.push(("EncIpv6Src", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncIpv6Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("EncIpv6Dst", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncKeyId(val) => {
+                    if last_off == offset {
+                        stack.push(("EncKeyId", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncDstPort(val) => {
+                    if last_off == offset {
+                        stack.push(("EncDstPort", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::NoCsum(val) => {
+                    if last_off == offset {
+                        stack.push(("NoCsum", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncOpts(val) => {
+                    if last_off == offset {
+                        stack.push(("EncOpts", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncTos(val) => {
+                    if last_off == offset {
+                        stack.push(("EncTos", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::EncTtl(val) => {
+                    if last_off == offset {
+                        stack.push(("EncTtl", last_off));
+                        break;
+                    }
+                }
+                ActTunnelKeyAttrs::NoFrag(val) => {
+                    if last_off == offset {
+                        stack.push(("NoFrag", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActTunnelKeyAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-vlan-attrs\""]
 #[derive(Clone)]
 pub enum ActVlanAttrs<'a> {
@@ -3948,93 +5213,85 @@ pub enum ActVlanAttrs<'a> {
     PushEthSrc(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActVlanAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<PushTcVlan> {
+    pub fn get_parms(&self) -> Result<PushTcVlan, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "Parms"))
     }
-    pub fn get_push_vlan_id(&self) -> Option<u16> {
+    pub fn get_push_vlan_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::PushVlanId(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::PushVlanId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "PushVlanId"))
     }
-    pub fn get_push_vlan_protocol(&self) -> Option<u16> {
+    pub fn get_push_vlan_protocol(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::PushVlanProtocol(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::PushVlanProtocol(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "PushVlanProtocol"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "Pad"))
     }
-    pub fn get_push_vlan_priority(&self) -> Option<u8> {
+    pub fn get_push_vlan_priority(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::PushVlanPriority(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::PushVlanPriority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "PushVlanPriority"))
     }
-    pub fn get_push_eth_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_push_eth_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::PushEthDst(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::PushEthDst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "PushEthDst"))
     }
-    pub fn get_push_eth_src(&self) -> Option<&'a [u8]> {
+    pub fn get_push_eth_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActVlanAttrs::PushEthSrc(val) = attr {
-                return Some(val);
+            if let ActVlanAttrs::PushEthSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActVlanAttrs", "PushEthSrc"))
     }
 }
 impl<'a> ActVlanAttrs<'a> {
@@ -4146,6 +5403,87 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActVlanAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActVlanAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActVlanAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActVlanAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActVlanAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::PushVlanId(val) => {
+                    if last_off == offset {
+                        stack.push(("PushVlanId", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::PushVlanProtocol(val) => {
+                    if last_off == offset {
+                        stack.push(("PushVlanProtocol", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::PushVlanPriority(val) => {
+                    if last_off == offset {
+                        stack.push(("PushVlanPriority", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::PushEthDst(val) => {
+                    if last_off == offset {
+                        stack.push(("PushEthDst", last_off));
+                        break;
+                    }
+                }
+                ActVlanAttrs::PushEthSrc(val) => {
+                    if last_off == offset {
+                        stack.push(("PushEthSrc", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActVlanAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"basic-attrs\""]
 #[derive(Clone)]
 pub enum BasicAttrs<'a> {
@@ -4157,71 +5495,68 @@ pub enum BasicAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, BasicAttrs<'a>> {
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BasicAttrs::Classid(val) = attr {
-                return Some(val);
+            if let BasicAttrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BasicAttrs", "Classid"))
     }
-    pub fn get_ematches(&self) -> Iterable<'a, EmatchAttrs<'a>> {
+    pub fn get_ematches(&self) -> Result<Iterable<'a, EmatchAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BasicAttrs::Ematches(val) = attr {
-                return val;
+            if let BasicAttrs::Ematches(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("BasicAttrs", "Ematches"))
     }
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let BasicAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let BasicAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("BasicAttrs", "Act"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BasicAttrs::Police(val) = attr {
-                return val;
+            if let BasicAttrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("BasicAttrs", "Police"))
     }
-    pub fn get_pcnt(&self) -> Option<PushTcBasicPcnt> {
+    pub fn get_pcnt(&self) -> Result<PushTcBasicPcnt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BasicAttrs::Pcnt(val) = attr {
-                return Some(val);
+            if let BasicAttrs::Pcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BasicAttrs", "Pcnt"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BasicAttrs::Pad(val) = attr {
-                return Some(val);
+            if let BasicAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BasicAttrs", "Pad"))
     }
 }
 impl<'a> ActAttrs<'a> {
@@ -4349,6 +5684,83 @@ impl<'a> std::fmt::Debug for Iterable<'a, BasicAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, BasicAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("BasicAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| BasicAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                BasicAttrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                BasicAttrs::Ematches(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                BasicAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                BasicAttrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                BasicAttrs::Pcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Pcnt", last_off));
+                        break;
+                    }
+                }
+                BasicAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("BasicAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"bpf-attrs\""]
 #[derive(Clone)]
 pub enum BpfAttrs<'a> {
@@ -4367,124 +5779,116 @@ pub enum BpfAttrs<'a> {
 impl<'a> Iterable<'a, BpfAttrs<'a>> {
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let BpfAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("BpfAttrs", "Act"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Police(val) = attr {
-                return val;
+            if let BpfAttrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("BpfAttrs", "Police"))
     }
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Classid(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Classid"))
     }
-    pub fn get_ops_len(&self) -> Option<u16> {
+    pub fn get_ops_len(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::OpsLen(val) = attr {
-                return Some(val);
+            if let BpfAttrs::OpsLen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "OpsLen"))
     }
-    pub fn get_ops(&self) -> Option<&'a [u8]> {
+    pub fn get_ops(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Ops(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Ops(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Ops"))
     }
-    pub fn get_fd(&self) -> Option<u32> {
+    pub fn get_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Fd(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Fd(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Fd"))
     }
-    pub fn get_name(&self) -> Option<&'a CStr> {
+    pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Name(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Name(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Name"))
     }
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Flags(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Flags"))
     }
-    pub fn get_flags_gen(&self) -> Option<u32> {
+    pub fn get_flags_gen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::FlagsGen(val) = attr {
-                return Some(val);
+            if let BpfAttrs::FlagsGen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "FlagsGen"))
     }
-    pub fn get_tag(&self) -> Option<&'a [u8]> {
+    pub fn get_tag(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Tag(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Tag(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Tag"))
     }
-    pub fn get_id(&self) -> Option<u32> {
+    pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let BpfAttrs::Id(val) = attr {
-                return Some(val);
+            if let BpfAttrs::Id(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("BpfAttrs", "Id"))
     }
 }
 impl<'a> BpfAttrs<'a> {
@@ -4617,6 +6021,113 @@ impl<'a> std::fmt::Debug for Iterable<'a, BpfAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, BpfAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("BpfAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| BpfAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                BpfAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                BpfAttrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::OpsLen(val) => {
+                    if last_off == offset {
+                        stack.push(("OpsLen", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Ops(val) => {
+                    if last_off == offset {
+                        stack.push(("Ops", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Fd(val) => {
+                    if last_off == offset {
+                        stack.push(("Fd", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Name(val) => {
+                    if last_off == offset {
+                        stack.push(("Name", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::FlagsGen(val) => {
+                    if last_off == offset {
+                        stack.push(("FlagsGen", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Tag(val) => {
+                    if last_off == offset {
+                        stack.push(("Tag", last_off));
+                        break;
+                    }
+                }
+                BpfAttrs::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("BpfAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"cake-attrs\""]
 #[derive(Clone)]
 pub enum CakeAttrs<'a> {
@@ -4640,203 +6151,185 @@ pub enum CakeAttrs<'a> {
     Fwmark(u32),
 }
 impl<'a> Iterable<'a, CakeAttrs<'a>> {
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Pad(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Pad"))
     }
-    pub fn get_base_rate64(&self) -> Option<u64> {
+    pub fn get_base_rate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::BaseRate64(val) = attr {
-                return Some(val);
+            if let CakeAttrs::BaseRate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "BaseRate64"))
     }
-    pub fn get_diffserv_mode(&self) -> Option<u32> {
+    pub fn get_diffserv_mode(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::DiffservMode(val) = attr {
-                return Some(val);
+            if let CakeAttrs::DiffservMode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "DiffservMode"))
     }
-    pub fn get_atm(&self) -> Option<u32> {
+    pub fn get_atm(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Atm(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Atm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Atm"))
     }
-    pub fn get_flow_mode(&self) -> Option<u32> {
+    pub fn get_flow_mode(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::FlowMode(val) = attr {
-                return Some(val);
+            if let CakeAttrs::FlowMode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "FlowMode"))
     }
-    pub fn get_overhead(&self) -> Option<u32> {
+    pub fn get_overhead(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Overhead(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Overhead(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Overhead"))
     }
-    pub fn get_rtt(&self) -> Option<u32> {
+    pub fn get_rtt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Rtt(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Rtt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Rtt"))
     }
-    pub fn get_target(&self) -> Option<u32> {
+    pub fn get_target(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Target(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Target(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Target"))
     }
-    pub fn get_autorate(&self) -> Option<u32> {
+    pub fn get_autorate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Autorate(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Autorate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Autorate"))
     }
-    pub fn get_memory(&self) -> Option<u32> {
+    pub fn get_memory(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Memory(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Memory(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Memory"))
     }
-    pub fn get_nat(&self) -> Option<u32> {
+    pub fn get_nat(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Nat(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Nat(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Nat"))
     }
-    pub fn get_raw(&self) -> Option<u32> {
+    pub fn get_raw(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Raw(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Raw(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Raw"))
     }
-    pub fn get_wash(&self) -> Option<u32> {
+    pub fn get_wash(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Wash(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Wash(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Wash"))
     }
-    pub fn get_mpu(&self) -> Option<u32> {
+    pub fn get_mpu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Mpu(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Mpu(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Mpu"))
     }
-    pub fn get_ingress(&self) -> Option<u32> {
+    pub fn get_ingress(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Ingress(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Ingress(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Ingress"))
     }
-    pub fn get_ack_filter(&self) -> Option<u32> {
+    pub fn get_ack_filter(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::AckFilter(val) = attr {
-                return Some(val);
+            if let CakeAttrs::AckFilter(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "AckFilter"))
     }
-    pub fn get_split_gso(&self) -> Option<u32> {
+    pub fn get_split_gso(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::SplitGso(val) = attr {
-                return Some(val);
+            if let CakeAttrs::SplitGso(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "SplitGso"))
     }
-    pub fn get_fwmark(&self) -> Option<u32> {
+    pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeAttrs::Fwmark(val) = attr {
-                return Some(val);
+            if let CakeAttrs::Fwmark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeAttrs", "Fwmark"))
     }
 }
 impl<'a> CakeAttrs<'a> {
@@ -5018,6 +6511,147 @@ impl<'a> std::fmt::Debug for Iterable<'a, CakeAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, CakeAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CakeAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CakeAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CakeAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::BaseRate64(val) => {
+                    if last_off == offset {
+                        stack.push(("BaseRate64", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::DiffservMode(val) => {
+                    if last_off == offset {
+                        stack.push(("DiffservMode", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Atm(val) => {
+                    if last_off == offset {
+                        stack.push(("Atm", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::FlowMode(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowMode", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Overhead(val) => {
+                    if last_off == offset {
+                        stack.push(("Overhead", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Rtt(val) => {
+                    if last_off == offset {
+                        stack.push(("Rtt", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Target(val) => {
+                    if last_off == offset {
+                        stack.push(("Target", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Autorate(val) => {
+                    if last_off == offset {
+                        stack.push(("Autorate", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Memory(val) => {
+                    if last_off == offset {
+                        stack.push(("Memory", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Nat(val) => {
+                    if last_off == offset {
+                        stack.push(("Nat", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Raw(val) => {
+                    if last_off == offset {
+                        stack.push(("Raw", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Wash(val) => {
+                    if last_off == offset {
+                        stack.push(("Wash", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Mpu(val) => {
+                    if last_off == offset {
+                        stack.push(("Mpu", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Ingress(val) => {
+                    if last_off == offset {
+                        stack.push(("Ingress", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::AckFilter(val) => {
+                    if last_off == offset {
+                        stack.push(("AckFilter", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::SplitGso(val) => {
+                    if last_off == offset {
+                        stack.push(("SplitGso", last_off));
+                        break;
+                    }
+                }
+                CakeAttrs::Fwmark(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmark", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CakeAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"cake-stats-attrs\""]
 #[derive(Clone)]
 pub enum CakeStatsAttrs<'a> {
@@ -5039,184 +6673,171 @@ pub enum CakeStatsAttrs<'a> {
     BlueTimerUs(i32),
 }
 impl<'a> Iterable<'a, CakeStatsAttrs<'a>> {
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::Pad(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "Pad"))
     }
-    pub fn get_capacity_estimate64(&self) -> Option<u64> {
+    pub fn get_capacity_estimate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::CapacityEstimate64(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::CapacityEstimate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "CapacityEstimate64"))
     }
-    pub fn get_memory_limit(&self) -> Option<u32> {
+    pub fn get_memory_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::MemoryLimit(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::MemoryLimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "MemoryLimit"))
     }
-    pub fn get_memory_used(&self) -> Option<u32> {
+    pub fn get_memory_used(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::MemoryUsed(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::MemoryUsed(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "MemoryUsed"))
     }
-    pub fn get_avg_netoff(&self) -> Option<u32> {
+    pub fn get_avg_netoff(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::AvgNetoff(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::AvgNetoff(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "AvgNetoff"))
     }
-    pub fn get_min_netlen(&self) -> Option<u32> {
+    pub fn get_min_netlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::MinNetlen(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::MinNetlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "MinNetlen"))
     }
-    pub fn get_max_netlen(&self) -> Option<u32> {
+    pub fn get_max_netlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::MaxNetlen(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::MaxNetlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "MaxNetlen"))
     }
-    pub fn get_min_adjlen(&self) -> Option<u32> {
+    pub fn get_min_adjlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::MinAdjlen(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::MinAdjlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "MinAdjlen"))
     }
-    pub fn get_max_adjlen(&self) -> Option<u32> {
+    pub fn get_max_adjlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::MaxAdjlen(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::MaxAdjlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "MaxAdjlen"))
     }
     pub fn get_tin_stats(
         &self,
-    ) -> ArrayIterable<
-        Iterable<'a, Iterable<'a, CakeTinStatsAttrs<'a>>>,
-        Iterable<'a, CakeTinStatsAttrs<'a>>,
+    ) -> Result<
+        ArrayIterable<
+            Iterable<'a, Iterable<'a, CakeTinStatsAttrs<'a>>>,
+            Iterable<'a, CakeTinStatsAttrs<'a>>,
+        >,
+        ErrorContext,
     > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::TinStats(val) = attr {
-                return ArrayIterable::new(val);
+            if let CakeStatsAttrs::TinStats(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("CakeStatsAttrs", "TinStats"))
     }
-    pub fn get_deficit(&self) -> Option<i32> {
+    pub fn get_deficit(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::Deficit(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::Deficit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "Deficit"))
     }
-    pub fn get_cobalt_count(&self) -> Option<u32> {
+    pub fn get_cobalt_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::CobaltCount(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::CobaltCount(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "CobaltCount"))
     }
-    pub fn get_dropping(&self) -> Option<u32> {
+    pub fn get_dropping(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::Dropping(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::Dropping(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "Dropping"))
     }
-    pub fn get_drop_next_us(&self) -> Option<i32> {
+    pub fn get_drop_next_us(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::DropNextUs(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::DropNextUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "DropNextUs"))
     }
-    pub fn get_p_drop(&self) -> Option<u32> {
+    pub fn get_p_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::PDrop(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::PDrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "PDrop"))
     }
-    pub fn get_blue_timer_us(&self) -> Option<i32> {
+    pub fn get_blue_timer_us(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeStatsAttrs::BlueTimerUs(val) = attr {
-                return Some(val);
+            if let CakeStatsAttrs::BlueTimerUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeStatsAttrs", "BlueTimerUs"))
     }
 }
 impl<'a> CakeTinStatsAttrs<'a> {
@@ -5414,6 +7035,143 @@ impl<'a> std::fmt::Debug for Iterable<'a, CakeStatsAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, CakeStatsAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CakeStatsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CakeStatsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CakeStatsAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::CapacityEstimate64(val) => {
+                    if last_off == offset {
+                        stack.push(("CapacityEstimate64", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::MemoryLimit(val) => {
+                    if last_off == offset {
+                        stack.push(("MemoryLimit", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::MemoryUsed(val) => {
+                    if last_off == offset {
+                        stack.push(("MemoryUsed", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::AvgNetoff(val) => {
+                    if last_off == offset {
+                        stack.push(("AvgNetoff", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::MinNetlen(val) => {
+                    if last_off == offset {
+                        stack.push(("MinNetlen", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::MaxNetlen(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxNetlen", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::MinAdjlen(val) => {
+                    if last_off == offset {
+                        stack.push(("MinAdjlen", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::MaxAdjlen(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxAdjlen", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::TinStats(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("TinStats", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::Deficit(val) => {
+                    if last_off == offset {
+                        stack.push(("Deficit", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::CobaltCount(val) => {
+                    if last_off == offset {
+                        stack.push(("CobaltCount", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::Dropping(val) => {
+                    if last_off == offset {
+                        stack.push(("Dropping", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::DropNextUs(val) => {
+                    if last_off == offset {
+                        stack.push(("DropNextUs", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::PDrop(val) => {
+                    if last_off == offset {
+                        stack.push(("PDrop", last_off));
+                        break;
+                    }
+                }
+                CakeStatsAttrs::BlueTimerUs(val) => {
+                    if last_off == offset {
+                        stack.push(("BlueTimerUs", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CakeStatsAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"cake-tin-stats-attrs\""]
 #[derive(Clone)]
 pub enum CakeTinStatsAttrs<'a> {
@@ -5444,280 +7202,255 @@ pub enum CakeTinStatsAttrs<'a> {
     FlowQuantum(u32),
 }
 impl<'a> Iterable<'a, CakeTinStatsAttrs<'a>> {
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::Pad(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "Pad"))
     }
-    pub fn get_sent_packets(&self) -> Option<u32> {
+    pub fn get_sent_packets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::SentPackets(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::SentPackets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "SentPackets"))
     }
-    pub fn get_sent_bytes64(&self) -> Option<u64> {
+    pub fn get_sent_bytes64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::SentBytes64(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::SentBytes64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "SentBytes64"))
     }
-    pub fn get_dropped_packets(&self) -> Option<u32> {
+    pub fn get_dropped_packets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::DroppedPackets(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::DroppedPackets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "DroppedPackets"))
     }
-    pub fn get_dropped_bytes64(&self) -> Option<u64> {
+    pub fn get_dropped_bytes64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::DroppedBytes64(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::DroppedBytes64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "DroppedBytes64"))
     }
-    pub fn get_acks_dropped_packets(&self) -> Option<u32> {
+    pub fn get_acks_dropped_packets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::AcksDroppedPackets(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::AcksDroppedPackets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "AcksDroppedPackets"))
     }
-    pub fn get_acks_dropped_bytes64(&self) -> Option<u64> {
+    pub fn get_acks_dropped_bytes64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::AcksDroppedBytes64(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::AcksDroppedBytes64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "AcksDroppedBytes64"))
     }
-    pub fn get_ecn_marked_packets(&self) -> Option<u32> {
+    pub fn get_ecn_marked_packets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::EcnMarkedPackets(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::EcnMarkedPackets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "EcnMarkedPackets"))
     }
-    pub fn get_ecn_marked_bytes64(&self) -> Option<u64> {
+    pub fn get_ecn_marked_bytes64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::EcnMarkedBytes64(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::EcnMarkedBytes64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "EcnMarkedBytes64"))
     }
-    pub fn get_backlog_packets(&self) -> Option<u32> {
+    pub fn get_backlog_packets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::BacklogPackets(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::BacklogPackets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "BacklogPackets"))
     }
-    pub fn get_backlog_bytes(&self) -> Option<u32> {
+    pub fn get_backlog_bytes(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::BacklogBytes(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::BacklogBytes(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "BacklogBytes"))
     }
-    pub fn get_threshold_rate64(&self) -> Option<u64> {
+    pub fn get_threshold_rate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::ThresholdRate64(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::ThresholdRate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "ThresholdRate64"))
     }
-    pub fn get_target_us(&self) -> Option<u32> {
+    pub fn get_target_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::TargetUs(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::TargetUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "TargetUs"))
     }
-    pub fn get_interval_us(&self) -> Option<u32> {
+    pub fn get_interval_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::IntervalUs(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::IntervalUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "IntervalUs"))
     }
-    pub fn get_way_indirect_hits(&self) -> Option<u32> {
+    pub fn get_way_indirect_hits(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::WayIndirectHits(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::WayIndirectHits(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "WayIndirectHits"))
     }
-    pub fn get_way_misses(&self) -> Option<u32> {
+    pub fn get_way_misses(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::WayMisses(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::WayMisses(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "WayMisses"))
     }
-    pub fn get_way_collisions(&self) -> Option<u32> {
+    pub fn get_way_collisions(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::WayCollisions(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::WayCollisions(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "WayCollisions"))
     }
-    pub fn get_peak_delay_us(&self) -> Option<u32> {
+    pub fn get_peak_delay_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::PeakDelayUs(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::PeakDelayUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "PeakDelayUs"))
     }
-    pub fn get_avg_delay_us(&self) -> Option<u32> {
+    pub fn get_avg_delay_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::AvgDelayUs(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::AvgDelayUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "AvgDelayUs"))
     }
-    pub fn get_base_delay_us(&self) -> Option<u32> {
+    pub fn get_base_delay_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::BaseDelayUs(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::BaseDelayUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "BaseDelayUs"))
     }
-    pub fn get_sparse_flows(&self) -> Option<u32> {
+    pub fn get_sparse_flows(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::SparseFlows(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::SparseFlows(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "SparseFlows"))
     }
-    pub fn get_bulk_flows(&self) -> Option<u32> {
+    pub fn get_bulk_flows(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::BulkFlows(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::BulkFlows(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "BulkFlows"))
     }
-    pub fn get_unresponsive_flows(&self) -> Option<u32> {
+    pub fn get_unresponsive_flows(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::UnresponsiveFlows(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::UnresponsiveFlows(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "UnresponsiveFlows"))
     }
-    pub fn get_max_skblen(&self) -> Option<u32> {
+    pub fn get_max_skblen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::MaxSkblen(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::MaxSkblen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "MaxSkblen"))
     }
-    pub fn get_flow_quantum(&self) -> Option<u32> {
+    pub fn get_flow_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CakeTinStatsAttrs::FlowQuantum(val) = attr {
-                return Some(val);
+            if let CakeTinStatsAttrs::FlowQuantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CakeTinStatsAttrs", "FlowQuantum"))
     }
 }
 impl<'a> CakeTinStatsAttrs<'a> {
@@ -5948,22 +7681,204 @@ impl<'a> std::fmt::Debug for Iterable<'a, CakeTinStatsAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, CakeTinStatsAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CakeTinStatsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CakeTinStatsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CakeTinStatsAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::SentPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("SentPackets", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::SentBytes64(val) => {
+                    if last_off == offset {
+                        stack.push(("SentBytes64", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::DroppedPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("DroppedPackets", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::DroppedBytes64(val) => {
+                    if last_off == offset {
+                        stack.push(("DroppedBytes64", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::AcksDroppedPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("AcksDroppedPackets", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::AcksDroppedBytes64(val) => {
+                    if last_off == offset {
+                        stack.push(("AcksDroppedBytes64", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::EcnMarkedPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("EcnMarkedPackets", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::EcnMarkedBytes64(val) => {
+                    if last_off == offset {
+                        stack.push(("EcnMarkedBytes64", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::BacklogPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("BacklogPackets", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::BacklogBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("BacklogBytes", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::ThresholdRate64(val) => {
+                    if last_off == offset {
+                        stack.push(("ThresholdRate64", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::TargetUs(val) => {
+                    if last_off == offset {
+                        stack.push(("TargetUs", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::IntervalUs(val) => {
+                    if last_off == offset {
+                        stack.push(("IntervalUs", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::WayIndirectHits(val) => {
+                    if last_off == offset {
+                        stack.push(("WayIndirectHits", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::WayMisses(val) => {
+                    if last_off == offset {
+                        stack.push(("WayMisses", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::WayCollisions(val) => {
+                    if last_off == offset {
+                        stack.push(("WayCollisions", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::PeakDelayUs(val) => {
+                    if last_off == offset {
+                        stack.push(("PeakDelayUs", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::AvgDelayUs(val) => {
+                    if last_off == offset {
+                        stack.push(("AvgDelayUs", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::BaseDelayUs(val) => {
+                    if last_off == offset {
+                        stack.push(("BaseDelayUs", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::SparseFlows(val) => {
+                    if last_off == offset {
+                        stack.push(("SparseFlows", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::BulkFlows(val) => {
+                    if last_off == offset {
+                        stack.push(("BulkFlows", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::UnresponsiveFlows(val) => {
+                    if last_off == offset {
+                        stack.push(("UnresponsiveFlows", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::MaxSkblen(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxSkblen", last_off));
+                        break;
+                    }
+                }
+                CakeTinStatsAttrs::FlowQuantum(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowQuantum", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CakeTinStatsAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"cbs-attrs\""]
 #[derive(Clone)]
 pub enum CbsAttrs {
     Parms(PushTcCbsQopt),
 }
 impl<'a> Iterable<'a, CbsAttrs> {
-    pub fn get_parms(&self) -> Option<PushTcCbsQopt> {
+    pub fn get_parms(&self) -> Result<PushTcCbsQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CbsAttrs::Parms(val) = attr {
-                return Some(val);
+            if let CbsAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CbsAttrs", "Parms"))
     }
 }
 impl CbsAttrs {
@@ -6026,6 +7941,45 @@ impl std::fmt::Debug for Iterable<'_, CbsAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, CbsAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CbsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CbsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CbsAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CbsAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"cgroup-attrs\""]
 #[derive(Clone)]
 pub enum CgroupAttrs<'a> {
@@ -6036,36 +7990,36 @@ pub enum CgroupAttrs<'a> {
 impl<'a> Iterable<'a, CgroupAttrs<'a>> {
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let CgroupAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let CgroupAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("CgroupAttrs", "Act"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CgroupAttrs::Police(val) = attr {
-                return val;
+            if let CgroupAttrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("CgroupAttrs", "Police"))
     }
-    pub fn get_ematches(&self) -> Option<&'a [u8]> {
+    pub fn get_ematches(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CgroupAttrs::Ematches(val) = attr {
-                return Some(val);
+            if let CgroupAttrs::Ematches(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CgroupAttrs", "Ematches"))
     }
 }
 impl<'a> CgroupAttrs<'a> {
@@ -6142,6 +8096,65 @@ impl<'a> std::fmt::Debug for Iterable<'a, CgroupAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, CgroupAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CgroupAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CgroupAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CgroupAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                CgroupAttrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                CgroupAttrs::Ematches(val) => {
+                    if last_off == offset {
+                        stack.push(("Ematches", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CgroupAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"choke-attrs\""]
 #[derive(Clone)]
 pub enum ChokeAttrs<'a> {
@@ -6150,38 +8163,35 @@ pub enum ChokeAttrs<'a> {
     MaxP(u32),
 }
 impl<'a> Iterable<'a, ChokeAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<PushTcRedQopt> {
+    pub fn get_parms(&self) -> Result<PushTcRedQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ChokeAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ChokeAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ChokeAttrs", "Parms"))
     }
-    pub fn get_stab(&self) -> Option<&'a [u8]> {
+    pub fn get_stab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ChokeAttrs::Stab(val) = attr {
-                return Some(val);
+            if let ChokeAttrs::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ChokeAttrs", "Stab"))
     }
-    pub fn get_max_p(&self) -> Option<u32> {
+    pub fn get_max_p(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ChokeAttrs::MaxP(val) = attr {
-                return Some(val);
+            if let ChokeAttrs::MaxP(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ChokeAttrs", "MaxP"))
     }
 }
 impl<'a> ChokeAttrs<'a> {
@@ -6258,6 +8268,57 @@ impl<'a> std::fmt::Debug for Iterable<'a, ChokeAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ChokeAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ChokeAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ChokeAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ChokeAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ChokeAttrs::Stab(val) => {
+                    if last_off == offset {
+                        stack.push(("Stab", last_off));
+                        break;
+                    }
+                }
+                ChokeAttrs::MaxP(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxP", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ChokeAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"codel-attrs\""]
 #[derive(Clone)]
 pub enum CodelAttrs {
@@ -6268,60 +8329,55 @@ pub enum CodelAttrs {
     CeThreshold(u32),
 }
 impl<'a> Iterable<'a, CodelAttrs> {
-    pub fn get_target(&self) -> Option<u32> {
+    pub fn get_target(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CodelAttrs::Target(val) = attr {
-                return Some(val);
+            if let CodelAttrs::Target(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CodelAttrs", "Target"))
     }
-    pub fn get_limit(&self) -> Option<u32> {
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CodelAttrs::Limit(val) = attr {
-                return Some(val);
+            if let CodelAttrs::Limit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CodelAttrs", "Limit"))
     }
-    pub fn get_interval(&self) -> Option<u32> {
+    pub fn get_interval(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CodelAttrs::Interval(val) = attr {
-                return Some(val);
+            if let CodelAttrs::Interval(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CodelAttrs", "Interval"))
     }
-    pub fn get_ecn(&self) -> Option<u32> {
+    pub fn get_ecn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CodelAttrs::Ecn(val) = attr {
-                return Some(val);
+            if let CodelAttrs::Ecn(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CodelAttrs", "Ecn"))
     }
-    pub fn get_ce_threshold(&self) -> Option<u32> {
+    pub fn get_ce_threshold(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CodelAttrs::CeThreshold(val) = attr {
-                return Some(val);
+            if let CodelAttrs::CeThreshold(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CodelAttrs", "CeThreshold"))
     }
 }
 impl CodelAttrs {
@@ -6412,22 +8468,84 @@ impl std::fmt::Debug for Iterable<'_, CodelAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, CodelAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CodelAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CodelAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CodelAttrs::Target(val) => {
+                    if last_off == offset {
+                        stack.push(("Target", last_off));
+                        break;
+                    }
+                }
+                CodelAttrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                CodelAttrs::Interval(val) => {
+                    if last_off == offset {
+                        stack.push(("Interval", last_off));
+                        break;
+                    }
+                }
+                CodelAttrs::Ecn(val) => {
+                    if last_off == offset {
+                        stack.push(("Ecn", last_off));
+                        break;
+                    }
+                }
+                CodelAttrs::CeThreshold(val) => {
+                    if last_off == offset {
+                        stack.push(("CeThreshold", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CodelAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"drr-attrs\""]
 #[derive(Clone)]
 pub enum DrrAttrs {
     Quantum(u32),
 }
 impl<'a> Iterable<'a, DrrAttrs> {
-    pub fn get_quantum(&self) -> Option<u32> {
+    pub fn get_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let DrrAttrs::Quantum(val) = attr {
-                return Some(val);
+            if let DrrAttrs::Quantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("DrrAttrs", "Quantum"))
     }
 }
 impl DrrAttrs {
@@ -6490,6 +8608,45 @@ impl std::fmt::Debug for Iterable<'_, DrrAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, DrrAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("DrrAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| DrrAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                DrrAttrs::Quantum(val) => {
+                    if last_off == offset {
+                        stack.push(("Quantum", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("DrrAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"dualpi2-attrs\""]
 #[derive(Clone)]
 pub enum Dualpi2Attrs {
@@ -6526,184 +8683,169 @@ pub enum Dualpi2Attrs {
 }
 impl<'a> Iterable<'a, Dualpi2Attrs> {
     #[doc = "Limit of total number of packets in queue"]
-    pub fn get_limit(&self) -> Option<u32> {
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::Limit(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::Limit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "Limit"))
     }
     #[doc = "Memory limit of total number of packets in queue"]
-    pub fn get_memory_limit(&self) -> Option<u32> {
+    pub fn get_memory_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::MemoryLimit(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::MemoryLimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "MemoryLimit"))
     }
     #[doc = "Classic target delay in microseconds"]
-    pub fn get_target(&self) -> Option<u32> {
+    pub fn get_target(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::Target(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::Target(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "Target"))
     }
     #[doc = "Drop probability update interval time in microseconds"]
-    pub fn get_tupdate(&self) -> Option<u32> {
+    pub fn get_tupdate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::Tupdate(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::Tupdate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "Tupdate"))
     }
     #[doc = "Integral gain factor in Hz for PI controller"]
-    pub fn get_alpha(&self) -> Option<u32> {
+    pub fn get_alpha(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::Alpha(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::Alpha(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "Alpha"))
     }
     #[doc = "Proportional gain factor in Hz for PI controller"]
-    pub fn get_beta(&self) -> Option<u32> {
+    pub fn get_beta(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::Beta(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::Beta(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "Beta"))
     }
     #[doc = "L4S step marking threshold in packets"]
-    pub fn get_step_thresh_pkts(&self) -> Option<u32> {
+    pub fn get_step_thresh_pkts(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::StepThreshPkts(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::StepThreshPkts(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "StepThreshPkts"))
     }
     #[doc = "L4S Step marking threshold in microseconds"]
-    pub fn get_step_thresh_us(&self) -> Option<u32> {
+    pub fn get_step_thresh_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::StepThreshUs(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::StepThreshUs(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "StepThreshUs"))
     }
     #[doc = "Packets enqueued to the L-queue can apply the step threshold when the queue length of L-queue is larger than this value. (0 is recommended)"]
-    pub fn get_min_qlen_step(&self) -> Option<u32> {
+    pub fn get_min_qlen_step(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::MinQlenStep(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::MinQlenStep(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "MinQlenStep"))
     }
     #[doc = "Probability coupling factor between Classic and L4S (2 is recommended)"]
-    pub fn get_coupling(&self) -> Option<u8> {
+    pub fn get_coupling(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::Coupling(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::Coupling(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "Coupling"))
     }
     #[doc = "Control the overload strategy (drop to preserve latency or let the queue overflow)\nAssociated type: \"Dualpi2DropOverload\" (enum)"]
-    pub fn get_drop_overload(&self) -> Option<u8> {
+    pub fn get_drop_overload(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::DropOverload(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::DropOverload(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "DropOverload"))
     }
     #[doc = "Decide where the Classic packets are PI-based dropped or marked\nAssociated type: \"Dualpi2DropEarly\" (enum)"]
-    pub fn get_drop_early(&self) -> Option<u8> {
+    pub fn get_drop_early(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::DropEarly(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::DropEarly(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "DropEarly"))
     }
     #[doc = "Classic WRR weight in percentage (from 0 to 100)"]
-    pub fn get_c_protection(&self) -> Option<u8> {
+    pub fn get_c_protection(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::CProtection(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::CProtection(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "CProtection"))
     }
     #[doc = "Configure the L-queue ECN classifier\nAssociated type: \"Dualpi2EcnMask\" (enum)"]
-    pub fn get_ecn_mask(&self) -> Option<u8> {
+    pub fn get_ecn_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::EcnMask(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::EcnMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "EcnMask"))
     }
     #[doc = "Split aggregated skb or not\nAssociated type: \"Dualpi2SplitGso\" (enum)"]
-    pub fn get_split_gso(&self) -> Option<u8> {
+    pub fn get_split_gso(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Dualpi2Attrs::SplitGso(val) = attr {
-                return Some(val);
+            if let Dualpi2Attrs::SplitGso(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Dualpi2Attrs", "SplitGso"))
     }
 }
 impl Dualpi2Attrs {
@@ -6864,6 +9006,129 @@ impl std::fmt::Debug for Iterable<'_, Dualpi2Attrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, Dualpi2Attrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("Dualpi2Attrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| Dualpi2Attrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                Dualpi2Attrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::MemoryLimit(val) => {
+                    if last_off == offset {
+                        stack.push(("MemoryLimit", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::Target(val) => {
+                    if last_off == offset {
+                        stack.push(("Target", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::Tupdate(val) => {
+                    if last_off == offset {
+                        stack.push(("Tupdate", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::Alpha(val) => {
+                    if last_off == offset {
+                        stack.push(("Alpha", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::Beta(val) => {
+                    if last_off == offset {
+                        stack.push(("Beta", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::StepThreshPkts(val) => {
+                    if last_off == offset {
+                        stack.push(("StepThreshPkts", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::StepThreshUs(val) => {
+                    if last_off == offset {
+                        stack.push(("StepThreshUs", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::MinQlenStep(val) => {
+                    if last_off == offset {
+                        stack.push(("MinQlenStep", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::Coupling(val) => {
+                    if last_off == offset {
+                        stack.push(("Coupling", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::DropOverload(val) => {
+                    if last_off == offset {
+                        stack.push(("DropOverload", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::DropEarly(val) => {
+                    if last_off == offset {
+                        stack.push(("DropEarly", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::CProtection(val) => {
+                    if last_off == offset {
+                        stack.push(("CProtection", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::EcnMask(val) => {
+                    if last_off == offset {
+                        stack.push(("EcnMask", last_off));
+                        break;
+                    }
+                }
+                Dualpi2Attrs::SplitGso(val) => {
+                    if last_off == offset {
+                        stack.push(("SplitGso", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("Dualpi2Attrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"ematch-attrs\""]
 #[derive(Clone)]
 pub enum EmatchAttrs<'a> {
@@ -6871,27 +9136,25 @@ pub enum EmatchAttrs<'a> {
     TreeList(&'a [u8]),
 }
 impl<'a> Iterable<'a, EmatchAttrs<'a>> {
-    pub fn get_tree_hdr(&self) -> Option<PushTcfEmatchTreeHdr> {
+    pub fn get_tree_hdr(&self) -> Result<PushTcfEmatchTreeHdr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EmatchAttrs::TreeHdr(val) = attr {
-                return Some(val);
+            if let EmatchAttrs::TreeHdr(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("EmatchAttrs", "TreeHdr"))
     }
-    pub fn get_tree_list(&self) -> Option<&'a [u8]> {
+    pub fn get_tree_list(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EmatchAttrs::TreeList(val) = attr {
-                return Some(val);
+            if let EmatchAttrs::TreeList(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("EmatchAttrs", "TreeList"))
     }
 }
 impl<'a> EmatchAttrs<'a> {
@@ -6961,6 +9224,51 @@ impl<'a> std::fmt::Debug for Iterable<'a, EmatchAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, EmatchAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("EmatchAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| EmatchAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                EmatchAttrs::TreeHdr(val) => {
+                    if last_off == offset {
+                        stack.push(("TreeHdr", last_off));
+                        break;
+                    }
+                }
+                EmatchAttrs::TreeList(val) => {
+                    if last_off == offset {
+                        stack.push(("TreeList", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("EmatchAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"flow-attrs\""]
 #[derive(Clone)]
 pub enum FlowAttrs<'a> {
@@ -6978,137 +9286,125 @@ pub enum FlowAttrs<'a> {
     Perturb(u32),
 }
 impl<'a> Iterable<'a, FlowAttrs<'a>> {
-    pub fn get_keys(&self) -> Option<u32> {
+    pub fn get_keys(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Keys(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Keys(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Keys"))
     }
-    pub fn get_mode(&self) -> Option<u32> {
+    pub fn get_mode(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Mode(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Mode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Mode"))
     }
-    pub fn get_baseclass(&self) -> Option<u32> {
+    pub fn get_baseclass(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Baseclass(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Baseclass(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Baseclass"))
     }
-    pub fn get_rshift(&self) -> Option<u32> {
+    pub fn get_rshift(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Rshift(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Rshift(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Rshift"))
     }
-    pub fn get_addend(&self) -> Option<u32> {
+    pub fn get_addend(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Addend(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Addend(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Addend"))
     }
-    pub fn get_mask(&self) -> Option<u32> {
+    pub fn get_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Mask(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Mask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Mask"))
     }
-    pub fn get_xor(&self) -> Option<u32> {
+    pub fn get_xor(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Xor(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Xor(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Xor"))
     }
-    pub fn get_divisor(&self) -> Option<u32> {
+    pub fn get_divisor(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Divisor(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Divisor(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Divisor"))
     }
-    pub fn get_act(&self) -> Option<&'a [u8]> {
+    pub fn get_act(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Act(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Act(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Act"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Police(val) = attr {
-                return val;
+            if let FlowAttrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowAttrs", "Police"))
     }
-    pub fn get_ematches(&self) -> Option<&'a [u8]> {
+    pub fn get_ematches(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Ematches(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Ematches(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Ematches"))
     }
-    pub fn get_perturb(&self) -> Option<u32> {
+    pub fn get_perturb(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowAttrs::Perturb(val) = attr {
-                return Some(val);
+            if let FlowAttrs::Perturb(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowAttrs", "Perturb"))
     }
 }
 impl<'a> FlowAttrs<'a> {
@@ -7248,6 +9544,112 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FlowAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowAttrs::Keys(val) => {
+                    if last_off == offset {
+                        stack.push(("Keys", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Mode(val) => {
+                    if last_off == offset {
+                        stack.push(("Mode", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Baseclass(val) => {
+                    if last_off == offset {
+                        stack.push(("Baseclass", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Rshift(val) => {
+                    if last_off == offset {
+                        stack.push(("Rshift", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Addend(val) => {
+                    if last_off == offset {
+                        stack.push(("Addend", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Mask(val) => {
+                    if last_off == offset {
+                        stack.push(("Mask", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Xor(val) => {
+                    if last_off == offset {
+                        stack.push(("Xor", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Divisor(val) => {
+                    if last_off == offset {
+                        stack.push(("Divisor", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Act(val) => {
+                    if last_off == offset {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowAttrs::Ematches(val) => {
+                    if last_off == offset {
+                        stack.push(("Ematches", last_off));
+                        break;
+                    }
+                }
+                FlowAttrs::Perturb(val) => {
+                    if last_off == offset {
+                        stack.push(("Perturb", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"flower-attrs\""]
 #[derive(Clone)]
 pub enum FlowerAttrs<'a> {
@@ -7369,1231 +9771,1127 @@ pub enum FlowerAttrs<'a> {
     KeyEncFlagsMask(u32),
 }
 impl<'a> Iterable<'a, FlowerAttrs<'a>> {
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::Classid(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "Classid"))
     }
-    pub fn get_indev(&self) -> Option<&'a CStr> {
+    pub fn get_indev(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::Indev(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::Indev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "Indev"))
     }
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let FlowerAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("FlowerAttrs", "Act"))
     }
-    pub fn get_key_eth_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_key_eth_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEthDst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEthDst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEthDst"))
     }
-    pub fn get_key_eth_dst_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_eth_dst_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEthDstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEthDstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEthDstMask"))
     }
-    pub fn get_key_eth_src(&self) -> Option<&'a [u8]> {
+    pub fn get_key_eth_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEthSrc(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEthSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEthSrc"))
     }
-    pub fn get_key_eth_src_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_eth_src_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEthSrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEthSrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEthSrcMask"))
     }
-    pub fn get_key_eth_type(&self) -> Option<u16> {
+    pub fn get_key_eth_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEthType(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEthType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEthType"))
     }
-    pub fn get_key_ip_proto(&self) -> Option<u8> {
+    pub fn get_key_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpProto(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpProto"))
     }
-    pub fn get_key_ipv4_src(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_ipv4_src(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv4Src(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv4Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv4Src"))
     }
-    pub fn get_key_ipv4_src_mask(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_ipv4_src_mask(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv4SrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv4SrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv4SrcMask"))
     }
-    pub fn get_key_ipv4_dst(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_ipv4_dst(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv4Dst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv4Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv4Dst"))
     }
-    pub fn get_key_ipv4_dst_mask(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_ipv4_dst_mask(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv4DstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv4DstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv4DstMask"))
     }
-    pub fn get_key_ipv6_src(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ipv6_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv6Src(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv6Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv6Src"))
     }
-    pub fn get_key_ipv6_src_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ipv6_src_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv6SrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv6SrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv6SrcMask"))
     }
-    pub fn get_key_ipv6_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ipv6_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv6Dst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv6Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv6Dst"))
     }
-    pub fn get_key_ipv6_dst_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ipv6_dst_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpv6DstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpv6DstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpv6DstMask"))
     }
-    pub fn get_key_tcp_src(&self) -> Option<u16> {
+    pub fn get_key_tcp_src(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyTcpSrc(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyTcpSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyTcpSrc"))
     }
-    pub fn get_key_tcp_dst(&self) -> Option<u16> {
+    pub fn get_key_tcp_dst(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyTcpDst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyTcpDst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyTcpDst"))
     }
-    pub fn get_key_udp_src(&self) -> Option<u16> {
+    pub fn get_key_udp_src(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyUdpSrc(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyUdpSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyUdpSrc"))
     }
-    pub fn get_key_udp_dst(&self) -> Option<u16> {
+    pub fn get_key_udp_dst(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyUdpDst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyUdpDst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyUdpDst"))
     }
     #[doc = "Associated type: \"ClsFlags\" (1 bit per enumeration)"]
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::Flags(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "Flags"))
     }
-    pub fn get_key_vlan_id(&self) -> Option<u16> {
+    pub fn get_key_vlan_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyVlanId(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyVlanId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyVlanId"))
     }
-    pub fn get_key_vlan_prio(&self) -> Option<u8> {
+    pub fn get_key_vlan_prio(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyVlanPrio(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyVlanPrio(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyVlanPrio"))
     }
-    pub fn get_key_vlan_eth_type(&self) -> Option<u16> {
+    pub fn get_key_vlan_eth_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyVlanEthType(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyVlanEthType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyVlanEthType"))
     }
-    pub fn get_key_enc_key_id(&self) -> Option<u32> {
+    pub fn get_key_enc_key_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncKeyId(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncKeyId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncKeyId"))
     }
-    pub fn get_key_enc_ipv4_src(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_enc_ipv4_src(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv4Src(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv4Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv4Src"))
     }
-    pub fn get_key_enc_ipv4_src_mask(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_enc_ipv4_src_mask(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv4SrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv4SrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv4SrcMask"))
     }
-    pub fn get_key_enc_ipv4_dst(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_enc_ipv4_dst(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv4Dst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv4Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv4Dst"))
     }
-    pub fn get_key_enc_ipv4_dst_mask(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_key_enc_ipv4_dst_mask(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv4DstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv4DstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv4DstMask"))
     }
-    pub fn get_key_enc_ipv6_src(&self) -> Option<&'a [u8]> {
+    pub fn get_key_enc_ipv6_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv6Src(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv6Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv6Src"))
     }
-    pub fn get_key_enc_ipv6_src_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_enc_ipv6_src_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv6SrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv6SrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv6SrcMask"))
     }
-    pub fn get_key_enc_ipv6_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_key_enc_ipv6_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv6Dst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv6Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv6Dst"))
     }
-    pub fn get_key_enc_ipv6_dst_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_enc_ipv6_dst_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpv6DstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpv6DstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpv6DstMask"))
     }
-    pub fn get_key_tcp_src_mask(&self) -> Option<u16> {
+    pub fn get_key_tcp_src_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyTcpSrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyTcpSrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyTcpSrcMask"))
     }
-    pub fn get_key_tcp_dst_mask(&self) -> Option<u16> {
+    pub fn get_key_tcp_dst_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyTcpDstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyTcpDstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyTcpDstMask"))
     }
-    pub fn get_key_udp_src_mask(&self) -> Option<u16> {
+    pub fn get_key_udp_src_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyUdpSrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyUdpSrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyUdpSrcMask"))
     }
-    pub fn get_key_udp_dst_mask(&self) -> Option<u16> {
+    pub fn get_key_udp_dst_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyUdpDstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyUdpDstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyUdpDstMask"))
     }
-    pub fn get_key_sctp_src_mask(&self) -> Option<u16> {
+    pub fn get_key_sctp_src_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeySctpSrcMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeySctpSrcMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeySctpSrcMask"))
     }
-    pub fn get_key_sctp_dst_mask(&self) -> Option<u16> {
+    pub fn get_key_sctp_dst_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeySctpDstMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeySctpDstMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeySctpDstMask"))
     }
-    pub fn get_key_sctp_src(&self) -> Option<u16> {
+    pub fn get_key_sctp_src(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeySctpSrc(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeySctpSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeySctpSrc"))
     }
-    pub fn get_key_sctp_dst(&self) -> Option<u16> {
+    pub fn get_key_sctp_dst(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeySctpDst(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeySctpDst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeySctpDst"))
     }
-    pub fn get_key_enc_udp_src_port(&self) -> Option<u16> {
+    pub fn get_key_enc_udp_src_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncUdpSrcPort(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncUdpSrcPort(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncUdpSrcPort"))
     }
-    pub fn get_key_enc_udp_src_port_mask(&self) -> Option<u16> {
+    pub fn get_key_enc_udp_src_port_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncUdpSrcPortMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncUdpSrcPortMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncUdpSrcPortMask"))
     }
-    pub fn get_key_enc_udp_dst_port(&self) -> Option<u16> {
+    pub fn get_key_enc_udp_dst_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncUdpDstPort(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncUdpDstPort(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncUdpDstPort"))
     }
-    pub fn get_key_enc_udp_dst_port_mask(&self) -> Option<u16> {
+    pub fn get_key_enc_udp_dst_port_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncUdpDstPortMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncUdpDstPortMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncUdpDstPortMask"))
     }
     #[doc = "Associated type: \"FlowerKeyCtrlFlags\" (1 bit per enumeration)"]
-    pub fn get_key_flags(&self) -> Option<u32> {
+    pub fn get_key_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyFlags(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyFlags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyFlags"))
     }
     #[doc = "Associated type: \"FlowerKeyCtrlFlags\" (1 bit per enumeration)"]
-    pub fn get_key_flags_mask(&self) -> Option<u32> {
+    pub fn get_key_flags_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyFlagsMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyFlagsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyFlagsMask"))
     }
-    pub fn get_key_icmpv4_code(&self) -> Option<u8> {
+    pub fn get_key_icmpv4_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv4Code(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv4Code(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv4Code"))
     }
-    pub fn get_key_icmpv4_code_mask(&self) -> Option<u8> {
+    pub fn get_key_icmpv4_code_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv4CodeMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv4CodeMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv4CodeMask"))
     }
-    pub fn get_key_icmpv4_type(&self) -> Option<u8> {
+    pub fn get_key_icmpv4_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv4Type(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv4Type(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv4Type"))
     }
-    pub fn get_key_icmpv4_type_mask(&self) -> Option<u8> {
+    pub fn get_key_icmpv4_type_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv4TypeMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv4TypeMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv4TypeMask"))
     }
-    pub fn get_key_icmpv6_code(&self) -> Option<u8> {
+    pub fn get_key_icmpv6_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv6Code(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv6Code(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv6Code"))
     }
-    pub fn get_key_icmpv6_code_mask(&self) -> Option<u8> {
+    pub fn get_key_icmpv6_code_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv6CodeMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv6CodeMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv6CodeMask"))
     }
-    pub fn get_key_icmpv6_type(&self) -> Option<u8> {
+    pub fn get_key_icmpv6_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv6Type(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv6Type(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv6Type"))
     }
-    pub fn get_key_icmpv6_type_mask(&self) -> Option<u8> {
+    pub fn get_key_icmpv6_type_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIcmpv6TypeMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIcmpv6TypeMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIcmpv6TypeMask"))
     }
-    pub fn get_key_arp_sip(&self) -> Option<u32> {
+    pub fn get_key_arp_sip(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpSip(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpSip(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpSip"))
     }
-    pub fn get_key_arp_sip_mask(&self) -> Option<u32> {
+    pub fn get_key_arp_sip_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpSipMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpSipMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpSipMask"))
     }
-    pub fn get_key_arp_tip(&self) -> Option<u32> {
+    pub fn get_key_arp_tip(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpTip(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpTip(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpTip"))
     }
-    pub fn get_key_arp_tip_mask(&self) -> Option<u32> {
+    pub fn get_key_arp_tip_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpTipMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpTipMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpTipMask"))
     }
-    pub fn get_key_arp_op(&self) -> Option<u8> {
+    pub fn get_key_arp_op(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpOp(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpOp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpOp"))
     }
-    pub fn get_key_arp_op_mask(&self) -> Option<u8> {
+    pub fn get_key_arp_op_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpOpMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpOpMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpOpMask"))
     }
-    pub fn get_key_arp_sha(&self) -> Option<&'a [u8]> {
+    pub fn get_key_arp_sha(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpSha(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpSha(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpSha"))
     }
-    pub fn get_key_arp_sha_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_arp_sha_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpShaMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpShaMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpShaMask"))
     }
-    pub fn get_key_arp_tha(&self) -> Option<&'a [u8]> {
+    pub fn get_key_arp_tha(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpTha(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpTha(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpTha"))
     }
-    pub fn get_key_arp_tha_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_arp_tha_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyArpThaMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyArpThaMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyArpThaMask"))
     }
-    pub fn get_key_mpls_ttl(&self) -> Option<u8> {
+    pub fn get_key_mpls_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyMplsTtl(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyMplsTtl(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyMplsTtl"))
     }
-    pub fn get_key_mpls_bos(&self) -> Option<u8> {
+    pub fn get_key_mpls_bos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyMplsBos(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyMplsBos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyMplsBos"))
     }
-    pub fn get_key_mpls_tc(&self) -> Option<u8> {
+    pub fn get_key_mpls_tc(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyMplsTc(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyMplsTc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyMplsTc"))
     }
-    pub fn get_key_mpls_label(&self) -> Option<u32> {
+    pub fn get_key_mpls_label(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyMplsLabel(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyMplsLabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyMplsLabel"))
     }
-    pub fn get_key_tcp_flags(&self) -> Option<u16> {
+    pub fn get_key_tcp_flags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyTcpFlags(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyTcpFlags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyTcpFlags"))
     }
-    pub fn get_key_tcp_flags_mask(&self) -> Option<u16> {
+    pub fn get_key_tcp_flags_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyTcpFlagsMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyTcpFlagsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyTcpFlagsMask"))
     }
-    pub fn get_key_ip_tos(&self) -> Option<u8> {
+    pub fn get_key_ip_tos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpTos(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpTos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpTos"))
     }
-    pub fn get_key_ip_tos_mask(&self) -> Option<u8> {
+    pub fn get_key_ip_tos_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpTosMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpTosMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpTosMask"))
     }
-    pub fn get_key_ip_ttl(&self) -> Option<u8> {
+    pub fn get_key_ip_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpTtl(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpTtl(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpTtl"))
     }
-    pub fn get_key_ip_ttl_mask(&self) -> Option<u8> {
+    pub fn get_key_ip_ttl_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyIpTtlMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyIpTtlMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyIpTtlMask"))
     }
-    pub fn get_key_cvlan_id(&self) -> Option<u16> {
+    pub fn get_key_cvlan_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCvlanId(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCvlanId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCvlanId"))
     }
-    pub fn get_key_cvlan_prio(&self) -> Option<u8> {
+    pub fn get_key_cvlan_prio(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCvlanPrio(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCvlanPrio(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCvlanPrio"))
     }
-    pub fn get_key_cvlan_eth_type(&self) -> Option<u16> {
+    pub fn get_key_cvlan_eth_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCvlanEthType(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCvlanEthType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCvlanEthType"))
     }
-    pub fn get_key_enc_ip_tos(&self) -> Option<u8> {
+    pub fn get_key_enc_ip_tos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpTos(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpTos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpTos"))
     }
-    pub fn get_key_enc_ip_tos_mask(&self) -> Option<u8> {
+    pub fn get_key_enc_ip_tos_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpTosMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpTosMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpTosMask"))
     }
-    pub fn get_key_enc_ip_ttl(&self) -> Option<u8> {
+    pub fn get_key_enc_ip_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpTtl(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpTtl(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpTtl"))
     }
-    pub fn get_key_enc_ip_ttl_mask(&self) -> Option<u8> {
+    pub fn get_key_enc_ip_ttl_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncIpTtlMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncIpTtlMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncIpTtlMask"))
     }
-    pub fn get_key_enc_opts(&self) -> Iterable<'a, FlowerKeyEncOptsAttrs<'a>> {
+    pub fn get_key_enc_opts(
+        &self,
+    ) -> Result<Iterable<'a, FlowerKeyEncOptsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncOpts(val) = attr {
-                return val;
+            if let FlowerAttrs::KeyEncOpts(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerAttrs", "KeyEncOpts"))
     }
-    pub fn get_key_enc_opts_mask(&self) -> Iterable<'a, FlowerKeyEncOptsAttrs<'a>> {
+    pub fn get_key_enc_opts_mask(
+        &self,
+    ) -> Result<Iterable<'a, FlowerKeyEncOptsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncOptsMask(val) = attr {
-                return val;
+            if let FlowerAttrs::KeyEncOptsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerAttrs", "KeyEncOptsMask"))
     }
-    pub fn get_in_hw_count(&self) -> Option<u32> {
+    pub fn get_in_hw_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::InHwCount(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::InHwCount(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "InHwCount"))
     }
-    pub fn get_key_port_src_min(&self) -> Option<u16> {
+    pub fn get_key_port_src_min(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyPortSrcMin(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyPortSrcMin(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyPortSrcMin"))
     }
-    pub fn get_key_port_src_max(&self) -> Option<u16> {
+    pub fn get_key_port_src_max(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyPortSrcMax(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyPortSrcMax(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyPortSrcMax"))
     }
-    pub fn get_key_port_dst_min(&self) -> Option<u16> {
+    pub fn get_key_port_dst_min(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyPortDstMin(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyPortDstMin(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyPortDstMin"))
     }
-    pub fn get_key_port_dst_max(&self) -> Option<u16> {
+    pub fn get_key_port_dst_max(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyPortDstMax(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyPortDstMax(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyPortDstMax"))
     }
-    pub fn get_key_ct_state(&self) -> Option<u16> {
+    pub fn get_key_ct_state(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtState(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtState(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtState"))
     }
-    pub fn get_key_ct_state_mask(&self) -> Option<u16> {
+    pub fn get_key_ct_state_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtStateMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtStateMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtStateMask"))
     }
-    pub fn get_key_ct_zone(&self) -> Option<u16> {
+    pub fn get_key_ct_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtZone(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtZone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtZone"))
     }
-    pub fn get_key_ct_zone_mask(&self) -> Option<u16> {
+    pub fn get_key_ct_zone_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtZoneMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtZoneMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtZoneMask"))
     }
-    pub fn get_key_ct_mark(&self) -> Option<u32> {
+    pub fn get_key_ct_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtMark(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtMark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtMark"))
     }
-    pub fn get_key_ct_mark_mask(&self) -> Option<u32> {
+    pub fn get_key_ct_mark_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtMarkMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtMarkMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtMarkMask"))
     }
-    pub fn get_key_ct_labels(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ct_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtLabels(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtLabels(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtLabels"))
     }
-    pub fn get_key_ct_labels_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_key_ct_labels_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCtLabelsMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyCtLabelsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyCtLabelsMask"))
     }
-    pub fn get_key_mpls_opts(&self) -> Iterable<'a, FlowerKeyMplsOptAttrs> {
+    pub fn get_key_mpls_opts(&self) -> Result<Iterable<'a, FlowerKeyMplsOptAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyMplsOpts(val) = attr {
-                return val;
+            if let FlowerAttrs::KeyMplsOpts(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerAttrs", "KeyMplsOpts"))
     }
-    pub fn get_key_hash(&self) -> Option<u32> {
+    pub fn get_key_hash(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyHash(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyHash(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyHash"))
     }
-    pub fn get_key_hash_mask(&self) -> Option<u32> {
+    pub fn get_key_hash_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyHashMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyHashMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyHashMask"))
     }
-    pub fn get_key_num_of_vlans(&self) -> Option<u8> {
+    pub fn get_key_num_of_vlans(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyNumOfVlans(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyNumOfVlans(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyNumOfVlans"))
     }
-    pub fn get_key_pppoe_sid(&self) -> Option<u16> {
+    pub fn get_key_pppoe_sid(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyPppoeSid(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyPppoeSid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyPppoeSid"))
     }
-    pub fn get_key_ppp_proto(&self) -> Option<u16> {
+    pub fn get_key_ppp_proto(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyPppProto(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyPppProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyPppProto"))
     }
-    pub fn get_key_l2tpv3_sid(&self) -> Option<u32> {
+    pub fn get_key_l2tpv3_sid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyL2tpv3Sid(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyL2tpv3Sid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyL2tpv3Sid"))
     }
-    pub fn get_l2_miss(&self) -> Option<u8> {
+    pub fn get_l2_miss(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::L2Miss(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::L2Miss(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "L2Miss"))
     }
-    pub fn get_key_cfm(&self) -> Iterable<'a, FlowerKeyCfmAttrs> {
+    pub fn get_key_cfm(&self) -> Result<Iterable<'a, FlowerKeyCfmAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyCfm(val) = attr {
-                return val;
+            if let FlowerAttrs::KeyCfm(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerAttrs", "KeyCfm"))
     }
-    pub fn get_key_spi(&self) -> Option<u32> {
+    pub fn get_key_spi(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeySpi(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeySpi(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeySpi"))
     }
-    pub fn get_key_spi_mask(&self) -> Option<u32> {
+    pub fn get_key_spi_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeySpiMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeySpiMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeySpiMask"))
     }
     #[doc = "Associated type: \"FlowerKeyCtrlFlags\" (1 bit per enumeration)"]
-    pub fn get_key_enc_flags(&self) -> Option<u32> {
+    pub fn get_key_enc_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncFlags(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncFlags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncFlags"))
     }
     #[doc = "Associated type: \"FlowerKeyCtrlFlags\" (1 bit per enumeration)"]
-    pub fn get_key_enc_flags_mask(&self) -> Option<u32> {
+    pub fn get_key_enc_flags_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerAttrs::KeyEncFlagsMask(val) = attr {
-                return Some(val);
+            if let FlowerAttrs::KeyEncFlagsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerAttrs", "KeyEncFlagsMask"))
     }
 }
 impl<'a> FlowerAttrs<'a> {
@@ -9426,6 +11724,713 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowerAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FlowerAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerAttrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::Indev(val) => {
+                    if last_off == offset {
+                        stack.push(("Indev", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEthDst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEthDst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEthDstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEthDstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEthSrc(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEthSrc", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEthSrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEthSrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEthType(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEthType", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpProto", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv4Src(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv4Src", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv4SrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv4SrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv4Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv4Dst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv4DstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv4DstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv6Src(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv6Src", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv6SrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv6SrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv6Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv6Dst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpv6DstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpv6DstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyTcpSrc(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyTcpSrc", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyTcpDst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyTcpDst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyUdpSrc(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyUdpSrc", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyUdpDst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyUdpDst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyVlanId(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyVlanId", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyVlanPrio(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyVlanPrio", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyVlanEthType(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyVlanEthType", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncKeyId(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncKeyId", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv4Src(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv4Src", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv4SrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv4SrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv4Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv4Dst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv4DstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv4DstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv6Src(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv6Src", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv6SrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv6SrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv6Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv6Dst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpv6DstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpv6DstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyTcpSrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyTcpSrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyTcpDstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyTcpDstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyUdpSrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyUdpSrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyUdpDstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyUdpDstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeySctpSrcMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeySctpSrcMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeySctpDstMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeySctpDstMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeySctpSrc(val) => {
+                    if last_off == offset {
+                        stack.push(("KeySctpSrc", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeySctpDst(val) => {
+                    if last_off == offset {
+                        stack.push(("KeySctpDst", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncUdpSrcPort(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncUdpSrcPort", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncUdpSrcPortMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncUdpSrcPortMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncUdpDstPort(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncUdpDstPort", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncUdpDstPortMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncUdpDstPortMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyFlags(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyFlags", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyFlagsMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyFlagsMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv4Code(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv4Code", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv4CodeMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv4CodeMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv4Type(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv4Type", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv4TypeMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv4TypeMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv6Code(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv6Code", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv6CodeMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv6CodeMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv6Type(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv6Type", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIcmpv6TypeMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIcmpv6TypeMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpSip(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpSip", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpSipMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpSipMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpTip(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpTip", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpTipMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpTipMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpOp(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpOp", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpOpMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpOpMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpSha(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpSha", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpShaMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpShaMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpTha(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpTha", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyArpThaMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyArpThaMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyMplsTtl(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyMplsTtl", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyMplsBos(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyMplsBos", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyMplsTc(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyMplsTc", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyMplsLabel(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyMplsLabel", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyTcpFlags(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyTcpFlags", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyTcpFlagsMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyTcpFlagsMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpTos(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpTos", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpTosMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpTosMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpTtl(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpTtl", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyIpTtlMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyIpTtlMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCvlanId(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCvlanId", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCvlanPrio(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCvlanPrio", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCvlanEthType(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCvlanEthType", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpTos(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpTos", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpTosMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpTosMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpTtl(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpTtl", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncIpTtlMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncIpTtlMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncOpts(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncOptsMask(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerAttrs::InHwCount(val) => {
+                    if last_off == offset {
+                        stack.push(("InHwCount", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyPortSrcMin(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyPortSrcMin", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyPortSrcMax(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyPortSrcMax", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyPortDstMin(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyPortDstMin", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyPortDstMax(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyPortDstMax", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtState(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtState", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtStateMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtStateMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtZone(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtZone", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtZoneMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtZoneMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtMark(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtMark", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtMarkMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtMarkMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtLabels(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtLabels", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCtLabelsMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyCtLabelsMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyMplsOpts(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyHash(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyHash", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyHashMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyHashMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyNumOfVlans(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyNumOfVlans", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyPppoeSid(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyPppoeSid", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyPppProto(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyPppProto", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyL2tpv3Sid(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyL2tpv3Sid", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::L2Miss(val) => {
+                    if last_off == offset {
+                        stack.push(("L2Miss", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyCfm(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerAttrs::KeySpi(val) => {
+                    if last_off == offset {
+                        stack.push(("KeySpi", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeySpiMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeySpiMask", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncFlags(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncFlags", last_off));
+                        break;
+                    }
+                }
+                FlowerAttrs::KeyEncFlagsMask(val) => {
+                    if last_off == offset {
+                        stack.push(("KeyEncFlagsMask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"flower-key-enc-opts-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyEncOptsAttrs<'a> {
@@ -9435,49 +12440,45 @@ pub enum FlowerKeyEncOptsAttrs<'a> {
     Gtp(Iterable<'a, FlowerKeyEncOptGtpAttrs>),
 }
 impl<'a> Iterable<'a, FlowerKeyEncOptsAttrs<'a>> {
-    pub fn get_geneve(&self) -> Iterable<'a, FlowerKeyEncOptGeneveAttrs<'a>> {
+    pub fn get_geneve(&self) -> Result<Iterable<'a, FlowerKeyEncOptGeneveAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptsAttrs::Geneve(val) = attr {
-                return val;
+            if let FlowerKeyEncOptsAttrs::Geneve(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerKeyEncOptsAttrs", "Geneve"))
     }
-    pub fn get_vxlan(&self) -> Iterable<'a, FlowerKeyEncOptVxlanAttrs> {
+    pub fn get_vxlan(&self) -> Result<Iterable<'a, FlowerKeyEncOptVxlanAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptsAttrs::Vxlan(val) = attr {
-                return val;
+            if let FlowerKeyEncOptsAttrs::Vxlan(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerKeyEncOptsAttrs", "Vxlan"))
     }
-    pub fn get_erspan(&self) -> Iterable<'a, FlowerKeyEncOptErspanAttrs> {
+    pub fn get_erspan(&self) -> Result<Iterable<'a, FlowerKeyEncOptErspanAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptsAttrs::Erspan(val) = attr {
-                return val;
+            if let FlowerKeyEncOptsAttrs::Erspan(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerKeyEncOptsAttrs", "Erspan"))
     }
-    pub fn get_gtp(&self) -> Iterable<'a, FlowerKeyEncOptGtpAttrs> {
+    pub fn get_gtp(&self) -> Result<Iterable<'a, FlowerKeyEncOptGtpAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptsAttrs::Gtp(val) = attr {
-                return val;
+            if let FlowerKeyEncOptsAttrs::Gtp(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FlowerKeyEncOptsAttrs", "Gtp"))
     }
 }
 impl<'a> FlowerKeyEncOptsAttrs<'a> {
@@ -9561,6 +12562,64 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowerKeyEncOptsAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FlowerKeyEncOptsAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyEncOptsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyEncOptsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyEncOptsAttrs::Geneve(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerKeyEncOptsAttrs::Vxlan(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerKeyEncOptsAttrs::Erspan(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FlowerKeyEncOptsAttrs::Gtp(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyEncOptsAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"flower-key-enc-opt-geneve-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyEncOptGeneveAttrs<'a> {
@@ -9569,38 +12628,35 @@ pub enum FlowerKeyEncOptGeneveAttrs<'a> {
     Data(&'a [u8]),
 }
 impl<'a> Iterable<'a, FlowerKeyEncOptGeneveAttrs<'a>> {
-    pub fn get_class(&self) -> Option<u16> {
+    pub fn get_class(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptGeneveAttrs::Class(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptGeneveAttrs::Class(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptGeneveAttrs", "Class"))
     }
-    pub fn get_type(&self) -> Option<u8> {
+    pub fn get_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptGeneveAttrs::Type(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptGeneveAttrs::Type(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptGeneveAttrs", "Type"))
     }
-    pub fn get_data(&self) -> Option<&'a [u8]> {
+    pub fn get_data(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptGeneveAttrs::Data(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptGeneveAttrs::Data(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptGeneveAttrs", "Data"))
     }
 }
 impl<'a> FlowerKeyEncOptGeneveAttrs<'a> {
@@ -9677,22 +12733,72 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowerKeyEncOptGeneveAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FlowerKeyEncOptGeneveAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyEncOptGeneveAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyEncOptGeneveAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyEncOptGeneveAttrs::Class(val) => {
+                    if last_off == offset {
+                        stack.push(("Class", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyEncOptGeneveAttrs::Type(val) => {
+                    if last_off == offset {
+                        stack.push(("Type", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyEncOptGeneveAttrs::Data(val) => {
+                    if last_off == offset {
+                        stack.push(("Data", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyEncOptGeneveAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"flower-key-enc-opt-vxlan-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyEncOptVxlanAttrs {
     Gbp(u32),
 }
 impl<'a> Iterable<'a, FlowerKeyEncOptVxlanAttrs> {
-    pub fn get_gbp(&self) -> Option<u32> {
+    pub fn get_gbp(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptVxlanAttrs::Gbp(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptVxlanAttrs::Gbp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptVxlanAttrs", "Gbp"))
     }
 }
 impl FlowerKeyEncOptVxlanAttrs {
@@ -9755,6 +12861,45 @@ impl std::fmt::Debug for Iterable<'_, FlowerKeyEncOptVxlanAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FlowerKeyEncOptVxlanAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyEncOptVxlanAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyEncOptVxlanAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyEncOptVxlanAttrs::Gbp(val) => {
+                    if last_off == offset {
+                        stack.push(("Gbp", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyEncOptVxlanAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"flower-key-enc-opt-erspan-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyEncOptErspanAttrs {
@@ -9764,49 +12909,45 @@ pub enum FlowerKeyEncOptErspanAttrs {
     Hwid(u8),
 }
 impl<'a> Iterable<'a, FlowerKeyEncOptErspanAttrs> {
-    pub fn get_ver(&self) -> Option<u8> {
+    pub fn get_ver(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptErspanAttrs::Ver(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptErspanAttrs::Ver(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptErspanAttrs", "Ver"))
     }
-    pub fn get_index(&self) -> Option<u32> {
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptErspanAttrs::Index(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptErspanAttrs::Index(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptErspanAttrs", "Index"))
     }
-    pub fn get_dir(&self) -> Option<u8> {
+    pub fn get_dir(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptErspanAttrs::Dir(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptErspanAttrs::Dir(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptErspanAttrs", "Dir"))
     }
-    pub fn get_hwid(&self) -> Option<u8> {
+    pub fn get_hwid(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptErspanAttrs::Hwid(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptErspanAttrs::Hwid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptErspanAttrs", "Hwid"))
     }
 }
 impl FlowerKeyEncOptErspanAttrs {
@@ -9890,6 +13031,63 @@ impl std::fmt::Debug for Iterable<'_, FlowerKeyEncOptErspanAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FlowerKeyEncOptErspanAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyEncOptErspanAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyEncOptErspanAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyEncOptErspanAttrs::Ver(val) => {
+                    if last_off == offset {
+                        stack.push(("Ver", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyEncOptErspanAttrs::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyEncOptErspanAttrs::Dir(val) => {
+                    if last_off == offset {
+                        stack.push(("Dir", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyEncOptErspanAttrs::Hwid(val) => {
+                    if last_off == offset {
+                        stack.push(("Hwid", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyEncOptErspanAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"flower-key-enc-opt-gtp-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyEncOptGtpAttrs {
@@ -9897,27 +13095,25 @@ pub enum FlowerKeyEncOptGtpAttrs {
     Qfi(u8),
 }
 impl<'a> Iterable<'a, FlowerKeyEncOptGtpAttrs> {
-    pub fn get_pdu_type(&self) -> Option<u8> {
+    pub fn get_pdu_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptGtpAttrs::PduType(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptGtpAttrs::PduType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptGtpAttrs", "PduType"))
     }
-    pub fn get_qfi(&self) -> Option<u8> {
+    pub fn get_qfi(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyEncOptGtpAttrs::Qfi(val) = attr {
-                return Some(val);
+            if let FlowerKeyEncOptGtpAttrs::Qfi(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyEncOptGtpAttrs", "Qfi"))
     }
 }
 impl FlowerKeyEncOptGtpAttrs {
@@ -9987,6 +13183,51 @@ impl std::fmt::Debug for Iterable<'_, FlowerKeyEncOptGtpAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FlowerKeyEncOptGtpAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyEncOptGtpAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyEncOptGtpAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyEncOptGtpAttrs::PduType(val) => {
+                    if last_off == offset {
+                        stack.push(("PduType", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyEncOptGtpAttrs::Qfi(val) => {
+                    if last_off == offset {
+                        stack.push(("Qfi", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyEncOptGtpAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"flower-key-mpls-opt-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyMplsOptAttrs {
@@ -9997,60 +13238,55 @@ pub enum FlowerKeyMplsOptAttrs {
     LseLabel(u32),
 }
 impl<'a> Iterable<'a, FlowerKeyMplsOptAttrs> {
-    pub fn get_lse_depth(&self) -> Option<u8> {
+    pub fn get_lse_depth(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyMplsOptAttrs::LseDepth(val) = attr {
-                return Some(val);
+            if let FlowerKeyMplsOptAttrs::LseDepth(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyMplsOptAttrs", "LseDepth"))
     }
-    pub fn get_lse_ttl(&self) -> Option<u8> {
+    pub fn get_lse_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyMplsOptAttrs::LseTtl(val) = attr {
-                return Some(val);
+            if let FlowerKeyMplsOptAttrs::LseTtl(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyMplsOptAttrs", "LseTtl"))
     }
-    pub fn get_lse_bos(&self) -> Option<u8> {
+    pub fn get_lse_bos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyMplsOptAttrs::LseBos(val) = attr {
-                return Some(val);
+            if let FlowerKeyMplsOptAttrs::LseBos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyMplsOptAttrs", "LseBos"))
     }
-    pub fn get_lse_tc(&self) -> Option<u8> {
+    pub fn get_lse_tc(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyMplsOptAttrs::LseTc(val) = attr {
-                return Some(val);
+            if let FlowerKeyMplsOptAttrs::LseTc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyMplsOptAttrs", "LseTc"))
     }
-    pub fn get_lse_label(&self) -> Option<u32> {
+    pub fn get_lse_label(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyMplsOptAttrs::LseLabel(val) = attr {
-                return Some(val);
+            if let FlowerKeyMplsOptAttrs::LseLabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyMplsOptAttrs", "LseLabel"))
     }
 }
 impl FlowerKeyMplsOptAttrs {
@@ -10141,6 +13377,69 @@ impl std::fmt::Debug for Iterable<'_, FlowerKeyMplsOptAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FlowerKeyMplsOptAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyMplsOptAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyMplsOptAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyMplsOptAttrs::LseDepth(val) => {
+                    if last_off == offset {
+                        stack.push(("LseDepth", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyMplsOptAttrs::LseTtl(val) => {
+                    if last_off == offset {
+                        stack.push(("LseTtl", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyMplsOptAttrs::LseBos(val) => {
+                    if last_off == offset {
+                        stack.push(("LseBos", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyMplsOptAttrs::LseTc(val) => {
+                    if last_off == offset {
+                        stack.push(("LseTc", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyMplsOptAttrs::LseLabel(val) => {
+                    if last_off == offset {
+                        stack.push(("LseLabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyMplsOptAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"flower-key-cfm-attrs\""]
 #[derive(Clone)]
 pub enum FlowerKeyCfmAttrs {
@@ -10148,27 +13447,25 @@ pub enum FlowerKeyCfmAttrs {
     Opcode(u8),
 }
 impl<'a> Iterable<'a, FlowerKeyCfmAttrs> {
-    pub fn get_md_level(&self) -> Option<u8> {
+    pub fn get_md_level(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyCfmAttrs::MdLevel(val) = attr {
-                return Some(val);
+            if let FlowerKeyCfmAttrs::MdLevel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyCfmAttrs", "MdLevel"))
     }
-    pub fn get_opcode(&self) -> Option<u8> {
+    pub fn get_opcode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FlowerKeyCfmAttrs::Opcode(val) = attr {
-                return Some(val);
+            if let FlowerKeyCfmAttrs::Opcode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FlowerKeyCfmAttrs", "Opcode"))
     }
 }
 impl FlowerKeyCfmAttrs {
@@ -10238,6 +13535,51 @@ impl std::fmt::Debug for Iterable<'_, FlowerKeyCfmAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FlowerKeyCfmAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FlowerKeyCfmAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FlowerKeyCfmAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FlowerKeyCfmAttrs::MdLevel(val) => {
+                    if last_off == offset {
+                        stack.push(("MdLevel", last_off));
+                        break;
+                    }
+                }
+                FlowerKeyCfmAttrs::Opcode(val) => {
+                    if last_off == offset {
+                        stack.push(("Opcode", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FlowerKeyCfmAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"fw-attrs\""]
 #[derive(Clone)]
 pub enum FwAttrs<'a> {
@@ -10248,60 +13590,58 @@ pub enum FwAttrs<'a> {
     Mask(u32),
 }
 impl<'a> Iterable<'a, FwAttrs<'a>> {
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FwAttrs::Classid(val) = attr {
-                return Some(val);
+            if let FwAttrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FwAttrs", "Classid"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FwAttrs::Police(val) = attr {
-                return val;
+            if let FwAttrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("FwAttrs", "Police"))
     }
-    pub fn get_indev(&self) -> Option<&'a CStr> {
+    pub fn get_indev(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FwAttrs::Indev(val) = attr {
-                return Some(val);
+            if let FwAttrs::Indev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FwAttrs", "Indev"))
     }
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let FwAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let FwAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("FwAttrs", "Act"))
     }
-    pub fn get_mask(&self) -> Option<u32> {
+    pub fn get_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FwAttrs::Mask(val) = attr {
-                return Some(val);
+            if let FwAttrs::Mask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FwAttrs", "Mask"))
     }
 }
 impl<'a> FwAttrs<'a> {
@@ -10392,6 +13732,74 @@ impl<'a> std::fmt::Debug for Iterable<'a, FwAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FwAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FwAttrs", offset));
+            return (stack, missing_type.and_then(|t| FwAttrs::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FwAttrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                FwAttrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                FwAttrs::Indev(val) => {
+                    if last_off == offset {
+                        stack.push(("Indev", last_off));
+                        break;
+                    }
+                }
+                FwAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                FwAttrs::Mask(val) => {
+                    if last_off == offset {
+                        stack.push(("Mask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FwAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"gred-attrs\""]
 #[derive(Clone)]
 pub enum GredAttrs<'a> {
@@ -10403,71 +13811,65 @@ pub enum GredAttrs<'a> {
     VqList(Iterable<'a, TcaGredVqListAttrs<'a>>),
 }
 impl<'a> Iterable<'a, GredAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<&'a [u8]> {
+    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let GredAttrs::Parms(val) = attr {
-                return Some(val);
+            if let GredAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("GredAttrs", "Parms"))
     }
-    pub fn get_stab(&self) -> Option<&'a [u8]> {
+    pub fn get_stab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let GredAttrs::Stab(val) = attr {
-                return Some(val);
+            if let GredAttrs::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("GredAttrs", "Stab"))
     }
-    pub fn get_dps(&self) -> Option<PushTcGredSopt> {
+    pub fn get_dps(&self) -> Result<PushTcGredSopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let GredAttrs::Dps(val) = attr {
-                return Some(val);
+            if let GredAttrs::Dps(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("GredAttrs", "Dps"))
     }
-    pub fn get_max_p(&self) -> Option<&'a [u8]> {
+    pub fn get_max_p(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let GredAttrs::MaxP(val) = attr {
-                return Some(val);
+            if let GredAttrs::MaxP(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("GredAttrs", "MaxP"))
     }
-    pub fn get_limit(&self) -> Option<u32> {
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let GredAttrs::Limit(val) = attr {
-                return Some(val);
+            if let GredAttrs::Limit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("GredAttrs", "Limit"))
     }
-    pub fn get_vq_list(&self) -> Iterable<'a, TcaGredVqListAttrs<'a>> {
+    pub fn get_vq_list(&self) -> Result<Iterable<'a, TcaGredVqListAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let GredAttrs::VqList(val) = attr {
-                return val;
+            if let GredAttrs::VqList(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("GredAttrs", "VqList"))
     }
 }
 impl<'a> GredAttrs<'a> {
@@ -10565,6 +13967,76 @@ impl<'a> std::fmt::Debug for Iterable<'a, GredAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, GredAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("GredAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| GredAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                GredAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                GredAttrs::Stab(val) => {
+                    if last_off == offset {
+                        stack.push(("Stab", last_off));
+                        break;
+                    }
+                }
+                GredAttrs::Dps(val) => {
+                    if last_off == offset {
+                        stack.push(("Dps", last_off));
+                        break;
+                    }
+                }
+                GredAttrs::MaxP(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxP", last_off));
+                        break;
+                    }
+                }
+                GredAttrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                GredAttrs::VqList(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("GredAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"tca-gred-vq-list-attrs\""]
 #[derive(Clone)]
 pub enum TcaGredVqListAttrs<'a> {
@@ -10646,6 +14118,46 @@ impl<'a> std::fmt::Debug for Iterable<'a, TcaGredVqListAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TcaGredVqListAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TcaGredVqListAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TcaGredVqListAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TcaGredVqListAttrs::Entry(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TcaGredVqListAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"tca-gred-vq-entry-attrs\""]
 #[derive(Clone)]
 pub enum TcaGredVqEntryAttrs<'a> {
@@ -10663,137 +14175,125 @@ pub enum TcaGredVqEntryAttrs<'a> {
     Flags(u32),
 }
 impl<'a> Iterable<'a, TcaGredVqEntryAttrs<'a>> {
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::Pad(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "Pad"))
     }
-    pub fn get_dp(&self) -> Option<u32> {
+    pub fn get_dp(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::Dp(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::Dp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "Dp"))
     }
-    pub fn get_stat_bytes(&self) -> Option<u64> {
+    pub fn get_stat_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatBytes(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatBytes(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatBytes"))
     }
-    pub fn get_stat_packets(&self) -> Option<u32> {
+    pub fn get_stat_packets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatPackets(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatPackets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatPackets"))
     }
-    pub fn get_stat_backlog(&self) -> Option<u32> {
+    pub fn get_stat_backlog(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatBacklog(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatBacklog(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatBacklog"))
     }
-    pub fn get_stat_prob_drop(&self) -> Option<u32> {
+    pub fn get_stat_prob_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatProbDrop(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatProbDrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatProbDrop"))
     }
-    pub fn get_stat_prob_mark(&self) -> Option<u32> {
+    pub fn get_stat_prob_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatProbMark(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatProbMark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatProbMark"))
     }
-    pub fn get_stat_forced_drop(&self) -> Option<u32> {
+    pub fn get_stat_forced_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatForcedDrop(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatForcedDrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatForcedDrop"))
     }
-    pub fn get_stat_forced_mark(&self) -> Option<u32> {
+    pub fn get_stat_forced_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatForcedMark(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatForcedMark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatForcedMark"))
     }
-    pub fn get_stat_pdrop(&self) -> Option<u32> {
+    pub fn get_stat_pdrop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatPdrop(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatPdrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatPdrop"))
     }
-    pub fn get_stat_other(&self) -> Option<u32> {
+    pub fn get_stat_other(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::StatOther(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::StatOther(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "StatOther"))
     }
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaGredVqEntryAttrs::Flags(val) = attr {
-                return Some(val);
+            if let TcaGredVqEntryAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaGredVqEntryAttrs", "Flags"))
     }
 }
 impl<'a> TcaGredVqEntryAttrs<'a> {
@@ -10933,6 +14433,111 @@ impl<'a> std::fmt::Debug for Iterable<'a, TcaGredVqEntryAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TcaGredVqEntryAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TcaGredVqEntryAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TcaGredVqEntryAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TcaGredVqEntryAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::Dp(val) => {
+                    if last_off == offset {
+                        stack.push(("Dp", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("StatBytes", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("StatPackets", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatBacklog(val) => {
+                    if last_off == offset {
+                        stack.push(("StatBacklog", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatProbDrop(val) => {
+                    if last_off == offset {
+                        stack.push(("StatProbDrop", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatProbMark(val) => {
+                    if last_off == offset {
+                        stack.push(("StatProbMark", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatForcedDrop(val) => {
+                    if last_off == offset {
+                        stack.push(("StatForcedDrop", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatForcedMark(val) => {
+                    if last_off == offset {
+                        stack.push(("StatForcedMark", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatPdrop(val) => {
+                    if last_off == offset {
+                        stack.push(("StatPdrop", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::StatOther(val) => {
+                    if last_off == offset {
+                        stack.push(("StatOther", last_off));
+                        break;
+                    }
+                }
+                TcaGredVqEntryAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TcaGredVqEntryAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"hfsc-attrs\""]
 #[derive(Clone)]
 pub enum HfscAttrs<'a> {
@@ -10941,38 +14546,35 @@ pub enum HfscAttrs<'a> {
     Usc(&'a [u8]),
 }
 impl<'a> Iterable<'a, HfscAttrs<'a>> {
-    pub fn get_rsc(&self) -> Option<&'a [u8]> {
+    pub fn get_rsc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HfscAttrs::Rsc(val) = attr {
-                return Some(val);
+            if let HfscAttrs::Rsc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HfscAttrs", "Rsc"))
     }
-    pub fn get_fsc(&self) -> Option<&'a [u8]> {
+    pub fn get_fsc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HfscAttrs::Fsc(val) = attr {
-                return Some(val);
+            if let HfscAttrs::Fsc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HfscAttrs", "Fsc"))
     }
-    pub fn get_usc(&self) -> Option<&'a [u8]> {
+    pub fn get_usc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HfscAttrs::Usc(val) = attr {
-                return Some(val);
+            if let HfscAttrs::Usc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HfscAttrs", "Usc"))
     }
 }
 impl<'a> HfscAttrs<'a> {
@@ -11049,6 +14651,57 @@ impl<'a> std::fmt::Debug for Iterable<'a, HfscAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, HfscAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("HfscAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| HfscAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                HfscAttrs::Rsc(val) => {
+                    if last_off == offset {
+                        stack.push(("Rsc", last_off));
+                        break;
+                    }
+                }
+                HfscAttrs::Fsc(val) => {
+                    if last_off == offset {
+                        stack.push(("Fsc", last_off));
+                        break;
+                    }
+                }
+                HfscAttrs::Usc(val) => {
+                    if last_off == offset {
+                        stack.push(("Usc", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("HfscAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"hhf-attrs\""]
 #[derive(Clone)]
 pub enum HhfAttrs {
@@ -11061,82 +14714,75 @@ pub enum HhfAttrs {
     NonHhWeight(u32),
 }
 impl<'a> Iterable<'a, HhfAttrs> {
-    pub fn get_backlog_limit(&self) -> Option<u32> {
+    pub fn get_backlog_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::BacklogLimit(val) = attr {
-                return Some(val);
+            if let HhfAttrs::BacklogLimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "BacklogLimit"))
     }
-    pub fn get_quantum(&self) -> Option<u32> {
+    pub fn get_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::Quantum(val) = attr {
-                return Some(val);
+            if let HhfAttrs::Quantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "Quantum"))
     }
-    pub fn get_hh_flows_limit(&self) -> Option<u32> {
+    pub fn get_hh_flows_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::HhFlowsLimit(val) = attr {
-                return Some(val);
+            if let HhfAttrs::HhFlowsLimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "HhFlowsLimit"))
     }
-    pub fn get_reset_timeout(&self) -> Option<u32> {
+    pub fn get_reset_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::ResetTimeout(val) = attr {
-                return Some(val);
+            if let HhfAttrs::ResetTimeout(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "ResetTimeout"))
     }
-    pub fn get_admit_bytes(&self) -> Option<u32> {
+    pub fn get_admit_bytes(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::AdmitBytes(val) = attr {
-                return Some(val);
+            if let HhfAttrs::AdmitBytes(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "AdmitBytes"))
     }
-    pub fn get_evict_timeout(&self) -> Option<u32> {
+    pub fn get_evict_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::EvictTimeout(val) = attr {
-                return Some(val);
+            if let HhfAttrs::EvictTimeout(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "EvictTimeout"))
     }
-    pub fn get_non_hh_weight(&self) -> Option<u32> {
+    pub fn get_non_hh_weight(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HhfAttrs::NonHhWeight(val) = attr {
-                return Some(val);
+            if let HhfAttrs::NonHhWeight(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HhfAttrs", "NonHhWeight"))
     }
 }
 impl HhfAttrs {
@@ -11241,6 +14887,81 @@ impl std::fmt::Debug for Iterable<'_, HhfAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, HhfAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("HhfAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| HhfAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                HhfAttrs::BacklogLimit(val) => {
+                    if last_off == offset {
+                        stack.push(("BacklogLimit", last_off));
+                        break;
+                    }
+                }
+                HhfAttrs::Quantum(val) => {
+                    if last_off == offset {
+                        stack.push(("Quantum", last_off));
+                        break;
+                    }
+                }
+                HhfAttrs::HhFlowsLimit(val) => {
+                    if last_off == offset {
+                        stack.push(("HhFlowsLimit", last_off));
+                        break;
+                    }
+                }
+                HhfAttrs::ResetTimeout(val) => {
+                    if last_off == offset {
+                        stack.push(("ResetTimeout", last_off));
+                        break;
+                    }
+                }
+                HhfAttrs::AdmitBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("AdmitBytes", last_off));
+                        break;
+                    }
+                }
+                HhfAttrs::EvictTimeout(val) => {
+                    if last_off == offset {
+                        stack.push(("EvictTimeout", last_off));
+                        break;
+                    }
+                }
+                HhfAttrs::NonHhWeight(val) => {
+                    if last_off == offset {
+                        stack.push(("NonHhWeight", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("HhfAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"htb-attrs\""]
 #[derive(Clone)]
 pub enum HtbAttrs<'a> {
@@ -11255,104 +14976,95 @@ pub enum HtbAttrs<'a> {
     Offload(()),
 }
 impl<'a> Iterable<'a, HtbAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<PushTcHtbOpt> {
+    pub fn get_parms(&self) -> Result<PushTcHtbOpt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Parms(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Parms"))
     }
-    pub fn get_init(&self) -> Option<PushTcHtbGlob> {
+    pub fn get_init(&self) -> Result<PushTcHtbGlob, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Init(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Init(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Init"))
     }
-    pub fn get_ctab(&self) -> Option<&'a [u8]> {
+    pub fn get_ctab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Ctab(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Ctab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Ctab"))
     }
-    pub fn get_rtab(&self) -> Option<&'a [u8]> {
+    pub fn get_rtab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Rtab(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Rtab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Rtab"))
     }
-    pub fn get_direct_qlen(&self) -> Option<u32> {
+    pub fn get_direct_qlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::DirectQlen(val) = attr {
-                return Some(val);
+            if let HtbAttrs::DirectQlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "DirectQlen"))
     }
-    pub fn get_rate64(&self) -> Option<u64> {
+    pub fn get_rate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Rate64(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Rate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Rate64"))
     }
-    pub fn get_ceil64(&self) -> Option<u64> {
+    pub fn get_ceil64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Ceil64(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Ceil64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Ceil64"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Pad(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Pad"))
     }
-    pub fn get_offload(&self) -> Option<()> {
+    pub fn get_offload(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HtbAttrs::Offload(val) = attr {
-                return Some(val);
+            if let HtbAttrs::Offload(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HtbAttrs", "Offload"))
     }
 }
 impl<'a> HtbAttrs<'a> {
@@ -11467,6 +15179,93 @@ impl<'a> std::fmt::Debug for Iterable<'a, HtbAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, HtbAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("HtbAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| HtbAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                HtbAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Init(val) => {
+                    if last_off == offset {
+                        stack.push(("Init", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Ctab(val) => {
+                    if last_off == offset {
+                        stack.push(("Ctab", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Rtab(val) => {
+                    if last_off == offset {
+                        stack.push(("Rtab", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::DirectQlen(val) => {
+                    if last_off == offset {
+                        stack.push(("DirectQlen", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Rate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate64", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Ceil64(val) => {
+                    if last_off == offset {
+                        stack.push(("Ceil64", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                HtbAttrs::Offload(val) => {
+                    if last_off == offset {
+                        stack.push(("Offload", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("HtbAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"matchall-attrs\""]
 #[derive(Clone)]
 pub enum MatchallAttrs<'a> {
@@ -11477,60 +15276,58 @@ pub enum MatchallAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, MatchallAttrs<'a>> {
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let MatchallAttrs::Classid(val) = attr {
-                return Some(val);
+            if let MatchallAttrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("MatchallAttrs", "Classid"))
     }
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let MatchallAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let MatchallAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("MatchallAttrs", "Act"))
     }
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let MatchallAttrs::Flags(val) = attr {
-                return Some(val);
+            if let MatchallAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("MatchallAttrs", "Flags"))
     }
-    pub fn get_pcnt(&self) -> Option<PushTcMatchallPcnt> {
+    pub fn get_pcnt(&self) -> Result<PushTcMatchallPcnt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let MatchallAttrs::Pcnt(val) = attr {
-                return Some(val);
+            if let MatchallAttrs::Pcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("MatchallAttrs", "Pcnt"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let MatchallAttrs::Pad(val) = attr {
-                return Some(val);
+            if let MatchallAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("MatchallAttrs", "Pad"))
     }
 }
 impl<'a> MatchallAttrs<'a> {
@@ -11621,22 +15418,92 @@ impl<'a> std::fmt::Debug for Iterable<'a, MatchallAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, MatchallAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("MatchallAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| MatchallAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                MatchallAttrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                MatchallAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                MatchallAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                MatchallAttrs::Pcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Pcnt", last_off));
+                        break;
+                    }
+                }
+                MatchallAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("MatchallAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"etf-attrs\""]
 #[derive(Clone)]
 pub enum EtfAttrs {
     Parms(PushTcEtfQopt),
 }
 impl<'a> Iterable<'a, EtfAttrs> {
-    pub fn get_parms(&self) -> Option<PushTcEtfQopt> {
+    pub fn get_parms(&self) -> Result<PushTcEtfQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EtfAttrs::Parms(val) = attr {
-                return Some(val);
+            if let EtfAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("EtfAttrs", "Parms"))
     }
 }
 impl EtfAttrs {
@@ -11699,6 +15566,45 @@ impl std::fmt::Debug for Iterable<'_, EtfAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, EtfAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("EtfAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| EtfAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                EtfAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("EtfAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"ets-attrs\""]
 #[derive(Clone)]
 pub enum EtsAttrs<'a> {
@@ -11712,38 +15618,35 @@ pub enum EtsAttrs<'a> {
     PriomapBand(u8),
 }
 impl<'a> Iterable<'a, EtsAttrs<'a>> {
-    pub fn get_nbands(&self) -> Option<u8> {
+    pub fn get_nbands(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EtsAttrs::Nbands(val) = attr {
-                return Some(val);
+            if let EtsAttrs::Nbands(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("EtsAttrs", "Nbands"))
     }
-    pub fn get_nstrict(&self) -> Option<u8> {
+    pub fn get_nstrict(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EtsAttrs::Nstrict(val) = attr {
-                return Some(val);
+            if let EtsAttrs::Nstrict(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("EtsAttrs", "Nstrict"))
     }
-    pub fn get_quanta(&self) -> Iterable<'a, EtsAttrs<'a>> {
+    pub fn get_quanta(&self) -> Result<Iterable<'a, EtsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EtsAttrs::Quanta(val) = attr {
-                return val;
+            if let EtsAttrs::Quanta(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("EtsAttrs", "Quanta"))
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_quanta_band(&self) -> MultiAttrIterable<Self, EtsAttrs<'a>, u32> {
@@ -11755,16 +15658,15 @@ impl<'a> Iterable<'a, EtsAttrs<'a>> {
             }
         })
     }
-    pub fn get_priomap(&self) -> Iterable<'a, EtsAttrs<'a>> {
+    pub fn get_priomap(&self) -> Result<Iterable<'a, EtsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let EtsAttrs::Priomap(val) = attr {
-                return val;
+            if let EtsAttrs::Priomap(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("EtsAttrs", "Priomap"))
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_priomap_band(&self) -> MultiAttrIterable<Self, EtsAttrs<'a>, u8> {
@@ -11872,6 +15774,76 @@ impl<'a> std::fmt::Debug for Iterable<'a, EtsAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, EtsAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("EtsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| EtsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                EtsAttrs::Nbands(val) => {
+                    if last_off == offset {
+                        stack.push(("Nbands", last_off));
+                        break;
+                    }
+                }
+                EtsAttrs::Nstrict(val) => {
+                    if last_off == offset {
+                        stack.push(("Nstrict", last_off));
+                        break;
+                    }
+                }
+                EtsAttrs::Quanta(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                EtsAttrs::QuantaBand(val) => {
+                    if last_off == offset {
+                        stack.push(("QuantaBand", last_off));
+                        break;
+                    }
+                }
+                EtsAttrs::Priomap(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                EtsAttrs::PriomapBand(val) => {
+                    if last_off == offset {
+                        stack.push(("PriomapBand", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("EtsAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"fq-attrs\""]
 #[derive(Clone)]
 pub enum FqAttrs<'a> {
@@ -11910,206 +15882,189 @@ pub enum FqAttrs<'a> {
 }
 impl<'a> Iterable<'a, FqAttrs<'a>> {
     #[doc = "Limit of total number of packets in queue"]
-    pub fn get_plimit(&self) -> Option<u32> {
+    pub fn get_plimit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::Plimit(val) = attr {
-                return Some(val);
+            if let FqAttrs::Plimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "Plimit"))
     }
     #[doc = "Limit of packets per flow"]
-    pub fn get_flow_plimit(&self) -> Option<u32> {
+    pub fn get_flow_plimit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::FlowPlimit(val) = attr {
-                return Some(val);
+            if let FqAttrs::FlowPlimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "FlowPlimit"))
     }
     #[doc = "RR quantum"]
-    pub fn get_quantum(&self) -> Option<u32> {
+    pub fn get_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::Quantum(val) = attr {
-                return Some(val);
+            if let FqAttrs::Quantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "Quantum"))
     }
     #[doc = "RR quantum for new flow"]
-    pub fn get_initial_quantum(&self) -> Option<u32> {
+    pub fn get_initial_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::InitialQuantum(val) = attr {
-                return Some(val);
+            if let FqAttrs::InitialQuantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "InitialQuantum"))
     }
     #[doc = "Enable / disable rate limiting"]
-    pub fn get_rate_enable(&self) -> Option<u32> {
+    pub fn get_rate_enable(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::RateEnable(val) = attr {
-                return Some(val);
+            if let FqAttrs::RateEnable(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "RateEnable"))
     }
     #[doc = "Obsolete, do not use"]
-    pub fn get_flow_default_rate(&self) -> Option<u32> {
+    pub fn get_flow_default_rate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::FlowDefaultRate(val) = attr {
-                return Some(val);
+            if let FqAttrs::FlowDefaultRate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "FlowDefaultRate"))
     }
     #[doc = "Per flow max rate"]
-    pub fn get_flow_max_rate(&self) -> Option<u32> {
+    pub fn get_flow_max_rate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::FlowMaxRate(val) = attr {
-                return Some(val);
+            if let FqAttrs::FlowMaxRate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "FlowMaxRate"))
     }
     #[doc = "log2(number of buckets)"]
-    pub fn get_buckets_log(&self) -> Option<u32> {
+    pub fn get_buckets_log(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::BucketsLog(val) = attr {
-                return Some(val);
+            if let FqAttrs::BucketsLog(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "BucketsLog"))
     }
     #[doc = "Flow credit refill delay in usec"]
-    pub fn get_flow_refill_delay(&self) -> Option<u32> {
+    pub fn get_flow_refill_delay(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::FlowRefillDelay(val) = attr {
-                return Some(val);
+            if let FqAttrs::FlowRefillDelay(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "FlowRefillDelay"))
     }
     #[doc = "Mask applied to orphaned skb hashes"]
-    pub fn get_orphan_mask(&self) -> Option<u32> {
+    pub fn get_orphan_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::OrphanMask(val) = attr {
-                return Some(val);
+            if let FqAttrs::OrphanMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "OrphanMask"))
     }
     #[doc = "Per packet delay under this rate"]
-    pub fn get_low_rate_threshold(&self) -> Option<u32> {
+    pub fn get_low_rate_threshold(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::LowRateThreshold(val) = attr {
-                return Some(val);
+            if let FqAttrs::LowRateThreshold(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "LowRateThreshold"))
     }
     #[doc = "DCTCP-like CE marking threshold"]
-    pub fn get_ce_threshold(&self) -> Option<u32> {
+    pub fn get_ce_threshold(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::CeThreshold(val) = attr {
-                return Some(val);
+            if let FqAttrs::CeThreshold(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "CeThreshold"))
     }
-    pub fn get_timer_slack(&self) -> Option<u32> {
+    pub fn get_timer_slack(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::TimerSlack(val) = attr {
-                return Some(val);
+            if let FqAttrs::TimerSlack(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "TimerSlack"))
     }
     #[doc = "Time horizon in usec"]
-    pub fn get_horizon(&self) -> Option<u32> {
+    pub fn get_horizon(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::Horizon(val) = attr {
-                return Some(val);
+            if let FqAttrs::Horizon(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "Horizon"))
     }
     #[doc = "Drop packets beyond horizon, or cap their EDT"]
-    pub fn get_horizon_drop(&self) -> Option<u8> {
+    pub fn get_horizon_drop(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::HorizonDrop(val) = attr {
-                return Some(val);
+            if let FqAttrs::HorizonDrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "HorizonDrop"))
     }
-    pub fn get_priomap(&self) -> Option<PushTcPrioQopt> {
+    pub fn get_priomap(&self) -> Result<PushTcPrioQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::Priomap(val) = attr {
-                return Some(val);
+            if let FqAttrs::Priomap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "Priomap"))
     }
     #[doc = "Weights for each band"]
-    pub fn get_weights(&self) -> Option<&'a [u8]> {
+    pub fn get_weights(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqAttrs::Weights(val) = attr {
-                return Some(val);
+            if let FqAttrs::Weights(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqAttrs", "Weights"))
     }
 }
 impl<'a> FqAttrs<'a> {
@@ -12284,6 +16239,138 @@ impl<'a> std::fmt::Debug for Iterable<'a, FqAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FqAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FqAttrs", offset));
+            return (stack, missing_type.and_then(|t| FqAttrs::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FqAttrs::Plimit(val) => {
+                    if last_off == offset {
+                        stack.push(("Plimit", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::FlowPlimit(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowPlimit", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::Quantum(val) => {
+                    if last_off == offset {
+                        stack.push(("Quantum", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::InitialQuantum(val) => {
+                    if last_off == offset {
+                        stack.push(("InitialQuantum", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::RateEnable(val) => {
+                    if last_off == offset {
+                        stack.push(("RateEnable", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::FlowDefaultRate(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowDefaultRate", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::FlowMaxRate(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowMaxRate", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::BucketsLog(val) => {
+                    if last_off == offset {
+                        stack.push(("BucketsLog", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::FlowRefillDelay(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowRefillDelay", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::OrphanMask(val) => {
+                    if last_off == offset {
+                        stack.push(("OrphanMask", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::LowRateThreshold(val) => {
+                    if last_off == offset {
+                        stack.push(("LowRateThreshold", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::CeThreshold(val) => {
+                    if last_off == offset {
+                        stack.push(("CeThreshold", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::TimerSlack(val) => {
+                    if last_off == offset {
+                        stack.push(("TimerSlack", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::Horizon(val) => {
+                    if last_off == offset {
+                        stack.push(("Horizon", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::HorizonDrop(val) => {
+                    if last_off == offset {
+                        stack.push(("HorizonDrop", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::Priomap(val) => {
+                    if last_off == offset {
+                        stack.push(("Priomap", last_off));
+                        break;
+                    }
+                }
+                FqAttrs::Weights(val) => {
+                    if last_off == offset {
+                        stack.push(("Weights", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FqAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"fq-codel-attrs\""]
 #[derive(Clone)]
 pub enum FqCodelAttrs {
@@ -12300,126 +16387,115 @@ pub enum FqCodelAttrs {
     CeThresholdMask(u8),
 }
 impl<'a> Iterable<'a, FqCodelAttrs> {
-    pub fn get_target(&self) -> Option<u32> {
+    pub fn get_target(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::Target(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::Target(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "Target"))
     }
-    pub fn get_limit(&self) -> Option<u32> {
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::Limit(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::Limit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "Limit"))
     }
-    pub fn get_interval(&self) -> Option<u32> {
+    pub fn get_interval(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::Interval(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::Interval(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "Interval"))
     }
-    pub fn get_ecn(&self) -> Option<u32> {
+    pub fn get_ecn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::Ecn(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::Ecn(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "Ecn"))
     }
-    pub fn get_flows(&self) -> Option<u32> {
+    pub fn get_flows(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::Flows(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::Flows(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "Flows"))
     }
-    pub fn get_quantum(&self) -> Option<u32> {
+    pub fn get_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::Quantum(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::Quantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "Quantum"))
     }
-    pub fn get_ce_threshold(&self) -> Option<u32> {
+    pub fn get_ce_threshold(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::CeThreshold(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::CeThreshold(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "CeThreshold"))
     }
-    pub fn get_drop_batch_size(&self) -> Option<u32> {
+    pub fn get_drop_batch_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::DropBatchSize(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::DropBatchSize(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "DropBatchSize"))
     }
-    pub fn get_memory_limit(&self) -> Option<u32> {
+    pub fn get_memory_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::MemoryLimit(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::MemoryLimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "MemoryLimit"))
     }
-    pub fn get_ce_threshold_selector(&self) -> Option<u8> {
+    pub fn get_ce_threshold_selector(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::CeThresholdSelector(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::CeThresholdSelector(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "CeThresholdSelector"))
     }
-    pub fn get_ce_threshold_mask(&self) -> Option<u8> {
+    pub fn get_ce_threshold_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqCodelAttrs::CeThresholdMask(val) = attr {
-                return Some(val);
+            if let FqCodelAttrs::CeThresholdMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqCodelAttrs", "CeThresholdMask"))
     }
 }
 impl FqCodelAttrs {
@@ -12552,6 +16628,105 @@ impl std::fmt::Debug for Iterable<'_, FqCodelAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FqCodelAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FqCodelAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FqCodelAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FqCodelAttrs::Target(val) => {
+                    if last_off == offset {
+                        stack.push(("Target", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::Interval(val) => {
+                    if last_off == offset {
+                        stack.push(("Interval", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::Ecn(val) => {
+                    if last_off == offset {
+                        stack.push(("Ecn", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::Flows(val) => {
+                    if last_off == offset {
+                        stack.push(("Flows", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::Quantum(val) => {
+                    if last_off == offset {
+                        stack.push(("Quantum", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::CeThreshold(val) => {
+                    if last_off == offset {
+                        stack.push(("CeThreshold", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::DropBatchSize(val) => {
+                    if last_off == offset {
+                        stack.push(("DropBatchSize", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::MemoryLimit(val) => {
+                    if last_off == offset {
+                        stack.push(("MemoryLimit", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::CeThresholdSelector(val) => {
+                    if last_off == offset {
+                        stack.push(("CeThresholdSelector", last_off));
+                        break;
+                    }
+                }
+                FqCodelAttrs::CeThresholdMask(val) => {
+                    if last_off == offset {
+                        stack.push(("CeThresholdMask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FqCodelAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"fq-pie-attrs\""]
 #[derive(Clone)]
 pub enum FqPieAttrs {
@@ -12569,137 +16744,125 @@ pub enum FqPieAttrs {
     DqRateEstimator(u32),
 }
 impl<'a> Iterable<'a, FqPieAttrs> {
-    pub fn get_limit(&self) -> Option<u32> {
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Limit(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Limit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Limit"))
     }
-    pub fn get_flows(&self) -> Option<u32> {
+    pub fn get_flows(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Flows(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Flows(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Flows"))
     }
-    pub fn get_target(&self) -> Option<u32> {
+    pub fn get_target(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Target(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Target(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Target"))
     }
-    pub fn get_tupdate(&self) -> Option<u32> {
+    pub fn get_tupdate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Tupdate(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Tupdate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Tupdate"))
     }
-    pub fn get_alpha(&self) -> Option<u32> {
+    pub fn get_alpha(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Alpha(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Alpha(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Alpha"))
     }
-    pub fn get_beta(&self) -> Option<u32> {
+    pub fn get_beta(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Beta(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Beta(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Beta"))
     }
-    pub fn get_quantum(&self) -> Option<u32> {
+    pub fn get_quantum(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Quantum(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Quantum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Quantum"))
     }
-    pub fn get_memory_limit(&self) -> Option<u32> {
+    pub fn get_memory_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::MemoryLimit(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::MemoryLimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "MemoryLimit"))
     }
-    pub fn get_ecn_prob(&self) -> Option<u32> {
+    pub fn get_ecn_prob(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::EcnProb(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::EcnProb(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "EcnProb"))
     }
-    pub fn get_ecn(&self) -> Option<u32> {
+    pub fn get_ecn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Ecn(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Ecn(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Ecn"))
     }
-    pub fn get_bytemode(&self) -> Option<u32> {
+    pub fn get_bytemode(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::Bytemode(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::Bytemode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "Bytemode"))
     }
-    pub fn get_dq_rate_estimator(&self) -> Option<u32> {
+    pub fn get_dq_rate_estimator(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FqPieAttrs::DqRateEstimator(val) = attr {
-                return Some(val);
+            if let FqPieAttrs::DqRateEstimator(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FqPieAttrs", "DqRateEstimator"))
     }
 }
 impl FqPieAttrs {
@@ -12839,6 +17002,111 @@ impl std::fmt::Debug for Iterable<'_, FqPieAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, FqPieAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FqPieAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FqPieAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FqPieAttrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Flows(val) => {
+                    if last_off == offset {
+                        stack.push(("Flows", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Target(val) => {
+                    if last_off == offset {
+                        stack.push(("Target", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Tupdate(val) => {
+                    if last_off == offset {
+                        stack.push(("Tupdate", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Alpha(val) => {
+                    if last_off == offset {
+                        stack.push(("Alpha", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Beta(val) => {
+                    if last_off == offset {
+                        stack.push(("Beta", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Quantum(val) => {
+                    if last_off == offset {
+                        stack.push(("Quantum", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::MemoryLimit(val) => {
+                    if last_off == offset {
+                        stack.push(("MemoryLimit", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::EcnProb(val) => {
+                    if last_off == offset {
+                        stack.push(("EcnProb", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Ecn(val) => {
+                    if last_off == offset {
+                        stack.push(("Ecn", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::Bytemode(val) => {
+                    if last_off == offset {
+                        stack.push(("Bytemode", last_off));
+                        break;
+                    }
+                }
+                FqPieAttrs::DqRateEstimator(val) => {
+                    if last_off == offset {
+                        stack.push(("DqRateEstimator", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FqPieAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"netem-attrs\""]
 #[derive(Clone)]
 pub enum NetemAttrs<'a> {
@@ -12858,159 +17126,145 @@ pub enum NetemAttrs<'a> {
     PrngSeed(u64),
 }
 impl<'a> Iterable<'a, NetemAttrs<'a>> {
-    pub fn get_corr(&self) -> Option<PushTcNetemCorr> {
+    pub fn get_corr(&self) -> Result<PushTcNetemCorr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Corr(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Corr(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Corr"))
     }
-    pub fn get_delay_dist(&self) -> Option<&'a [u8]> {
+    pub fn get_delay_dist(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::DelayDist(val) = attr {
-                return Some(val);
+            if let NetemAttrs::DelayDist(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "DelayDist"))
     }
-    pub fn get_reorder(&self) -> Option<PushTcNetemReorder> {
+    pub fn get_reorder(&self) -> Result<PushTcNetemReorder, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Reorder(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Reorder(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Reorder"))
     }
-    pub fn get_corrupt(&self) -> Option<PushTcNetemCorrupt> {
+    pub fn get_corrupt(&self) -> Result<PushTcNetemCorrupt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Corrupt(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Corrupt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Corrupt"))
     }
-    pub fn get_loss(&self) -> Iterable<'a, NetemLossAttrs> {
+    pub fn get_loss(&self) -> Result<Iterable<'a, NetemLossAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Loss(val) = attr {
-                return val;
+            if let NetemAttrs::Loss(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("NetemAttrs", "Loss"))
     }
-    pub fn get_rate(&self) -> Option<PushTcNetemRate> {
+    pub fn get_rate(&self) -> Result<PushTcNetemRate, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Rate(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Rate"))
     }
-    pub fn get_ecn(&self) -> Option<u32> {
+    pub fn get_ecn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Ecn(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Ecn(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Ecn"))
     }
-    pub fn get_rate64(&self) -> Option<u64> {
+    pub fn get_rate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Rate64(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Rate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Rate64"))
     }
-    pub fn get_pad(&self) -> Option<u32> {
+    pub fn get_pad(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Pad(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Pad"))
     }
-    pub fn get_latency64(&self) -> Option<i64> {
+    pub fn get_latency64(&self) -> Result<i64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Latency64(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Latency64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Latency64"))
     }
-    pub fn get_jitter64(&self) -> Option<i64> {
+    pub fn get_jitter64(&self) -> Result<i64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Jitter64(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Jitter64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Jitter64"))
     }
-    pub fn get_slot(&self) -> Option<PushTcNetemSlot> {
+    pub fn get_slot(&self) -> Result<PushTcNetemSlot, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::Slot(val) = attr {
-                return Some(val);
+            if let NetemAttrs::Slot(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "Slot"))
     }
-    pub fn get_slot_dist(&self) -> Option<&'a [u8]> {
+    pub fn get_slot_dist(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::SlotDist(val) = attr {
-                return Some(val);
+            if let NetemAttrs::SlotDist(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "SlotDist"))
     }
-    pub fn get_prng_seed(&self) -> Option<u64> {
+    pub fn get_prng_seed(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemAttrs::PrngSeed(val) = attr {
-                return Some(val);
+            if let NetemAttrs::PrngSeed(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemAttrs", "PrngSeed"))
     }
 }
 impl<'a> NetemAttrs<'a> {
@@ -13164,6 +17418,124 @@ impl<'a> std::fmt::Debug for Iterable<'a, NetemAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, NetemAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("NetemAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| NetemAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                NetemAttrs::Corr(val) => {
+                    if last_off == offset {
+                        stack.push(("Corr", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::DelayDist(val) => {
+                    if last_off == offset {
+                        stack.push(("DelayDist", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Reorder(val) => {
+                    if last_off == offset {
+                        stack.push(("Reorder", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Corrupt(val) => {
+                    if last_off == offset {
+                        stack.push(("Corrupt", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Loss(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                NetemAttrs::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Ecn(val) => {
+                    if last_off == offset {
+                        stack.push(("Ecn", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Rate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate64", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Latency64(val) => {
+                    if last_off == offset {
+                        stack.push(("Latency64", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Jitter64(val) => {
+                    if last_off == offset {
+                        stack.push(("Jitter64", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::Slot(val) => {
+                    if last_off == offset {
+                        stack.push(("Slot", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::SlotDist(val) => {
+                    if last_off == offset {
+                        stack.push(("SlotDist", last_off));
+                        break;
+                    }
+                }
+                NetemAttrs::PrngSeed(val) => {
+                    if last_off == offset {
+                        stack.push(("PrngSeed", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("NetemAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"netem-loss-attrs\""]
 #[derive(Clone)]
 pub enum NetemLossAttrs {
@@ -13174,28 +17546,26 @@ pub enum NetemLossAttrs {
 }
 impl<'a> Iterable<'a, NetemLossAttrs> {
     #[doc = "General Intuitive - 4 state model"]
-    pub fn get_gi(&self) -> Option<PushTcNetemGimodel> {
+    pub fn get_gi(&self) -> Result<PushTcNetemGimodel, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemLossAttrs::Gi(val) = attr {
-                return Some(val);
+            if let NetemLossAttrs::Gi(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemLossAttrs", "Gi"))
     }
     #[doc = "Gilbert Elliot models"]
-    pub fn get_ge(&self) -> Option<PushTcNetemGemodel> {
+    pub fn get_ge(&self) -> Result<PushTcNetemGemodel, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NetemLossAttrs::Ge(val) = attr {
-                return Some(val);
+            if let NetemLossAttrs::Ge(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NetemLossAttrs", "Ge"))
     }
 }
 impl NetemLossAttrs {
@@ -13265,6 +17635,51 @@ impl std::fmt::Debug for Iterable<'_, NetemLossAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, NetemLossAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("NetemLossAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| NetemLossAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                NetemLossAttrs::Gi(val) => {
+                    if last_off == offset {
+                        stack.push(("Gi", last_off));
+                        break;
+                    }
+                }
+                NetemLossAttrs::Ge(val) => {
+                    if last_off == offset {
+                        stack.push(("Ge", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("NetemLossAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"pie-attrs\""]
 #[derive(Clone)]
 pub enum PieAttrs {
@@ -13278,93 +17693,85 @@ pub enum PieAttrs {
     DqRateEstimator(u32),
 }
 impl<'a> Iterable<'a, PieAttrs> {
-    pub fn get_target(&self) -> Option<u32> {
+    pub fn get_target(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Target(val) = attr {
-                return Some(val);
+            if let PieAttrs::Target(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Target"))
     }
-    pub fn get_limit(&self) -> Option<u32> {
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Limit(val) = attr {
-                return Some(val);
+            if let PieAttrs::Limit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Limit"))
     }
-    pub fn get_tupdate(&self) -> Option<u32> {
+    pub fn get_tupdate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Tupdate(val) = attr {
-                return Some(val);
+            if let PieAttrs::Tupdate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Tupdate"))
     }
-    pub fn get_alpha(&self) -> Option<u32> {
+    pub fn get_alpha(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Alpha(val) = attr {
-                return Some(val);
+            if let PieAttrs::Alpha(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Alpha"))
     }
-    pub fn get_beta(&self) -> Option<u32> {
+    pub fn get_beta(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Beta(val) = attr {
-                return Some(val);
+            if let PieAttrs::Beta(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Beta"))
     }
-    pub fn get_ecn(&self) -> Option<u32> {
+    pub fn get_ecn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Ecn(val) = attr {
-                return Some(val);
+            if let PieAttrs::Ecn(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Ecn"))
     }
-    pub fn get_bytemode(&self) -> Option<u32> {
+    pub fn get_bytemode(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::Bytemode(val) = attr {
-                return Some(val);
+            if let PieAttrs::Bytemode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "Bytemode"))
     }
-    pub fn get_dq_rate_estimator(&self) -> Option<u32> {
+    pub fn get_dq_rate_estimator(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PieAttrs::DqRateEstimator(val) = attr {
-                return Some(val);
+            if let PieAttrs::DqRateEstimator(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PieAttrs", "DqRateEstimator"))
     }
 }
 impl PieAttrs {
@@ -13476,6 +17883,87 @@ impl std::fmt::Debug for Iterable<'_, PieAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, PieAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("PieAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| PieAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                PieAttrs::Target(val) => {
+                    if last_off == offset {
+                        stack.push(("Target", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::Tupdate(val) => {
+                    if last_off == offset {
+                        stack.push(("Tupdate", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::Alpha(val) => {
+                    if last_off == offset {
+                        stack.push(("Alpha", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::Beta(val) => {
+                    if last_off == offset {
+                        stack.push(("Beta", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::Ecn(val) => {
+                    if last_off == offset {
+                        stack.push(("Ecn", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::Bytemode(val) => {
+                    if last_off == offset {
+                        stack.push(("Bytemode", last_off));
+                        break;
+                    }
+                }
+                PieAttrs::DqRateEstimator(val) => {
+                    if last_off == offset {
+                        stack.push(("DqRateEstimator", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("PieAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"police-attrs\""]
 #[derive(Clone)]
 pub enum PoliceAttrs<'a> {
@@ -13492,126 +17980,115 @@ pub enum PoliceAttrs<'a> {
     Pktburst64(u64),
 }
 impl<'a> Iterable<'a, PoliceAttrs<'a>> {
-    pub fn get_tbf(&self) -> Option<PushTcPolice> {
+    pub fn get_tbf(&self) -> Result<PushTcPolice, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Tbf(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Tbf(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Tbf"))
     }
-    pub fn get_rate(&self) -> Option<&'a [u8]> {
+    pub fn get_rate(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Rate(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Rate"))
     }
-    pub fn get_peakrate(&self) -> Option<&'a [u8]> {
+    pub fn get_peakrate(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Peakrate(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Peakrate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Peakrate"))
     }
-    pub fn get_avrate(&self) -> Option<u32> {
+    pub fn get_avrate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Avrate(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Avrate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Avrate"))
     }
-    pub fn get_result(&self) -> Option<u32> {
+    pub fn get_result(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Result(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Result(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Result"))
     }
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Tm(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Tm"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Pad(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Pad"))
     }
-    pub fn get_rate64(&self) -> Option<u64> {
+    pub fn get_rate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Rate64(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Rate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Rate64"))
     }
-    pub fn get_peakrate64(&self) -> Option<u64> {
+    pub fn get_peakrate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Peakrate64(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Peakrate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Peakrate64"))
     }
-    pub fn get_pktrate64(&self) -> Option<u64> {
+    pub fn get_pktrate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Pktrate64(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Pktrate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Pktrate64"))
     }
-    pub fn get_pktburst64(&self) -> Option<u64> {
+    pub fn get_pktburst64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let PoliceAttrs::Pktburst64(val) = attr {
-                return Some(val);
+            if let PoliceAttrs::Pktburst64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("PoliceAttrs", "Pktburst64"))
     }
 }
 impl<'a> PoliceAttrs<'a> {
@@ -13744,6 +18221,105 @@ impl<'a> std::fmt::Debug for Iterable<'a, PoliceAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("PoliceAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| PoliceAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                PoliceAttrs::Tbf(val) => {
+                    if last_off == offset {
+                        stack.push(("Tbf", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Peakrate(val) => {
+                    if last_off == offset {
+                        stack.push(("Peakrate", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Avrate(val) => {
+                    if last_off == offset {
+                        stack.push(("Avrate", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Result(val) => {
+                    if last_off == offset {
+                        stack.push(("Result", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Rate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate64", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Peakrate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Peakrate64", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Pktrate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Pktrate64", last_off));
+                        break;
+                    }
+                }
+                PoliceAttrs::Pktburst64(val) => {
+                    if last_off == offset {
+                        stack.push(("Pktburst64", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("PoliceAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"qfq-attrs\""]
 #[derive(Clone)]
 pub enum QfqAttrs {
@@ -13751,27 +18327,25 @@ pub enum QfqAttrs {
     Lmax(u32),
 }
 impl<'a> Iterable<'a, QfqAttrs> {
-    pub fn get_weight(&self) -> Option<u32> {
+    pub fn get_weight(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let QfqAttrs::Weight(val) = attr {
-                return Some(val);
+            if let QfqAttrs::Weight(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("QfqAttrs", "Weight"))
     }
-    pub fn get_lmax(&self) -> Option<u32> {
+    pub fn get_lmax(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let QfqAttrs::Lmax(val) = attr {
-                return Some(val);
+            if let QfqAttrs::Lmax(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("QfqAttrs", "Lmax"))
     }
 }
 impl QfqAttrs {
@@ -13841,6 +18415,51 @@ impl std::fmt::Debug for Iterable<'_, QfqAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, QfqAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("QfqAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| QfqAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                QfqAttrs::Weight(val) => {
+                    if last_off == offset {
+                        stack.push(("Weight", last_off));
+                        break;
+                    }
+                }
+                QfqAttrs::Lmax(val) => {
+                    if last_off == offset {
+                        stack.push(("Lmax", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("QfqAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"red-attrs\""]
 #[derive(Clone)]
 pub enum RedAttrs<'a> {
@@ -13852,71 +18471,65 @@ pub enum RedAttrs<'a> {
     MarkBlock(u32),
 }
 impl<'a> Iterable<'a, RedAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<PushTcRedQopt> {
+    pub fn get_parms(&self) -> Result<PushTcRedQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RedAttrs::Parms(val) = attr {
-                return Some(val);
+            if let RedAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RedAttrs", "Parms"))
     }
-    pub fn get_stab(&self) -> Option<&'a [u8]> {
+    pub fn get_stab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RedAttrs::Stab(val) = attr {
-                return Some(val);
+            if let RedAttrs::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RedAttrs", "Stab"))
     }
-    pub fn get_max_p(&self) -> Option<u32> {
+    pub fn get_max_p(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RedAttrs::MaxP(val) = attr {
-                return Some(val);
+            if let RedAttrs::MaxP(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RedAttrs", "MaxP"))
     }
-    pub fn get_flags(&self) -> Option<PushBuiltinBitfield32> {
+    pub fn get_flags(&self) -> Result<PushBuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RedAttrs::Flags(val) = attr {
-                return Some(val);
+            if let RedAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RedAttrs", "Flags"))
     }
-    pub fn get_early_drop_block(&self) -> Option<u32> {
+    pub fn get_early_drop_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RedAttrs::EarlyDropBlock(val) = attr {
-                return Some(val);
+            if let RedAttrs::EarlyDropBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RedAttrs", "EarlyDropBlock"))
     }
-    pub fn get_mark_block(&self) -> Option<u32> {
+    pub fn get_mark_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RedAttrs::MarkBlock(val) = attr {
-                return Some(val);
+            if let RedAttrs::MarkBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RedAttrs", "MarkBlock"))
     }
 }
 impl<'a> RedAttrs<'a> {
@@ -14014,6 +18627,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, RedAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, RedAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("RedAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| RedAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                RedAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                RedAttrs::Stab(val) => {
+                    if last_off == offset {
+                        stack.push(("Stab", last_off));
+                        break;
+                    }
+                }
+                RedAttrs::MaxP(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxP", last_off));
+                        break;
+                    }
+                }
+                RedAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                RedAttrs::EarlyDropBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EarlyDropBlock", last_off));
+                        break;
+                    }
+                }
+                RedAttrs::MarkBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("MarkBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("RedAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"route-attrs\""]
 #[derive(Clone)]
 pub enum RouteAttrs<'a> {
@@ -14025,71 +18707,68 @@ pub enum RouteAttrs<'a> {
     Act(Iterable<'a, Iterable<'a, ActAttrs<'a>>>),
 }
 impl<'a> Iterable<'a, RouteAttrs<'a>> {
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Classid(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Classid"))
     }
-    pub fn get_to(&self) -> Option<u32> {
+    pub fn get_to(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::To(val) = attr {
-                return Some(val);
+            if let RouteAttrs::To(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "To"))
     }
-    pub fn get_from(&self) -> Option<u32> {
+    pub fn get_from(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::From(val) = attr {
-                return Some(val);
+            if let RouteAttrs::From(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "From"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Iif(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Iif"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Police(val) = attr {
-                return val;
+            if let RouteAttrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("RouteAttrs", "Police"))
     }
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let RouteAttrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("RouteAttrs", "Act"))
     }
 }
 impl<'a> RouteAttrs<'a> {
@@ -14187,6 +18866,83 @@ impl<'a> std::fmt::Debug for Iterable<'a, RouteAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, RouteAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("RouteAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| RouteAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                RouteAttrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::To(val) => {
+                    if last_off == offset {
+                        stack.push(("To", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::From(val) => {
+                    if last_off == offset {
+                        stack.push(("From", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                RouteAttrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("RouteAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"taprio-attrs\""]
 #[derive(Clone)]
 pub enum TaprioAttrs<'a> {
@@ -14204,137 +18960,127 @@ pub enum TaprioAttrs<'a> {
     TcEntry(Iterable<'a, TaprioTcEntryAttrs>),
 }
 impl<'a> Iterable<'a, TaprioAttrs<'a>> {
-    pub fn get_priomap(&self) -> Option<PushTcMqprioQopt> {
+    pub fn get_priomap(&self) -> Result<PushTcMqprioQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::Priomap(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::Priomap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "Priomap"))
     }
-    pub fn get_sched_entry_list(&self) -> Iterable<'a, TaprioSchedEntryList<'a>> {
+    pub fn get_sched_entry_list(
+        &self,
+    ) -> Result<Iterable<'a, TaprioSchedEntryList<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::SchedEntryList(val) = attr {
-                return val;
+            if let TaprioAttrs::SchedEntryList(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("TaprioAttrs", "SchedEntryList"))
     }
-    pub fn get_sched_base_time(&self) -> Option<i64> {
+    pub fn get_sched_base_time(&self) -> Result<i64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::SchedBaseTime(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::SchedBaseTime(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "SchedBaseTime"))
     }
-    pub fn get_sched_single_entry(&self) -> Iterable<'a, TaprioSchedEntry> {
+    pub fn get_sched_single_entry(&self) -> Result<Iterable<'a, TaprioSchedEntry>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::SchedSingleEntry(val) = attr {
-                return val;
+            if let TaprioAttrs::SchedSingleEntry(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("TaprioAttrs", "SchedSingleEntry"))
     }
-    pub fn get_sched_clockid(&self) -> Option<i32> {
+    pub fn get_sched_clockid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::SchedClockid(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::SchedClockid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "SchedClockid"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::Pad(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "Pad"))
     }
-    pub fn get_admin_sched(&self) -> Option<&'a [u8]> {
+    pub fn get_admin_sched(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::AdminSched(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::AdminSched(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "AdminSched"))
     }
-    pub fn get_sched_cycle_time(&self) -> Option<i64> {
+    pub fn get_sched_cycle_time(&self) -> Result<i64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::SchedCycleTime(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::SchedCycleTime(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "SchedCycleTime"))
     }
-    pub fn get_sched_cycle_time_extension(&self) -> Option<i64> {
+    pub fn get_sched_cycle_time_extension(&self) -> Result<i64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::SchedCycleTimeExtension(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::SchedCycleTimeExtension(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "SchedCycleTimeExtension"))
     }
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::Flags(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "Flags"))
     }
-    pub fn get_txtime_delay(&self) -> Option<u32> {
+    pub fn get_txtime_delay(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::TxtimeDelay(val) = attr {
-                return Some(val);
+            if let TaprioAttrs::TxtimeDelay(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioAttrs", "TxtimeDelay"))
     }
-    pub fn get_tc_entry(&self) -> Iterable<'a, TaprioTcEntryAttrs> {
+    pub fn get_tc_entry(&self) -> Result<Iterable<'a, TaprioTcEntryAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioAttrs::TcEntry(val) = attr {
-                return val;
+            if let TaprioAttrs::TcEntry(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("TaprioAttrs", "TcEntry"))
     }
 }
 impl<'a> TaprioAttrs<'a> {
@@ -14476,6 +19222,112 @@ impl<'a> std::fmt::Debug for Iterable<'a, TaprioAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TaprioAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TaprioAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TaprioAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TaprioAttrs::Priomap(val) => {
+                    if last_off == offset {
+                        stack.push(("Priomap", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::SchedEntryList(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                TaprioAttrs::SchedBaseTime(val) => {
+                    if last_off == offset {
+                        stack.push(("SchedBaseTime", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::SchedSingleEntry(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                TaprioAttrs::SchedClockid(val) => {
+                    if last_off == offset {
+                        stack.push(("SchedClockid", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::AdminSched(val) => {
+                    if last_off == offset {
+                        stack.push(("AdminSched", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::SchedCycleTime(val) => {
+                    if last_off == offset {
+                        stack.push(("SchedCycleTime", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::SchedCycleTimeExtension(val) => {
+                    if last_off == offset {
+                        stack.push(("SchedCycleTimeExtension", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::TxtimeDelay(val) => {
+                    if last_off == offset {
+                        stack.push(("TxtimeDelay", last_off));
+                        break;
+                    }
+                }
+                TaprioAttrs::TcEntry(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TaprioAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"taprio-sched-entry-list\""]
 #[derive(Clone)]
 pub enum TaprioSchedEntryList<'a> {
@@ -14556,6 +19408,46 @@ impl<'a> std::fmt::Debug for Iterable<'a, TaprioSchedEntryList<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TaprioSchedEntryList<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TaprioSchedEntryList", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TaprioSchedEntryList::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TaprioSchedEntryList::Entry(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TaprioSchedEntryList", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"taprio-sched-entry\""]
 #[derive(Clone)]
 pub enum TaprioSchedEntry {
@@ -14565,49 +19457,45 @@ pub enum TaprioSchedEntry {
     Interval(u32),
 }
 impl<'a> Iterable<'a, TaprioSchedEntry> {
-    pub fn get_index(&self) -> Option<u32> {
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioSchedEntry::Index(val) = attr {
-                return Some(val);
+            if let TaprioSchedEntry::Index(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioSchedEntry", "Index"))
     }
-    pub fn get_cmd(&self) -> Option<u8> {
+    pub fn get_cmd(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioSchedEntry::Cmd(val) = attr {
-                return Some(val);
+            if let TaprioSchedEntry::Cmd(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioSchedEntry", "Cmd"))
     }
-    pub fn get_gate_mask(&self) -> Option<u32> {
+    pub fn get_gate_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioSchedEntry::GateMask(val) = attr {
-                return Some(val);
+            if let TaprioSchedEntry::GateMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioSchedEntry", "GateMask"))
     }
-    pub fn get_interval(&self) -> Option<u32> {
+    pub fn get_interval(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioSchedEntry::Interval(val) = attr {
-                return Some(val);
+            if let TaprioSchedEntry::Interval(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioSchedEntry", "Interval"))
     }
 }
 impl TaprioSchedEntry {
@@ -14691,6 +19579,63 @@ impl std::fmt::Debug for Iterable<'_, TaprioSchedEntry> {
         fmt.finish()
     }
 }
+impl Iterable<'_, TaprioSchedEntry> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TaprioSchedEntry", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TaprioSchedEntry::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TaprioSchedEntry::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                TaprioSchedEntry::Cmd(val) => {
+                    if last_off == offset {
+                        stack.push(("Cmd", last_off));
+                        break;
+                    }
+                }
+                TaprioSchedEntry::GateMask(val) => {
+                    if last_off == offset {
+                        stack.push(("GateMask", last_off));
+                        break;
+                    }
+                }
+                TaprioSchedEntry::Interval(val) => {
+                    if last_off == offset {
+                        stack.push(("Interval", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TaprioSchedEntry", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"taprio-tc-entry-attrs\""]
 #[derive(Clone)]
 pub enum TaprioTcEntryAttrs {
@@ -14699,38 +19644,35 @@ pub enum TaprioTcEntryAttrs {
     Fp(u32),
 }
 impl<'a> Iterable<'a, TaprioTcEntryAttrs> {
-    pub fn get_index(&self) -> Option<u32> {
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioTcEntryAttrs::Index(val) = attr {
-                return Some(val);
+            if let TaprioTcEntryAttrs::Index(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioTcEntryAttrs", "Index"))
     }
-    pub fn get_max_sdu(&self) -> Option<u32> {
+    pub fn get_max_sdu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioTcEntryAttrs::MaxSdu(val) = attr {
-                return Some(val);
+            if let TaprioTcEntryAttrs::MaxSdu(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioTcEntryAttrs", "MaxSdu"))
     }
-    pub fn get_fp(&self) -> Option<u32> {
+    pub fn get_fp(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TaprioTcEntryAttrs::Fp(val) = attr {
-                return Some(val);
+            if let TaprioTcEntryAttrs::Fp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TaprioTcEntryAttrs", "Fp"))
     }
 }
 impl TaprioTcEntryAttrs {
@@ -14807,6 +19749,57 @@ impl std::fmt::Debug for Iterable<'_, TaprioTcEntryAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, TaprioTcEntryAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TaprioTcEntryAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TaprioTcEntryAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TaprioTcEntryAttrs::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                TaprioTcEntryAttrs::MaxSdu(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxSdu", last_off));
+                        break;
+                    }
+                }
+                TaprioTcEntryAttrs::Fp(val) => {
+                    if last_off == offset {
+                        stack.push(("Fp", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TaprioTcEntryAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"tbf-attrs\""]
 #[derive(Clone)]
 pub enum TbfAttrs<'a> {
@@ -14820,93 +19813,85 @@ pub enum TbfAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, TbfAttrs<'a>> {
-    pub fn get_parms(&self) -> Option<PushTcTbfQopt> {
+    pub fn get_parms(&self) -> Result<PushTcTbfQopt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Parms(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Parms"))
     }
-    pub fn get_rtab(&self) -> Option<&'a [u8]> {
+    pub fn get_rtab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Rtab(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Rtab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Rtab"))
     }
-    pub fn get_ptab(&self) -> Option<&'a [u8]> {
+    pub fn get_ptab(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Ptab(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Ptab(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Ptab"))
     }
-    pub fn get_rate64(&self) -> Option<u64> {
+    pub fn get_rate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Rate64(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Rate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Rate64"))
     }
-    pub fn get_prate64(&self) -> Option<u64> {
+    pub fn get_prate64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Prate64(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Prate64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Prate64"))
     }
-    pub fn get_burst(&self) -> Option<u32> {
+    pub fn get_burst(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Burst(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Burst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Burst"))
     }
-    pub fn get_pburst(&self) -> Option<u32> {
+    pub fn get_pburst(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Pburst(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Pburst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Pburst"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TbfAttrs::Pad(val) = attr {
-                return Some(val);
+            if let TbfAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TbfAttrs", "Pad"))
     }
 }
 impl<'a> TbfAttrs<'a> {
@@ -15018,6 +20003,87 @@ impl<'a> std::fmt::Debug for Iterable<'a, TbfAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TbfAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TbfAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TbfAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TbfAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Rtab(val) => {
+                    if last_off == offset {
+                        stack.push(("Rtab", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Ptab(val) => {
+                    if last_off == offset {
+                        stack.push(("Ptab", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Rate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate64", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Prate64(val) => {
+                    if last_off == offset {
+                        stack.push(("Prate64", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Burst(val) => {
+                    if last_off == offset {
+                        stack.push(("Burst", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Pburst(val) => {
+                    if last_off == offset {
+                        stack.push(("Pburst", last_off));
+                        break;
+                    }
+                }
+                TbfAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TbfAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-sample-attrs\""]
 #[derive(Clone)]
 pub enum ActSampleAttrs<'a> {
@@ -15029,71 +20095,65 @@ pub enum ActSampleAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActSampleAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSampleAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActSampleAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSampleAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<PushTcGact> {
+    pub fn get_parms(&self) -> Result<PushTcGact, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSampleAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActSampleAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSampleAttrs", "Parms"))
     }
-    pub fn get_rate(&self) -> Option<u32> {
+    pub fn get_rate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSampleAttrs::Rate(val) = attr {
-                return Some(val);
+            if let ActSampleAttrs::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSampleAttrs", "Rate"))
     }
-    pub fn get_trunc_size(&self) -> Option<u32> {
+    pub fn get_trunc_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSampleAttrs::TruncSize(val) = attr {
-                return Some(val);
+            if let ActSampleAttrs::TruncSize(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSampleAttrs", "TruncSize"))
     }
-    pub fn get_psample_group(&self) -> Option<u32> {
+    pub fn get_psample_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSampleAttrs::PsampleGroup(val) = attr {
-                return Some(val);
+            if let ActSampleAttrs::PsampleGroup(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSampleAttrs", "PsampleGroup"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActSampleAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActSampleAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActSampleAttrs", "Pad"))
     }
 }
 impl<'a> ActSampleAttrs<'a> {
@@ -15191,6 +20251,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActSampleAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActSampleAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActSampleAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActSampleAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActSampleAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActSampleAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActSampleAttrs::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                ActSampleAttrs::TruncSize(val) => {
+                    if last_off == offset {
+                        stack.push(("TruncSize", last_off));
+                        break;
+                    }
+                }
+                ActSampleAttrs::PsampleGroup(val) => {
+                    if last_off == offset {
+                        stack.push(("PsampleGroup", last_off));
+                        break;
+                    }
+                }
+                ActSampleAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActSampleAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"act-gact-attrs\""]
 #[derive(Clone)]
 pub enum ActGactAttrs<'a> {
@@ -15200,49 +20329,45 @@ pub enum ActGactAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, ActGactAttrs<'a>> {
-    pub fn get_tm(&self) -> Option<PushTcfT> {
+    pub fn get_tm(&self) -> Result<PushTcfT, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGactAttrs::Tm(val) = attr {
-                return Some(val);
+            if let ActGactAttrs::Tm(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGactAttrs", "Tm"))
     }
-    pub fn get_parms(&self) -> Option<PushTcGact> {
+    pub fn get_parms(&self) -> Result<PushTcGact, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGactAttrs::Parms(val) = attr {
-                return Some(val);
+            if let ActGactAttrs::Parms(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGactAttrs", "Parms"))
     }
-    pub fn get_prob(&self) -> Option<PushTcGactP> {
+    pub fn get_prob(&self) -> Result<PushTcGactP, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGactAttrs::Prob(val) = attr {
-                return Some(val);
+            if let ActGactAttrs::Prob(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGactAttrs", "Prob"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ActGactAttrs::Pad(val) = attr {
-                return Some(val);
+            if let ActGactAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ActGactAttrs", "Pad"))
     }
 }
 impl<'a> ActGactAttrs<'a> {
@@ -15326,6 +20451,63 @@ impl<'a> std::fmt::Debug for Iterable<'a, ActGactAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ActGactAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ActGactAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ActGactAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ActGactAttrs::Tm(val) => {
+                    if last_off == offset {
+                        stack.push(("Tm", last_off));
+                        break;
+                    }
+                }
+                ActGactAttrs::Parms(val) => {
+                    if last_off == offset {
+                        stack.push(("Parms", last_off));
+                        break;
+                    }
+                }
+                ActGactAttrs::Prob(val) => {
+                    if last_off == offset {
+                        stack.push(("Prob", last_off));
+                        break;
+                    }
+                }
+                ActGactAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ActGactAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"tca-stab-attrs\""]
 #[derive(Clone)]
 pub enum TcaStabAttrs<'a> {
@@ -15333,27 +20515,25 @@ pub enum TcaStabAttrs<'a> {
     Data(&'a [u8]),
 }
 impl<'a> Iterable<'a, TcaStabAttrs<'a>> {
-    pub fn get_base(&self) -> Option<PushTcSizespec> {
+    pub fn get_base(&self) -> Result<PushTcSizespec, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStabAttrs::Base(val) = attr {
-                return Some(val);
+            if let TcaStabAttrs::Base(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStabAttrs", "Base"))
     }
-    pub fn get_data(&self) -> Option<&'a [u8]> {
+    pub fn get_data(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStabAttrs::Data(val) = attr {
-                return Some(val);
+            if let TcaStabAttrs::Data(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStabAttrs", "Data"))
     }
 }
 impl<'a> TcaStabAttrs<'a> {
@@ -15423,6 +20603,51 @@ impl<'a> std::fmt::Debug for Iterable<'a, TcaStabAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TcaStabAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TcaStabAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TcaStabAttrs::Base(val) => {
+                    if last_off == offset {
+                        stack.push(("Base", last_off));
+                        break;
+                    }
+                }
+                TcaStabAttrs::Data(val) => {
+                    if last_off == offset {
+                        stack.push(("Data", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TcaStabAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"tca-stats-attrs\""]
 #[derive(Clone)]
 pub enum TcaStatsAttrs<'a> {
@@ -15436,93 +20661,85 @@ pub enum TcaStatsAttrs<'a> {
     Pkt64(u64),
 }
 impl<'a> Iterable<'a, TcaStatsAttrs<'a>> {
-    pub fn get_basic(&self) -> Option<PushGnetStatsBasic> {
+    pub fn get_basic(&self) -> Result<PushGnetStatsBasic, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::Basic(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::Basic(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "Basic"))
     }
-    pub fn get_rate_est(&self) -> Option<PushGnetStatsRateEst> {
+    pub fn get_rate_est(&self) -> Result<PushGnetStatsRateEst, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::RateEst(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::RateEst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "RateEst"))
     }
-    pub fn get_queue(&self) -> Option<PushGnetStatsQueue> {
+    pub fn get_queue(&self) -> Result<PushGnetStatsQueue, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::Queue(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::Queue(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "Queue"))
     }
-    pub fn get_app(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_app(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::App(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::App(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "App"))
     }
-    pub fn get_rate_est64(&self) -> Option<PushGnetStatsRateEst64> {
+    pub fn get_rate_est64(&self) -> Result<PushGnetStatsRateEst64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::RateEst64(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::RateEst64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "RateEst64"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::Pad(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "Pad"))
     }
-    pub fn get_basic_hw(&self) -> Option<PushGnetStatsBasic> {
+    pub fn get_basic_hw(&self) -> Result<PushGnetStatsBasic, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::BasicHw(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::BasicHw(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "BasicHw"))
     }
-    pub fn get_pkt64(&self) -> Option<u64> {
+    pub fn get_pkt64(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TcaStatsAttrs::Pkt64(val) = attr {
-                return Some(val);
+            if let TcaStatsAttrs::Pkt64(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TcaStatsAttrs", "Pkt64"))
     }
 }
 impl<'a> TcaStatsAttrs<'a> {
@@ -15629,6 +20846,87 @@ impl<'a> std::fmt::Debug for Iterable<'a, TcaStatsAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TcaStatsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TcaStatsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TcaStatsAttrs::Basic(val) => {
+                    if last_off == offset {
+                        stack.push(("Basic", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::RateEst(val) => {
+                    if last_off == offset {
+                        stack.push(("RateEst", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::Queue(val) => {
+                    if last_off == offset {
+                        stack.push(("Queue", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::App(val) => {
+                    if last_off == offset {
+                        stack.push(("App", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::RateEst64(val) => {
+                    if last_off == offset {
+                        stack.push(("RateEst64", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::BasicHw(val) => {
+                    if last_off == offset {
+                        stack.push(("BasicHw", last_off));
+                        break;
+                    }
+                }
+                TcaStatsAttrs::Pkt64(val) => {
+                    if last_off == offset {
+                        stack.push(("Pkt64", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TcaStatsAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"u32-attrs\""]
 #[derive(Clone)]
 pub enum U32Attrs<'a> {
@@ -15646,137 +20944,128 @@ pub enum U32Attrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, U32Attrs<'a>> {
-    pub fn get_classid(&self) -> Option<u32> {
+    pub fn get_classid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Classid(val) = attr {
-                return Some(val);
+            if let U32Attrs::Classid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Classid"))
     }
-    pub fn get_hash(&self) -> Option<u32> {
+    pub fn get_hash(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Hash(val) = attr {
-                return Some(val);
+            if let U32Attrs::Hash(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Hash"))
     }
-    pub fn get_link(&self) -> Option<u32> {
+    pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Link(val) = attr {
-                return Some(val);
+            if let U32Attrs::Link(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Link"))
     }
-    pub fn get_divisor(&self) -> Option<u32> {
+    pub fn get_divisor(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Divisor(val) = attr {
-                return Some(val);
+            if let U32Attrs::Divisor(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Divisor"))
     }
-    pub fn get_sel(&self) -> Option<PushTcU32Sel> {
+    pub fn get_sel(&self) -> Result<PushTcU32Sel, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Sel(val) = attr {
-                return Some(val);
+            if let U32Attrs::Sel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Sel"))
     }
-    pub fn get_police(&self) -> Iterable<'a, PoliceAttrs<'a>> {
+    pub fn get_police(&self) -> Result<Iterable<'a, PoliceAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Police(val) = attr {
-                return val;
+            if let U32Attrs::Police(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("U32Attrs", "Police"))
     }
     pub fn get_act(
         &self,
-    ) -> ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>> {
+    ) -> Result<
+        ArrayIterable<Iterable<'a, Iterable<'a, ActAttrs<'a>>>, Iterable<'a, ActAttrs<'a>>>,
+        ErrorContext,
+    > {
         for attr in self.clone() {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Act(val) = attr {
-                return ArrayIterable::new(val);
+            if let U32Attrs::Act(val) = attr? {
+                return Ok(ArrayIterable::new(val));
             }
         }
-        ArrayIterable::new(Iterable::new(&[]))
+        Err(self.error_missing("U32Attrs", "Act"))
     }
-    pub fn get_indev(&self) -> Option<&'a CStr> {
+    pub fn get_indev(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Indev(val) = attr {
-                return Some(val);
+            if let U32Attrs::Indev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Indev"))
     }
-    pub fn get_pcnt(&self) -> Option<PushTcU32Pcnt> {
+    pub fn get_pcnt(&self) -> Result<PushTcU32Pcnt, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Pcnt(val) = attr {
-                return Some(val);
+            if let U32Attrs::Pcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Pcnt"))
     }
-    pub fn get_mark(&self) -> Option<PushTcU32Mark> {
+    pub fn get_mark(&self) -> Result<PushTcU32Mark, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Mark(val) = attr {
-                return Some(val);
+            if let U32Attrs::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Mark"))
     }
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Flags(val) = attr {
-                return Some(val);
+            if let U32Attrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Flags"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let U32Attrs::Pad(val) = attr {
-                return Some(val);
+            if let U32Attrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("U32Attrs", "Pad"))
     }
 }
 impl<'a> U32Attrs<'a> {
@@ -15916,6 +21205,119 @@ impl<'a> std::fmt::Debug for Iterable<'a, U32Attrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, U32Attrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("U32Attrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| U32Attrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                U32Attrs::Classid(val) => {
+                    if last_off == offset {
+                        stack.push(("Classid", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Hash(val) => {
+                    if last_off == offset {
+                        stack.push(("Hash", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Link(val) => {
+                    if last_off == offset {
+                        stack.push(("Link", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Divisor(val) => {
+                    if last_off == offset {
+                        stack.push(("Divisor", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Sel(val) => {
+                    if last_off == offset {
+                        stack.push(("Sel", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Police(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                U32Attrs::Act(val) => {
+                    for entry in val {
+                        let Ok(attr) = entry else { break };
+                        (stack, missing) = attr.lookup_attr(offset, missing_type);
+                        if !stack.is_empty() {
+                            break;
+                        }
+                    }
+                    if !stack.is_empty() {
+                        stack.push(("Act", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Indev(val) => {
+                    if last_off == offset {
+                        stack.push(("Indev", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Pcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Pcnt", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                U32Attrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("U32Attrs", cur));
+        }
+        (stack, missing)
+    }
+}
 pub struct PushAttrs<Prev: Rec> {
     prev: Option<Prev>,
     header_offset: Option<usize>,
@@ -15946,6 +21348,12 @@ impl<Prev: Rec> PushAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -16521,6 +21929,12 @@ impl<Prev: Rec> PushAttrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_ext_warn_msg_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 16u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
 }
 impl<Prev: Rec> Drop for PushAttrs<Prev> {
     fn drop(&mut self) {
@@ -16561,6 +21975,12 @@ impl<Prev: Rec> PushActAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -16862,6 +22282,12 @@ impl<Prev: Rec> PushActBpfAttrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 6u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn push_pad(mut self, value: &[u8]) -> Self {
         push_header(self.as_rec_mut(), 7u16, value.len() as u16);
         self.as_rec_mut().extend(value);
@@ -17088,6 +22514,12 @@ impl<Prev: Rec> PushActCtAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_helper_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 16u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_helper_family(mut self, value: u8) -> Self {
@@ -18136,6 +23568,12 @@ impl<Prev: Rec> PushBpfAttrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn push_flags(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 8u16, 4 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
@@ -19140,6 +24578,12 @@ impl<Prev: Rec> PushFlowerAttrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_indev_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 2u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_rec_mut(), 3u16);
         PushArrayActAttrs {
@@ -20097,6 +25541,12 @@ impl<Prev: Rec> PushFwAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_indev_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
@@ -22094,6 +27544,12 @@ impl<Prev: Rec> PushU32Attrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_indev_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 8u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn push_pcnt(mut self, value: PushTcU32Pcnt) -> Self {
         push_header(self.as_rec_mut(), 9u16, value.as_slice().len() as u16);
         self.as_rec_mut().extend(value.as_slice());
@@ -22199,7 +27655,7 @@ impl std::fmt::Debug for PushTcmsg {
 #[doc = "Original name: \"tc-stats\""]
 #[derive(Clone)]
 pub struct PushTcStats {
-    buf: [u8; 36usize],
+    buf: [u8; 40usize],
 }
 impl PushTcStats {
     #[doc = "Create zero-initialized struct"]
@@ -22224,7 +27680,7 @@ impl PushTcStats {
         &mut self.buf
     }
     pub const fn len() -> usize {
-        36usize
+        40usize
     }
     #[doc = "Number of enqueued bytes"]
     pub fn bytes(&self) -> u64 {
@@ -22508,16 +27964,16 @@ impl PushTcHtbOpt {
         20usize
     }
     pub fn rate(&self) -> PushTcRatespec {
-        PushTcRatespec::new_from_slice(&self.buf[0usize..9usize]).unwrap()
+        PushTcRatespec::new_from_slice(&self.buf[0usize..12usize]).unwrap()
     }
     pub fn set_rate(&mut self, value: PushTcRatespec) {
-        self.buf[0usize..9usize].copy_from_slice(&value.as_slice())
+        self.buf[0usize..12usize].copy_from_slice(&value.as_slice())
     }
     pub fn ceil(&self) -> PushTcRatespec {
-        PushTcRatespec::new_from_slice(&self.buf[0usize..9usize]).unwrap()
+        PushTcRatespec::new_from_slice(&self.buf[0usize..12usize]).unwrap()
     }
     pub fn set_ceil(&mut self, value: PushTcRatespec) {
-        self.buf[0usize..9usize].copy_from_slice(&value.as_slice())
+        self.buf[0usize..12usize].copy_from_slice(&value.as_slice())
     }
     pub fn buffer(&self) -> u32 {
         parse_u32(&self.buf[0usize..4usize]).unwrap()
@@ -24199,7 +29655,7 @@ impl std::fmt::Debug for PushTcSfqQoptV1 {
 #[doc = "Original name: \"tc-ratespec\""]
 #[derive(Clone)]
 pub struct PushTcRatespec {
-    buf: [u8; 9usize],
+    buf: [u8; 12usize],
 }
 impl PushTcRatespec {
     #[doc = "Create zero-initialized struct"]
@@ -24224,7 +29680,7 @@ impl PushTcRatespec {
         &mut self.buf
     }
     pub const fn len() -> usize {
-        9usize
+        12usize
     }
     pub fn cell_log(&self) -> u8 {
         parse_u8(&self.buf[0usize..1usize]).unwrap()
@@ -24257,10 +29713,10 @@ impl PushTcRatespec {
         self.buf[4usize..5usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn rate(&self) -> u32 {
-        parse_u32(&self.buf[5usize..9usize]).unwrap()
+        parse_u32(&self.buf[8usize..12usize]).unwrap()
     }
     pub fn set_rate(&mut self, value: u32) {
-        self.buf[5usize..9usize].copy_from_slice(&value.to_ne_bytes())
+        self.buf[8usize..12usize].copy_from_slice(&value.to_ne_bytes())
     }
 }
 impl std::fmt::Debug for PushTcRatespec {
@@ -24306,16 +29762,16 @@ impl PushTcTbfQopt {
         12usize
     }
     pub fn rate(&self) -> PushTcRatespec {
-        PushTcRatespec::new_from_slice(&self.buf[0usize..9usize]).unwrap()
+        PushTcRatespec::new_from_slice(&self.buf[0usize..12usize]).unwrap()
     }
     pub fn set_rate(&mut self, value: PushTcRatespec) {
-        self.buf[0usize..9usize].copy_from_slice(&value.as_slice())
+        self.buf[0usize..12usize].copy_from_slice(&value.as_slice())
     }
     pub fn peakrate(&self) -> PushTcRatespec {
-        PushTcRatespec::new_from_slice(&self.buf[0usize..9usize]).unwrap()
+        PushTcRatespec::new_from_slice(&self.buf[0usize..12usize]).unwrap()
     }
     pub fn set_peakrate(&mut self, value: PushTcRatespec) {
-        self.buf[0usize..9usize].copy_from_slice(&value.as_slice())
+        self.buf[0usize..12usize].copy_from_slice(&value.as_slice())
     }
     pub fn limit(&self) -> u32 {
         parse_u32(&self.buf[0usize..4usize]).unwrap()
@@ -24725,7 +30181,7 @@ impl PushTcFqCodelXstats {
     pub const fn len() -> usize {
         40usize
     }
-    pub fn r#type(&self) -> u32 {
+    pub fn get_type(&self) -> u32 {
         parse_u32(&self.buf[0usize..4usize]).unwrap()
     }
     pub fn set_type(&mut self, value: u32) {
@@ -24805,7 +30261,7 @@ impl PushTcFqCodelXstats {
 impl std::fmt::Debug for PushTcFqCodelXstats {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_struct("TcFqCodelXstats")
-            .field("type", &self.r#type())
+            .field("type", &self.get_type())
             .field("maxpacket", &self.maxpacket())
             .field("drop_overlimit", &self.drop_overlimit())
             .field("ecn_mark", &self.ecn_mark())
@@ -25084,7 +30540,7 @@ impl std::fmt::Debug for PushTcFqPieXstats {
 #[doc = "Original name: \"tc-fq-qd-stats\""]
 #[derive(Clone)]
 pub struct PushTcFqQdStats {
-    buf: [u8; 116usize],
+    buf: [u8; 120usize],
 }
 impl PushTcFqQdStats {
     #[doc = "Create zero-initialized struct"]
@@ -25109,7 +30565,7 @@ impl PushTcFqQdStats {
         &mut self.buf
     }
     pub const fn len() -> usize {
-        116usize
+        120usize
     }
     pub fn gc_flows(&self) -> u64 {
         parse_u64(&self.buf[0usize..8usize]).unwrap()
@@ -25663,7 +31119,7 @@ impl std::fmt::Debug for PushTcSfqXstats {
 #[doc = "Original name: \"gnet-stats-basic\""]
 #[derive(Clone)]
 pub struct PushGnetStatsBasic {
-    buf: [u8; 12usize],
+    buf: [u8; 16usize],
 }
 impl PushGnetStatsBasic {
     #[doc = "Create zero-initialized struct"]
@@ -25688,7 +31144,7 @@ impl PushGnetStatsBasic {
         &mut self.buf
     }
     pub const fn len() -> usize {
-        12usize
+        16usize
     }
     pub fn bytes(&self) -> u64 {
         parse_u64(&self.buf[0usize..8usize]).unwrap()
@@ -26011,7 +31467,7 @@ impl std::fmt::Debug for PushTcU32Mark {
 #[doc = "Original name: \"tc-u32-sel\""]
 #[derive(Clone)]
 pub struct PushTcU32Sel {
-    buf: [u8; 15usize],
+    buf: [u8; 16usize],
 }
 impl PushTcU32Sel {
     #[doc = "Create zero-initialized struct"]
@@ -26036,7 +31492,7 @@ impl PushTcU32Sel {
         &mut self.buf
     }
     pub const fn len() -> usize {
-        15usize
+        16usize
     }
     pub fn flags(&self) -> u8 {
         parse_u8(&self.buf[0usize..1usize]).unwrap()
@@ -26057,40 +31513,40 @@ impl PushTcU32Sel {
         self.buf[2usize..3usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn offmask(&self) -> u16 {
-        parse_be_u16(&self.buf[3usize..5usize]).unwrap()
+        parse_be_u16(&self.buf[4usize..6usize]).unwrap()
     }
     pub fn set_offmask(&mut self, value: u16) {
-        self.buf[3usize..5usize].copy_from_slice(&value.to_be_bytes())
+        self.buf[4usize..6usize].copy_from_slice(&value.to_be_bytes())
     }
     pub fn off(&self) -> u16 {
-        parse_u16(&self.buf[5usize..7usize]).unwrap()
+        parse_u16(&self.buf[6usize..8usize]).unwrap()
     }
     pub fn set_off(&mut self, value: u16) {
-        self.buf[5usize..7usize].copy_from_slice(&value.to_ne_bytes())
+        self.buf[6usize..8usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn offoff(&self) -> i16 {
-        parse_i16(&self.buf[7usize..9usize]).unwrap()
+        parse_i16(&self.buf[8usize..10usize]).unwrap()
     }
     pub fn set_offoff(&mut self, value: i16) {
-        self.buf[7usize..9usize].copy_from_slice(&value.to_ne_bytes())
+        self.buf[8usize..10usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn hoff(&self) -> i16 {
-        parse_i16(&self.buf[9usize..11usize]).unwrap()
+        parse_i16(&self.buf[10usize..12usize]).unwrap()
     }
     pub fn set_hoff(&mut self, value: i16) {
-        self.buf[9usize..11usize].copy_from_slice(&value.to_ne_bytes())
+        self.buf[10usize..12usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn hmask(&self) -> u32 {
-        parse_be_u32(&self.buf[11usize..15usize]).unwrap()
+        parse_be_u32(&self.buf[12usize..16usize]).unwrap()
     }
     pub fn set_hmask(&mut self, value: u32) {
-        self.buf[11usize..15usize].copy_from_slice(&value.to_be_bytes())
+        self.buf[12usize..16usize].copy_from_slice(&value.to_be_bytes())
     }
     pub fn keys(&self) -> PushTcU32Key {
-        PushTcU32Key::new_from_slice(&self.buf[15usize..31usize]).unwrap()
+        PushTcU32Key::new_from_slice(&self.buf[16usize..32usize]).unwrap()
     }
     pub fn set_keys(&mut self, value: PushTcU32Key) {
-        self.buf[15usize..31usize].copy_from_slice(&value.as_slice())
+        self.buf[16usize..32usize].copy_from_slice(&value.as_slice())
     }
 }
 impl std::fmt::Debug for PushTcU32Sel {
@@ -26647,16 +32103,16 @@ impl PushTcPolice {
         self.buf[16usize..20usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn rate(&self) -> PushTcRatespec {
-        PushTcRatespec::new_from_slice(&self.buf[20usize..29usize]).unwrap()
+        PushTcRatespec::new_from_slice(&self.buf[20usize..32usize]).unwrap()
     }
     pub fn set_rate(&mut self, value: PushTcRatespec) {
-        self.buf[20usize..29usize].copy_from_slice(&value.as_slice())
+        self.buf[20usize..32usize].copy_from_slice(&value.as_slice())
     }
     pub fn peakrate(&self) -> PushTcRatespec {
-        PushTcRatespec::new_from_slice(&self.buf[20usize..29usize]).unwrap()
+        PushTcRatespec::new_from_slice(&self.buf[20usize..32usize]).unwrap()
     }
     pub fn set_peakrate(&mut self, value: PushTcRatespec) {
-        self.buf[20usize..29usize].copy_from_slice(&value.as_slice())
+        self.buf[20usize..32usize].copy_from_slice(&value.as_slice())
     }
     pub fn refcnt(&self) -> i32 {
         parse_i32(&self.buf[20usize..24usize]).unwrap()
@@ -26696,7 +32152,7 @@ impl std::fmt::Debug for PushTcPolice {
 #[doc = "Original name: \"tc-pedit-sel\""]
 #[derive(Clone)]
 pub struct PushTcPeditSel {
-    buf: [u8; 22usize],
+    buf: [u8; 24usize],
 }
 impl PushTcPeditSel {
     #[doc = "Create zero-initialized struct"]
@@ -26721,7 +32177,7 @@ impl PushTcPeditSel {
         &mut self.buf
     }
     pub const fn len() -> usize {
-        22usize
+        24usize
     }
     pub fn index(&self) -> u32 {
         parse_u32(&self.buf[0usize..4usize]).unwrap()
@@ -26766,10 +32222,10 @@ impl PushTcPeditSel {
         self.buf[21usize..22usize].copy_from_slice(&value.to_ne_bytes())
     }
     pub fn keys(&self) -> PushTcPeditKey {
-        PushTcPeditKey::new_from_slice(&self.buf[22usize..46usize]).unwrap()
+        PushTcPeditKey::new_from_slice(&self.buf[24usize..48usize]).unwrap()
     }
     pub fn set_keys(&mut self, value: PushTcPeditKey) {
-        self.buf[22usize..46usize].copy_from_slice(&value.as_slice())
+        self.buf[24usize..48usize].copy_from_slice(&value.as_slice())
     }
 }
 impl std::fmt::Debug for PushTcPeditSel {
@@ -26956,11 +32412,17 @@ impl<Prev: Rec> Rec for PushOpNewqdiscDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -26976,6 +32438,12 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -27412,7 +32880,7 @@ impl<Prev: Rec> Drop for PushOpNewqdiscDoRequest<Prev> {
     }
 }
 #[doc = "Create new tc qdisc."]
-#[doc = "Original name: \"OpNewqdiscDoRequest\""]
+#[doc = "Original name: \"op-newqdisc-do-request\""]
 #[derive(Clone)]
 pub enum OpNewqdiscDoRequest<'a> {
     Kind(&'a CStr),
@@ -27423,71 +32891,65 @@ pub enum OpNewqdiscDoRequest<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpNewqdiscDoRequest<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewqdiscDoRequest::Kind(val) = attr {
-                return Some(val);
+            if let OpNewqdiscDoRequest::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewqdiscDoRequest", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewqdiscDoRequest::Options(val) = attr {
-                return Some(val);
+            if let OpNewqdiscDoRequest::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewqdiscDoRequest", "Options"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewqdiscDoRequest::Rate(val) = attr {
-                return Some(val);
+            if let OpNewqdiscDoRequest::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewqdiscDoRequest", "Rate"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewqdiscDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpNewqdiscDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewqdiscDoRequest", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewqdiscDoRequest::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpNewqdiscDoRequest::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewqdiscDoRequest", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewqdiscDoRequest::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpNewqdiscDoRequest::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewqdiscDoRequest", "EgressBlock"))
     }
 }
 impl<'a> OpNewqdiscDoRequest<'a> {
@@ -27498,30 +32960,11 @@ impl<'a> OpNewqdiscDoRequest<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewqdiscDoRequest<'a>> {
@@ -27542,9 +32985,7 @@ impl<'a> Iterator for Iterable<'a, OpNewqdiscDoRequest<'a>> {
                 }),
                 2u16 => OpNewqdiscDoRequest::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -27607,6 +33048,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewqdiscDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpNewqdiscDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewqdiscDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewqdiscDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewqdiscDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpNewqdiscDoRequest::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpNewqdiscDoRequest::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpNewqdiscDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpNewqdiscDoRequest::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpNewqdiscDoRequest::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewqdiscDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Create new tc qdisc."]
 pub struct PushOpNewqdiscDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -27619,11 +33129,17 @@ impl<Prev: Rec> Rec for PushOpNewqdiscDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewqdiscDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -27643,7 +33159,7 @@ impl<Prev: Rec> Drop for PushOpNewqdiscDoReply<Prev> {
     }
 }
 #[doc = "Create new tc qdisc."]
-#[doc = "Original name: \"OpNewqdiscDoReply\""]
+#[doc = "Original name: \"op-newqdisc-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewqdiscDoReply {}
 impl<'a> Iterable<'a, OpNewqdiscDoReply> {}
@@ -27655,30 +33171,11 @@ impl OpNewqdiscDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewqdiscDoReply> {
@@ -27722,6 +33219,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewqdiscDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewqdiscDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewqdiscDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewqdiscDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewqdiscDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewqdiscDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpNewqdiscDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewqdiscDoRequest<&mut Vec<u8>> {
+        PushOpNewqdiscDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewqdiscDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewqdiscDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 36u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewqdiscDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewqdiscDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Delete existing tc qdisc."]
 pub struct PushOpDelqdiscDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -27734,11 +33289,17 @@ impl<Prev: Rec> Rec for PushOpDelqdiscDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -27746,6 +33307,444 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
             finalize_nested_header(prev.as_rec_mut(), *header_offset);
         }
         prev
+    }
+    pub fn push_kind(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+        self = self.push_kind(c"basic");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushBasicAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+        self = self.push_kind(c"bpf");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushBpfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+        self = self.push_kind(c"bfifo");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+        self = self.push_kind(c"cake");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushCakeAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+        self = self.push_kind(c"cbs");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushCbsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+        self = self.push_kind(c"cgroup");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushCgroupAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+        self = self.push_kind(c"choke");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushChokeAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_clsact(mut self) -> Self {
+        self = self.push_kind(c"clsact");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+        self = self.push_kind(c"codel");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushCodelAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+        self = self.push_kind(c"drr");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushDrrAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+        self = self.push_kind(c"dualpi2");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushDualpi2Attrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+        self = self.push_kind(c"etf");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushEtfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+        self = self.push_kind(c"ets");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushEtsAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+        self = self.push_kind(c"flow");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushFlowAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+        self = self.push_kind(c"flower");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushFlowerAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+        self = self.push_kind(c"fq");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushFqAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+        self = self.push_kind(c"fq_codel");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushFqCodelAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+        self = self.push_kind(c"fq_pie");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushFqPieAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+        self = self.push_kind(c"fw");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushFwAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+        self = self.push_kind(c"gred");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushGredAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+        self = self.push_kind(c"hfsc");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+        self = self.push_kind(c"hhf");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushHhfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+        self = self.push_kind(c"htb");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushHtbAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_ingress(mut self) -> Self {
+        self = self.push_kind(c"ingress");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+        self = self.push_kind(c"matchall");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushMatchallAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_mq(mut self) -> Self {
+        self = self.push_kind(c"mq");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+        self = self.push_kind(c"mqprio");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+        self = self.push_kind(c"multiq");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_netem(
+        mut self,
+        fixed_header: &PushTcNetemQopt,
+    ) -> PushNetemAttrs<Self> {
+        self = self.push_kind(c"netem");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        PushNetemAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+        self = self.push_kind(c"pfifo");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+        self = self.push_kind(c"pfifo_fast");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+        self = self.push_kind(c"pfifo_head_drop");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+        self = self.push_kind(c"pie");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushPieAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+        self = self.push_kind(c"plug");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+        self = self.push_kind(c"prio");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+        self = self.push_kind(c"qfq");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushQfqAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+        self = self.push_kind(c"red");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushRedAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+        self = self.push_kind(c"route");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushRouteAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+        self = self.push_kind(c"sfb");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+        self = self.push_kind(c"sfq");
+        push_nested_header(self.as_rec_mut(), 2u16);
+        self.as_rec_mut().extend(fixed_header.as_slice());
+        self
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+        self = self.push_kind(c"taprio");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushTaprioAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+        self = self.push_kind(c"tbf");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushTbfAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+        self = self.push_kind(c"u32");
+        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        PushU32Attrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_rate(mut self, value: PushGnetEstimator) -> Self {
+        push_header(self.as_rec_mut(), 5u16, value.as_slice().len() as u16);
+        self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_chain(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 11u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ingress_block(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_egress_block(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 14u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
+        self
     }
 }
 impl<Prev: Rec> Drop for PushOpDelqdiscDoRequest<Prev> {
@@ -27758,46 +33757,95 @@ impl<Prev: Rec> Drop for PushOpDelqdiscDoRequest<Prev> {
     }
 }
 #[doc = "Delete existing tc qdisc."]
-#[doc = "Original name: \"OpDelqdiscDoRequest\""]
+#[doc = "Original name: \"op-delqdisc-do-request\""]
 #[derive(Clone)]
-pub enum OpDelqdiscDoRequest {}
-impl<'a> Iterable<'a, OpDelqdiscDoRequest> {}
-impl OpDelqdiscDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushTcmsg, Iterable<'_, OpDelqdiscDoRequest>) {
+pub enum OpDelqdiscDoRequest<'a> {
+    Kind(&'a CStr),
+    Options(OptionsMsg<'a>),
+    Rate(PushGnetEstimator),
+    Chain(u32),
+    IngressBlock(u32),
+    EgressBlock(u32),
+}
+impl<'a> Iterable<'a, OpDelqdiscDoRequest<'a>> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelqdiscDoRequest::Kind(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpDelqdiscDoRequest", "Kind"))
+    }
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelqdiscDoRequest::Options(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpDelqdiscDoRequest", "Options"))
+    }
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelqdiscDoRequest::Rate(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpDelqdiscDoRequest", "Rate"))
+    }
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelqdiscDoRequest::Chain(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpDelqdiscDoRequest", "Chain"))
+    }
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelqdiscDoRequest::IngressBlock(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpDelqdiscDoRequest", "IngressBlock"))
+    }
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelqdiscDoRequest::EgressBlock(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpDelqdiscDoRequest", "EgressBlock"))
+    }
+}
+impl<'a> OpDelqdiscDoRequest<'a> {
+    pub fn new(buf: &'a [u8]) -> (PushTcmsg, Iterable<'a, OpDelqdiscDoRequest<'a>>) {
         let mut header = PushTcmsg::new();
         header
             .as_mut_slice()
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelqdiscDoRequest> {
-    type Item = Result<OpDelqdiscDoRequest, ErrorContext>;
+impl<'a> Iterator for Iterable<'a, OpDelqdiscDoRequest<'a>> {
+    type Item = Result<OpDelqdiscDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
@@ -27807,6 +33855,39 @@ impl Iterator for Iterable<'_, OpDelqdiscDoRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
+                1u16 => OpDelqdiscDoRequest::Kind({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => OpDelqdiscDoRequest::Options({
+                    let res = {
+                        let Ok(selector) = self.get_kind() else { break };
+                        OptionsMsg::select_with_loc(selector, next, self.orig_loc)
+                    };
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => OpDelqdiscDoRequest::Rate({
+                    let res = PushGnetEstimator::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => OpDelqdiscDoRequest::Chain({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => OpDelqdiscDoRequest::IngressBlock({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => OpDelqdiscDoRequest::EgressBlock({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 0 => break,
                 n => break,
             };
@@ -27819,7 +33900,7 @@ impl Iterator for Iterable<'_, OpDelqdiscDoRequest> {
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelqdiscDoRequest> {
+impl<'a> std::fmt::Debug for Iterable<'a, OpDelqdiscDoRequest<'a>> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelqdiscDoRequest");
         for attr in self.clone() {
@@ -27832,9 +33913,85 @@ impl std::fmt::Debug for Iterable<'_, OpDelqdiscDoRequest> {
                     return f.write_str(")");
                 }
             };
-            match attr {};
+            match attr {
+                OpDelqdiscDoRequest::Kind(val) => fmt.field("Kind", &val),
+                OpDelqdiscDoRequest::Options(val) => fmt.field("Options", &val),
+                OpDelqdiscDoRequest::Rate(val) => fmt.field("Rate", &val),
+                OpDelqdiscDoRequest::Chain(val) => fmt.field("Chain", &val),
+                OpDelqdiscDoRequest::IngressBlock(val) => fmt.field("IngressBlock", &val),
+                OpDelqdiscDoRequest::EgressBlock(val) => fmt.field("EgressBlock", &val),
+            };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, OpDelqdiscDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDelqdiscDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelqdiscDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpDelqdiscDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpDelqdiscDoRequest::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpDelqdiscDoRequest::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpDelqdiscDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpDelqdiscDoRequest::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpDelqdiscDoRequest::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpDelqdiscDoRequest", cur));
+        }
+        (stack, None)
     }
 }
 #[doc = "Delete existing tc qdisc."]
@@ -27849,11 +34006,17 @@ impl<Prev: Rec> Rec for PushOpDelqdiscDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDelqdiscDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -27873,7 +34036,7 @@ impl<Prev: Rec> Drop for PushOpDelqdiscDoReply<Prev> {
     }
 }
 #[doc = "Delete existing tc qdisc."]
-#[doc = "Original name: \"OpDelqdiscDoReply\""]
+#[doc = "Original name: \"op-delqdisc-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelqdiscDoReply {}
 impl<'a> Iterable<'a, OpDelqdiscDoReply> {}
@@ -27885,30 +34048,11 @@ impl OpDelqdiscDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDelqdiscDoReply> {
@@ -27952,6 +34096,64 @@ impl std::fmt::Debug for Iterable<'_, OpDelqdiscDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDelqdiscDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDelqdiscDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelqdiscDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDelqdiscDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDelqdiscDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpDelqdiscDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDelqdiscDoRequest<&mut Vec<u8>> {
+        PushOpDelqdiscDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDelqdiscDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDelqdiscDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 37u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDelqdiscDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDelqdiscDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDumpRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -27964,11 +34166,17 @@ impl<Prev: Rec> Rec for PushOpGetqdiscDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetqdiscDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -27992,22 +34200,21 @@ impl<Prev: Rec> Drop for PushOpGetqdiscDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc qdisc information."]
-#[doc = "Original name: \"OpGetqdiscDumpRequest\""]
+#[doc = "Original name: \"op-getqdisc-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetqdiscDumpRequest {
     DumpInvisible(()),
 }
 impl<'a> Iterable<'a, OpGetqdiscDumpRequest> {
-    pub fn get_dump_invisible(&self) -> Option<()> {
+    pub fn get_dump_invisible(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpRequest::DumpInvisible(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpRequest::DumpInvisible(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpRequest", "DumpInvisible"))
     }
 }
 impl OpGetqdiscDumpRequest {
@@ -28018,30 +34225,11 @@ impl OpGetqdiscDumpRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetqdiscDumpRequest> {
@@ -28088,6 +34276,45 @@ impl std::fmt::Debug for Iterable<'_, OpGetqdiscDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetqdiscDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGetqdiscDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetqdiscDumpRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetqdiscDumpRequest::DumpInvisible(val) => {
+                    if last_off == offset {
+                        stack.push(("DumpInvisible", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetqdiscDumpRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -28100,11 +34327,17 @@ impl<Prev: Rec> Rec for PushOpGetqdiscDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -28120,6 +34353,12 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -28678,7 +34917,7 @@ impl<Prev: Rec> Drop for PushOpGetqdiscDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump tc qdisc information."]
-#[doc = "Original name: \"OpGetqdiscDumpReply\""]
+#[doc = "Original name: \"op-getqdisc-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetqdiscDumpReply<'a> {
     Kind(&'a CStr),
@@ -28694,126 +34933,115 @@ pub enum OpGetqdiscDumpReply<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpGetqdiscDumpReply<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Kind(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Options(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Stats(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Xstats(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Rate(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Fcnt(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Stats2(val) = attr {
-                return val;
+            if let OpGetqdiscDumpReply::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetqdiscDumpReply", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Stab(val) = attr {
-                return val;
+            if let OpGetqdiscDumpReply::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetqdiscDumpReply", "Stab"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::Chain(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDumpReply::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDumpReply::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDumpReply", "EgressBlock"))
     }
 }
 impl<'a> OpGetqdiscDumpReply<'a> {
@@ -28824,30 +35052,11 @@ impl<'a> OpGetqdiscDumpReply<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetqdiscDumpReply<'a>> {
@@ -28868,9 +35077,7 @@ impl<'a> Iterator for Iterable<'a, OpGetqdiscDumpReply<'a>> {
                 }),
                 2u16 => OpGetqdiscDumpReply::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -28883,9 +35090,7 @@ impl<'a> Iterator for Iterable<'a, OpGetqdiscDumpReply<'a>> {
                 }),
                 4u16 => OpGetqdiscDumpReply::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -28968,6 +35173,148 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetqdiscDumpReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetqdiscDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGetqdiscDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetqdiscDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetqdiscDumpReply::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDumpReply::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetqdiscDumpReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetqdiscDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetqdiscDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpGetqdiscDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetqdiscDumpRequest<&mut Vec<u8>> {
+        PushOpGetqdiscDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetqdiscDumpRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGetqdiscDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 38u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetqdiscDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetqdiscDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -28980,11 +35327,17 @@ impl<Prev: Rec> Rec for PushOpGetqdiscDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetqdiscDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -29008,22 +35361,21 @@ impl<Prev: Rec> Drop for PushOpGetqdiscDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc qdisc information."]
-#[doc = "Original name: \"OpGetqdiscDoRequest\""]
+#[doc = "Original name: \"op-getqdisc-do-request\""]
 #[derive(Clone)]
 pub enum OpGetqdiscDoRequest {
     DumpInvisible(()),
 }
 impl<'a> Iterable<'a, OpGetqdiscDoRequest> {
-    pub fn get_dump_invisible(&self) -> Option<()> {
+    pub fn get_dump_invisible(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoRequest::DumpInvisible(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoRequest::DumpInvisible(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoRequest", "DumpInvisible"))
     }
 }
 impl OpGetqdiscDoRequest {
@@ -29034,30 +35386,11 @@ impl OpGetqdiscDoRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetqdiscDoRequest> {
@@ -29104,6 +35437,45 @@ impl std::fmt::Debug for Iterable<'_, OpGetqdiscDoRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetqdiscDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGetqdiscDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetqdiscDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetqdiscDoRequest::DumpInvisible(val) => {
+                    if last_off == offset {
+                        stack.push(("DumpInvisible", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetqdiscDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -29116,11 +35488,17 @@ impl<Prev: Rec> Rec for PushOpGetqdiscDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -29136,6 +35514,12 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -29694,7 +36078,7 @@ impl<Prev: Rec> Drop for PushOpGetqdiscDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc qdisc information."]
-#[doc = "Original name: \"OpGetqdiscDoReply\""]
+#[doc = "Original name: \"op-getqdisc-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetqdiscDoReply<'a> {
     Kind(&'a CStr),
@@ -29710,126 +36094,115 @@ pub enum OpGetqdiscDoReply<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpGetqdiscDoReply<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Kind(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Options(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Stats(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Xstats(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Rate(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Fcnt(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Stats2(val) = attr {
-                return val;
+            if let OpGetqdiscDoReply::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetqdiscDoReply", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Stab(val) = attr {
-                return val;
+            if let OpGetqdiscDoReply::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetqdiscDoReply", "Stab"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::Chain(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetqdiscDoReply::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpGetqdiscDoReply::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetqdiscDoReply", "EgressBlock"))
     }
 }
 impl<'a> OpGetqdiscDoReply<'a> {
@@ -29840,30 +36213,11 @@ impl<'a> OpGetqdiscDoReply<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetqdiscDoReply<'a>> {
@@ -29884,9 +36238,7 @@ impl<'a> Iterator for Iterable<'a, OpGetqdiscDoReply<'a>> {
                 }),
                 2u16 => OpGetqdiscDoReply::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -29899,9 +36251,7 @@ impl<'a> Iterator for Iterable<'a, OpGetqdiscDoReply<'a>> {
                 }),
                 4u16 => OpGetqdiscDoReply::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -29984,6 +36334,146 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetqdiscDoReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetqdiscDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGetqdiscDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetqdiscDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetqdiscDoReply::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpGetqdiscDoReply::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetqdiscDoReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetqdiscDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetqdiscDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpGetqdiscDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGetqdiscDoRequest<&mut Vec<u8>> {
+        PushOpGetqdiscDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetqdiscDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGetqdiscDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 38u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetqdiscDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetqdiscDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpNewtclassDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -29996,11 +36486,17 @@ impl<Prev: Rec> Rec for PushOpNewtclassDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -30016,6 +36512,12 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -30452,7 +36954,7 @@ impl<Prev: Rec> Drop for PushOpNewtclassDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc traffic class information."]
-#[doc = "Original name: \"OpNewtclassDoRequest\""]
+#[doc = "Original name: \"op-newtclass-do-request\""]
 #[derive(Clone)]
 pub enum OpNewtclassDoRequest<'a> {
     Kind(&'a CStr),
@@ -30463,71 +36965,65 @@ pub enum OpNewtclassDoRequest<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpNewtclassDoRequest<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtclassDoRequest::Kind(val) = attr {
-                return Some(val);
+            if let OpNewtclassDoRequest::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtclassDoRequest", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtclassDoRequest::Options(val) = attr {
-                return Some(val);
+            if let OpNewtclassDoRequest::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtclassDoRequest", "Options"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtclassDoRequest::Rate(val) = attr {
-                return Some(val);
+            if let OpNewtclassDoRequest::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtclassDoRequest", "Rate"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtclassDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpNewtclassDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtclassDoRequest", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtclassDoRequest::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpNewtclassDoRequest::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtclassDoRequest", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtclassDoRequest::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpNewtclassDoRequest::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtclassDoRequest", "EgressBlock"))
     }
 }
 impl<'a> OpNewtclassDoRequest<'a> {
@@ -30538,30 +37034,11 @@ impl<'a> OpNewtclassDoRequest<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewtclassDoRequest<'a>> {
@@ -30582,9 +37059,7 @@ impl<'a> Iterator for Iterable<'a, OpNewtclassDoRequest<'a>> {
                 }),
                 2u16 => OpNewtclassDoRequest::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -30647,6 +37122,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewtclassDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpNewtclassDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewtclassDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewtclassDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewtclassDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpNewtclassDoRequest::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpNewtclassDoRequest::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpNewtclassDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpNewtclassDoRequest::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpNewtclassDoRequest::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewtclassDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpNewtclassDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -30659,11 +37203,17 @@ impl<Prev: Rec> Rec for PushOpNewtclassDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewtclassDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -30683,7 +37233,7 @@ impl<Prev: Rec> Drop for PushOpNewtclassDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc traffic class information."]
-#[doc = "Original name: \"OpNewtclassDoReply\""]
+#[doc = "Original name: \"op-newtclass-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewtclassDoReply {}
 impl<'a> Iterable<'a, OpNewtclassDoReply> {}
@@ -30695,30 +37245,11 @@ impl OpNewtclassDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewtclassDoReply> {
@@ -30762,6 +37293,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewtclassDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewtclassDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewtclassDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewtclassDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewtclassDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewtclassDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpNewtclassDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewtclassDoRequest<&mut Vec<u8>> {
+        PushOpNewtclassDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewtclassDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewtclassDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 40u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewtclassDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewtclassDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpDeltclassDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -30774,11 +37363,17 @@ impl<Prev: Rec> Rec for PushOpDeltclassDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDeltclassDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -30798,7 +37393,7 @@ impl<Prev: Rec> Drop for PushOpDeltclassDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc traffic class information."]
-#[doc = "Original name: \"OpDeltclassDoRequest\""]
+#[doc = "Original name: \"op-deltclass-do-request\""]
 #[derive(Clone)]
 pub enum OpDeltclassDoRequest {}
 impl<'a> Iterable<'a, OpDeltclassDoRequest> {}
@@ -30810,30 +37405,11 @@ impl OpDeltclassDoRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDeltclassDoRequest> {
@@ -30877,6 +37453,24 @@ impl std::fmt::Debug for Iterable<'_, OpDeltclassDoRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDeltclassDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDeltclassDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDeltclassDoRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpDeltclassDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -30889,11 +37483,17 @@ impl<Prev: Rec> Rec for PushOpDeltclassDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDeltclassDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -30913,7 +37513,7 @@ impl<Prev: Rec> Drop for PushOpDeltclassDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc traffic class information."]
-#[doc = "Original name: \"OpDeltclassDoReply\""]
+#[doc = "Original name: \"op-deltclass-do-reply\""]
 #[derive(Clone)]
 pub enum OpDeltclassDoReply {}
 impl<'a> Iterable<'a, OpDeltclassDoReply> {}
@@ -30925,30 +37525,11 @@ impl OpDeltclassDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDeltclassDoReply> {
@@ -30992,6 +37573,64 @@ impl std::fmt::Debug for Iterable<'_, OpDeltclassDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDeltclassDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDeltclassDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDeltclassDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDeltclassDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDeltclassDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpDeltclassDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDeltclassDoRequest<&mut Vec<u8>> {
+        PushOpDeltclassDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDeltclassDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDeltclassDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 41u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDeltclassDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDeltclassDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpGettclassDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -31004,11 +37643,17 @@ impl<Prev: Rec> Rec for PushOpGettclassDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGettclassDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -31028,7 +37673,7 @@ impl<Prev: Rec> Drop for PushOpGettclassDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc traffic class information."]
-#[doc = "Original name: \"OpGettclassDoRequest\""]
+#[doc = "Original name: \"op-gettclass-do-request\""]
 #[derive(Clone)]
 pub enum OpGettclassDoRequest {}
 impl<'a> Iterable<'a, OpGettclassDoRequest> {}
@@ -31040,30 +37685,11 @@ impl OpGettclassDoRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGettclassDoRequest> {
@@ -31107,6 +37733,24 @@ impl std::fmt::Debug for Iterable<'_, OpGettclassDoRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGettclassDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGettclassDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGettclassDoRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpGettclassDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -31119,11 +37763,17 @@ impl<Prev: Rec> Rec for PushOpGettclassDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -31139,6 +37789,12 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -31697,7 +38353,7 @@ impl<Prev: Rec> Drop for PushOpGettclassDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc traffic class information."]
-#[doc = "Original name: \"OpGettclassDoReply\""]
+#[doc = "Original name: \"op-gettclass-do-reply\""]
 #[derive(Clone)]
 pub enum OpGettclassDoReply<'a> {
     Kind(&'a CStr),
@@ -31713,126 +38369,115 @@ pub enum OpGettclassDoReply<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpGettclassDoReply<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Kind(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Options(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Stats(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Xstats(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Rate(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Fcnt(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Stats2(val) = attr {
-                return val;
+            if let OpGettclassDoReply::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGettclassDoReply", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Stab(val) = attr {
-                return val;
+            if let OpGettclassDoReply::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGettclassDoReply", "Stab"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::Chain(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettclassDoReply::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpGettclassDoReply::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettclassDoReply", "EgressBlock"))
     }
 }
 impl<'a> OpGettclassDoReply<'a> {
@@ -31843,30 +38488,11 @@ impl<'a> OpGettclassDoReply<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGettclassDoReply<'a>> {
@@ -31887,9 +38513,7 @@ impl<'a> Iterator for Iterable<'a, OpGettclassDoReply<'a>> {
                 }),
                 2u16 => OpGettclassDoReply::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -31902,9 +38526,7 @@ impl<'a> Iterator for Iterable<'a, OpGettclassDoReply<'a>> {
                 }),
                 4u16 => OpGettclassDoReply::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -31987,6 +38609,146 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettclassDoReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGettclassDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGettclassDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGettclassDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGettclassDoReply::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGettclassDoReply::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpGettclassDoReply::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGettclassDoReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGettclassDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGettclassDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpGettclassDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGettclassDoRequest<&mut Vec<u8>> {
+        PushOpGettclassDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGettclassDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGettclassDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 42u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGettclassDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGettclassDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpNewtfilterDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -31999,11 +38761,17 @@ impl<Prev: Rec> Rec for PushOpNewtfilterDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -32019,6 +38787,12 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -32455,7 +39229,7 @@ impl<Prev: Rec> Drop for PushOpNewtfilterDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpNewtfilterDoRequest\""]
+#[doc = "Original name: \"op-newtfilter-do-request\""]
 #[derive(Clone)]
 pub enum OpNewtfilterDoRequest<'a> {
     Kind(&'a CStr),
@@ -32466,71 +39240,65 @@ pub enum OpNewtfilterDoRequest<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpNewtfilterDoRequest<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtfilterDoRequest::Kind(val) = attr {
-                return Some(val);
+            if let OpNewtfilterDoRequest::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtfilterDoRequest", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtfilterDoRequest::Options(val) = attr {
-                return Some(val);
+            if let OpNewtfilterDoRequest::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtfilterDoRequest", "Options"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtfilterDoRequest::Rate(val) = attr {
-                return Some(val);
+            if let OpNewtfilterDoRequest::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtfilterDoRequest", "Rate"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtfilterDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpNewtfilterDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtfilterDoRequest", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtfilterDoRequest::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpNewtfilterDoRequest::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtfilterDoRequest", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewtfilterDoRequest::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpNewtfilterDoRequest::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewtfilterDoRequest", "EgressBlock"))
     }
 }
 impl<'a> OpNewtfilterDoRequest<'a> {
@@ -32541,30 +39309,11 @@ impl<'a> OpNewtfilterDoRequest<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewtfilterDoRequest<'a>> {
@@ -32585,9 +39334,7 @@ impl<'a> Iterator for Iterable<'a, OpNewtfilterDoRequest<'a>> {
                 }),
                 2u16 => OpNewtfilterDoRequest::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -32650,6 +39397,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewtfilterDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpNewtfilterDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewtfilterDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewtfilterDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewtfilterDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpNewtfilterDoRequest::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpNewtfilterDoRequest::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpNewtfilterDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpNewtfilterDoRequest::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpNewtfilterDoRequest::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewtfilterDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpNewtfilterDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -32662,11 +39478,17 @@ impl<Prev: Rec> Rec for PushOpNewtfilterDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewtfilterDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -32686,7 +39508,7 @@ impl<Prev: Rec> Drop for PushOpNewtfilterDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpNewtfilterDoReply\""]
+#[doc = "Original name: \"op-newtfilter-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewtfilterDoReply {}
 impl<'a> Iterable<'a, OpNewtfilterDoReply> {}
@@ -32698,30 +39520,11 @@ impl OpNewtfilterDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewtfilterDoReply> {
@@ -32765,6 +39568,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewtfilterDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewtfilterDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewtfilterDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewtfilterDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewtfilterDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewtfilterDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpNewtfilterDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewtfilterDoRequest<&mut Vec<u8>> {
+        PushOpNewtfilterDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewtfilterDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewtfilterDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 44u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewtfilterDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewtfilterDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpDeltfilterDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -32777,11 +39638,17 @@ impl<Prev: Rec> Rec for PushOpDeltfilterDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDeltfilterDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -32797,6 +39664,12 @@ impl<Prev: Rec> PushOpDeltfilterDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_chain(mut self, value: u32) -> Self {
@@ -32815,34 +39688,32 @@ impl<Prev: Rec> Drop for PushOpDeltfilterDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpDeltfilterDoRequest\""]
+#[doc = "Original name: \"op-deltfilter-do-request\""]
 #[derive(Clone)]
 pub enum OpDeltfilterDoRequest<'a> {
     Kind(&'a CStr),
     Chain(u32),
 }
 impl<'a> Iterable<'a, OpDeltfilterDoRequest<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDeltfilterDoRequest::Kind(val) = attr {
-                return Some(val);
+            if let OpDeltfilterDoRequest::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDeltfilterDoRequest", "Kind"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDeltfilterDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpDeltfilterDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDeltfilterDoRequest", "Chain"))
     }
 }
 impl<'a> OpDeltfilterDoRequest<'a> {
@@ -32853,30 +39724,11 @@ impl<'a> OpDeltfilterDoRequest<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpDeltfilterDoRequest<'a>> {
@@ -32933,6 +39785,51 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDeltfilterDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpDeltfilterDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDeltfilterDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDeltfilterDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpDeltfilterDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpDeltfilterDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpDeltfilterDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpDeltfilterDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -32945,11 +39842,17 @@ impl<Prev: Rec> Rec for PushOpDeltfilterDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDeltfilterDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -32969,7 +39872,7 @@ impl<Prev: Rec> Drop for PushOpDeltfilterDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpDeltfilterDoReply\""]
+#[doc = "Original name: \"op-deltfilter-do-reply\""]
 #[derive(Clone)]
 pub enum OpDeltfilterDoReply {}
 impl<'a> Iterable<'a, OpDeltfilterDoReply> {}
@@ -32981,30 +39884,11 @@ impl OpDeltfilterDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDeltfilterDoReply> {
@@ -33048,6 +39932,64 @@ impl std::fmt::Debug for Iterable<'_, OpDeltfilterDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDeltfilterDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDeltfilterDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDeltfilterDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDeltfilterDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDeltfilterDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpDeltfilterDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDeltfilterDoRequest<&mut Vec<u8>> {
+        PushOpDeltfilterDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDeltfilterDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDeltfilterDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 45u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDeltfilterDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDeltfilterDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDumpRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -33060,11 +40002,17 @@ impl<Prev: Rec> Rec for PushOpGettfilterDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGettfilterDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -33094,34 +40042,32 @@ impl<Prev: Rec> Drop for PushOpGettfilterDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpGettfilterDumpRequest\""]
+#[doc = "Original name: \"op-gettfilter-dump-request\""]
 #[derive(Clone)]
 pub enum OpGettfilterDumpRequest {
     Chain(u32),
     DumpFlags(PushBuiltinBitfield32),
 }
 impl<'a> Iterable<'a, OpGettfilterDumpRequest> {
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpRequest", "Chain"))
     }
-    pub fn get_dump_flags(&self) -> Option<PushBuiltinBitfield32> {
+    pub fn get_dump_flags(&self) -> Result<PushBuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpRequest::DumpFlags(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpRequest::DumpFlags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpRequest", "DumpFlags"))
     }
 }
 impl OpGettfilterDumpRequest {
@@ -33132,30 +40078,11 @@ impl OpGettfilterDumpRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGettfilterDumpRequest> {
@@ -33212,6 +40139,51 @@ impl std::fmt::Debug for Iterable<'_, OpGettfilterDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGettfilterDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGettfilterDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGettfilterDumpRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGettfilterDumpRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpRequest::DumpFlags(val) => {
+                    if last_off == offset {
+                        stack.push(("DumpFlags", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGettfilterDumpRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -33224,11 +40196,17 @@ impl<Prev: Rec> Rec for PushOpGettfilterDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -33244,6 +40222,12 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -33802,7 +40786,7 @@ impl<Prev: Rec> Drop for PushOpGettfilterDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpGettfilterDumpReply\""]
+#[doc = "Original name: \"op-gettfilter-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGettfilterDumpReply<'a> {
     Kind(&'a CStr),
@@ -33818,126 +40802,115 @@ pub enum OpGettfilterDumpReply<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpGettfilterDumpReply<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Kind(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Options(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Stats(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Xstats(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Rate(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Fcnt(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Stats2(val) = attr {
-                return val;
+            if let OpGettfilterDumpReply::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGettfilterDumpReply", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Stab(val) = attr {
-                return val;
+            if let OpGettfilterDumpReply::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGettfilterDumpReply", "Stab"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::Chain(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDumpReply::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpGettfilterDumpReply::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDumpReply", "EgressBlock"))
     }
 }
 impl<'a> OpGettfilterDumpReply<'a> {
@@ -33948,30 +40921,11 @@ impl<'a> OpGettfilterDumpReply<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGettfilterDumpReply<'a>> {
@@ -33992,9 +40946,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDumpReply<'a>> {
                 }),
                 2u16 => OpGettfilterDumpReply::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -34007,9 +40959,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDumpReply<'a>> {
                 }),
                 4u16 => OpGettfilterDumpReply::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -34092,6 +41042,148 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettfilterDumpReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGettfilterDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGettfilterDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGettfilterDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGettfilterDumpReply::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDumpReply::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGettfilterDumpReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGettfilterDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGettfilterDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpGettfilterDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGettfilterDumpRequest<&mut Vec<u8>> {
+        PushOpGettfilterDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGettfilterDumpRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGettfilterDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 46u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGettfilterDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGettfilterDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -34104,11 +41196,17 @@ impl<Prev: Rec> Rec for PushOpGettfilterDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGettfilterDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -34124,6 +41222,12 @@ impl<Prev: Rec> PushOpGettfilterDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_chain(mut self, value: u32) -> Self {
@@ -34142,34 +41246,32 @@ impl<Prev: Rec> Drop for PushOpGettfilterDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpGettfilterDoRequest\""]
+#[doc = "Original name: \"op-gettfilter-do-request\""]
 #[derive(Clone)]
 pub enum OpGettfilterDoRequest<'a> {
     Kind(&'a CStr),
     Chain(u32),
 }
 impl<'a> Iterable<'a, OpGettfilterDoRequest<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoRequest::Kind(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoRequest::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoRequest", "Kind"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoRequest", "Chain"))
     }
 }
 impl<'a> OpGettfilterDoRequest<'a> {
@@ -34180,30 +41282,11 @@ impl<'a> OpGettfilterDoRequest<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGettfilterDoRequest<'a>> {
@@ -34260,6 +41343,51 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettfilterDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGettfilterDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGettfilterDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGettfilterDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGettfilterDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGettfilterDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -34272,11 +41400,17 @@ impl<Prev: Rec> Rec for PushOpGettfilterDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -34292,6 +41426,12 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -34850,7 +41990,7 @@ impl<Prev: Rec> Drop for PushOpGettfilterDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc filter information."]
-#[doc = "Original name: \"OpGettfilterDoReply\""]
+#[doc = "Original name: \"op-gettfilter-do-reply\""]
 #[derive(Clone)]
 pub enum OpGettfilterDoReply<'a> {
     Kind(&'a CStr),
@@ -34866,126 +42006,115 @@ pub enum OpGettfilterDoReply<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpGettfilterDoReply<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Kind(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Options(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Stats(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Xstats(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Rate(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Fcnt(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Stats2(val) = attr {
-                return val;
+            if let OpGettfilterDoReply::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGettfilterDoReply", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Stab(val) = attr {
-                return val;
+            if let OpGettfilterDoReply::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGettfilterDoReply", "Stab"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::Chain(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGettfilterDoReply::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpGettfilterDoReply::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGettfilterDoReply", "EgressBlock"))
     }
 }
 impl<'a> OpGettfilterDoReply<'a> {
@@ -34996,30 +42125,11 @@ impl<'a> OpGettfilterDoReply<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGettfilterDoReply<'a>> {
@@ -35040,9 +42150,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDoReply<'a>> {
                 }),
                 2u16 => OpGettfilterDoReply::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -35055,9 +42163,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDoReply<'a>> {
                 }),
                 4u16 => OpGettfilterDoReply::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -35140,6 +42246,146 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettfilterDoReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGettfilterDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGettfilterDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGettfilterDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGettfilterDoReply::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpGettfilterDoReply::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGettfilterDoReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGettfilterDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGettfilterDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpGettfilterDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGettfilterDoRequest<&mut Vec<u8>> {
+        PushOpGettfilterDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGettfilterDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGettfilterDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 46u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGettfilterDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGettfilterDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpNewchainDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -35152,11 +42398,17 @@ impl<Prev: Rec> Rec for PushOpNewchainDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -35172,6 +42424,12 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -35608,7 +42866,7 @@ impl<Prev: Rec> Drop for PushOpNewchainDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc chain information."]
-#[doc = "Original name: \"OpNewchainDoRequest\""]
+#[doc = "Original name: \"op-newchain-do-request\""]
 #[derive(Clone)]
 pub enum OpNewchainDoRequest<'a> {
     Kind(&'a CStr),
@@ -35619,71 +42877,65 @@ pub enum OpNewchainDoRequest<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewchainDoRequest::Kind(val) = attr {
-                return Some(val);
+            if let OpNewchainDoRequest::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewchainDoRequest", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewchainDoRequest::Options(val) = attr {
-                return Some(val);
+            if let OpNewchainDoRequest::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewchainDoRequest", "Options"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewchainDoRequest::Rate(val) = attr {
-                return Some(val);
+            if let OpNewchainDoRequest::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewchainDoRequest", "Rate"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewchainDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpNewchainDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewchainDoRequest", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewchainDoRequest::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpNewchainDoRequest::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewchainDoRequest", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewchainDoRequest::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpNewchainDoRequest::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewchainDoRequest", "EgressBlock"))
     }
 }
 impl<'a> OpNewchainDoRequest<'a> {
@@ -35694,30 +42946,11 @@ impl<'a> OpNewchainDoRequest<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
@@ -35738,9 +42971,7 @@ impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
                 }),
                 2u16 => OpNewchainDoRequest::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -35803,6 +43034,75 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewchainDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewchainDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewchainDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewchainDoRequest::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewchainDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpNewchainDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -35815,11 +43115,17 @@ impl<Prev: Rec> Rec for PushOpNewchainDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewchainDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -35839,7 +43145,7 @@ impl<Prev: Rec> Drop for PushOpNewchainDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc chain information."]
-#[doc = "Original name: \"OpNewchainDoReply\""]
+#[doc = "Original name: \"op-newchain-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewchainDoReply {}
 impl<'a> Iterable<'a, OpNewchainDoReply> {}
@@ -35851,30 +43157,11 @@ impl OpNewchainDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewchainDoReply> {
@@ -35918,6 +43205,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewchainDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewchainDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpNewchainDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewchainDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewchainDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewchainDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpNewchainDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewchainDoRequest<&mut Vec<u8>> {
+        PushOpNewchainDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewchainDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewchainDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 100u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewchainDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewchainDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpDelchainDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -35930,11 +43275,17 @@ impl<Prev: Rec> Rec for PushOpDelchainDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDelchainDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -35959,22 +43310,21 @@ impl<Prev: Rec> Drop for PushOpDelchainDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc chain information."]
-#[doc = "Original name: \"OpDelchainDoRequest\""]
+#[doc = "Original name: \"op-delchain-do-request\""]
 #[derive(Clone)]
 pub enum OpDelchainDoRequest {
     Chain(u32),
 }
 impl<'a> Iterable<'a, OpDelchainDoRequest> {
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelchainDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpDelchainDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelchainDoRequest", "Chain"))
     }
 }
 impl OpDelchainDoRequest {
@@ -35985,30 +43335,11 @@ impl OpDelchainDoRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDelchainDoRequest> {
@@ -36059,6 +43390,45 @@ impl std::fmt::Debug for Iterable<'_, OpDelchainDoRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDelchainDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDelchainDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelchainDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpDelchainDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpDelchainDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpDelchainDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -36071,11 +43441,17 @@ impl<Prev: Rec> Rec for PushOpDelchainDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDelchainDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -36095,7 +43471,7 @@ impl<Prev: Rec> Drop for PushOpDelchainDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc chain information."]
-#[doc = "Original name: \"OpDelchainDoReply\""]
+#[doc = "Original name: \"op-delchain-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelchainDoReply {}
 impl<'a> Iterable<'a, OpDelchainDoReply> {}
@@ -36107,30 +43483,11 @@ impl OpDelchainDoReply {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDelchainDoReply> {
@@ -36174,6 +43531,64 @@ impl std::fmt::Debug for Iterable<'_, OpDelchainDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDelchainDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpDelchainDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelchainDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDelchainDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDelchainDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpDelchainDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDelchainDoRequest<&mut Vec<u8>> {
+        PushOpDelchainDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDelchainDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDelchainDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 101u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDelchainDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDelchainDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpGetchainDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -36186,11 +43601,17 @@ impl<Prev: Rec> Rec for PushOpGetchainDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetchainDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -36215,22 +43636,21 @@ impl<Prev: Rec> Drop for PushOpGetchainDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tc chain information."]
-#[doc = "Original name: \"OpGetchainDoRequest\""]
+#[doc = "Original name: \"op-getchain-do-request\""]
 #[derive(Clone)]
 pub enum OpGetchainDoRequest {
     Chain(u32),
 }
 impl<'a> Iterable<'a, OpGetchainDoRequest> {
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoRequest::Chain(val) = attr {
-                return Some(val);
+            if let OpGetchainDoRequest::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoRequest", "Chain"))
     }
 }
 impl OpGetchainDoRequest {
@@ -36241,30 +43661,11 @@ impl OpGetchainDoRequest {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetchainDoRequest> {
@@ -36315,6 +43716,45 @@ impl std::fmt::Debug for Iterable<'_, OpGetchainDoRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetchainDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGetchainDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetchainDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetchainDoRequest::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetchainDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpGetchainDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -36327,11 +43767,17 @@ impl<Prev: Rec> Rec for PushOpGetchainDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushTcmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushTcmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -36347,6 +43793,12 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_kind_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
@@ -36905,7 +44357,7 @@ impl<Prev: Rec> Drop for PushOpGetchainDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tc chain information."]
-#[doc = "Original name: \"OpGetchainDoReply\""]
+#[doc = "Original name: \"op-getchain-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetchainDoReply<'a> {
     Kind(&'a CStr),
@@ -36921,126 +44373,115 @@ pub enum OpGetchainDoReply<'a> {
     EgressBlock(u32),
 }
 impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
-    pub fn get_kind(&self) -> Option<&'a CStr> {
+    pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Kind(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Kind(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Kind"))
     }
-    pub fn get_options(&self) -> Option<OptionsMsg<'a>> {
+    pub fn get_options(&self) -> Result<OptionsMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Options(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Options(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Options"))
     }
-    pub fn get_stats(&self) -> Option<PushTcStats> {
+    pub fn get_stats(&self) -> Result<PushTcStats, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Stats(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Stats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Stats"))
     }
-    pub fn get_xstats(&self) -> Option<TcaStatsAppMsg<'a>> {
+    pub fn get_xstats(&self) -> Result<TcaStatsAppMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Xstats(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Xstats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Xstats"))
     }
-    pub fn get_rate(&self) -> Option<PushGnetEstimator> {
+    pub fn get_rate(&self) -> Result<PushGnetEstimator, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Rate(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Rate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Rate"))
     }
-    pub fn get_fcnt(&self) -> Option<u32> {
+    pub fn get_fcnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Fcnt(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Fcnt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Fcnt"))
     }
-    pub fn get_stats2(&self) -> Iterable<'a, TcaStatsAttrs<'a>> {
+    pub fn get_stats2(&self) -> Result<Iterable<'a, TcaStatsAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Stats2(val) = attr {
-                return val;
+            if let OpGetchainDoReply::Stats2(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetchainDoReply", "Stats2"))
     }
-    pub fn get_stab(&self) -> Iterable<'a, TcaStabAttrs<'a>> {
+    pub fn get_stab(&self) -> Result<Iterable<'a, TcaStabAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Stab(val) = attr {
-                return val;
+            if let OpGetchainDoReply::Stab(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetchainDoReply", "Stab"))
     }
-    pub fn get_chain(&self) -> Option<u32> {
+    pub fn get_chain(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::Chain(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::Chain(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "Chain"))
     }
-    pub fn get_ingress_block(&self) -> Option<u32> {
+    pub fn get_ingress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::IngressBlock(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::IngressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "IngressBlock"))
     }
-    pub fn get_egress_block(&self) -> Option<u32> {
+    pub fn get_egress_block(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetchainDoReply::EgressBlock(val) = attr {
-                return Some(val);
+            if let OpGetchainDoReply::EgressBlock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetchainDoReply", "EgressBlock"))
     }
 }
 impl<'a> OpGetchainDoReply<'a> {
@@ -37051,30 +44492,11 @@ impl<'a> OpGetchainDoReply<'a> {
             .clone_from_slice(&buf[..PushTcmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushTcmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Kind",
-            2u16 => "Options",
-            3u16 => "Stats",
-            4u16 => "Xstats",
-            5u16 => "Rate",
-            6u16 => "Fcnt",
-            7u16 => "Stats2",
-            8u16 => "Stab",
-            9u16 => "Pad",
-            10u16 => "DumpInvisible",
-            11u16 => "Chain",
-            12u16 => "HwOffload",
-            13u16 => "IngressBlock",
-            14u16 => "EgressBlock",
-            15u16 => "DumpFlags",
-            16u16 => "ExtWarnMsg",
-            _ => return None,
-        };
-        Some(res)
+        Attrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
@@ -37095,9 +44517,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
                 }),
                 2u16 => OpGetchainDoReply::Options({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         OptionsMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -37110,9 +44530,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
                 }),
                 4u16 => OpGetchainDoReply::Xstats({
                     let res = {
-                        let Some(selector) = self.get_kind() else {
-                            break;
-                        };
+                        let Ok(selector) = self.get_kind() else { break };
                         TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc)
                     };
                     let Some(val) = res else { break };
@@ -37193,5 +44611,282 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDoReply<'a>> {
             };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushTcmsg::len() {
+            stack.push(("OpGetchainDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetchainDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetchainDoReply::Kind(val) => {
+                    if last_off == offset {
+                        stack.push(("Kind", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Options(val) => {
+                    if last_off == offset {
+                        stack.push(("Options", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Stats(val) => {
+                    if last_off == offset {
+                        stack.push(("Stats", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Xstats(val) => {
+                    if last_off == offset {
+                        stack.push(("Xstats", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Rate(val) => {
+                    if last_off == offset {
+                        stack.push(("Rate", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Fcnt(val) => {
+                    if last_off == offset {
+                        stack.push(("Fcnt", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Stats2(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Stab(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetchainDoReply::Chain(val) => {
+                    if last_off == offset {
+                        stack.push(("Chain", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::IngressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("IngressBlock", last_off));
+                        break;
+                    }
+                }
+                OpGetchainDoReply::EgressBlock(val) => {
+                    if last_off == offset {
+                        stack.push(("EgressBlock", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetchainDoReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetchainDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetchainDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushTcmsg) -> Self {
+        PushOpGetchainDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGetchainDoRequest<&mut Vec<u8>> {
+        PushOpGetchainDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetchainDoRequest<'_> {
+    type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGetchainDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 102u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetchainDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetchainDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
+#[derive(Debug)]
+enum RequestBuf<'buf> {
+    Ref(&'buf mut Vec<u8>),
+    Own(Vec<u8>),
+}
+#[derive(Debug)]
+pub struct Request<'buf> {
+    buf: RequestBuf<'buf>,
+    flags: u16,
+}
+impl Request<'static> {
+    pub fn new() -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(Vec::new()),
+        }
+    }
+    pub fn from_buf(buf: Vec<u8>) -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(buf),
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'buf> Request<'buf> {
+    pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
+        buf.clear();
+        Self {
+            flags: 0,
+            buf: RequestBuf::Ref(buf),
+        }
+    }
+    fn buf(&self) -> &Vec<u8> {
+        match &self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    fn buf_mut(&mut self) -> &mut Vec<u8> {
+        match &mut self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    pub fn set_create(mut self) -> Self {
+        self.flags |= consts::NLM_F_CREATE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    pub fn set_excl(mut self) -> Self {
+        self.flags |= consts::NLM_F_EXCL as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_replace(mut self) -> Self {
+        self.flags |= consts::NLM_F_REPLACE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_change(self) -> Self {
+        self.set_create().set_replace()
+    }
+    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    pub fn set_append(mut self) -> Self {
+        self.flags |= consts::NLM_F_APPEND as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    fn set_dump(mut self) -> Self {
+        self.flags |= consts::NLM_F_DUMP as u16;
+        self
+    }
+    pub fn op_newqdisc_do_request(self, header: &PushTcmsg) -> RequestOpNewqdiscDoRequest<'buf> {
+        RequestOpNewqdiscDoRequest::new(self, header)
+    }
+    pub fn op_delqdisc_do_request(self, header: &PushTcmsg) -> RequestOpDelqdiscDoRequest<'buf> {
+        RequestOpDelqdiscDoRequest::new(self, header)
+    }
+    pub fn op_getqdisc_dump_request(
+        self,
+        header: &PushTcmsg,
+    ) -> RequestOpGetqdiscDumpRequest<'buf> {
+        RequestOpGetqdiscDumpRequest::new(self, header)
+    }
+    pub fn op_getqdisc_do_request(self, header: &PushTcmsg) -> RequestOpGetqdiscDoRequest<'buf> {
+        RequestOpGetqdiscDoRequest::new(self, header)
+    }
+    pub fn op_newtclass_do_request(self, header: &PushTcmsg) -> RequestOpNewtclassDoRequest<'buf> {
+        RequestOpNewtclassDoRequest::new(self, header)
+    }
+    pub fn op_deltclass_do_request(self, header: &PushTcmsg) -> RequestOpDeltclassDoRequest<'buf> {
+        RequestOpDeltclassDoRequest::new(self, header)
+    }
+    pub fn op_gettclass_do_request(self, header: &PushTcmsg) -> RequestOpGettclassDoRequest<'buf> {
+        RequestOpGettclassDoRequest::new(self, header)
+    }
+    pub fn op_newtfilter_do_request(
+        self,
+        header: &PushTcmsg,
+    ) -> RequestOpNewtfilterDoRequest<'buf> {
+        RequestOpNewtfilterDoRequest::new(self, header)
+    }
+    pub fn op_deltfilter_do_request(
+        self,
+        header: &PushTcmsg,
+    ) -> RequestOpDeltfilterDoRequest<'buf> {
+        RequestOpDeltfilterDoRequest::new(self, header)
+    }
+    pub fn op_gettfilter_dump_request(
+        self,
+        header: &PushTcmsg,
+    ) -> RequestOpGettfilterDumpRequest<'buf> {
+        RequestOpGettfilterDumpRequest::new(self, header)
+    }
+    pub fn op_gettfilter_do_request(
+        self,
+        header: &PushTcmsg,
+    ) -> RequestOpGettfilterDoRequest<'buf> {
+        RequestOpGettfilterDoRequest::new(self, header)
+    }
+    pub fn op_newchain_do_request(self, header: &PushTcmsg) -> RequestOpNewchainDoRequest<'buf> {
+        RequestOpNewchainDoRequest::new(self, header)
+    }
+    pub fn op_delchain_do_request(self, header: &PushTcmsg) -> RequestOpDelchainDoRequest<'buf> {
+        RequestOpDelchainDoRequest::new(self, header)
+    }
+    pub fn op_getchain_do_request(self, header: &PushTcmsg) -> RequestOpGetchainDoRequest<'buf> {
+        RequestOpGetchainDoRequest::new(self, header)
     }
 }

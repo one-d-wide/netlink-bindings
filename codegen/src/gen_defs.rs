@@ -9,6 +9,7 @@ use crate::{
 
 pub struct GenImplStruct {
     pub off: usize,
+    pub alignment: usize,
     pub lifetime_needed: bool,
     pub type_name: Ident,
 }

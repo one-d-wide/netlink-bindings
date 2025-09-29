@@ -115,7 +115,7 @@ pub fn gen_sub(
 
     tokens.extend(quote! {
         impl<'a> #type_name<'a> {
-            fn select_with_loc(selector: #sel_type, buf: &'a [u8], loc: *const u8) -> Option<Self> {
+            fn select_with_loc(selector: #sel_type, buf: &'a [u8], loc: usize) -> Option<Self> {
                 // Null character not included
                 match selector #sel {
                     #selects

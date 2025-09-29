@@ -5,6 +5,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use std::{
     collections::HashSet,
+    ffi::CString,
     io::Write,
     path::PathBuf,
     process::{Command, Stdio},
@@ -12,10 +13,13 @@ use std::{
 
 mod dump;
 mod gen_attrs;
+mod gen_debug_impl;
 mod gen_defs;
-mod gen_introspect;
 mod gen_iterable;
+mod gen_lookup;
 mod gen_ops;
+mod gen_request_impl;
+mod gen_reverse_lookup;
 mod gen_sub_message;
 mod gen_utils;
 mod gen_writable;
@@ -82,6 +86,11 @@ struct CliArgs {
     #[argh(switch)]
     no_operations: bool,
 
+    /// aggregate reverse lookup
+    #[argh(option, arg_name = "path")]
+    #[argh(usage)]
+    reverse_lookup: Option<PathBuf>,
+
     #[argh(positional, arg_name = "path_to_spec")]
     #[argh(usage)]
     spec: Option<PathBuf>,
@@ -90,12 +99,21 @@ struct CliArgs {
 fn main() {
     let mut args: CliArgs = argh::from_env();
 
+    if let Some(output) = &args.reverse_lookup {
+        gen_reverse_lookup::gen_reverse_lookup(&args, output);
+        return;
+    }
+
     let mut has_tests = false;
     if let Some(mut dir) = args.dir.clone() {
         let mut prot = dir.file_name().unwrap().to_str().unwrap();
 
         if let Some(spec) = &args.spec {
             if prot == "src" {
+                if spec.extension().is_none_or(|ext| ext != "yaml") {
+                    println!("Provided spec doesn't look .yaml file. Refusing to copy");
+                    std::process::exit(1);
+                }
                 prot = spec.file_stem().unwrap().to_str().unwrap();
                 dir = dir.join(prot);
             }
@@ -136,6 +154,8 @@ fn main() {
     tokens.extend(quote! {
         #![doc = #mod_doc]
         #![allow(clippy::all)]
+        #![allow(unused_imports)]
+        #![allow(unused_assignments)]
         #![allow(non_snake_case)]
         #![allow(unused_variables)]
         #![allow(irrefutable_let_patterns)]
@@ -149,11 +169,22 @@ fn main() {
         });
     }
     tokens.extend(quote! {
+        use crate::{Protocol, NetlinkRequest};
         use crate::utils::*;
+        use crate::consts;
+    });
+    if spec.name != "builtin" {
+        tokens.extend(quote! {
+            use crate::builtin::{PushBuiltinNfgenmsg, PushBuiltinBitfield32};
+        });
+    }
+    let protoname = CString::new(spec.name.clone()).unwrap();
+    tokens.extend(quote! {
+        pub const PROTONAME: &CStr = #protoname;
     });
     if let Some(protonum) = &spec.protonum {
         tokens.extend(quote! {
-            pub const PROTONUM: u8 = #protonum;
+            pub const PROTONUM: u16 = #protonum;
         });
     }
     tokens.extend(gen_defs(&spec));
@@ -165,31 +196,7 @@ fn main() {
         tokens.extend(gen_ops(&spec, &mut ctx));
     }
 
-    let mut out = tokens.to_string().into_bytes();
-
-    if !args.no_fmt {
-        let mut proc = Command::new(&args.fmt)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .arg("--edition=2021")
-            .spawn()
-            .unwrap();
-
-        proc.stdin
-            .as_mut()
-            .unwrap()
-            .write_all(tokens.to_string().as_bytes())
-            .unwrap();
-
-        let res = proc.wait_with_output().unwrap();
-
-        if !res.status.success() {
-            println!("Error formatting with {:?}", args.fmt);
-            std::process::exit(1);
-        }
-
-        out = res.stdout;
-    }
+    let out = fmt(&args, &tokens);
 
     if let Some(output) = &args.output {
         println!("Writing {output:?}");
@@ -210,5 +217,34 @@ fn main() {
             println!("Dumping all {dump_all:?}");
             std::fs::write(dump_all, &buf).unwrap();
         }
+    }
+}
+
+fn fmt(args: &CliArgs, tokens: &TokenStream) -> Vec<u8> {
+    let tokens = tokens.to_string();
+    if !args.no_fmt {
+        let mut proc = Command::new(&args.fmt)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .arg("--edition=2024")
+            .spawn()
+            .unwrap();
+
+        proc.stdin
+            .as_mut()
+            .unwrap()
+            .write_all(tokens.to_string().as_bytes())
+            .unwrap();
+
+        let res = proc.wait_with_output().unwrap();
+
+        if !res.status.success() {
+            println!("Error formatting with {:?}", args.fmt);
+            std::process::exit(1);
+        }
+
+        res.stdout
+    } else {
+        tokens.into()
     }
 }

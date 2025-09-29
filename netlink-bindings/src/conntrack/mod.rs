@@ -1,12 +1,18 @@
 #![doc = "Netfilter connection tracking subsystem over nfnetlink"]
 #![allow(clippy::all)]
+#![allow(unused_imports)]
+#![allow(unused_assignments)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::consts;
 use crate::utils::*;
-pub const PROTONUM: u8 = 12u8;
+use crate::{NetlinkRequest, Protocol};
+pub const PROTONAME: &CStr = c"conntrack";
+pub const PROTONUM: u16 = 12u16;
 #[doc = "Original name: \"nf-ct-tcp-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Clone)]
 pub enum NfCtTcpFlags {
@@ -81,60 +87,55 @@ pub enum CounterAttrs<'a> {
     Pad(&'a [u8]),
 }
 impl<'a> Iterable<'a, CounterAttrs<'a>> {
-    pub fn get_packets(&self) -> Option<u64> {
+    pub fn get_packets(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CounterAttrs::Packets(val) = attr {
-                return Some(val);
+            if let CounterAttrs::Packets(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CounterAttrs", "Packets"))
     }
-    pub fn get_bytes(&self) -> Option<u64> {
+    pub fn get_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CounterAttrs::Bytes(val) = attr {
-                return Some(val);
+            if let CounterAttrs::Bytes(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CounterAttrs", "Bytes"))
     }
-    pub fn get_packets_old(&self) -> Option<u32> {
+    pub fn get_packets_old(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CounterAttrs::PacketsOld(val) = attr {
-                return Some(val);
+            if let CounterAttrs::PacketsOld(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CounterAttrs", "PacketsOld"))
     }
-    pub fn get_bytes_old(&self) -> Option<u32> {
+    pub fn get_bytes_old(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CounterAttrs::BytesOld(val) = attr {
-                return Some(val);
+            if let CounterAttrs::BytesOld(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CounterAttrs", "BytesOld"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let CounterAttrs::Pad(val) = attr {
-                return Some(val);
+            if let CounterAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("CounterAttrs", "Pad"))
     }
 }
 impl<'a> CounterAttrs<'a> {
@@ -225,6 +226,69 @@ impl<'a> std::fmt::Debug for Iterable<'a, CounterAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, CounterAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("CounterAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| CounterAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                CounterAttrs::Packets(val) => {
+                    if last_off == offset {
+                        stack.push(("Packets", last_off));
+                        break;
+                    }
+                }
+                CounterAttrs::Bytes(val) => {
+                    if last_off == offset {
+                        stack.push(("Bytes", last_off));
+                        break;
+                    }
+                }
+                CounterAttrs::PacketsOld(val) => {
+                    if last_off == offset {
+                        stack.push(("PacketsOld", last_off));
+                        break;
+                    }
+                }
+                CounterAttrs::BytesOld(val) => {
+                    if last_off == offset {
+                        stack.push(("BytesOld", last_off));
+                        break;
+                    }
+                }
+                CounterAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("CounterAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"tuple-proto-attrs\""]
 #[derive(Clone)]
 pub enum TupleProtoAttrs {
@@ -245,108 +309,99 @@ pub enum TupleProtoAttrs {
 }
 impl<'a> Iterable<'a, TupleProtoAttrs> {
     #[doc = "l4 protocol number"]
-    pub fn get_proto_num(&self) -> Option<u8> {
+    pub fn get_proto_num(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoNum(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoNum(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoNum"))
     }
     #[doc = "l4 source port"]
-    pub fn get_proto_src_port(&self) -> Option<u16> {
+    pub fn get_proto_src_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoSrcPort(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoSrcPort(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoSrcPort"))
     }
     #[doc = "l4 source port"]
-    pub fn get_proto_dst_port(&self) -> Option<u16> {
+    pub fn get_proto_dst_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoDstPort(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoDstPort(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoDstPort"))
     }
     #[doc = "l4 icmp id"]
-    pub fn get_proto_icmp_id(&self) -> Option<u16> {
+    pub fn get_proto_icmp_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoIcmpId(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoIcmpId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpId"))
     }
-    pub fn get_proto_icmp_type(&self) -> Option<u8> {
+    pub fn get_proto_icmp_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoIcmpType(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoIcmpType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpType"))
     }
-    pub fn get_proto_icmp_code(&self) -> Option<u8> {
+    pub fn get_proto_icmp_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoIcmpCode(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoIcmpCode(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpCode"))
     }
     #[doc = "l4 icmp id"]
-    pub fn get_proto_icmpv6_id(&self) -> Option<u16> {
+    pub fn get_proto_icmpv6_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoIcmpv6Id(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoIcmpv6Id(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpv6Id"))
     }
-    pub fn get_proto_icmpv6_type(&self) -> Option<u8> {
+    pub fn get_proto_icmpv6_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoIcmpv6Type(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoIcmpv6Type(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpv6Type"))
     }
-    pub fn get_proto_icmpv6_code(&self) -> Option<u8> {
+    pub fn get_proto_icmpv6_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleProtoAttrs::ProtoIcmpv6Code(val) = attr {
-                return Some(val);
+            if let TupleProtoAttrs::ProtoIcmpv6Code(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpv6Code"))
     }
 }
 impl TupleProtoAttrs {
@@ -465,6 +520,93 @@ impl std::fmt::Debug for Iterable<'_, TupleProtoAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, TupleProtoAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TupleProtoAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TupleProtoAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TupleProtoAttrs::ProtoNum(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoNum", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoSrcPort(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoSrcPort", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoDstPort(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoDstPort", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoIcmpId(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoIcmpId", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoIcmpType(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoIcmpType", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoIcmpCode(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoIcmpCode", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoIcmpv6Id(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoIcmpv6Id", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoIcmpv6Type(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoIcmpv6Type", last_off));
+                        break;
+                    }
+                }
+                TupleProtoAttrs::ProtoIcmpv6Code(val) => {
+                    if last_off == offset {
+                        stack.push(("ProtoIcmpv6Code", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TupleProtoAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"tuple-ip-attrs\""]
 #[derive(Clone)]
 pub enum TupleIpAttrs {
@@ -479,52 +621,48 @@ pub enum TupleIpAttrs {
 }
 impl<'a> Iterable<'a, TupleIpAttrs> {
     #[doc = "ipv4 source address"]
-    pub fn get_ip_v4_src(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_ip_v4_src(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleIpAttrs::IpV4Src(val) = attr {
-                return Some(val);
+            if let TupleIpAttrs::IpV4Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleIpAttrs", "IpV4Src"))
     }
     #[doc = "ipv4 destination address"]
-    pub fn get_ip_v4_dst(&self) -> Option<std::net::Ipv4Addr> {
+    pub fn get_ip_v4_dst(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleIpAttrs::IpV4Dst(val) = attr {
-                return Some(val);
+            if let TupleIpAttrs::IpV4Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleIpAttrs", "IpV4Dst"))
     }
     #[doc = "ipv6 source address"]
-    pub fn get_ip_v6_src(&self) -> Option<std::net::Ipv6Addr> {
+    pub fn get_ip_v6_src(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleIpAttrs::IpV6Src(val) = attr {
-                return Some(val);
+            if let TupleIpAttrs::IpV6Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleIpAttrs", "IpV6Src"))
     }
     #[doc = "ipv6 destination address"]
-    pub fn get_ip_v6_dst(&self) -> Option<std::net::Ipv6Addr> {
+    pub fn get_ip_v6_dst(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleIpAttrs::IpV6Dst(val) = attr {
-                return Some(val);
+            if let TupleIpAttrs::IpV6Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleIpAttrs", "IpV6Dst"))
     }
 }
 impl TupleIpAttrs {
@@ -608,6 +746,63 @@ impl std::fmt::Debug for Iterable<'_, TupleIpAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, TupleIpAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TupleIpAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TupleIpAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TupleIpAttrs::IpV4Src(val) => {
+                    if last_off == offset {
+                        stack.push(("IpV4Src", last_off));
+                        break;
+                    }
+                }
+                TupleIpAttrs::IpV4Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("IpV4Dst", last_off));
+                        break;
+                    }
+                }
+                TupleIpAttrs::IpV6Src(val) => {
+                    if last_off == offset {
+                        stack.push(("IpV6Src", last_off));
+                        break;
+                    }
+                }
+                TupleIpAttrs::IpV6Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("IpV6Dst", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TupleIpAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"tuple-attrs\""]
 #[derive(Clone)]
 pub enum TupleAttrs<'a> {
@@ -620,40 +815,37 @@ pub enum TupleAttrs<'a> {
 }
 impl<'a> Iterable<'a, TupleAttrs<'a>> {
     #[doc = "conntrack l3 information"]
-    pub fn get_tuple_ip(&self) -> Iterable<'a, TupleIpAttrs> {
+    pub fn get_tuple_ip(&self) -> Result<Iterable<'a, TupleIpAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleAttrs::TupleIp(val) = attr {
-                return val;
+            if let TupleAttrs::TupleIp(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("TupleAttrs", "TupleIp"))
     }
     #[doc = "conntrack l4 information"]
-    pub fn get_tuple_proto(&self) -> Iterable<'a, TupleProtoAttrs> {
+    pub fn get_tuple_proto(&self) -> Result<Iterable<'a, TupleProtoAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleAttrs::TupleProto(val) = attr {
-                return val;
+            if let TupleAttrs::TupleProto(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("TupleAttrs", "TupleProto"))
     }
     #[doc = "conntrack zone id"]
-    pub fn get_tuple_zone(&self) -> Option<u16> {
+    pub fn get_tuple_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let TupleAttrs::TupleZone(val) = attr {
-                return Some(val);
+            if let TupleAttrs::TupleZone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("TupleAttrs", "TupleZone"))
     }
 }
 impl<'a> TupleAttrs<'a> {
@@ -730,6 +922,58 @@ impl<'a> std::fmt::Debug for Iterable<'a, TupleAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, TupleAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("TupleAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TupleAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TupleAttrs::TupleIp(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                TupleAttrs::TupleProto(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                TupleAttrs::TupleZone(val) => {
+                    if last_off == offset {
+                        stack.push(("TupleZone", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TupleAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"protoinfo-tcp-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoTcpAttrs {
@@ -744,62 +988,57 @@ pub enum ProtoinfoTcpAttrs {
 }
 impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
     #[doc = "tcp connection state\nAssociated type: \"NfCtTcpState\" (enum)"]
-    pub fn get_tcp_state(&self) -> Option<u8> {
+    pub fn get_tcp_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoTcpAttrs::TcpState(val) = attr {
-                return Some(val);
+            if let ProtoinfoTcpAttrs::TcpState(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpState"))
     }
     #[doc = "window scaling factor in original direction"]
-    pub fn get_tcp_wscale_original(&self) -> Option<u8> {
+    pub fn get_tcp_wscale_original(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoTcpAttrs::TcpWscaleOriginal(val) = attr {
-                return Some(val);
+            if let ProtoinfoTcpAttrs::TcpWscaleOriginal(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpWscaleOriginal"))
     }
     #[doc = "window scaling factor in reply direction"]
-    pub fn get_tcp_wscale_reply(&self) -> Option<u8> {
+    pub fn get_tcp_wscale_reply(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoTcpAttrs::TcpWscaleReply(val) = attr {
-                return Some(val);
+            if let ProtoinfoTcpAttrs::TcpWscaleReply(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpWscaleReply"))
     }
-    pub fn get_tcp_flags_original(&self) -> Option<PushNfCtTcpFlagsMask> {
+    pub fn get_tcp_flags_original(&self) -> Result<PushNfCtTcpFlagsMask, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoTcpAttrs::TcpFlagsOriginal(val) = attr {
-                return Some(val);
+            if let ProtoinfoTcpAttrs::TcpFlagsOriginal(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpFlagsOriginal"))
     }
-    pub fn get_tcp_flags_reply(&self) -> Option<PushNfCtTcpFlagsMask> {
+    pub fn get_tcp_flags_reply(&self) -> Result<PushNfCtTcpFlagsMask, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoTcpAttrs::TcpFlagsReply(val) = attr {
-                return Some(val);
+            if let ProtoinfoTcpAttrs::TcpFlagsReply(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpFlagsReply"))
     }
 }
 impl ProtoinfoTcpAttrs {
@@ -890,6 +1129,69 @@ impl std::fmt::Debug for Iterable<'_, ProtoinfoTcpAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, ProtoinfoTcpAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ProtoinfoTcpAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ProtoinfoTcpAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ProtoinfoTcpAttrs::TcpState(val) => {
+                    if last_off == offset {
+                        stack.push(("TcpState", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoTcpAttrs::TcpWscaleOriginal(val) => {
+                    if last_off == offset {
+                        stack.push(("TcpWscaleOriginal", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoTcpAttrs::TcpWscaleReply(val) => {
+                    if last_off == offset {
+                        stack.push(("TcpWscaleReply", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoTcpAttrs::TcpFlagsOriginal(val) => {
+                    if last_off == offset {
+                        stack.push(("TcpFlagsOriginal", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoTcpAttrs::TcpFlagsReply(val) => {
+                    if last_off == offset {
+                        stack.push(("TcpFlagsReply", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ProtoinfoTcpAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"protoinfo-dccp-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoDccpAttrs<'a> {
@@ -901,49 +1203,45 @@ pub enum ProtoinfoDccpAttrs<'a> {
 }
 impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
     #[doc = "dccp connection state"]
-    pub fn get_dccp_state(&self) -> Option<u8> {
+    pub fn get_dccp_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoDccpAttrs::DccpState(val) = attr {
-                return Some(val);
+            if let ProtoinfoDccpAttrs::DccpState(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpState"))
     }
-    pub fn get_dccp_role(&self) -> Option<u8> {
+    pub fn get_dccp_role(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoDccpAttrs::DccpRole(val) = attr {
-                return Some(val);
+            if let ProtoinfoDccpAttrs::DccpRole(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpRole"))
     }
-    pub fn get_dccp_handshake_seq(&self) -> Option<u64> {
+    pub fn get_dccp_handshake_seq(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoDccpAttrs::DccpHandshakeSeq(val) = attr {
-                return Some(val);
+            if let ProtoinfoDccpAttrs::DccpHandshakeSeq(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpHandshakeSeq"))
     }
-    pub fn get_dccp_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_dccp_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoDccpAttrs::DccpPad(val) = attr {
-                return Some(val);
+            if let ProtoinfoDccpAttrs::DccpPad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpPad"))
     }
 }
 impl<'a> ProtoinfoDccpAttrs<'a> {
@@ -1027,6 +1325,63 @@ impl<'a> std::fmt::Debug for Iterable<'a, ProtoinfoDccpAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ProtoinfoDccpAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ProtoinfoDccpAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ProtoinfoDccpAttrs::DccpState(val) => {
+                    if last_off == offset {
+                        stack.push(("DccpState", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoDccpAttrs::DccpRole(val) => {
+                    if last_off == offset {
+                        stack.push(("DccpRole", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoDccpAttrs::DccpHandshakeSeq(val) => {
+                    if last_off == offset {
+                        stack.push(("DccpHandshakeSeq", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoDccpAttrs::DccpPad(val) => {
+                    if last_off == offset {
+                        stack.push(("DccpPad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ProtoinfoDccpAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"protoinfo-sctp-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoSctpAttrs {
@@ -1037,38 +1392,35 @@ pub enum ProtoinfoSctpAttrs {
 }
 impl<'a> Iterable<'a, ProtoinfoSctpAttrs> {
     #[doc = "sctp connection state\nAssociated type: \"NfCtSctpState\" (enum)"]
-    pub fn get_sctp_state(&self) -> Option<u8> {
+    pub fn get_sctp_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoSctpAttrs::SctpState(val) = attr {
-                return Some(val);
+            if let ProtoinfoSctpAttrs::SctpState(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoSctpAttrs", "SctpState"))
     }
-    pub fn get_vtag_original(&self) -> Option<u32> {
+    pub fn get_vtag_original(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoSctpAttrs::VtagOriginal(val) = attr {
-                return Some(val);
+            if let ProtoinfoSctpAttrs::VtagOriginal(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoSctpAttrs", "VtagOriginal"))
     }
-    pub fn get_vtag_reply(&self) -> Option<u32> {
+    pub fn get_vtag_reply(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoSctpAttrs::VtagReply(val) = attr {
-                return Some(val);
+            if let ProtoinfoSctpAttrs::VtagReply(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ProtoinfoSctpAttrs", "VtagReply"))
     }
 }
 impl ProtoinfoSctpAttrs {
@@ -1145,6 +1497,57 @@ impl std::fmt::Debug for Iterable<'_, ProtoinfoSctpAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, ProtoinfoSctpAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ProtoinfoSctpAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ProtoinfoSctpAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ProtoinfoSctpAttrs::SctpState(val) => {
+                    if last_off == offset {
+                        stack.push(("SctpState", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoSctpAttrs::VtagOriginal(val) => {
+                    if last_off == offset {
+                        stack.push(("VtagOriginal", last_off));
+                        break;
+                    }
+                }
+                ProtoinfoSctpAttrs::VtagReply(val) => {
+                    if last_off == offset {
+                        stack.push(("VtagReply", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ProtoinfoSctpAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"protoinfo-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoAttrs<'a> {
@@ -1157,40 +1560,37 @@ pub enum ProtoinfoAttrs<'a> {
 }
 impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
     #[doc = "conntrack tcp state information"]
-    pub fn get_protoinfo_tcp(&self) -> Iterable<'a, ProtoinfoTcpAttrs> {
+    pub fn get_protoinfo_tcp(&self) -> Result<Iterable<'a, ProtoinfoTcpAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoAttrs::ProtoinfoTcp(val) = attr {
-                return val;
+            if let ProtoinfoAttrs::ProtoinfoTcp(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ProtoinfoAttrs", "ProtoinfoTcp"))
     }
     #[doc = "conntrack dccp state information"]
-    pub fn get_protoinfo_dccp(&self) -> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
+    pub fn get_protoinfo_dccp(&self) -> Result<Iterable<'a, ProtoinfoDccpAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoAttrs::ProtoinfoDccp(val) = attr {
-                return val;
+            if let ProtoinfoAttrs::ProtoinfoDccp(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ProtoinfoAttrs", "ProtoinfoDccp"))
     }
     #[doc = "conntrack sctp state information"]
-    pub fn get_protoinfo_sctp(&self) -> Iterable<'a, ProtoinfoSctpAttrs> {
+    pub fn get_protoinfo_sctp(&self) -> Result<Iterable<'a, ProtoinfoSctpAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ProtoinfoAttrs::ProtoinfoSctp(val) = attr {
-                return val;
+            if let ProtoinfoAttrs::ProtoinfoSctp(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ProtoinfoAttrs", "ProtoinfoSctp"))
     }
 }
 impl<'a> ProtoinfoAttrs<'a> {
@@ -1267,6 +1667,58 @@ impl<'a> std::fmt::Debug for Iterable<'a, ProtoinfoAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ProtoinfoAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ProtoinfoAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ProtoinfoAttrs::ProtoinfoTcp(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ProtoinfoAttrs::ProtoinfoDccp(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ProtoinfoAttrs::ProtoinfoSctp(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ProtoinfoAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"help-attrs\""]
 #[derive(Clone)]
 pub enum HelpAttrs<'a> {
@@ -1275,16 +1727,15 @@ pub enum HelpAttrs<'a> {
 }
 impl<'a> Iterable<'a, HelpAttrs<'a>> {
     #[doc = "helper name"]
-    pub fn get_help_name(&self) -> Option<&'a CStr> {
+    pub fn get_help_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let HelpAttrs::HelpName(val) = attr {
-                return Some(val);
+            if let HelpAttrs::HelpName(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("HelpAttrs", "HelpName"))
     }
 }
 impl<'a> HelpAttrs<'a> {
@@ -1347,6 +1798,45 @@ impl<'a> std::fmt::Debug for Iterable<'a, HelpAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, HelpAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("HelpAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| HelpAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                HelpAttrs::HelpName(val) => {
+                    if last_off == offset {
+                        stack.push(("HelpName", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("HelpAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"nat-proto-attrs\""]
 #[derive(Clone)]
 pub enum NatProtoAttrs {
@@ -1354,27 +1844,25 @@ pub enum NatProtoAttrs {
     NatPortMax(u16),
 }
 impl<'a> Iterable<'a, NatProtoAttrs> {
-    pub fn get_nat_port_min(&self) -> Option<u16> {
+    pub fn get_nat_port_min(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatProtoAttrs::NatPortMin(val) = attr {
-                return Some(val);
+            if let NatProtoAttrs::NatPortMin(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NatProtoAttrs", "NatPortMin"))
     }
-    pub fn get_nat_port_max(&self) -> Option<u16> {
+    pub fn get_nat_port_max(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatProtoAttrs::NatPortMax(val) = attr {
-                return Some(val);
+            if let NatProtoAttrs::NatPortMax(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NatProtoAttrs", "NatPortMax"))
     }
 }
 impl NatProtoAttrs {
@@ -1444,6 +1932,51 @@ impl std::fmt::Debug for Iterable<'_, NatProtoAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, NatProtoAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("NatProtoAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| NatProtoAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                NatProtoAttrs::NatPortMin(val) => {
+                    if last_off == offset {
+                        stack.push(("NatPortMin", last_off));
+                        break;
+                    }
+                }
+                NatProtoAttrs::NatPortMax(val) => {
+                    if last_off == offset {
+                        stack.push(("NatPortMax", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("NatProtoAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"nat-attrs\""]
 #[derive(Clone)]
 pub enum NatAttrs<'a> {
@@ -1454,60 +1987,55 @@ pub enum NatAttrs<'a> {
     NatProto(Iterable<'a, NatProtoAttrs>),
 }
 impl<'a> Iterable<'a, NatAttrs<'a>> {
-    pub fn get_nat_v4_minip(&self) -> Option<u32> {
+    pub fn get_nat_v4_minip(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatAttrs::NatV4Minip(val) = attr {
-                return Some(val);
+            if let NatAttrs::NatV4Minip(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NatAttrs", "NatV4Minip"))
     }
-    pub fn get_nat_v4_maxip(&self) -> Option<u32> {
+    pub fn get_nat_v4_maxip(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatAttrs::NatV4Maxip(val) = attr {
-                return Some(val);
+            if let NatAttrs::NatV4Maxip(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NatAttrs", "NatV4Maxip"))
     }
-    pub fn get_nat_v6_minip(&self) -> Option<&'a [u8]> {
+    pub fn get_nat_v6_minip(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatAttrs::NatV6Minip(val) = attr {
-                return Some(val);
+            if let NatAttrs::NatV6Minip(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NatAttrs", "NatV6Minip"))
     }
-    pub fn get_nat_v6_maxip(&self) -> Option<&'a [u8]> {
+    pub fn get_nat_v6_maxip(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatAttrs::NatV6Maxip(val) = attr {
-                return Some(val);
+            if let NatAttrs::NatV6Maxip(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("NatAttrs", "NatV6Maxip"))
     }
-    pub fn get_nat_proto(&self) -> Iterable<'a, NatProtoAttrs> {
+    pub fn get_nat_proto(&self) -> Result<Iterable<'a, NatProtoAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let NatAttrs::NatProto(val) = attr {
-                return val;
+            if let NatAttrs::NatProto(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("NatAttrs", "NatProto"))
     }
 }
 impl<'a> NatAttrs<'a> {
@@ -1598,6 +2126,70 @@ impl<'a> std::fmt::Debug for Iterable<'a, NatAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, NatAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("NatAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| NatAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                NatAttrs::NatV4Minip(val) => {
+                    if last_off == offset {
+                        stack.push(("NatV4Minip", last_off));
+                        break;
+                    }
+                }
+                NatAttrs::NatV4Maxip(val) => {
+                    if last_off == offset {
+                        stack.push(("NatV4Maxip", last_off));
+                        break;
+                    }
+                }
+                NatAttrs::NatV6Minip(val) => {
+                    if last_off == offset {
+                        stack.push(("NatV6Minip", last_off));
+                        break;
+                    }
+                }
+                NatAttrs::NatV6Maxip(val) => {
+                    if last_off == offset {
+                        stack.push(("NatV6Maxip", last_off));
+                        break;
+                    }
+                }
+                NatAttrs::NatProto(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("NatAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"seqadj-attrs\""]
 #[derive(Clone)]
 pub enum SeqadjAttrs {
@@ -1606,38 +2198,35 @@ pub enum SeqadjAttrs {
     OffsetAfter(u32),
 }
 impl<'a> Iterable<'a, SeqadjAttrs> {
-    pub fn get_correction_pos(&self) -> Option<u32> {
+    pub fn get_correction_pos(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SeqadjAttrs::CorrectionPos(val) = attr {
-                return Some(val);
+            if let SeqadjAttrs::CorrectionPos(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SeqadjAttrs", "CorrectionPos"))
     }
-    pub fn get_offset_before(&self) -> Option<u32> {
+    pub fn get_offset_before(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SeqadjAttrs::OffsetBefore(val) = attr {
-                return Some(val);
+            if let SeqadjAttrs::OffsetBefore(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SeqadjAttrs", "OffsetBefore"))
     }
-    pub fn get_offset_after(&self) -> Option<u32> {
+    pub fn get_offset_after(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SeqadjAttrs::OffsetAfter(val) = attr {
-                return Some(val);
+            if let SeqadjAttrs::OffsetAfter(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SeqadjAttrs", "OffsetAfter"))
     }
 }
 impl SeqadjAttrs {
@@ -1714,22 +2303,72 @@ impl std::fmt::Debug for Iterable<'_, SeqadjAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, SeqadjAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("SeqadjAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| SeqadjAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                SeqadjAttrs::CorrectionPos(val) => {
+                    if last_off == offset {
+                        stack.push(("CorrectionPos", last_off));
+                        break;
+                    }
+                }
+                SeqadjAttrs::OffsetBefore(val) => {
+                    if last_off == offset {
+                        stack.push(("OffsetBefore", last_off));
+                        break;
+                    }
+                }
+                SeqadjAttrs::OffsetAfter(val) => {
+                    if last_off == offset {
+                        stack.push(("OffsetAfter", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("SeqadjAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"secctx-attrs\""]
 #[derive(Clone)]
 pub enum SecctxAttrs<'a> {
     SecctxName(&'a CStr),
 }
 impl<'a> Iterable<'a, SecctxAttrs<'a>> {
-    pub fn get_secctx_name(&self) -> Option<&'a CStr> {
+    pub fn get_secctx_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SecctxAttrs::SecctxName(val) = attr {
-                return Some(val);
+            if let SecctxAttrs::SecctxName(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SecctxAttrs", "SecctxName"))
     }
 }
 impl<'a> SecctxAttrs<'a> {
@@ -1792,6 +2431,45 @@ impl<'a> std::fmt::Debug for Iterable<'a, SecctxAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, SecctxAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("SecctxAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| SecctxAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                SecctxAttrs::SecctxName(val) => {
+                    if last_off == offset {
+                        stack.push(("SecctxName", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("SecctxAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"synproxy-attrs\""]
 #[derive(Clone)]
 pub enum SynproxyAttrs {
@@ -1800,38 +2478,35 @@ pub enum SynproxyAttrs {
     Tsoff(u32),
 }
 impl<'a> Iterable<'a, SynproxyAttrs> {
-    pub fn get_isn(&self) -> Option<u32> {
+    pub fn get_isn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SynproxyAttrs::Isn(val) = attr {
-                return Some(val);
+            if let SynproxyAttrs::Isn(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SynproxyAttrs", "Isn"))
     }
-    pub fn get_its(&self) -> Option<u32> {
+    pub fn get_its(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SynproxyAttrs::Its(val) = attr {
-                return Some(val);
+            if let SynproxyAttrs::Its(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SynproxyAttrs", "Its"))
     }
-    pub fn get_tsoff(&self) -> Option<u32> {
+    pub fn get_tsoff(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let SynproxyAttrs::Tsoff(val) = attr {
-                return Some(val);
+            if let SynproxyAttrs::Tsoff(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("SynproxyAttrs", "Tsoff"))
     }
 }
 impl SynproxyAttrs {
@@ -1908,6 +2583,57 @@ impl std::fmt::Debug for Iterable<'_, SynproxyAttrs> {
         fmt.finish()
     }
 }
+impl Iterable<'_, SynproxyAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("SynproxyAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| SynproxyAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                SynproxyAttrs::Isn(val) => {
+                    if last_off == offset {
+                        stack.push(("Isn", last_off));
+                        break;
+                    }
+                }
+                SynproxyAttrs::Its(val) => {
+                    if last_off == offset {
+                        stack.push(("Its", last_off));
+                        break;
+                    }
+                }
+                SynproxyAttrs::Tsoff(val) => {
+                    if last_off == offset {
+                        stack.push(("Tsoff", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("SynproxyAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"conntrack-attrs\""]
 #[derive(Clone)]
 pub enum ConntrackAttrs<'a> {
@@ -1947,307 +2673,280 @@ pub enum ConntrackAttrs<'a> {
 }
 impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::TupleOrig(val) = attr {
-                return val;
+            if let ConntrackAttrs::TupleOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "TupleOrig"))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::TupleReply(val) = attr {
-                return val;
+            if let ConntrackAttrs::TupleReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "TupleReply"))
     }
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
-    pub fn get_status(&self) -> Option<u32> {
+    pub fn get_status(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Status(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Status(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Status"))
     }
-    pub fn get_protoinfo(&self) -> Iterable<'a, ProtoinfoAttrs<'a>> {
+    pub fn get_protoinfo(&self) -> Result<Iterable<'a, ProtoinfoAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Protoinfo(val) = attr {
-                return val;
+            if let ConntrackAttrs::Protoinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "Protoinfo"))
     }
-    pub fn get_help(&self) -> Iterable<'a, HelpAttrs<'a>> {
+    pub fn get_help(&self) -> Result<Iterable<'a, HelpAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Help(val) = attr {
-                return val;
+            if let ConntrackAttrs::Help(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "Help"))
     }
-    pub fn get_nat_src(&self) -> Iterable<'a, NatAttrs<'a>> {
+    pub fn get_nat_src(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::NatSrc(val) = attr {
-                return val;
+            if let ConntrackAttrs::NatSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "NatSrc"))
     }
-    pub fn get_timeout(&self) -> Option<u32> {
+    pub fn get_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Timeout(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Timeout(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Timeout"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Mark(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Mark"))
     }
-    pub fn get_counters_orig(&self) -> Iterable<'a, CounterAttrs<'a>> {
+    pub fn get_counters_orig(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::CountersOrig(val) = attr {
-                return val;
+            if let ConntrackAttrs::CountersOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "CountersOrig"))
     }
-    pub fn get_counters_reply(&self) -> Iterable<'a, CounterAttrs<'a>> {
+    pub fn get_counters_reply(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::CountersReply(val) = attr {
-                return val;
+            if let ConntrackAttrs::CountersReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "CountersReply"))
     }
-    pub fn get_use(&self) -> Option<u32> {
+    pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Use(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Use(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Use"))
     }
-    pub fn get_id(&self) -> Option<u32> {
+    pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Id(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Id(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Id"))
     }
-    pub fn get_nat_dst(&self) -> Iterable<'a, NatAttrs<'a>> {
+    pub fn get_nat_dst(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::NatDst(val) = attr {
-                return val;
+            if let ConntrackAttrs::NatDst(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "NatDst"))
     }
-    pub fn get_tuple_master(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_master(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::TupleMaster(val) = attr {
-                return val;
+            if let ConntrackAttrs::TupleMaster(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "TupleMaster"))
     }
-    pub fn get_seq_adj_orig(&self) -> Iterable<'a, SeqadjAttrs> {
+    pub fn get_seq_adj_orig(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::SeqAdjOrig(val) = attr {
-                return val;
+            if let ConntrackAttrs::SeqAdjOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "SeqAdjOrig"))
     }
-    pub fn get_seq_adj_reply(&self) -> Iterable<'a, SeqadjAttrs> {
+    pub fn get_seq_adj_reply(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::SeqAdjReply(val) = attr {
-                return val;
+            if let ConntrackAttrs::SeqAdjReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "SeqAdjReply"))
     }
     #[doc = "obsolete"]
-    pub fn get_secmark(&self) -> Option<&'a [u8]> {
+    pub fn get_secmark(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Secmark(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Secmark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Secmark"))
     }
     #[doc = "conntrack zone id"]
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Zone(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Zone"))
     }
-    pub fn get_secctx(&self) -> Iterable<'a, SecctxAttrs<'a>> {
+    pub fn get_secctx(&self) -> Result<Iterable<'a, SecctxAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Secctx(val) = attr {
-                return val;
+            if let ConntrackAttrs::Secctx(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "Secctx"))
     }
-    pub fn get_timestamp(&self) -> Option<u64> {
+    pub fn get_timestamp(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Timestamp(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Timestamp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Timestamp"))
     }
-    pub fn get_mark_mask(&self) -> Option<u32> {
+    pub fn get_mark_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::MarkMask(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::MarkMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "MarkMask"))
     }
-    pub fn get_labels(&self) -> Option<&'a [u8]> {
+    pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Labels(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::Labels(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "Labels"))
     }
-    pub fn get_labels_mask(&self) -> Option<&'a [u8]> {
+    pub fn get_labels_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::LabelsMask(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::LabelsMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "LabelsMask"))
     }
-    pub fn get_synproxy(&self) -> Iterable<'a, SynproxyAttrs> {
+    pub fn get_synproxy(&self) -> Result<Iterable<'a, SynproxyAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Synproxy(val) = attr {
-                return val;
+            if let ConntrackAttrs::Synproxy(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "Synproxy"))
     }
-    pub fn get_filter(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_filter(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::Filter(val) = attr {
-                return val;
+            if let ConntrackAttrs::Filter(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("ConntrackAttrs", "Filter"))
     }
     #[doc = "conntrack flag bits to change\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
-    pub fn get_status_mask(&self) -> Option<u32> {
+    pub fn get_status_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::StatusMask(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::StatusMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "StatusMask"))
     }
-    pub fn get_timestamp_event(&self) -> Option<u64> {
+    pub fn get_timestamp_event(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackAttrs::TimestampEvent(val) = attr {
-                return Some(val);
+            if let ConntrackAttrs::TimestampEvent(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackAttrs", "TimestampEvent"))
     }
 }
 impl<'a> ConntrackAttrs<'a> {
@@ -2492,6 +3191,202 @@ impl<'a> std::fmt::Debug for Iterable<'a, ConntrackAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ConntrackAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ConntrackAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ConntrackAttrs::TupleOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::TupleReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Status(val) => {
+                    if last_off == offset {
+                        stack.push(("Status", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Protoinfo(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Help(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::NatSrc(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Timeout(val) => {
+                    if last_off == offset {
+                        stack.push(("Timeout", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::CountersOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::CountersReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Use(val) => {
+                    if last_off == offset {
+                        stack.push(("Use", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::NatDst(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::TupleMaster(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::SeqAdjOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::SeqAdjReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Secmark(val) => {
+                    if last_off == offset {
+                        stack.push(("Secmark", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Secctx(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Timestamp(val) => {
+                    if last_off == offset {
+                        stack.push(("Timestamp", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::MarkMask(val) => {
+                    if last_off == offset {
+                        stack.push(("MarkMask", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Labels(val) => {
+                    if last_off == offset {
+                        stack.push(("Labels", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::LabelsMask(val) => {
+                    if last_off == offset {
+                        stack.push(("LabelsMask", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::Synproxy(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::Filter(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ConntrackAttrs::StatusMask(val) => {
+                    if last_off == offset {
+                        stack.push(("StatusMask", last_off));
+                        break;
+                    }
+                }
+                ConntrackAttrs::TimestampEvent(val) => {
+                    if last_off == offset {
+                        stack.push(("TimestampEvent", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ConntrackAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"conntrack-stats-attrs\""]
 #[derive(Clone)]
 pub enum ConntrackStatsAttrs {
@@ -2519,175 +3414,160 @@ pub enum ConntrackStatsAttrs {
 }
 impl<'a> Iterable<'a, ConntrackStatsAttrs> {
     #[doc = "obsolete"]
-    pub fn get_searched(&self) -> Option<u32> {
+    pub fn get_searched(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Searched(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Searched(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Searched"))
     }
-    pub fn get_found(&self) -> Option<u32> {
+    pub fn get_found(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Found(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Found(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Found"))
     }
     #[doc = "obsolete"]
-    pub fn get_new(&self) -> Option<u32> {
+    pub fn get_new(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::New(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::New(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "New"))
     }
     #[doc = "obsolete"]
-    pub fn get_invalid(&self) -> Option<u32> {
+    pub fn get_invalid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Invalid(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Invalid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Invalid"))
     }
     #[doc = "obsolete"]
-    pub fn get_ignore(&self) -> Option<u32> {
+    pub fn get_ignore(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Ignore(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Ignore(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Ignore"))
     }
     #[doc = "obsolete"]
-    pub fn get_delete(&self) -> Option<u32> {
+    pub fn get_delete(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Delete(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Delete(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Delete"))
     }
     #[doc = "obsolete"]
-    pub fn get_delete_list(&self) -> Option<u32> {
+    pub fn get_delete_list(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::DeleteList(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::DeleteList(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "DeleteList"))
     }
-    pub fn get_insert(&self) -> Option<u32> {
+    pub fn get_insert(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Insert(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Insert(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Insert"))
     }
-    pub fn get_insert_failed(&self) -> Option<u32> {
+    pub fn get_insert_failed(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::InsertFailed(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::InsertFailed(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "InsertFailed"))
     }
-    pub fn get_drop(&self) -> Option<u32> {
+    pub fn get_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Drop(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Drop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Drop"))
     }
-    pub fn get_early_drop(&self) -> Option<u32> {
+    pub fn get_early_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::EarlyDrop(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::EarlyDrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "EarlyDrop"))
     }
-    pub fn get_error(&self) -> Option<u32> {
+    pub fn get_error(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::Error(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::Error(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "Error"))
     }
-    pub fn get_search_restart(&self) -> Option<u32> {
+    pub fn get_search_restart(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::SearchRestart(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::SearchRestart(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "SearchRestart"))
     }
-    pub fn get_clash_resolve(&self) -> Option<u32> {
+    pub fn get_clash_resolve(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::ClashResolve(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::ClashResolve(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "ClashResolve"))
     }
-    pub fn get_chain_toolong(&self) -> Option<u32> {
+    pub fn get_chain_toolong(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let ConntrackStatsAttrs::ChainToolong(val) = attr {
-                return Some(val);
+            if let ConntrackStatsAttrs::ChainToolong(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("ConntrackStatsAttrs", "ChainToolong"))
     }
 }
 impl ConntrackStatsAttrs {
@@ -2846,6 +3726,129 @@ impl std::fmt::Debug for Iterable<'_, ConntrackStatsAttrs> {
             };
         }
         fmt.finish()
+    }
+}
+impl Iterable<'_, ConntrackStatsAttrs> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ConntrackStatsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ConntrackStatsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ConntrackStatsAttrs::Searched(val) => {
+                    if last_off == offset {
+                        stack.push(("Searched", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Found(val) => {
+                    if last_off == offset {
+                        stack.push(("Found", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::New(val) => {
+                    if last_off == offset {
+                        stack.push(("New", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Invalid(val) => {
+                    if last_off == offset {
+                        stack.push(("Invalid", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Ignore(val) => {
+                    if last_off == offset {
+                        stack.push(("Ignore", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Delete(val) => {
+                    if last_off == offset {
+                        stack.push(("Delete", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::DeleteList(val) => {
+                    if last_off == offset {
+                        stack.push(("DeleteList", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Insert(val) => {
+                    if last_off == offset {
+                        stack.push(("Insert", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::InsertFailed(val) => {
+                    if last_off == offset {
+                        stack.push(("InsertFailed", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Drop(val) => {
+                    if last_off == offset {
+                        stack.push(("Drop", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::EarlyDrop(val) => {
+                    if last_off == offset {
+                        stack.push(("EarlyDrop", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::Error(val) => {
+                    if last_off == offset {
+                        stack.push(("Error", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::SearchRestart(val) => {
+                    if last_off == offset {
+                        stack.push(("SearchRestart", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::ClashResolve(val) => {
+                    if last_off == offset {
+                        stack.push(("ClashResolve", last_off));
+                        break;
+                    }
+                }
+                ConntrackStatsAttrs::ChainToolong(val) => {
+                    if last_off == offset {
+                        stack.push(("ChainToolong", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ConntrackStatsAttrs", cur));
+        }
+        (stack, None)
     }
 }
 pub struct PushCounterAttrs<Prev: Rec> {
@@ -3355,6 +4358,13 @@ impl<Prev: Rec> PushHelpAttrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    #[doc = "helper name"]
+    pub fn push_help_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
 }
 impl<Prev: Rec> Drop for PushHelpAttrs<Prev> {
     fn drop(&mut self) {
@@ -3546,6 +4556,12 @@ impl<Prev: Rec> PushSecctxAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_secctx_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
 }
@@ -4047,11 +5063,17 @@ impl<Prev: Rec> Rec for PushOpGetDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushNfgenmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushNfgenmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -4095,7 +5117,7 @@ impl<Prev: Rec> Drop for PushOpGetDumpRequest<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"OpGetDumpRequest\""]
+#[doc = "Original name: \"op-get-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetDumpRequest<'a> {
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
@@ -4107,50 +5129,46 @@ pub enum OpGetDumpRequest<'a> {
 }
 impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
-    pub fn get_status(&self) -> Option<u32> {
+    pub fn get_status(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpRequest::Status(val) = attr {
-                return Some(val);
+            if let OpGetDumpRequest::Status(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpRequest", "Status"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpRequest::Mark(val) = attr {
-                return Some(val);
+            if let OpGetDumpRequest::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpRequest", "Mark"))
     }
     #[doc = "conntrack zone id"]
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpRequest::Zone(val) = attr {
-                return Some(val);
+            if let OpGetDumpRequest::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpRequest", "Zone"))
     }
-    pub fn get_filter(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_filter(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpRequest::Filter(val) = attr {
-                return val;
+            if let OpGetDumpRequest::Filter(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpRequest", "Filter"))
     }
 }
 impl<'a> OpGetDumpRequest<'a> {
@@ -4161,41 +5179,11 @@ impl<'a> OpGetDumpRequest<'a> {
             .clone_from_slice(&buf[..PushNfgenmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "TupleOrig",
-            2u16 => "TupleReply",
-            3u16 => "Status",
-            4u16 => "Protoinfo",
-            5u16 => "Help",
-            6u16 => "NatSrc",
-            7u16 => "Timeout",
-            8u16 => "Mark",
-            9u16 => "CountersOrig",
-            10u16 => "CountersReply",
-            11u16 => "Use",
-            12u16 => "Id",
-            13u16 => "NatDst",
-            14u16 => "TupleMaster",
-            15u16 => "SeqAdjOrig",
-            16u16 => "SeqAdjReply",
-            17u16 => "Secmark",
-            18u16 => "Zone",
-            19u16 => "Secctx",
-            20u16 => "Timestamp",
-            21u16 => "MarkMask",
-            22u16 => "Labels",
-            23u16 => "LabelsMask",
-            24u16 => "Synproxy",
-            25u16 => "Filter",
-            26u16 => "StatusMask",
-            27u16 => "TimestampEvent",
-            _ => return None,
-        };
-        Some(res)
+        ConntrackAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetDumpRequest<'a>> {
@@ -4264,6 +5252,64 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushNfgenmsg::len() {
+            stack.push(("OpGetDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetDumpRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetDumpRequest::Status(val) => {
+                    if last_off == offset {
+                        stack.push(("Status", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpRequest::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpRequest::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpRequest::Filter(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetDumpRequest", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "get / dump entries"]
 pub struct PushOpGetDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -4276,11 +5322,17 @@ impl<Prev: Rec> Rec for PushOpGetDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushNfgenmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushNfgenmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -4430,7 +5482,7 @@ impl<Prev: Rec> Drop for PushOpGetDumpReply<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"OpGetDumpReply\""]
+#[doc = "Original name: \"op-get-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetDumpReply<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
@@ -4460,228 +5512,208 @@ pub enum OpGetDumpReply<'a> {
 }
 impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::TupleOrig(val) = attr {
-                return val;
+            if let OpGetDumpReply::TupleOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "TupleOrig"))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::TupleReply(val) = attr {
-                return val;
+            if let OpGetDumpReply::TupleReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "TupleReply"))
     }
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
-    pub fn get_status(&self) -> Option<u32> {
+    pub fn get_status(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Status(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Status(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Status"))
     }
-    pub fn get_protoinfo(&self) -> Iterable<'a, ProtoinfoAttrs<'a>> {
+    pub fn get_protoinfo(&self) -> Result<Iterable<'a, ProtoinfoAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Protoinfo(val) = attr {
-                return val;
+            if let OpGetDumpReply::Protoinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "Protoinfo"))
     }
-    pub fn get_help(&self) -> Iterable<'a, HelpAttrs<'a>> {
+    pub fn get_help(&self) -> Result<Iterable<'a, HelpAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Help(val) = attr {
-                return val;
+            if let OpGetDumpReply::Help(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "Help"))
     }
-    pub fn get_nat_src(&self) -> Iterable<'a, NatAttrs<'a>> {
+    pub fn get_nat_src(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::NatSrc(val) = attr {
-                return val;
+            if let OpGetDumpReply::NatSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "NatSrc"))
     }
-    pub fn get_timeout(&self) -> Option<u32> {
+    pub fn get_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Timeout(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Timeout(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Timeout"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Mark(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Mark"))
     }
-    pub fn get_counters_orig(&self) -> Iterable<'a, CounterAttrs<'a>> {
+    pub fn get_counters_orig(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::CountersOrig(val) = attr {
-                return val;
+            if let OpGetDumpReply::CountersOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "CountersOrig"))
     }
-    pub fn get_counters_reply(&self) -> Iterable<'a, CounterAttrs<'a>> {
+    pub fn get_counters_reply(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::CountersReply(val) = attr {
-                return val;
+            if let OpGetDumpReply::CountersReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "CountersReply"))
     }
-    pub fn get_use(&self) -> Option<u32> {
+    pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Use(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Use(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Use"))
     }
-    pub fn get_id(&self) -> Option<u32> {
+    pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Id(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Id(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Id"))
     }
-    pub fn get_nat_dst(&self) -> Iterable<'a, NatAttrs<'a>> {
+    pub fn get_nat_dst(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::NatDst(val) = attr {
-                return val;
+            if let OpGetDumpReply::NatDst(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "NatDst"))
     }
-    pub fn get_tuple_master(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_master(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::TupleMaster(val) = attr {
-                return val;
+            if let OpGetDumpReply::TupleMaster(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "TupleMaster"))
     }
-    pub fn get_seq_adj_orig(&self) -> Iterable<'a, SeqadjAttrs> {
+    pub fn get_seq_adj_orig(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::SeqAdjOrig(val) = attr {
-                return val;
+            if let OpGetDumpReply::SeqAdjOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "SeqAdjOrig"))
     }
-    pub fn get_seq_adj_reply(&self) -> Iterable<'a, SeqadjAttrs> {
+    pub fn get_seq_adj_reply(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::SeqAdjReply(val) = attr {
-                return val;
+            if let OpGetDumpReply::SeqAdjReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "SeqAdjReply"))
     }
     #[doc = "conntrack zone id"]
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Zone(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Zone"))
     }
-    pub fn get_secctx(&self) -> Iterable<'a, SecctxAttrs<'a>> {
+    pub fn get_secctx(&self) -> Result<Iterable<'a, SecctxAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Secctx(val) = attr {
-                return val;
+            if let OpGetDumpReply::Secctx(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "Secctx"))
     }
-    pub fn get_labels(&self) -> Option<&'a [u8]> {
+    pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Labels(val) = attr {
-                return Some(val);
+            if let OpGetDumpReply::Labels(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDumpReply", "Labels"))
     }
-    pub fn get_synproxy(&self) -> Iterable<'a, SynproxyAttrs> {
+    pub fn get_synproxy(&self) -> Result<Iterable<'a, SynproxyAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDumpReply::Synproxy(val) = attr {
-                return val;
+            if let OpGetDumpReply::Synproxy(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDumpReply", "Synproxy"))
     }
 }
 impl<'a> OpGetDumpReply<'a> {
@@ -4692,41 +5724,11 @@ impl<'a> OpGetDumpReply<'a> {
             .clone_from_slice(&buf[..PushNfgenmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "TupleOrig",
-            2u16 => "TupleReply",
-            3u16 => "Status",
-            4u16 => "Protoinfo",
-            5u16 => "Help",
-            6u16 => "NatSrc",
-            7u16 => "Timeout",
-            8u16 => "Mark",
-            9u16 => "CountersOrig",
-            10u16 => "CountersReply",
-            11u16 => "Use",
-            12u16 => "Id",
-            13u16 => "NatDst",
-            14u16 => "TupleMaster",
-            15u16 => "SeqAdjOrig",
-            16u16 => "SeqAdjReply",
-            17u16 => "Secmark",
-            18u16 => "Zone",
-            19u16 => "Secctx",
-            20u16 => "Timestamp",
-            21u16 => "MarkMask",
-            22u16 => "Labels",
-            23u16 => "LabelsMask",
-            24u16 => "Synproxy",
-            25u16 => "Filter",
-            26u16 => "StatusMask",
-            27u16 => "TimestampEvent",
-            _ => return None,
-        };
-        Some(res)
+        ConntrackAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
@@ -4891,6 +5893,202 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushNfgenmsg::len() {
+            stack.push(("OpGetDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetDumpReply::TupleOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::TupleReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::Status(val) => {
+                    if last_off == offset {
+                        stack.push(("Status", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::Protoinfo(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::Help(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::NatSrc(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::Timeout(val) => {
+                    if last_off == offset {
+                        stack.push(("Timeout", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::CountersOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::CountersReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::Use(val) => {
+                    if last_off == offset {
+                        stack.push(("Use", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::NatDst(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::TupleMaster(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::SeqAdjOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::SeqAdjReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::Secctx(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDumpReply::Labels(val) => {
+                    if last_off == offset {
+                        stack.push(("Labels", last_off));
+                        break;
+                    }
+                }
+                OpGetDumpReply::Synproxy(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetDumpReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushNfgenmsg) -> Self {
+        PushOpGetDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetDumpRequest<&mut Vec<u8>> {
+        PushOpGetDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetDumpRequest<'_> {
+    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 12u16,
+            request_type: 257u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "get / dump entries"]
 pub struct PushOpGetDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -4903,11 +6101,17 @@ impl<Prev: Rec> Rec for PushOpGetDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushNfgenmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushNfgenmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -4949,7 +6153,7 @@ impl<Prev: Rec> Drop for PushOpGetDoRequest<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"OpGetDoRequest\""]
+#[doc = "Original name: \"op-get-do-request\""]
 #[derive(Clone)]
 pub enum OpGetDoRequest<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
@@ -4961,40 +6165,37 @@ pub enum OpGetDoRequest<'a> {
 }
 impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoRequest::TupleOrig(val) = attr {
-                return val;
+            if let OpGetDoRequest::TupleOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoRequest", "TupleOrig"))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoRequest::TupleReply(val) = attr {
-                return val;
+            if let OpGetDoRequest::TupleReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoRequest", "TupleReply"))
     }
     #[doc = "conntrack zone id"]
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoRequest::Zone(val) = attr {
-                return Some(val);
+            if let OpGetDoRequest::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoRequest", "Zone"))
     }
 }
 impl<'a> OpGetDoRequest<'a> {
@@ -5005,41 +6206,11 @@ impl<'a> OpGetDoRequest<'a> {
             .clone_from_slice(&buf[..PushNfgenmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "TupleOrig",
-            2u16 => "TupleReply",
-            3u16 => "Status",
-            4u16 => "Protoinfo",
-            5u16 => "Help",
-            6u16 => "NatSrc",
-            7u16 => "Timeout",
-            8u16 => "Mark",
-            9u16 => "CountersOrig",
-            10u16 => "CountersReply",
-            11u16 => "Use",
-            12u16 => "Id",
-            13u16 => "NatDst",
-            14u16 => "TupleMaster",
-            15u16 => "SeqAdjOrig",
-            16u16 => "SeqAdjReply",
-            17u16 => "Secmark",
-            18u16 => "Zone",
-            19u16 => "Secctx",
-            20u16 => "Timestamp",
-            21u16 => "MarkMask",
-            22u16 => "Labels",
-            23u16 => "LabelsMask",
-            24u16 => "Synproxy",
-            25u16 => "Filter",
-            26u16 => "StatusMask",
-            27u16 => "TimestampEvent",
-            _ => return None,
-        };
-        Some(res)
+        ConntrackAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetDoRequest<'a>> {
@@ -5102,6 +6273,58 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushNfgenmsg::len() {
+            stack.push(("OpGetDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetDoRequest::TupleOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoRequest::TupleReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoRequest::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetDoRequest", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "get / dump entries"]
 pub struct PushOpGetDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -5114,11 +6337,17 @@ impl<Prev: Rec> Rec for PushOpGetDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushNfgenmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushNfgenmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -5268,7 +6497,7 @@ impl<Prev: Rec> Drop for PushOpGetDoReply<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"OpGetDoReply\""]
+#[doc = "Original name: \"op-get-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetDoReply<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
@@ -5298,228 +6527,208 @@ pub enum OpGetDoReply<'a> {
 }
 impl<'a> Iterable<'a, OpGetDoReply<'a>> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::TupleOrig(val) = attr {
-                return val;
+            if let OpGetDoReply::TupleOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "TupleOrig"))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::TupleReply(val) = attr {
-                return val;
+            if let OpGetDoReply::TupleReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "TupleReply"))
     }
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
-    pub fn get_status(&self) -> Option<u32> {
+    pub fn get_status(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Status(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Status(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Status"))
     }
-    pub fn get_protoinfo(&self) -> Iterable<'a, ProtoinfoAttrs<'a>> {
+    pub fn get_protoinfo(&self) -> Result<Iterable<'a, ProtoinfoAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Protoinfo(val) = attr {
-                return val;
+            if let OpGetDoReply::Protoinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "Protoinfo"))
     }
-    pub fn get_help(&self) -> Iterable<'a, HelpAttrs<'a>> {
+    pub fn get_help(&self) -> Result<Iterable<'a, HelpAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Help(val) = attr {
-                return val;
+            if let OpGetDoReply::Help(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "Help"))
     }
-    pub fn get_nat_src(&self) -> Iterable<'a, NatAttrs<'a>> {
+    pub fn get_nat_src(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::NatSrc(val) = attr {
-                return val;
+            if let OpGetDoReply::NatSrc(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "NatSrc"))
     }
-    pub fn get_timeout(&self) -> Option<u32> {
+    pub fn get_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Timeout(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Timeout(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Timeout"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Mark(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Mark"))
     }
-    pub fn get_counters_orig(&self) -> Iterable<'a, CounterAttrs<'a>> {
+    pub fn get_counters_orig(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::CountersOrig(val) = attr {
-                return val;
+            if let OpGetDoReply::CountersOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "CountersOrig"))
     }
-    pub fn get_counters_reply(&self) -> Iterable<'a, CounterAttrs<'a>> {
+    pub fn get_counters_reply(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::CountersReply(val) = attr {
-                return val;
+            if let OpGetDoReply::CountersReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "CountersReply"))
     }
-    pub fn get_use(&self) -> Option<u32> {
+    pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Use(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Use(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Use"))
     }
-    pub fn get_id(&self) -> Option<u32> {
+    pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Id(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Id(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Id"))
     }
-    pub fn get_nat_dst(&self) -> Iterable<'a, NatAttrs<'a>> {
+    pub fn get_nat_dst(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::NatDst(val) = attr {
-                return val;
+            if let OpGetDoReply::NatDst(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "NatDst"))
     }
-    pub fn get_tuple_master(&self) -> Iterable<'a, TupleAttrs<'a>> {
+    pub fn get_tuple_master(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::TupleMaster(val) = attr {
-                return val;
+            if let OpGetDoReply::TupleMaster(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "TupleMaster"))
     }
-    pub fn get_seq_adj_orig(&self) -> Iterable<'a, SeqadjAttrs> {
+    pub fn get_seq_adj_orig(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::SeqAdjOrig(val) = attr {
-                return val;
+            if let OpGetDoReply::SeqAdjOrig(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "SeqAdjOrig"))
     }
-    pub fn get_seq_adj_reply(&self) -> Iterable<'a, SeqadjAttrs> {
+    pub fn get_seq_adj_reply(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::SeqAdjReply(val) = attr {
-                return val;
+            if let OpGetDoReply::SeqAdjReply(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "SeqAdjReply"))
     }
     #[doc = "conntrack zone id"]
-    pub fn get_zone(&self) -> Option<u16> {
+    pub fn get_zone(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Zone(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Zone(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Zone"))
     }
-    pub fn get_secctx(&self) -> Iterable<'a, SecctxAttrs<'a>> {
+    pub fn get_secctx(&self) -> Result<Iterable<'a, SecctxAttrs<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Secctx(val) = attr {
-                return val;
+            if let OpGetDoReply::Secctx(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "Secctx"))
     }
-    pub fn get_labels(&self) -> Option<&'a [u8]> {
+    pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Labels(val) = attr {
-                return Some(val);
+            if let OpGetDoReply::Labels(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetDoReply", "Labels"))
     }
-    pub fn get_synproxy(&self) -> Iterable<'a, SynproxyAttrs> {
+    pub fn get_synproxy(&self) -> Result<Iterable<'a, SynproxyAttrs>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetDoReply::Synproxy(val) = attr {
-                return val;
+            if let OpGetDoReply::Synproxy(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetDoReply", "Synproxy"))
     }
 }
 impl<'a> OpGetDoReply<'a> {
@@ -5530,41 +6739,11 @@ impl<'a> OpGetDoReply<'a> {
             .clone_from_slice(&buf[..PushNfgenmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "TupleOrig",
-            2u16 => "TupleReply",
-            3u16 => "Status",
-            4u16 => "Protoinfo",
-            5u16 => "Help",
-            6u16 => "NatSrc",
-            7u16 => "Timeout",
-            8u16 => "Mark",
-            9u16 => "CountersOrig",
-            10u16 => "CountersReply",
-            11u16 => "Use",
-            12u16 => "Id",
-            13u16 => "NatDst",
-            14u16 => "TupleMaster",
-            15u16 => "SeqAdjOrig",
-            16u16 => "SeqAdjReply",
-            17u16 => "Secmark",
-            18u16 => "Zone",
-            19u16 => "Secctx",
-            20u16 => "Timestamp",
-            21u16 => "MarkMask",
-            22u16 => "Labels",
-            23u16 => "LabelsMask",
-            24u16 => "Synproxy",
-            25u16 => "Filter",
-            26u16 => "StatusMask",
-            27u16 => "TimestampEvent",
-            _ => return None,
-        };
-        Some(res)
+        ConntrackAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
@@ -5729,6 +6908,198 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushNfgenmsg::len() {
+            stack.push(("OpGetDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetDoReply::TupleOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::TupleReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::Status(val) => {
+                    if last_off == offset {
+                        stack.push(("Status", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::Protoinfo(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::Help(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::NatSrc(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::Timeout(val) => {
+                    if last_off == offset {
+                        stack.push(("Timeout", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::CountersOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::CountersReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::Use(val) => {
+                    if last_off == offset {
+                        stack.push(("Use", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::NatDst(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::TupleMaster(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::SeqAdjOrig(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::SeqAdjReply(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::Secctx(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetDoReply::Labels(val) => {
+                    if last_off == offset {
+                        stack.push(("Labels", last_off));
+                        break;
+                    }
+                }
+                OpGetDoReply::Synproxy(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetDoReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushNfgenmsg) -> Self {
+        PushOpGetDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGetDoRequest<&mut Vec<u8>> {
+        PushOpGetDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetDoRequest<'_> {
+    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 12u16,
+            request_type: 257u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "dump pcpu conntrack stats"]
 pub struct PushOpGetStatsDumpRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -5741,11 +7112,17 @@ impl<Prev: Rec> Rec for PushOpGetStatsDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetStatsDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushNfgenmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushNfgenmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -5765,7 +7142,7 @@ impl<Prev: Rec> Drop for PushOpGetStatsDumpRequest<Prev> {
     }
 }
 #[doc = "dump pcpu conntrack stats"]
-#[doc = "Original name: \"OpGetStatsDumpRequest\""]
+#[doc = "Original name: \"op-get-stats-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetStatsDumpRequest {}
 impl<'a> Iterable<'a, OpGetStatsDumpRequest> {}
@@ -5777,29 +7154,11 @@ impl OpGetStatsDumpRequest {
             .clone_from_slice(&buf[..PushNfgenmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Searched",
-            2u16 => "Found",
-            3u16 => "New",
-            4u16 => "Invalid",
-            5u16 => "Ignore",
-            6u16 => "Delete",
-            7u16 => "DeleteList",
-            8u16 => "Insert",
-            9u16 => "InsertFailed",
-            10u16 => "Drop",
-            11u16 => "EarlyDrop",
-            12u16 => "Error",
-            13u16 => "SearchRestart",
-            14u16 => "ClashResolve",
-            15u16 => "ChainToolong",
-            _ => return None,
-        };
-        Some(res)
+        ConntrackStatsAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetStatsDumpRequest> {
@@ -5843,6 +7202,24 @@ impl std::fmt::Debug for Iterable<'_, OpGetStatsDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetStatsDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushNfgenmsg::len() {
+            stack.push(("OpGetStatsDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetStatsDumpRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "dump pcpu conntrack stats"]
 pub struct PushOpGetStatsDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -5855,11 +7232,17 @@ impl<Prev: Rec> Rec for PushOpGetStatsDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetStatsDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushNfgenmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushNfgenmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -5930,7 +7313,7 @@ impl<Prev: Rec> Drop for PushOpGetStatsDumpReply<Prev> {
     }
 }
 #[doc = "dump pcpu conntrack stats"]
-#[doc = "Original name: \"OpGetStatsDumpReply\""]
+#[doc = "Original name: \"op-get-stats-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetStatsDumpReply {
     #[doc = "obsolete"]
@@ -5947,115 +7330,105 @@ pub enum OpGetStatsDumpReply {
 }
 impl<'a> Iterable<'a, OpGetStatsDumpReply> {
     #[doc = "obsolete"]
-    pub fn get_searched(&self) -> Option<u32> {
+    pub fn get_searched(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::Searched(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::Searched(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "Searched"))
     }
-    pub fn get_found(&self) -> Option<u32> {
+    pub fn get_found(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::Found(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::Found(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "Found"))
     }
-    pub fn get_insert(&self) -> Option<u32> {
+    pub fn get_insert(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::Insert(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::Insert(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "Insert"))
     }
-    pub fn get_insert_failed(&self) -> Option<u32> {
+    pub fn get_insert_failed(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::InsertFailed(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::InsertFailed(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "InsertFailed"))
     }
-    pub fn get_drop(&self) -> Option<u32> {
+    pub fn get_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::Drop(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::Drop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "Drop"))
     }
-    pub fn get_early_drop(&self) -> Option<u32> {
+    pub fn get_early_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::EarlyDrop(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::EarlyDrop(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "EarlyDrop"))
     }
-    pub fn get_error(&self) -> Option<u32> {
+    pub fn get_error(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::Error(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::Error(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "Error"))
     }
-    pub fn get_search_restart(&self) -> Option<u32> {
+    pub fn get_search_restart(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::SearchRestart(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::SearchRestart(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "SearchRestart"))
     }
-    pub fn get_clash_resolve(&self) -> Option<u32> {
+    pub fn get_clash_resolve(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::ClashResolve(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::ClashResolve(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "ClashResolve"))
     }
-    pub fn get_chain_toolong(&self) -> Option<u32> {
+    pub fn get_chain_toolong(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetStatsDumpReply::ChainToolong(val) = attr {
-                return Some(val);
+            if let OpGetStatsDumpReply::ChainToolong(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetStatsDumpReply", "ChainToolong"))
     }
 }
 impl OpGetStatsDumpReply {
@@ -6066,29 +7439,11 @@ impl OpGetStatsDumpReply {
             .clone_from_slice(&buf[..PushNfgenmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Searched",
-            2u16 => "Found",
-            3u16 => "New",
-            4u16 => "Invalid",
-            5u16 => "Ignore",
-            6u16 => "Delete",
-            7u16 => "DeleteList",
-            8u16 => "Insert",
-            9u16 => "InsertFailed",
-            10u16 => "Drop",
-            11u16 => "EarlyDrop",
-            12u16 => "Error",
-            13u16 => "SearchRestart",
-            14u16 => "ClashResolve",
-            15u16 => "ChainToolong",
-            _ => return None,
-        };
-        Some(res)
+        ConntrackStatsAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetStatsDumpReply> {
@@ -6191,5 +7546,232 @@ impl std::fmt::Debug for Iterable<'_, OpGetStatsDumpReply> {
             };
         }
         fmt.finish()
+    }
+}
+impl Iterable<'_, OpGetStatsDumpReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushNfgenmsg::len() {
+            stack.push(("OpGetStatsDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetStatsDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetStatsDumpReply::Searched(val) => {
+                    if last_off == offset {
+                        stack.push(("Searched", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::Found(val) => {
+                    if last_off == offset {
+                        stack.push(("Found", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::Insert(val) => {
+                    if last_off == offset {
+                        stack.push(("Insert", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::InsertFailed(val) => {
+                    if last_off == offset {
+                        stack.push(("InsertFailed", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::Drop(val) => {
+                    if last_off == offset {
+                        stack.push(("Drop", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::EarlyDrop(val) => {
+                    if last_off == offset {
+                        stack.push(("EarlyDrop", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::Error(val) => {
+                    if last_off == offset {
+                        stack.push(("Error", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::SearchRestart(val) => {
+                    if last_off == offset {
+                        stack.push(("SearchRestart", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::ClashResolve(val) => {
+                    if last_off == offset {
+                        stack.push(("ClashResolve", last_off));
+                        break;
+                    }
+                }
+                OpGetStatsDumpReply::ChainToolong(val) => {
+                    if last_off == offset {
+                        stack.push(("ChainToolong", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetStatsDumpReply", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetStatsDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetStatsDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushNfgenmsg) -> Self {
+        PushOpGetStatsDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetStatsDumpRequest<&mut Vec<u8>> {
+        PushOpGetStatsDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetStatsDumpRequest<'_> {
+    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetStatsDumpReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 12u16,
+            request_type: 260u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetStatsDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetStatsDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
+#[derive(Debug)]
+enum RequestBuf<'buf> {
+    Ref(&'buf mut Vec<u8>),
+    Own(Vec<u8>),
+}
+#[derive(Debug)]
+pub struct Request<'buf> {
+    buf: RequestBuf<'buf>,
+    flags: u16,
+}
+impl Request<'static> {
+    pub fn new() -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(Vec::new()),
+        }
+    }
+    pub fn from_buf(buf: Vec<u8>) -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(buf),
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'buf> Request<'buf> {
+    pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
+        buf.clear();
+        Self {
+            flags: 0,
+            buf: RequestBuf::Ref(buf),
+        }
+    }
+    fn buf(&self) -> &Vec<u8> {
+        match &self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    fn buf_mut(&mut self) -> &mut Vec<u8> {
+        match &mut self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    pub fn set_create(mut self) -> Self {
+        self.flags |= consts::NLM_F_CREATE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    pub fn set_excl(mut self) -> Self {
+        self.flags |= consts::NLM_F_EXCL as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_replace(mut self) -> Self {
+        self.flags |= consts::NLM_F_REPLACE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_change(self) -> Self {
+        self.set_create().set_replace()
+    }
+    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    pub fn set_append(mut self) -> Self {
+        self.flags |= consts::NLM_F_APPEND as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    fn set_dump(mut self) -> Self {
+        self.flags |= consts::NLM_F_DUMP as u16;
+        self
+    }
+    pub fn op_get_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetDumpRequest<'buf> {
+        RequestOpGetDumpRequest::new(self, header)
+    }
+    pub fn op_get_do_request(self, header: &PushNfgenmsg) -> RequestOpGetDoRequest<'buf> {
+        RequestOpGetDoRequest::new(self, header)
+    }
+    pub fn op_get_stats_dump_request(
+        self,
+        header: &PushNfgenmsg,
+    ) -> RequestOpGetStatsDumpRequest<'buf> {
+        RequestOpGetStatsDumpRequest::new(self, header)
     }
 }

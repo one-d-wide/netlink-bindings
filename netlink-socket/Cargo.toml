@@ -1,0 +1,24 @@
+[package]
+name = "netlink-socket"
+version = "0.1.0"
+authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
+categories = [ "network-programming", "os", "api-bindings" ]
+repository = "https://github.com/one-d-wide/netlink-bindings"
+license = "GPL-2.0"
+edition = "2021"
+
+[[example]]
+name = "wireguard-setup"
+required-features = [ "netlink-bindings/wireguard", "netlink-bindings/rt-link", "netlink-bindings/rt-addr" ]
+
+[[example]]
+name = "conntrack"
+required-features = [ "netlink-bindings/conntrack" ]
+
+[[example]]
+name = "extack"
+required-features = [ "netlink-bindings/rt-link" ]
+
+[dependencies]
+libc = "0.2"
+netlink-bindings = { path = "../netlink-bindings", features = [ "nlctrl" ] }

@@ -7,6 +7,7 @@
 PushOpGetDeviceDumpRequest::new(&mut vec)
   .push_ifindex(val) // u32
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
 
   // Set to all zeros to remove.
   .push_private_key(val) // &[u8]
@@ -147,6 +148,7 @@ for entry in attrs.get_peers() {
 PushOpGetDeviceDumpReply::new(&mut vec)
   .push_ifindex(val) // u32
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
 
   // Set to all zeros to remove.
   .push_private_key(val) // &[u8]
@@ -457,6 +459,7 @@ for attr in iter {
 PushOpSetDeviceDoRequest::new(&mut vec)
   .push_ifindex(val) // u32
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
 
   // Set to all zeros to remove.
   .push_private_key(val) // &[u8]

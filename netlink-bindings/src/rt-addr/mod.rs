@@ -1,12 +1,18 @@
 #![doc = "Address configuration over rtnetlink."]
 #![allow(clippy::all)]
+#![allow(unused_imports)]
+#![allow(unused_assignments)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::consts;
 use crate::utils::*;
-pub const PROTONUM: u8 = 0u8;
+use crate::{NetlinkRequest, Protocol};
+pub const PROTONAME: &CStr = c"rt-addr";
+pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"ifa-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Clone)]
 pub enum IfaFlags {
@@ -26,10 +32,10 @@ pub enum IfaFlags {
 #[doc = "Original name: \"addr-attrs\""]
 #[derive(Clone)]
 pub enum AddrAttrs<'a> {
-    Address(&'a [u8]),
-    Local(&'a [u8]),
+    Address(std::net::IpAddr),
+    Local(std::net::IpAddr),
     Label(&'a CStr),
-    Broadcast(&'a [u8]),
+    Broadcast(std::net::IpAddr),
     Anycast(&'a [u8]),
     Cacheinfo(PushIfaCacheinfo),
     Multicast(&'a [u8]),
@@ -40,127 +46,116 @@ pub enum AddrAttrs<'a> {
     Proto(u8),
 }
 impl<'a> Iterable<'a, AddrAttrs<'a>> {
-    pub fn get_address(&self) -> Option<&'a [u8]> {
+    pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Address(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Address(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Address"))
     }
-    pub fn get_local(&self) -> Option<&'a [u8]> {
+    pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Local(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Local(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Local"))
     }
-    pub fn get_label(&self) -> Option<&'a CStr> {
+    pub fn get_label(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Label(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Label(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Label"))
     }
-    pub fn get_broadcast(&self) -> Option<&'a [u8]> {
+    pub fn get_broadcast(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Broadcast(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Broadcast(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Broadcast"))
     }
-    pub fn get_anycast(&self) -> Option<&'a [u8]> {
+    pub fn get_anycast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Anycast(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Anycast(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Anycast"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushIfaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Cacheinfo(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Cacheinfo"))
     }
-    pub fn get_multicast(&self) -> Option<&'a [u8]> {
+    pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Multicast(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Multicast(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Multicast"))
     }
     #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
-    pub fn get_flags(&self) -> Option<u32> {
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Flags(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Flags(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Flags"))
     }
-    pub fn get_rt_priority(&self) -> Option<u32> {
+    pub fn get_rt_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::RtPriority(val) = attr {
-                return Some(val);
+            if let AddrAttrs::RtPriority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "RtPriority"))
     }
-    pub fn get_target_netnsid(&self) -> Option<&'a [u8]> {
+    pub fn get_target_netnsid(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::TargetNetnsid(val) = attr {
-                return Some(val);
+            if let AddrAttrs::TargetNetnsid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "TargetNetnsid"))
     }
-    pub fn get_proto(&self) -> Option<u8> {
+    pub fn get_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let AddrAttrs::Proto(val) = attr {
-                return Some(val);
+            if let AddrAttrs::Proto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("AddrAttrs", "Proto"))
     }
 }
 impl<'a> AddrAttrs<'a> {
@@ -197,12 +192,12 @@ impl<'a> Iterator for Iterable<'a, AddrAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => AddrAttrs::Address({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => AddrAttrs::Local({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -212,7 +207,7 @@ impl<'a> Iterator for Iterable<'a, AddrAttrs<'a>> {
                     val
                 }),
                 4u16 => AddrAttrs::Broadcast({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -293,6 +288,105 @@ impl<'a> std::fmt::Debug for Iterable<'a, AddrAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, AddrAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("AddrAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| AddrAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                AddrAttrs::Address(val) => {
+                    if last_off == offset {
+                        stack.push(("Address", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Local(val) => {
+                    if last_off == offset {
+                        stack.push(("Local", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Label(val) => {
+                    if last_off == offset {
+                        stack.push(("Label", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Broadcast(val) => {
+                    if last_off == offset {
+                        stack.push(("Broadcast", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Anycast(val) => {
+                    if last_off == offset {
+                        stack.push(("Anycast", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Multicast(val) => {
+                    if last_off == offset {
+                        stack.push(("Multicast", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::RtPriority(val) => {
+                    if last_off == offset {
+                        stack.push(("RtPriority", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::TargetNetnsid(val) => {
+                    if last_off == offset {
+                        stack.push(("TargetNetnsid", last_off));
+                        break;
+                    }
+                }
+                AddrAttrs::Proto(val) => {
+                    if last_off == offset {
+                        stack.push(("Proto", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("AddrAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 pub struct PushAddrAttrs<Prev: Rec> {
     prev: Option<Prev>,
     header_offset: Option<usize>,
@@ -316,14 +410,24 @@ impl<Prev: Rec> PushAddrAttrs<Prev> {
         }
         prev
     }
-    pub fn push_address(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_address(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 1u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 2u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
     pub fn push_label(mut self, value: &CStr) -> Self {
@@ -335,9 +439,20 @@ impl<Prev: Rec> PushAddrAttrs<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
-    pub fn push_broadcast(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 4u16, value.len() as u16);
+    pub fn push_label_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
         self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
+    pub fn push_broadcast(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 4u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
     pub fn push_anycast(mut self, value: &[u8]) -> Self {
@@ -537,11 +652,17 @@ impl<Prev: Rec> Rec for PushOpNewaddrDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewaddrDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -550,14 +671,24 @@ impl<Prev: Rec> PushOpNewaddrDoRequest<Prev> {
         }
         prev
     }
-    pub fn push_address(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_address(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 1u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 2u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
     pub fn push_label(mut self, value: &CStr) -> Self {
@@ -569,9 +700,21 @@ impl<Prev: Rec> PushOpNewaddrDoRequest<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_label_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn push_cacheinfo(mut self, value: PushIfaCacheinfo) -> Self {
         push_header(self.as_rec_mut(), 6u16, value.as_slice().len() as u16);
         self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
 }
@@ -585,58 +728,67 @@ impl<Prev: Rec> Drop for PushOpNewaddrDoRequest<Prev> {
     }
 }
 #[doc = "Add new address"]
-#[doc = "Original name: \"OpNewaddrDoRequest\""]
+#[doc = "Original name: \"op-newaddr-do-request\""]
 #[derive(Clone)]
 pub enum OpNewaddrDoRequest<'a> {
-    Address(&'a [u8]),
-    Local(&'a [u8]),
+    Address(std::net::IpAddr),
+    Local(std::net::IpAddr),
     Label(&'a CStr),
     Cacheinfo(PushIfaCacheinfo),
+    #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
+    Flags(u32),
 }
 impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
-    pub fn get_address(&self) -> Option<&'a [u8]> {
+    pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewaddrDoRequest::Address(val) = attr {
-                return Some(val);
+            if let OpNewaddrDoRequest::Address(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewaddrDoRequest", "Address"))
     }
-    pub fn get_local(&self) -> Option<&'a [u8]> {
+    pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewaddrDoRequest::Local(val) = attr {
-                return Some(val);
+            if let OpNewaddrDoRequest::Local(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewaddrDoRequest", "Local"))
     }
-    pub fn get_label(&self) -> Option<&'a CStr> {
+    pub fn get_label(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewaddrDoRequest::Label(val) = attr {
-                return Some(val);
+            if let OpNewaddrDoRequest::Label(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewaddrDoRequest", "Label"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushIfaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewaddrDoRequest::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpNewaddrDoRequest::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewaddrDoRequest", "Cacheinfo"))
+    }
+    #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpNewaddrDoRequest::Flags(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpNewaddrDoRequest", "Flags"))
     }
 }
 impl<'a> OpNewaddrDoRequest<'a> {
@@ -647,25 +799,11 @@ impl<'a> OpNewaddrDoRequest<'a> {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
@@ -680,12 +818,12 @@ impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => OpNewaddrDoRequest::Address({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => OpNewaddrDoRequest::Local({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -696,6 +834,11 @@ impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
                 }),
                 6u16 => OpNewaddrDoRequest::Cacheinfo({
                     let res = PushIfaCacheinfo::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => OpNewaddrDoRequest::Flags({
+                    let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -729,9 +872,73 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewaddrDoRequest<'a>> {
                 OpNewaddrDoRequest::Local(val) => fmt.field("Local", &val),
                 OpNewaddrDoRequest::Label(val) => fmt.field("Label", &val),
                 OpNewaddrDoRequest::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
+                OpNewaddrDoRequest::Flags(val) => fmt.field("Flags", &val),
             };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpNewaddrDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewaddrDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewaddrDoRequest::Address(val) => {
+                    if last_off == offset {
+                        stack.push(("Address", last_off));
+                        break;
+                    }
+                }
+                OpNewaddrDoRequest::Local(val) => {
+                    if last_off == offset {
+                        stack.push(("Local", last_off));
+                        break;
+                    }
+                }
+                OpNewaddrDoRequest::Label(val) => {
+                    if last_off == offset {
+                        stack.push(("Label", last_off));
+                        break;
+                    }
+                }
+                OpNewaddrDoRequest::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpNewaddrDoRequest::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewaddrDoRequest", cur));
+        }
+        (stack, None)
     }
 }
 #[doc = "Add new address"]
@@ -746,11 +953,17 @@ impl<Prev: Rec> Rec for PushOpNewaddrDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewaddrDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -770,7 +983,7 @@ impl<Prev: Rec> Drop for PushOpNewaddrDoReply<Prev> {
     }
 }
 #[doc = "Add new address"]
-#[doc = "Original name: \"OpNewaddrDoReply\""]
+#[doc = "Original name: \"op-newaddr-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewaddrDoReply {}
 impl<'a> Iterable<'a, OpNewaddrDoReply> {}
@@ -782,25 +995,11 @@ impl OpNewaddrDoReply {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewaddrDoReply> {
@@ -844,6 +1043,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewaddrDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewaddrDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpNewaddrDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewaddrDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewaddrDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewaddrDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushIfaddrmsg) -> Self {
+        PushOpNewaddrDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewaddrDoRequest<&mut Vec<u8>> {
+        PushOpNewaddrDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewaddrDoRequest<'_> {
+    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpNewaddrDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 20u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewaddrDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewaddrDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Remove address"]
 pub struct PushOpDeladdrDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -856,11 +1113,17 @@ impl<Prev: Rec> Rec for PushOpDeladdrDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDeladdrDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -869,14 +1132,24 @@ impl<Prev: Rec> PushOpDeladdrDoRequest<Prev> {
         }
         prev
     }
-    pub fn push_address(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_address(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 1u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 2u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
 }
@@ -890,67 +1163,51 @@ impl<Prev: Rec> Drop for PushOpDeladdrDoRequest<Prev> {
     }
 }
 #[doc = "Remove address"]
-#[doc = "Original name: \"OpDeladdrDoRequest\""]
+#[doc = "Original name: \"op-deladdr-do-request\""]
 #[derive(Clone)]
-pub enum OpDeladdrDoRequest<'a> {
-    Address(&'a [u8]),
-    Local(&'a [u8]),
+pub enum OpDeladdrDoRequest {
+    Address(std::net::IpAddr),
+    Local(std::net::IpAddr),
 }
-impl<'a> Iterable<'a, OpDeladdrDoRequest<'a>> {
-    pub fn get_address(&self) -> Option<&'a [u8]> {
+impl<'a> Iterable<'a, OpDeladdrDoRequest> {
+    pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDeladdrDoRequest::Address(val) = attr {
-                return Some(val);
+            if let OpDeladdrDoRequest::Address(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDeladdrDoRequest", "Address"))
     }
-    pub fn get_local(&self) -> Option<&'a [u8]> {
+    pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDeladdrDoRequest::Local(val) = attr {
-                return Some(val);
+            if let OpDeladdrDoRequest::Local(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDeladdrDoRequest", "Local"))
     }
 }
-impl<'a> OpDeladdrDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, Iterable<'a, OpDeladdrDoRequest<'a>>) {
+impl OpDeladdrDoRequest {
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpDeladdrDoRequest>) {
         let mut header = PushIfaddrmsg::new();
         header
             .as_mut_slice()
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDeladdrDoRequest<'a>> {
-    type Item = Result<OpDeladdrDoRequest<'a>, ErrorContext>;
+impl Iterator for Iterable<'_, OpDeladdrDoRequest> {
+    type Item = Result<OpDeladdrDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
@@ -961,12 +1218,12 @@ impl<'a> Iterator for Iterable<'a, OpDeladdrDoRequest<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => OpDeladdrDoRequest::Address({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => OpDeladdrDoRequest::Local({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -982,7 +1239,7 @@ impl<'a> Iterator for Iterable<'a, OpDeladdrDoRequest<'a>> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDeladdrDoRequest<'a>> {
+impl std::fmt::Debug for Iterable<'_, OpDeladdrDoRequest> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDeladdrDoRequest");
         for attr in self.clone() {
@@ -1003,6 +1260,51 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDeladdrDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDeladdrDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpDeladdrDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDeladdrDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpDeladdrDoRequest::Address(val) => {
+                    if last_off == offset {
+                        stack.push(("Address", last_off));
+                        break;
+                    }
+                }
+                OpDeladdrDoRequest::Local(val) => {
+                    if last_off == offset {
+                        stack.push(("Local", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpDeladdrDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Remove address"]
 pub struct PushOpDeladdrDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -1015,11 +1317,17 @@ impl<Prev: Rec> Rec for PushOpDeladdrDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDeladdrDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1039,7 +1347,7 @@ impl<Prev: Rec> Drop for PushOpDeladdrDoReply<Prev> {
     }
 }
 #[doc = "Remove address"]
-#[doc = "Original name: \"OpDeladdrDoReply\""]
+#[doc = "Original name: \"op-deladdr-do-reply\""]
 #[derive(Clone)]
 pub enum OpDeladdrDoReply {}
 impl<'a> Iterable<'a, OpDeladdrDoReply> {}
@@ -1051,25 +1359,11 @@ impl OpDeladdrDoReply {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDeladdrDoReply> {
@@ -1113,6 +1407,64 @@ impl std::fmt::Debug for Iterable<'_, OpDeladdrDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDeladdrDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpDeladdrDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDeladdrDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDeladdrDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDeladdrDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushIfaddrmsg) -> Self {
+        PushOpDeladdrDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDeladdrDoRequest<&mut Vec<u8>> {
+        PushOpDeladdrDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDeladdrDoRequest<'_> {
+    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpDeladdrDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 21u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDeladdrDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDeladdrDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Dump address information."]
 pub struct PushOpGetaddrDumpRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -1125,11 +1477,17 @@ impl<Prev: Rec> Rec for PushOpGetaddrDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetaddrDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1149,7 +1507,7 @@ impl<Prev: Rec> Drop for PushOpGetaddrDumpRequest<Prev> {
     }
 }
 #[doc = "Dump address information."]
-#[doc = "Original name: \"OpGetaddrDumpRequest\""]
+#[doc = "Original name: \"op-getaddr-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetaddrDumpRequest {}
 impl<'a> Iterable<'a, OpGetaddrDumpRequest> {}
@@ -1161,25 +1519,11 @@ impl OpGetaddrDumpRequest {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetaddrDumpRequest> {
@@ -1223,6 +1567,24 @@ impl std::fmt::Debug for Iterable<'_, OpGetaddrDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetaddrDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpGetaddrDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetaddrDumpRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Dump address information."]
 pub struct PushOpGetaddrDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -1235,11 +1597,17 @@ impl<Prev: Rec> Rec for PushOpGetaddrDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetaddrDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1248,14 +1616,24 @@ impl<Prev: Rec> PushOpGetaddrDumpReply<Prev> {
         }
         prev
     }
-    pub fn push_address(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 1u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_address(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 1u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 2u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_rec_mut(), 2u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_rec_mut(), value);
         self
     }
     pub fn push_label(mut self, value: &CStr) -> Self {
@@ -1267,9 +1645,21 @@ impl<Prev: Rec> PushOpGetaddrDumpReply<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_label_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn push_cacheinfo(mut self, value: PushIfaCacheinfo) -> Self {
         push_header(self.as_rec_mut(), 6u16, value.as_slice().len() as u16);
         self.as_rec_mut().extend(value.as_slice());
+        self
+    }
+    #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
 }
@@ -1283,58 +1673,67 @@ impl<Prev: Rec> Drop for PushOpGetaddrDumpReply<Prev> {
     }
 }
 #[doc = "Dump address information."]
-#[doc = "Original name: \"OpGetaddrDumpReply\""]
+#[doc = "Original name: \"op-getaddr-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetaddrDumpReply<'a> {
-    Address(&'a [u8]),
-    Local(&'a [u8]),
+    Address(std::net::IpAddr),
+    Local(std::net::IpAddr),
     Label(&'a CStr),
     Cacheinfo(PushIfaCacheinfo),
+    #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
+    Flags(u32),
 }
 impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
-    pub fn get_address(&self) -> Option<&'a [u8]> {
+    pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetaddrDumpReply::Address(val) = attr {
-                return Some(val);
+            if let OpGetaddrDumpReply::Address(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetaddrDumpReply", "Address"))
     }
-    pub fn get_local(&self) -> Option<&'a [u8]> {
+    pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetaddrDumpReply::Local(val) = attr {
-                return Some(val);
+            if let OpGetaddrDumpReply::Local(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetaddrDumpReply", "Local"))
     }
-    pub fn get_label(&self) -> Option<&'a CStr> {
+    pub fn get_label(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetaddrDumpReply::Label(val) = attr {
-                return Some(val);
+            if let OpGetaddrDumpReply::Label(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetaddrDumpReply", "Label"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushIfaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetaddrDumpReply::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpGetaddrDumpReply::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetaddrDumpReply", "Cacheinfo"))
+    }
+    #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpGetaddrDumpReply::Flags(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(self.error_missing("OpGetaddrDumpReply", "Flags"))
     }
 }
 impl<'a> OpGetaddrDumpReply<'a> {
@@ -1345,25 +1744,11 @@ impl<'a> OpGetaddrDumpReply<'a> {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
@@ -1378,12 +1763,12 @@ impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => OpGetaddrDumpReply::Address({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => OpGetaddrDumpReply::Local({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1394,6 +1779,11 @@ impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
                 }),
                 6u16 => OpGetaddrDumpReply::Cacheinfo({
                     let res = PushIfaCacheinfo::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => OpGetaddrDumpReply::Flags({
+                    let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1427,9 +1817,115 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetaddrDumpReply<'a>> {
                 OpGetaddrDumpReply::Local(val) => fmt.field("Local", &val),
                 OpGetaddrDumpReply::Label(val) => fmt.field("Label", &val),
                 OpGetaddrDumpReply::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
+                OpGetaddrDumpReply::Flags(val) => fmt.field("Flags", &val),
             };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpGetaddrDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetaddrDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetaddrDumpReply::Address(val) => {
+                    if last_off == offset {
+                        stack.push(("Address", last_off));
+                        break;
+                    }
+                }
+                OpGetaddrDumpReply::Local(val) => {
+                    if last_off == offset {
+                        stack.push(("Local", last_off));
+                        break;
+                    }
+                }
+                OpGetaddrDumpReply::Label(val) => {
+                    if last_off == offset {
+                        stack.push(("Label", last_off));
+                        break;
+                    }
+                }
+                OpGetaddrDumpReply::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpGetaddrDumpReply::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetaddrDumpReply", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetaddrDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetaddrDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushIfaddrmsg) -> Self {
+        PushOpGetaddrDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetaddrDumpRequest<&mut Vec<u8>> {
+        PushOpGetaddrDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetaddrDumpRequest<'_> {
+    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetaddrDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 22u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetaddrDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetaddrDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
@@ -1444,11 +1940,17 @@ impl<Prev: Rec> Rec for PushOpGetmulticastDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetmulticastDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1468,7 +1970,7 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"OpGetmulticastDumpRequest\""]
+#[doc = "Original name: \"op-getmulticast-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDumpRequest {}
 impl<'a> Iterable<'a, OpGetmulticastDumpRequest> {}
@@ -1480,25 +1982,11 @@ impl OpGetmulticastDumpRequest {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetmulticastDumpRequest> {
@@ -1542,6 +2030,24 @@ impl std::fmt::Debug for Iterable<'_, OpGetmulticastDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetmulticastDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpGetmulticastDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetmulticastDumpRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -1554,11 +2060,17 @@ impl<Prev: Rec> Rec for PushOpGetmulticastDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetmulticastDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1588,34 +2100,32 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"OpGetmulticastDumpReply\""]
+#[doc = "Original name: \"op-getmulticast-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDumpReply<'a> {
     Cacheinfo(PushIfaCacheinfo),
     Multicast(&'a [u8]),
 }
 impl<'a> Iterable<'a, OpGetmulticastDumpReply<'a>> {
-    pub fn get_cacheinfo(&self) -> Option<PushIfaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetmulticastDumpReply::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpGetmulticastDumpReply::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetmulticastDumpReply", "Cacheinfo"))
     }
-    pub fn get_multicast(&self) -> Option<&'a [u8]> {
+    pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetmulticastDumpReply::Multicast(val) = attr {
-                return Some(val);
+            if let OpGetmulticastDumpReply::Multicast(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetmulticastDumpReply", "Multicast"))
     }
 }
 impl<'a> OpGetmulticastDumpReply<'a> {
@@ -1626,25 +2136,11 @@ impl<'a> OpGetmulticastDumpReply<'a> {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetmulticastDumpReply<'a>> {
@@ -1701,6 +2197,93 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetmulticastDumpReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetmulticastDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpGetmulticastDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetmulticastDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetmulticastDumpReply::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpGetmulticastDumpReply::Multicast(val) => {
+                    if last_off == offset {
+                        stack.push(("Multicast", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetmulticastDumpReply", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetmulticastDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetmulticastDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushIfaddrmsg) -> Self {
+        PushOpGetmulticastDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetmulticastDumpRequest<&mut Vec<u8>> {
+        PushOpGetmulticastDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetmulticastDumpRequest<'_> {
+    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetmulticastDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 58u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetmulticastDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetmulticastDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -1713,11 +2296,17 @@ impl<Prev: Rec> Rec for PushOpGetmulticastDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetmulticastDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1737,7 +2326,7 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"OpGetmulticastDoRequest\""]
+#[doc = "Original name: \"op-getmulticast-do-request\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDoRequest {}
 impl<'a> Iterable<'a, OpGetmulticastDoRequest> {}
@@ -1749,25 +2338,11 @@ impl OpGetmulticastDoRequest {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetmulticastDoRequest> {
@@ -1811,6 +2386,24 @@ impl std::fmt::Debug for Iterable<'_, OpGetmulticastDoRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetmulticastDoRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpGetmulticastDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetmulticastDoRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -1823,11 +2416,17 @@ impl<Prev: Rec> Rec for PushOpGetmulticastDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetmulticastDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushIfaddrmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushIfaddrmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1857,34 +2456,32 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDoReply<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"OpGetmulticastDoReply\""]
+#[doc = "Original name: \"op-getmulticast-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDoReply<'a> {
     Cacheinfo(PushIfaCacheinfo),
     Multicast(&'a [u8]),
 }
 impl<'a> Iterable<'a, OpGetmulticastDoReply<'a>> {
-    pub fn get_cacheinfo(&self) -> Option<PushIfaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetmulticastDoReply::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpGetmulticastDoReply::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetmulticastDoReply", "Cacheinfo"))
     }
-    pub fn get_multicast(&self) -> Option<&'a [u8]> {
+    pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetmulticastDoReply::Multicast(val) = attr {
-                return Some(val);
+            if let OpGetmulticastDoReply::Multicast(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetmulticastDoReply", "Multicast"))
     }
 }
 impl<'a> OpGetmulticastDoReply<'a> {
@@ -1895,25 +2492,11 @@ impl<'a> OpGetmulticastDoReply<'a> {
             .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Address",
-            2u16 => "Local",
-            3u16 => "Label",
-            4u16 => "Broadcast",
-            5u16 => "Anycast",
-            6u16 => "Cacheinfo",
-            7u16 => "Multicast",
-            8u16 => "Flags",
-            9u16 => "RtPriority",
-            10u16 => "TargetNetnsid",
-            11u16 => "Proto",
-            _ => return None,
-        };
-        Some(res)
+        AddrAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetmulticastDoReply<'a>> {
@@ -1968,5 +2551,194 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetmulticastDoReply<'a>> {
             };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, OpGetmulticastDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushIfaddrmsg::len() {
+            stack.push(("OpGetmulticastDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetmulticastDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetmulticastDoReply::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpGetmulticastDoReply::Multicast(val) => {
+                    if last_off == offset {
+                        stack.push(("Multicast", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetmulticastDoReply", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetmulticastDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetmulticastDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushIfaddrmsg) -> Self {
+        PushOpGetmulticastDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGetmulticastDoRequest<&mut Vec<u8>> {
+        PushOpGetmulticastDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetmulticastDoRequest<'_> {
+    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetmulticastDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 58u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetmulticastDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetmulticastDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
+#[derive(Debug)]
+enum RequestBuf<'buf> {
+    Ref(&'buf mut Vec<u8>),
+    Own(Vec<u8>),
+}
+#[derive(Debug)]
+pub struct Request<'buf> {
+    buf: RequestBuf<'buf>,
+    flags: u16,
+}
+impl Request<'static> {
+    pub fn new() -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(Vec::new()),
+        }
+    }
+    pub fn from_buf(buf: Vec<u8>) -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(buf),
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'buf> Request<'buf> {
+    pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
+        buf.clear();
+        Self {
+            flags: 0,
+            buf: RequestBuf::Ref(buf),
+        }
+    }
+    fn buf(&self) -> &Vec<u8> {
+        match &self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    fn buf_mut(&mut self) -> &mut Vec<u8> {
+        match &mut self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    pub fn set_create(mut self) -> Self {
+        self.flags |= consts::NLM_F_CREATE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    pub fn set_excl(mut self) -> Self {
+        self.flags |= consts::NLM_F_EXCL as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_replace(mut self) -> Self {
+        self.flags |= consts::NLM_F_REPLACE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_change(self) -> Self {
+        self.set_create().set_replace()
+    }
+    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    pub fn set_append(mut self) -> Self {
+        self.flags |= consts::NLM_F_APPEND as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    fn set_dump(mut self) -> Self {
+        self.flags |= consts::NLM_F_DUMP as u16;
+        self
+    }
+    pub fn op_newaddr_do_request(self, header: &PushIfaddrmsg) -> RequestOpNewaddrDoRequest<'buf> {
+        RequestOpNewaddrDoRequest::new(self, header)
+    }
+    pub fn op_deladdr_do_request(self, header: &PushIfaddrmsg) -> RequestOpDeladdrDoRequest<'buf> {
+        RequestOpDeladdrDoRequest::new(self, header)
+    }
+    pub fn op_getaddr_dump_request(
+        self,
+        header: &PushIfaddrmsg,
+    ) -> RequestOpGetaddrDumpRequest<'buf> {
+        RequestOpGetaddrDumpRequest::new(self, header)
+    }
+    pub fn op_getmulticast_dump_request(
+        self,
+        header: &PushIfaddrmsg,
+    ) -> RequestOpGetmulticastDumpRequest<'buf> {
+        RequestOpGetmulticastDumpRequest::new(self, header)
+    }
+    pub fn op_getmulticast_do_request(
+        self,
+        header: &PushIfaddrmsg,
+    ) -> RequestOpGetmulticastDoRequest<'buf> {
+        RequestOpGetmulticastDoRequest::new(self, header)
     }
 }

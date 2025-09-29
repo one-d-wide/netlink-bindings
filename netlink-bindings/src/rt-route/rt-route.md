@@ -163,6 +163,7 @@ PushOpNewrouteDoRequest::new(&mut vec)
     .push_initrwnd(val) // u32
     .push_quickack(val) // u32
     .push_cc_algo(val) // &CStr
+    .push_cc_algo_bytes(val) // &[u8]
     .push_fastopen_no_cookie(val) // u32
   .end_nested()
   .push_multipath(val) // &[u8]
@@ -226,6 +227,7 @@ PushOpDelrouteDoRequest::new(&mut vec)
     .push_initrwnd(val) // u32
     .push_quickack(val) // u32
     .push_cc_algo(val) // &CStr
+    .push_cc_algo_bytes(val) // &[u8]
     .push_fastopen_no_cookie(val) // u32
   .end_nested()
   .push_multipath(val) // &[u8]

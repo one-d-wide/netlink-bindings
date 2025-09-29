@@ -5,8 +5,8 @@ use quote::{format_ident, quote, ToTokens};
 use syn::Ident;
 
 use crate::{
+    gen_debug_impl::gen_introspect_attrs,
     gen_defs::GenImplStruct,
-    gen_introspect::gen_introspect_attrs,
     gen_iterable::gen_iterable_attrs,
     gen_ops::OpHeader,
     gen_sub_message::sub_message_name,
@@ -25,7 +25,7 @@ pub fn gen_attrsets(spec: &Spec, ctx: &mut Context) -> TokenStream {
     let mut tokens = proc_macro2::TokenStream::new();
 
     for set in &spec.attribute_sets {
-        gen_attrset(&mut tokens, spec, ctx, set, None);
+        gen_attrset(&mut tokens, spec, ctx, set, None, None);
     }
 
     tokens
@@ -37,6 +37,7 @@ pub fn gen_attrset(
     ctx: &mut Context,
     set: &AttrSet,
     fixed_header: Option<&OpHeader>,
+    superset: Option<&AttrSet>,
 ) {
     let type_name = format_ident!("{}", kebab_to_type(&set.name));
 
@@ -45,6 +46,7 @@ pub fn gen_attrset(
 
     let mut m = GenImplStruct {
         off: 0,
+        alignment: 0,
         lifetime_needed: false,
         type_name: type_name.clone(),
     };
@@ -80,8 +82,9 @@ pub fn gen_attrset(
         }
     });
 
-    gen_iterable_attrs(tokens, spec, ctx, &mut m, set, fixed_header);
+    gen_iterable_attrs(tokens, spec, ctx, &mut m, set, fixed_header, superset);
     gen_introspect_attrs(tokens, spec, ctx, &m, set);
+    crate::gen_lookup::gen_lookup(tokens, spec, ctx, &m, set, fixed_header);
 }
 
 pub fn gen_attr(
@@ -109,6 +112,8 @@ pub fn gen_attr(
     });
 
     let type_name = &m.type_name;
+    let attrs_str = format!("{type_name}");
+    let attr_str = format!("{}", kebab_to_type(&attr.name));
     let get_name = shorthand_name(&attr.name);
 
     doc_attr(attr, |doc| shorthands.extend(quote!(#[doc = #doc])));
@@ -134,16 +139,15 @@ pub fn gen_attr(
             });
         }
         AttrType::Nest { .. } => shorthands.extend(quote! {
-            pub fn #get_name(&self) -> #rust_type {
+            pub fn #get_name(&self) -> Result<#rust_type, ErrorContext> {
                 let mut iter = self.clone();
                 iter.pos = 0;
                 for attr in iter {
-                    let Ok(attr) = attr else { break };
-                    if let #type_name::#variant_name(val) = attr {
-                        return val;
+                    if let #type_name::#variant_name(val) = attr? {
+                        return Ok(val);
                     }
                 }
-                Iterable::new(&[])
+                Err(self.error_missing(#attrs_str, #attr_str))
             }
         }),
         AttrType::IndexedArray { sub_type } => {
@@ -164,28 +168,26 @@ pub fn gen_attr(
                 other => unreachable!("{other:?}"),
             };
             shorthands.extend(quote! {
-                pub fn #get_name(&self) -> ArrayIterable<#rust_type, #item_type> {
+                pub fn #get_name(&self) -> Result<ArrayIterable<#rust_type, #item_type>, ErrorContext> {
                     for attr in self.clone() {
-                        let Ok(attr) = attr else { break };
-                        if let #type_name::#variant_name(val) = attr {
-                            return ArrayIterable::new(val);
+                        if let #type_name::#variant_name(val) = attr? {
+                            return Ok(ArrayIterable::new(val));
                         }
                     }
-                    ArrayIterable::new(Iterable::new(&[]))
+                    Err(self.error_missing(#attrs_str, #attr_str))
                 }
             })
         }
         _ => shorthands.extend(quote! {
-            pub fn #get_name(&self) -> Option<#rust_type> {
+            pub fn #get_name(&self) -> Result<#rust_type, ErrorContext> {
                 let mut iter = self.clone();
                 iter.pos = 0;
                 for attr in iter {
-                    let Ok(attr) = attr else { break };
-                    if let #type_name::#variant_name(val) = attr {
-                        return Some(val);
+                    if let #type_name::#variant_name(val) = attr? {
+                        return Ok(val);
                     }
                 }
-                None
+                Err(self.error_missing(#attrs_str, #attr_str))
             }
         }),
     }

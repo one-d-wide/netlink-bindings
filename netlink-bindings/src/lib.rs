@@ -1,11 +1,17 @@
-pub mod primitives;
+mod primitives;
+mod traits;
+
+pub mod builtin;
+pub mod consts;
 pub mod utils;
+
+pub use traits::{NetlinkRequest, Protocol};
 
 // ```fish
 // cat proto \
 //     | while read i
 //         echo
-//         echo "#[cfg(any(feature = \"all\", feature = \"$i\"))]"
+//         echo "#[cfg(feature = \"$i\")]"
 //         if string match -qr ".*-.*" -- $i
 //             echo "#[path = \"$i/mod.rs\"]"
 //         end
@@ -13,89 +19,89 @@ pub mod utils;
 //     end
 // ```
 
-#[cfg(any(feature = "all", feature = "conntrack"))]
+#[cfg(feature = "conntrack")]
 pub mod conntrack;
 
-// #[cfg(any(feature = "all", feature = "devlink"))]
+// #[cfg(feature = "devlink")]
 // pub mod devlink;
 //
-// #[cfg(any(feature = "all", feature = "dpll"))]
+// #[cfg(feature = "dpll")]
 // pub mod dpll;
 //
-// #[cfg(any(feature = "all", feature = "ethtool"))]
+// #[cfg(feature = "ethtool")]
 // pub mod ethtool;
 //
-// #[cfg(any(feature = "all", feature = "fou"))]
+// #[cfg(feature = "fou")]
 // pub mod fou;
 //
-// #[cfg(any(feature = "all", feature = "handshake"))]
+// #[cfg(feature = "handshake")]
 // pub mod handshake;
 //
-// #[cfg(any(feature = "all", feature = "lockd"))]
+// #[cfg(feature = "lockd")]
 // pub mod lockd;
 //
-// #[cfg(any(feature = "all", feature = "mptcp_pm"))]
+// #[cfg(feature = "mptcp_pm")]
 // pub mod mptcp_pm;
 //
-// #[cfg(any(feature = "all", feature = "net-shaper"))]
+// #[cfg(feature = "net-shaper")]
 // #[path = "net-shaper/mod.rs"]
 // pub mod net_shaper;
 //
-// #[cfg(any(feature = "all", feature = "netdev"))]
+// #[cfg(feature = "netdev")]
 // pub mod netdev;
 //
-// #[cfg(any(feature = "all", feature = "nfsd"))]
+// #[cfg(feature = "nfsd")]
 // pub mod nfsd;
 //
-// #[cfg(any(feature = "all", feature = "nftables"))]
+// #[cfg(feature = "nftables")]
 // pub mod nftables;
 //
-// #[cfg(any(feature = "all", feature = "nl80211"))]
+// #[cfg(feature = "nl80211")]
 // pub mod nl80211;
-//
-// #[cfg(any(feature = "all", feature = "nlctrl"))]
-// pub mod nlctrl;
-//
-// #[cfg(any(feature = "all", feature = "ovpn"))]
+
+#[cfg(feature = "nlctrl")]
+pub mod nlctrl;
+
+// #[cfg(feature = "ovpn")]
 // pub mod ovpn;
 //
-// #[cfg(any(feature = "all", feature = "ovs_datapath"))]
+// #[cfg(feature = "ovs_datapath")]
 // pub mod ovs_datapath;
 //
-// #[cfg(any(feature = "all", feature = "ovs_flow"))]
+// #[cfg(feature = "ovs_flow")]
 // pub mod ovs_flow;
 //
-// #[cfg(any(feature = "all", feature = "ovs_vport"))]
+// #[cfg(feature = "ovs_vport")]
 // pub mod ovs_vport;
 
-#[cfg(any(feature = "all", feature = "rt-addr"))]
+#[cfg(feature = "rt-addr")]
 #[path = "rt-addr/mod.rs"]
 pub mod rt_addr;
 
-#[cfg(any(feature = "all", feature = "rt-link"))]
+#[cfg(feature = "rt-link")]
 #[path = "rt-link/mod.rs"]
 pub mod rt_link;
 
-#[cfg(any(feature = "all", feature = "rt-neigh"))]
+#[cfg(feature = "rt-neigh")]
 #[path = "rt-neigh/mod.rs"]
 pub mod rt_neigh;
 
-#[cfg(any(feature = "all", feature = "rt-route"))]
+#[cfg(feature = "rt-route")]
 #[path = "rt-route/mod.rs"]
 pub mod rt_route;
 
-#[cfg(any(feature = "all", feature = "rt-rule"))]
+#[cfg(feature = "rt-rule")]
 #[path = "rt-rule/mod.rs"]
 pub mod rt_rule;
 
-#[cfg(any(feature = "all", feature = "tc"))]
+#[cfg(feature = "tc")]
 pub mod tc;
 
-// #[cfg(any(feature = "all", feature = "tcp_metrics"))]
+// #[cfg(feature = "tcp_metrics")]
 // pub mod tcp_metrics;
 //
-// #[cfg(any(feature = "all", feature = "team"))]
+// #[cfg(feature = "team")]
 // pub mod team;
 
-#[cfg(any(feature = "all", feature = "wireguard"))]
+#[cfg(feature = "wireguard")]
 pub mod wireguard;

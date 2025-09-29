@@ -205,6 +205,16 @@ pub fn dump_writable_attr(out: &mut Vec<u8>, n: &mut Nest, spec: &Spec, attr: &A
                 kebab_to_rust(&attr.name)
             )
             .unwrap();
+
+            if let AttrType::String = &attr.r#type {
+                n.indent(out);
+                writeln!(
+                    out,
+                    ".push_{}_bytes(val) // &[u8]",
+                    kebab_to_rust(&attr.name)
+                )
+                .unwrap();
+            }
         }
     }
 }
@@ -484,8 +494,8 @@ pub fn dump_ops(out: &mut Vec<u8>, spec: &Spec, all: bool) {
         writeln!(out, "# Operation {:?}", ops.name).unwrap();
 
         let mut generate = |op_name, op: &Operation| {
-            let reply_name = gen_ops::reply_type_name(&ops.name, op_name);
-            let request_name = gen_ops::request_type_name(&ops.name, op_name);
+            let reply_name = kebab_to_type(&gen_ops::reply_kebab_name(&ops.name, op_name));
+            let request_name = kebab_to_type(&gen_ops::request_kebab_name(&ops.name, op_name));
 
             writeln!(out).unwrap();
             writeln!(out, "## {op_name} (request)").unwrap();

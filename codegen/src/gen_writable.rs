@@ -80,21 +80,33 @@ pub fn gen_writable_attrset(
     let new_impl = if let Some(fixed_header) = fixed_header {
         let header = writable_type(&fixed_header.name);
         let header_var = format_ident!("header");
-        if let Some(fill) = &fixed_header.fill {
+        if let Some(fill) = &fixed_header.construct_header {
             let fill = fill(&header_var);
             quote! {
                 pub fn new(mut prev: Prev) -> Self {
+                    Self::write_header(&mut prev);
+                    Self::new_without_header(prev)
+                }
+                fn new_without_header(prev: Prev) -> Self {
+                    Self { prev: Some(prev), header_offset: None }
+                }
+                fn write_header(prev: &mut Prev) {
                     let mut #header_var = #header::new();
                     #fill
                     prev.as_rec_mut().extend(#header_var.as_slice());
-                    Self { prev: Some(prev), header_offset: None }
                 }
             }
         } else {
             quote! {
                 pub fn new(mut prev: Prev, #header_var: &#header) -> Self {
-                    prev.as_rec_mut().extend(#header_var.as_slice());
+                    Self::write_header(&mut prev, #header_var);
+                    Self::new_without_header(prev)
+                }
+                fn new_without_header(prev: Prev) -> Self {
                     Self { prev: Some(prev), header_offset: None }
+                }
+                fn write_header(prev: &mut Prev, #header_var: &#header) {
+                    prev.as_rec_mut().extend(#header_var.as_slice());
                 }
             }
         }
@@ -277,6 +289,20 @@ pub fn gen_writable_attrset(
                 self
             }
         });
+
+        if let AttrType::String = &next.r#type {
+            // Convince method to use allow &[u8] instead of &CStr
+            let func_bytes = format_ident!("{func}_bytes");
+            doc_attr(next, |doc| impls.extend(quote!(#[doc = #doc])));
+            impls.extend(quote! {
+                pub fn #func_bytes(mut self, #value_name: &[u8]) -> Self {
+                    push_header(self.as_rec_mut(), #id, (#value_name.len() + 1) as u16);
+                    self.as_rec_mut().extend(#value_name);
+                    self.as_rec_mut().push(0);
+                    self
+                }
+            });
+        }
     }
 
     tokens.extend(quote! {
@@ -387,32 +413,39 @@ pub fn gen_writable_type(next: &AttrProp) -> (TokenStream, TokenStream, TokenStr
     }
 }
 
-pub fn gen_def_struct_len(spec: &Spec, r#struct: &str) -> usize {
+pub fn gen_def_struct_len(spec: &Spec, r#struct: &str) -> (usize, usize) {
     let DefType::Struct { members, .. } = &spec.find_def(r#struct).def else {
         unreachable!("{:?}", r#struct);
     };
 
     let mut len = 0;
-    for m in members {
-        len += match &m.r#type {
-            AttrType::U8 => 1,
-            AttrType::U16 => 2,
-            AttrType::U32 => 4,
-            AttrType::U64 => 8,
-            AttrType::S8 => 1,
-            AttrType::S16 => 2,
-            AttrType::S32 => 4,
-            AttrType::S64 => 8,
-            AttrType::Pad { len: Some(len) } => *len,
+    let mut alignment = 1;
+    for member in members {
+        let (member_len, member_alignment) = match &member.r#type {
+            AttrType::U8 => (1, 1),
+            AttrType::U16 => (2, 2),
+            AttrType::U32 => (4, 4),
+            AttrType::U64 => (8, 8),
+            AttrType::S8 => (1, 1),
+            AttrType::S16 => (2, 2),
+            AttrType::S32 => (4, 4),
+            AttrType::S64 => (8, 8),
+            AttrType::Pad { len: Some(len) } => (*len, 1),
             AttrType::Binary {
                 r#struct: Some(r#struct),
                 ..
             } => gen_def_struct_len(spec, r#struct),
             r#type => unreachable!("{:?}", r#type),
         };
+        len += member_len;
+        alignment = alignment.max(member_alignment);
     }
 
-    len
+    (align_up(len, alignment), alignment)
+}
+
+pub const fn align_up(len: usize, alignment: usize) -> usize {
+    ((len) + alignment - 1) & !(alignment - 1)
 }
 
 pub fn gen_def_struct_uint_writable(
@@ -424,7 +457,7 @@ pub fn gen_def_struct_uint_writable(
 ) {
     let value_name = format_ident!("value");
     let getter_prefix = match attr.name.as_str() {
-        "type" => "r#",
+        "type" | "len" => "get_",
         _ => "",
     };
     let getter_name = format_ident!("{getter_prefix}{}", kebab_to_rust(&attr.name));
@@ -434,14 +467,14 @@ pub fn gen_def_struct_uint_writable(
     doc_attr(attr, |doc| docs.extend(quote!(#[doc = #doc])));
 
     let (rust_type, len) = match &attr.r#type {
-        AttrType::U8 => ("u8", size_of::<u8>()),
-        AttrType::U16 => ("u16", size_of::<u16>()),
-        AttrType::U32 => ("u32", size_of::<u32>()),
-        AttrType::U64 => ("u64", size_of::<u64>()),
-        AttrType::S8 => ("i8", size_of::<i8>()),
-        AttrType::S16 => ("i16", size_of::<i16>()),
-        AttrType::S32 => ("i32", size_of::<i32>()),
-        AttrType::S64 => ("i64", size_of::<i64>()),
+        AttrType::U8 => ("u8", 1),
+        AttrType::U16 => ("u16", 2),
+        AttrType::U32 => ("u32", 4),
+        AttrType::U64 => ("u64", 8),
+        AttrType::S8 => ("i8", 1),
+        AttrType::S16 => ("i16", 2),
+        AttrType::S32 => ("i32", 4),
+        AttrType::S64 => ("i64", 8),
         AttrType::Pad { len: Some(len) } => {
             m.off += len;
             return;
@@ -452,7 +485,11 @@ pub fn gen_def_struct_uint_writable(
         } => {
             let rust_type = writable_type(r#struct);
 
-            let len = gen_def_struct_len(spec, r#struct);
+            let (len, alignment) = gen_def_struct_len(spec, r#struct);
+
+            m.off = align_up(m.off, alignment);
+            m.alignment = m.alignment.max(alignment);
+
             let first = m.off;
             let last = m.off + len;
 
@@ -506,6 +543,9 @@ pub fn gen_def_struct_uint_writable(
 
     let rust_type = format_ident!("{}", rust_type);
 
+    m.alignment = m.alignment.max(len);
+    m.off = align_up(m.off, len);
+
     let first = m.off;
     let last = m.off + len;
 
@@ -542,6 +582,8 @@ pub fn gen_def_struct_uint_writable(
     m.off += len;
 }
 
+// Binary structures are aligned according to C conventions
+// Link: https://www.gnu.org/software/c-intro-and-ref/manual/html_node/Structure-Layout.html
 pub fn gen_writable_struct(
     tokens: &mut TokenStream,
     spec: &Spec,
@@ -553,6 +595,7 @@ pub fn gen_writable_struct(
 
     let mut m = GenImplStruct {
         off: 0,
+        alignment: 0,
         lifetime_needed: false,
         type_name: type_name.clone(),
     };
@@ -565,7 +608,7 @@ pub fn gen_writable_struct(
 
     let fmt_name = format_ident!("fmt");
 
-    let len = m.off;
+    let len = align_up(m.off, m.alignment);
     let doc = format!("Original name: {:?}", name);
     tokens.extend(quote! {
         #[doc = #doc]

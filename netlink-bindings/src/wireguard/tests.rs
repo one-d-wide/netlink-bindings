@@ -10,7 +10,7 @@ fn invalid_header_size() {
 
     dump_hex(payload);
 
-    // NOTE: Reader is configured to panic on error in #[cfg(test)]
+    // NOTE: Decoder is configured to panic on error in #[cfg(test)]
     println!("{:#?}", OpSetDeviceDoRequest::new(payload));
 }
 
@@ -38,6 +38,19 @@ fn invalid_len_of_fixed_payload() {
     println!("{:#?}", OpSetDeviceDoRequest::new(payload));
 }
 
+#[test]
+#[should_panic(expected = "Missing attribute \"PublicKey\" in \"OpSetDeviceDoRequest\"")]
+fn missing_attribute() {
+    let payload = &[0x01, 0x01, 0x00, 0x00];
+
+    dump_hex(payload);
+
+    let iter = OpSetDeviceDoRequest::new(payload);
+    println!("{:#?}", iter);
+
+    iter.get_public_key().ok();
+}
+
 const PUB_KEY: [u8; wireguard::KEY_LEN as usize] = [
     0x8d, 0x9d, 0x60, 0x90, 0x6b, 0xfd, 0xa7, 0x7e, 0x4e, 0x4d, 0x3a, 0x06, 0x9c, 0x2f, 0x2d, 0x3c,
     0xc3, 0x30, 0xe1, 0xeb, 0xfb, 0xce, 0xf6, 0x6a, 0x85, 0xed, 0xd3, 0xe6, 0xc1, 0xf7, 0xf6, 0x73,
@@ -63,29 +76,29 @@ fn wg0_set_2_allowed_addresses() {
 
     dump_hex(payload);
 
-    let req = OpSetDeviceDoRequest::new(payload);
+    let mut req = OpSetDeviceDoRequest::new(payload);
+    for i in 0..payload.len() {
+        println!("{i:02x?}: {:?}", req.find_missing(i));
+    }
     println!("{:#?}", req);
 
     // We should be binary compatible too
-    assert_eq!(req.get_ifname(), Some(c"wg0"));
-    let mut peers = req.get_peers();
+    assert_eq!(req.get_ifname(), Ok(c"wg0"));
+    let mut peers = req.get_peers().unwrap();
     let peer = peers.next().unwrap();
-    assert_eq!(peer.get_public_key(), Some(&PUB_KEY[..]));
-    assert_eq!(
-        peer.get_flags(),
-        Some(WgpeerFlags::ReplaceAllowedips as u32)
-    );
-    let mut ips = peer.get_allowedips();
+    assert_eq!(peer.get_public_key(), Ok(&PUB_KEY[..]));
+    assert_eq!(peer.get_flags(), Ok(WgpeerFlags::ReplaceAllowedips as u32));
+    let mut ips = peer.get_allowedips().unwrap();
 
     let ip = ips.next().unwrap();
-    assert_eq!(ip.get_family(), Some(2));
-    assert_eq!(ip.get_ipaddr(), Some("10.0.0.5".parse().unwrap()));
-    assert_eq!(ip.get_cidr_mask(), Some(32));
+    assert_eq!(ip.get_family(), Ok(2));
+    assert_eq!(ip.get_ipaddr(), Ok("10.0.0.5".parse().unwrap()));
+    assert_eq!(ip.get_cidr_mask(), Ok(32));
 
     let ip = ips.next().unwrap();
-    assert_eq!(ip.get_family(), Some(2));
-    assert_eq!(ip.get_ipaddr(), Some("10.0.0.6".parse().unwrap()));
-    assert_eq!(ip.get_cidr_mask(), Some(32));
+    assert_eq!(ip.get_family(), Ok(2));
+    assert_eq!(ip.get_ipaddr(), Ok("10.0.0.6".parse().unwrap()));
+    assert_eq!(ip.get_cidr_mask(), Ok(32));
 
     assert!(ips.next().is_none());
 

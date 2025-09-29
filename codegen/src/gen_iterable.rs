@@ -19,6 +19,7 @@ pub fn gen_iterable_attrs(
     m: &mut GenImplStruct,
     set: &AttrSet,
     fixed_header: Option<&OpHeader>,
+    superset: Option<&AttrSet>,
 ) {
     let mut variants = TokenStream::new();
 
@@ -74,7 +75,7 @@ pub fn gen_iterable_attrs(
                 let name = gen_sub_message::gen_sub(tokens, spec, ctx, sub, selector_type);
 
                 push(quote! {{
-                    let Some(selector) = self.#get_selector() else { break };
+                    let Ok(selector) = self.#get_selector() else { break };
                     #name::select_with_loc(selector, #buf_name, self.orig_loc)
                 }});
             }
@@ -100,12 +101,12 @@ pub fn gen_iterable_attrs(
     let new_impl = if let Some(fixed_header) = fixed_header {
         let header = writable_type(&fixed_header.name);
         // TODO: verify fixed header length and contents
-        if fixed_header.fill.is_some() {
+        if fixed_header.construct_header.is_some() {
             quote! {
                 pub fn new(buf: &#iterable_lifetime [u8]) -> Iterable<#iterable_lifetime, #type_name #lifetime> {
                     let mut header = #header::new();
                     header.as_mut_slice().clone_from_slice(&buf[..#header::len()]);
-                    Iterable::with_loc(&buf[#header::len()..], buf.as_ptr())
+                    Iterable::with_loc(&buf[#header::len()..], buf.as_ptr() as usize)
                 }
             }
         } else {
@@ -113,7 +114,7 @@ pub fn gen_iterable_attrs(
                 pub fn new(buf: &#iterable_lifetime [u8]) -> (#header, Iterable<#iterable_lifetime, #type_name #lifetime>) {
                     let mut header = #header::new();
                     header.as_mut_slice().clone_from_slice(&buf[..#header::len()]);
-                    (header, Iterable::with_loc(&buf[#header::len()..], buf.as_ptr()))
+                    (header, Iterable::with_loc(&buf[#header::len()..], buf.as_ptr() as usize))
                 }
             }
         }
@@ -125,7 +126,20 @@ pub fn gen_iterable_attrs(
         }
     };
 
-    let attr_from_type = if !type_to_str.is_empty() {
+    let attr_from_type = if type_to_str.is_empty() {
+        quote! {
+            fn attr_from_type(r#type: u16) -> Option<&'static str> {
+                None
+            }
+        }
+    } else if let Some(superset) = superset {
+        let rust_type = format_ident!("{}", kebab_to_type(&superset.name));
+        quote! {
+            fn attr_from_type(r#type: u16) -> Option<&'static str> {
+                #rust_type::attr_from_type(r#type)
+            }
+        }
+    } else {
         quote! {
             fn attr_from_type(r#type: u16) -> Option<&'static str> {
                 let res = match r#type {
@@ -133,12 +147,6 @@ pub fn gen_iterable_attrs(
                     _ => return None,
                 };
                 Some(res)
-            }
-        }
-    } else {
-        quote! {
-            fn attr_from_type(r#type: u16) -> Option<&'static str> {
-                None
             }
         }
     };
@@ -216,7 +224,7 @@ pub fn gen_iterable_parse(attr: &AttrProp) -> TokenStream {
             return quote! { #parse(#buf_name).map(Ipv6Addr::from_bits) };
         }
         AttrType::Binary { .. } if attr.is_ip() => {
-            let parse = format_ident!("parse_addr");
+            let parse = format_ident!("parse_ip");
             return quote! { #parse(#buf_name) };
         }
         AttrType::Binary { .. } if attr.is_sockaddr() => {

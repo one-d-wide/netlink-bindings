@@ -1,12 +1,18 @@
 #![doc = "Route configuration over rtnetlink."]
 #![allow(clippy::all)]
+#![allow(unused_imports)]
+#![allow(unused_assignments)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::consts;
 use crate::utils::*;
-pub const PROTONUM: u8 = 0u8;
+use crate::{NetlinkRequest, Protocol};
+pub const PROTONAME: &CStr = c"rt-route";
+pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"rtm-type\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Clone)]
 pub enum RtmType {
@@ -59,346 +65,315 @@ pub enum RouteAttrs<'a> {
     Flowlabel(u32),
 }
 impl<'a> Iterable<'a, RouteAttrs<'a>> {
-    pub fn get_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Dst(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Dst"))
     }
-    pub fn get_src(&self) -> Option<&'a [u8]> {
+    pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Src(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Src"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Iif(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Iif"))
     }
-    pub fn get_oif(&self) -> Option<u32> {
+    pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Oif(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Oif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Oif"))
     }
-    pub fn get_gateway(&self) -> Option<&'a [u8]> {
+    pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Gateway(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Gateway(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Gateway"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Priority(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Priority"))
     }
-    pub fn get_prefsrc(&self) -> Option<&'a [u8]> {
+    pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Prefsrc(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Prefsrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Prefsrc"))
     }
-    pub fn get_metrics(&self) -> Iterable<'a, Metrics<'a>> {
+    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Metrics(val) = attr {
-                return val;
+            if let RouteAttrs::Metrics(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("RouteAttrs", "Metrics"))
     }
-    pub fn get_multipath(&self) -> Option<&'a [u8]> {
+    pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Multipath(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Multipath(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Multipath"))
     }
-    pub fn get_protoinfo(&self) -> Option<&'a [u8]> {
+    pub fn get_protoinfo(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Protoinfo(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Protoinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Protoinfo"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Flow(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Flow"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushRtaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Cacheinfo(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Cacheinfo"))
     }
-    pub fn get_session(&self) -> Option<&'a [u8]> {
+    pub fn get_session(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Session(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Session(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Session"))
     }
-    pub fn get_mp_algo(&self) -> Option<&'a [u8]> {
+    pub fn get_mp_algo(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::MpAlgo(val) = attr {
-                return Some(val);
+            if let RouteAttrs::MpAlgo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "MpAlgo"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Table(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Table"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Mark(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Mark"))
     }
-    pub fn get_mfc_stats(&self) -> Option<&'a [u8]> {
+    pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::MfcStats(val) = attr {
-                return Some(val);
+            if let RouteAttrs::MfcStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "MfcStats"))
     }
-    pub fn get_via(&self) -> Option<&'a [u8]> {
+    pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Via(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Via(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Via"))
     }
-    pub fn get_newdst(&self) -> Option<&'a [u8]> {
+    pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Newdst(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Newdst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Newdst"))
     }
-    pub fn get_pref(&self) -> Option<u8> {
+    pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Pref(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Pref(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Pref"))
     }
-    pub fn get_encap_type(&self) -> Option<u16> {
+    pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::EncapType(val) = attr {
-                return Some(val);
+            if let RouteAttrs::EncapType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "EncapType"))
     }
-    pub fn get_encap(&self) -> Option<&'a [u8]> {
+    pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Encap(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Encap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Encap"))
     }
-    pub fn get_expires(&self) -> Option<u32> {
+    pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Expires(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Expires(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Expires"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Pad(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Pad"))
     }
-    pub fn get_uid(&self) -> Option<u32> {
+    pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Uid(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Uid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Uid"))
     }
-    pub fn get_ttl_propagate(&self) -> Option<u8> {
+    pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::TtlPropagate(val) = attr {
-                return Some(val);
+            if let RouteAttrs::TtlPropagate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "TtlPropagate"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::IpProto(val) = attr {
-                return Some(val);
+            if let RouteAttrs::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "IpProto"))
     }
-    pub fn get_sport(&self) -> Option<u16> {
+    pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Sport(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Sport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Sport"))
     }
-    pub fn get_dport(&self) -> Option<u16> {
+    pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Dport(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Dport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Dport"))
     }
-    pub fn get_nh_id(&self) -> Option<u32> {
+    pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::NhId(val) = attr {
-                return Some(val);
+            if let RouteAttrs::NhId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "NhId"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let RouteAttrs::Flowlabel(val) = attr {
-                return Some(val);
+            if let RouteAttrs::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("RouteAttrs", "Flowlabel"))
     }
 }
 impl<'a> RouteAttrs<'a> {
@@ -671,6 +646,226 @@ impl<'a> std::fmt::Debug for Iterable<'a, RouteAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, RouteAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("RouteAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| RouteAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                RouteAttrs::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Oif(val) => {
+                    if last_off == offset {
+                        stack.push(("Oif", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Gateway(val) => {
+                    if last_off == offset {
+                        stack.push(("Gateway", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Prefsrc(val) => {
+                    if last_off == offset {
+                        stack.push(("Prefsrc", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Metrics(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                RouteAttrs::Multipath(val) => {
+                    if last_off == offset {
+                        stack.push(("Multipath", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Protoinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Protoinfo", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Session(val) => {
+                    if last_off == offset {
+                        stack.push(("Session", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::MpAlgo(val) => {
+                    if last_off == offset {
+                        stack.push(("MpAlgo", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::MfcStats(val) => {
+                    if last_off == offset {
+                        stack.push(("MfcStats", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Via(val) => {
+                    if last_off == offset {
+                        stack.push(("Via", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Newdst(val) => {
+                    if last_off == offset {
+                        stack.push(("Newdst", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Pref(val) => {
+                    if last_off == offset {
+                        stack.push(("Pref", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::EncapType(val) => {
+                    if last_off == offset {
+                        stack.push(("EncapType", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Encap(val) => {
+                    if last_off == offset {
+                        stack.push(("Encap", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Expires(val) => {
+                    if last_off == offset {
+                        stack.push(("Expires", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Uid(val) => {
+                    if last_off == offset {
+                        stack.push(("Uid", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::TtlPropagate(val) => {
+                    if last_off == offset {
+                        stack.push(("TtlPropagate", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Sport(val) => {
+                    if last_off == offset {
+                        stack.push(("Sport", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Dport(val) => {
+                    if last_off == offset {
+                        stack.push(("Dport", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::NhId(val) => {
+                    if last_off == offset {
+                        stack.push(("NhId", last_off));
+                        break;
+                    }
+                }
+                RouteAttrs::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("RouteAttrs", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Original name: \"metrics\""]
 #[derive(Clone)]
 pub enum Metrics<'a> {
@@ -693,192 +888,175 @@ pub enum Metrics<'a> {
     FastopenNoCookie(u32),
 }
 impl<'a> Iterable<'a, Metrics<'a>> {
-    pub fn get_lock(&self) -> Option<u32> {
+    pub fn get_lock(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Lock(val) = attr {
-                return Some(val);
+            if let Metrics::Lock(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Lock"))
     }
-    pub fn get_mtu(&self) -> Option<u32> {
+    pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Mtu(val) = attr {
-                return Some(val);
+            if let Metrics::Mtu(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Mtu"))
     }
-    pub fn get_window(&self) -> Option<u32> {
+    pub fn get_window(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Window(val) = attr {
-                return Some(val);
+            if let Metrics::Window(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Window"))
     }
-    pub fn get_rtt(&self) -> Option<u32> {
+    pub fn get_rtt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Rtt(val) = attr {
-                return Some(val);
+            if let Metrics::Rtt(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Rtt"))
     }
-    pub fn get_rttvar(&self) -> Option<u32> {
+    pub fn get_rttvar(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Rttvar(val) = attr {
-                return Some(val);
+            if let Metrics::Rttvar(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Rttvar"))
     }
-    pub fn get_ssthresh(&self) -> Option<u32> {
+    pub fn get_ssthresh(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Ssthresh(val) = attr {
-                return Some(val);
+            if let Metrics::Ssthresh(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Ssthresh"))
     }
-    pub fn get_cwnd(&self) -> Option<u32> {
+    pub fn get_cwnd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Cwnd(val) = attr {
-                return Some(val);
+            if let Metrics::Cwnd(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Cwnd"))
     }
-    pub fn get_advmss(&self) -> Option<u32> {
+    pub fn get_advmss(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Advmss(val) = attr {
-                return Some(val);
+            if let Metrics::Advmss(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Advmss"))
     }
-    pub fn get_reordering(&self) -> Option<u32> {
+    pub fn get_reordering(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Reordering(val) = attr {
-                return Some(val);
+            if let Metrics::Reordering(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Reordering"))
     }
-    pub fn get_hoplimit(&self) -> Option<u32> {
+    pub fn get_hoplimit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Hoplimit(val) = attr {
-                return Some(val);
+            if let Metrics::Hoplimit(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Hoplimit"))
     }
-    pub fn get_initcwnd(&self) -> Option<u32> {
+    pub fn get_initcwnd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Initcwnd(val) = attr {
-                return Some(val);
+            if let Metrics::Initcwnd(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Initcwnd"))
     }
-    pub fn get_features(&self) -> Option<u32> {
+    pub fn get_features(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Features(val) = attr {
-                return Some(val);
+            if let Metrics::Features(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Features"))
     }
-    pub fn get_rto_min(&self) -> Option<u32> {
+    pub fn get_rto_min(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::RtoMin(val) = attr {
-                return Some(val);
+            if let Metrics::RtoMin(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "RtoMin"))
     }
-    pub fn get_initrwnd(&self) -> Option<u32> {
+    pub fn get_initrwnd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Initrwnd(val) = attr {
-                return Some(val);
+            if let Metrics::Initrwnd(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Initrwnd"))
     }
-    pub fn get_quickack(&self) -> Option<u32> {
+    pub fn get_quickack(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::Quickack(val) = attr {
-                return Some(val);
+            if let Metrics::Quickack(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "Quickack"))
     }
-    pub fn get_cc_algo(&self) -> Option<&'a CStr> {
+    pub fn get_cc_algo(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::CcAlgo(val) = attr {
-                return Some(val);
+            if let Metrics::CcAlgo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "CcAlgo"))
     }
-    pub fn get_fastopen_no_cookie(&self) -> Option<u32> {
+    pub fn get_fastopen_no_cookie(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let Metrics::FastopenNoCookie(val) = attr {
-                return Some(val);
+            if let Metrics::FastopenNoCookie(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("Metrics", "FastopenNoCookie"))
     }
 }
 impl<'a> Metrics<'a> {
@@ -1052,6 +1230,138 @@ impl<'a> std::fmt::Debug for Iterable<'a, Metrics<'a>> {
             };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, Metrics<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("Metrics", offset));
+            return (stack, missing_type.and_then(|t| Metrics::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                Metrics::Lock(val) => {
+                    if last_off == offset {
+                        stack.push(("Lock", last_off));
+                        break;
+                    }
+                }
+                Metrics::Mtu(val) => {
+                    if last_off == offset {
+                        stack.push(("Mtu", last_off));
+                        break;
+                    }
+                }
+                Metrics::Window(val) => {
+                    if last_off == offset {
+                        stack.push(("Window", last_off));
+                        break;
+                    }
+                }
+                Metrics::Rtt(val) => {
+                    if last_off == offset {
+                        stack.push(("Rtt", last_off));
+                        break;
+                    }
+                }
+                Metrics::Rttvar(val) => {
+                    if last_off == offset {
+                        stack.push(("Rttvar", last_off));
+                        break;
+                    }
+                }
+                Metrics::Ssthresh(val) => {
+                    if last_off == offset {
+                        stack.push(("Ssthresh", last_off));
+                        break;
+                    }
+                }
+                Metrics::Cwnd(val) => {
+                    if last_off == offset {
+                        stack.push(("Cwnd", last_off));
+                        break;
+                    }
+                }
+                Metrics::Advmss(val) => {
+                    if last_off == offset {
+                        stack.push(("Advmss", last_off));
+                        break;
+                    }
+                }
+                Metrics::Reordering(val) => {
+                    if last_off == offset {
+                        stack.push(("Reordering", last_off));
+                        break;
+                    }
+                }
+                Metrics::Hoplimit(val) => {
+                    if last_off == offset {
+                        stack.push(("Hoplimit", last_off));
+                        break;
+                    }
+                }
+                Metrics::Initcwnd(val) => {
+                    if last_off == offset {
+                        stack.push(("Initcwnd", last_off));
+                        break;
+                    }
+                }
+                Metrics::Features(val) => {
+                    if last_off == offset {
+                        stack.push(("Features", last_off));
+                        break;
+                    }
+                }
+                Metrics::RtoMin(val) => {
+                    if last_off == offset {
+                        stack.push(("RtoMin", last_off));
+                        break;
+                    }
+                }
+                Metrics::Initrwnd(val) => {
+                    if last_off == offset {
+                        stack.push(("Initrwnd", last_off));
+                        break;
+                    }
+                }
+                Metrics::Quickack(val) => {
+                    if last_off == offset {
+                        stack.push(("Quickack", last_off));
+                        break;
+                    }
+                }
+                Metrics::CcAlgo(val) => {
+                    if last_off == offset {
+                        stack.push(("CcAlgo", last_off));
+                        break;
+                    }
+                }
+                Metrics::FastopenNoCookie(val) => {
+                    if last_off == offset {
+                        stack.push(("FastopenNoCookie", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("Metrics", cur));
+        }
+        (stack, None)
     }
 }
 pub struct PushRouteAttrs<Prev: Rec> {
@@ -1351,6 +1661,12 @@ impl<Prev: Rec> PushMetrics<Prev> {
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    pub fn push_cc_algo_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 16u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     pub fn push_fastopen_no_cookie(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 17u16, 4 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
@@ -1552,11 +1868,17 @@ impl<Prev: Rec> Rec for PushOpGetrouteDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetrouteDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1576,7 +1898,7 @@ impl<Prev: Rec> Drop for PushOpGetrouteDumpRequest<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"OpGetrouteDumpRequest\""]
+#[doc = "Original name: \"op-getroute-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetrouteDumpRequest {}
 impl<'a> Iterable<'a, OpGetrouteDumpRequest> {}
@@ -1588,45 +1910,11 @@ impl OpGetrouteDumpRequest {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetrouteDumpRequest> {
@@ -1670,6 +1958,24 @@ impl std::fmt::Debug for Iterable<'_, OpGetrouteDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetrouteDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpGetrouteDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetrouteDumpRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -1682,11 +1988,17 @@ impl<Prev: Rec> Rec for PushOpGetrouteDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetrouteDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1848,7 +2160,7 @@ impl<Prev: Rec> Drop for PushOpGetrouteDumpReply<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"OpGetrouteDumpReply\""]
+#[doc = "Original name: \"op-getroute-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetrouteDumpReply<'a> {
     Dst(&'a [u8]),
@@ -1881,313 +2193,285 @@ pub enum OpGetrouteDumpReply<'a> {
     Flowlabel(u32),
 }
 impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
-    pub fn get_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Dst(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Dst"))
     }
-    pub fn get_src(&self) -> Option<&'a [u8]> {
+    pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Src(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Src"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Iif(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Iif"))
     }
-    pub fn get_oif(&self) -> Option<u32> {
+    pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Oif(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Oif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Oif"))
     }
-    pub fn get_gateway(&self) -> Option<&'a [u8]> {
+    pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Gateway(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Gateway(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Gateway"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Priority(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Priority"))
     }
-    pub fn get_prefsrc(&self) -> Option<&'a [u8]> {
+    pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Prefsrc(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Prefsrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Prefsrc"))
     }
-    pub fn get_metrics(&self) -> Iterable<'a, Metrics<'a>> {
+    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Metrics(val) = attr {
-                return val;
+            if let OpGetrouteDumpReply::Metrics(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetrouteDumpReply", "Metrics"))
     }
-    pub fn get_multipath(&self) -> Option<&'a [u8]> {
+    pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Multipath(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Multipath(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Multipath"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Flow(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Flow"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushRtaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Cacheinfo"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Table(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Table"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Mark(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Mark"))
     }
-    pub fn get_mfc_stats(&self) -> Option<&'a [u8]> {
+    pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::MfcStats(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::MfcStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "MfcStats"))
     }
-    pub fn get_via(&self) -> Option<&'a [u8]> {
+    pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Via(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Via(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Via"))
     }
-    pub fn get_newdst(&self) -> Option<&'a [u8]> {
+    pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Newdst(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Newdst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Newdst"))
     }
-    pub fn get_pref(&self) -> Option<u8> {
+    pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Pref(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Pref(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Pref"))
     }
-    pub fn get_encap_type(&self) -> Option<u16> {
+    pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::EncapType(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::EncapType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "EncapType"))
     }
-    pub fn get_encap(&self) -> Option<&'a [u8]> {
+    pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Encap(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Encap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Encap"))
     }
-    pub fn get_expires(&self) -> Option<u32> {
+    pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Expires(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Expires(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Expires"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Pad(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Pad"))
     }
-    pub fn get_uid(&self) -> Option<u32> {
+    pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Uid(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Uid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Uid"))
     }
-    pub fn get_ttl_propagate(&self) -> Option<u8> {
+    pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::TtlPropagate(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::TtlPropagate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "TtlPropagate"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::IpProto(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "IpProto"))
     }
-    pub fn get_sport(&self) -> Option<u16> {
+    pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Sport(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Sport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Sport"))
     }
-    pub fn get_dport(&self) -> Option<u16> {
+    pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Dport(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Dport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Dport"))
     }
-    pub fn get_nh_id(&self) -> Option<u32> {
+    pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::NhId(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::NhId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "NhId"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDumpReply::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpGetrouteDumpReply::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDumpReply", "Flowlabel"))
     }
 }
 impl<'a> OpGetrouteDumpReply<'a> {
@@ -2198,45 +2482,11 @@ impl<'a> OpGetrouteDumpReply<'a> {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetrouteDumpReply<'a>> {
@@ -2449,6 +2699,250 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDumpReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpGetrouteDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetrouteDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetrouteDumpReply::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Oif(val) => {
+                    if last_off == offset {
+                        stack.push(("Oif", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Gateway(val) => {
+                    if last_off == offset {
+                        stack.push(("Gateway", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Prefsrc(val) => {
+                    if last_off == offset {
+                        stack.push(("Prefsrc", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Metrics(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Multipath(val) => {
+                    if last_off == offset {
+                        stack.push(("Multipath", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::MfcStats(val) => {
+                    if last_off == offset {
+                        stack.push(("MfcStats", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Via(val) => {
+                    if last_off == offset {
+                        stack.push(("Via", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Newdst(val) => {
+                    if last_off == offset {
+                        stack.push(("Newdst", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Pref(val) => {
+                    if last_off == offset {
+                        stack.push(("Pref", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::EncapType(val) => {
+                    if last_off == offset {
+                        stack.push(("EncapType", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Encap(val) => {
+                    if last_off == offset {
+                        stack.push(("Encap", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Expires(val) => {
+                    if last_off == offset {
+                        stack.push(("Expires", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Uid(val) => {
+                    if last_off == offset {
+                        stack.push(("Uid", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::TtlPropagate(val) => {
+                    if last_off == offset {
+                        stack.push(("TtlPropagate", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Sport(val) => {
+                    if last_off == offset {
+                        stack.push(("Sport", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Dport(val) => {
+                    if last_off == offset {
+                        stack.push(("Dport", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::NhId(val) => {
+                    if last_off == offset {
+                        stack.push(("NhId", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDumpReply::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetrouteDumpReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetrouteDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetrouteDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushRtmsg) -> Self {
+        PushOpGetrouteDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetrouteDumpRequest<&mut Vec<u8>> {
+        PushOpGetrouteDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetrouteDumpRequest<'_> {
+    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpGetrouteDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 26u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetrouteDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetrouteDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -2461,11 +2955,17 @@ impl<Prev: Rec> Rec for PushOpGetrouteDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetrouteDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -2535,7 +3035,7 @@ impl<Prev: Rec> Drop for PushOpGetrouteDoRequest<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"OpGetrouteDoRequest\""]
+#[doc = "Original name: \"op-getroute-do-request\""]
 #[derive(Clone)]
 pub enum OpGetrouteDoRequest<'a> {
     Dst(&'a [u8]),
@@ -2550,115 +3050,105 @@ pub enum OpGetrouteDoRequest<'a> {
     Flowlabel(u32),
 }
 impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
-    pub fn get_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Dst(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Dst"))
     }
-    pub fn get_src(&self) -> Option<&'a [u8]> {
+    pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Src(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Src"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Iif(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Iif"))
     }
-    pub fn get_oif(&self) -> Option<u32> {
+    pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Oif(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Oif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Oif"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Mark(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Mark"))
     }
-    pub fn get_uid(&self) -> Option<u32> {
+    pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Uid(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Uid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Uid"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::IpProto(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "IpProto"))
     }
-    pub fn get_sport(&self) -> Option<u16> {
+    pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Sport(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Sport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Sport"))
     }
-    pub fn get_dport(&self) -> Option<u16> {
+    pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Dport(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Dport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Dport"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoRequest::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoRequest::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoRequest", "Flowlabel"))
     }
 }
 impl<'a> OpGetrouteDoRequest<'a> {
@@ -2669,45 +3159,11 @@ impl<'a> OpGetrouteDoRequest<'a> {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetrouteDoRequest<'a>> {
@@ -2812,6 +3268,99 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpGetrouteDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetrouteDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetrouteDoRequest::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Oif(val) => {
+                    if last_off == offset {
+                        stack.push(("Oif", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Uid(val) => {
+                    if last_off == offset {
+                        stack.push(("Uid", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Sport(val) => {
+                    if last_off == offset {
+                        stack.push(("Sport", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Dport(val) => {
+                    if last_off == offset {
+                        stack.push(("Dport", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoRequest::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetrouteDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -2824,11 +3373,17 @@ impl<Prev: Rec> Rec for PushOpGetrouteDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetrouteDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -2990,7 +3545,7 @@ impl<Prev: Rec> Drop for PushOpGetrouteDoReply<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"OpGetrouteDoReply\""]
+#[doc = "Original name: \"op-getroute-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetrouteDoReply<'a> {
     Dst(&'a [u8]),
@@ -3023,313 +3578,285 @@ pub enum OpGetrouteDoReply<'a> {
     Flowlabel(u32),
 }
 impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
-    pub fn get_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Dst(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Dst"))
     }
-    pub fn get_src(&self) -> Option<&'a [u8]> {
+    pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Src(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Src"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Iif(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Iif"))
     }
-    pub fn get_oif(&self) -> Option<u32> {
+    pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Oif(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Oif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Oif"))
     }
-    pub fn get_gateway(&self) -> Option<&'a [u8]> {
+    pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Gateway(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Gateway(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Gateway"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Priority(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Priority"))
     }
-    pub fn get_prefsrc(&self) -> Option<&'a [u8]> {
+    pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Prefsrc(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Prefsrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Prefsrc"))
     }
-    pub fn get_metrics(&self) -> Iterable<'a, Metrics<'a>> {
+    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Metrics(val) = attr {
-                return val;
+            if let OpGetrouteDoReply::Metrics(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpGetrouteDoReply", "Metrics"))
     }
-    pub fn get_multipath(&self) -> Option<&'a [u8]> {
+    pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Multipath(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Multipath(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Multipath"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Flow(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Flow"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushRtaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Cacheinfo"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Table(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Table"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Mark(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Mark"))
     }
-    pub fn get_mfc_stats(&self) -> Option<&'a [u8]> {
+    pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::MfcStats(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::MfcStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "MfcStats"))
     }
-    pub fn get_via(&self) -> Option<&'a [u8]> {
+    pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Via(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Via(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Via"))
     }
-    pub fn get_newdst(&self) -> Option<&'a [u8]> {
+    pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Newdst(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Newdst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Newdst"))
     }
-    pub fn get_pref(&self) -> Option<u8> {
+    pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Pref(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Pref(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Pref"))
     }
-    pub fn get_encap_type(&self) -> Option<u16> {
+    pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::EncapType(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::EncapType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "EncapType"))
     }
-    pub fn get_encap(&self) -> Option<&'a [u8]> {
+    pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Encap(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Encap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Encap"))
     }
-    pub fn get_expires(&self) -> Option<u32> {
+    pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Expires(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Expires(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Expires"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Pad(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Pad"))
     }
-    pub fn get_uid(&self) -> Option<u32> {
+    pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Uid(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Uid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Uid"))
     }
-    pub fn get_ttl_propagate(&self) -> Option<u8> {
+    pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::TtlPropagate(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::TtlPropagate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "TtlPropagate"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::IpProto(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "IpProto"))
     }
-    pub fn get_sport(&self) -> Option<u16> {
+    pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Sport(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Sport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Sport"))
     }
-    pub fn get_dport(&self) -> Option<u16> {
+    pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Dport(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Dport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Dport"))
     }
-    pub fn get_nh_id(&self) -> Option<u32> {
+    pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::NhId(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::NhId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "NhId"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetrouteDoReply::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpGetrouteDoReply::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetrouteDoReply", "Flowlabel"))
     }
 }
 impl<'a> OpGetrouteDoReply<'a> {
@@ -3340,45 +3867,11 @@ impl<'a> OpGetrouteDoReply<'a> {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetrouteDoReply<'a>> {
@@ -3591,6 +4084,248 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDoReply<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpGetrouteDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetrouteDoReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetrouteDoReply::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Oif(val) => {
+                    if last_off == offset {
+                        stack.push(("Oif", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Gateway(val) => {
+                    if last_off == offset {
+                        stack.push(("Gateway", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Prefsrc(val) => {
+                    if last_off == offset {
+                        stack.push(("Prefsrc", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Metrics(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Multipath(val) => {
+                    if last_off == offset {
+                        stack.push(("Multipath", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::MfcStats(val) => {
+                    if last_off == offset {
+                        stack.push(("MfcStats", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Via(val) => {
+                    if last_off == offset {
+                        stack.push(("Via", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Newdst(val) => {
+                    if last_off == offset {
+                        stack.push(("Newdst", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Pref(val) => {
+                    if last_off == offset {
+                        stack.push(("Pref", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::EncapType(val) => {
+                    if last_off == offset {
+                        stack.push(("EncapType", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Encap(val) => {
+                    if last_off == offset {
+                        stack.push(("Encap", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Expires(val) => {
+                    if last_off == offset {
+                        stack.push(("Expires", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Uid(val) => {
+                    if last_off == offset {
+                        stack.push(("Uid", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::TtlPropagate(val) => {
+                    if last_off == offset {
+                        stack.push(("TtlPropagate", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Sport(val) => {
+                    if last_off == offset {
+                        stack.push(("Sport", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Dport(val) => {
+                    if last_off == offset {
+                        stack.push(("Dport", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::NhId(val) => {
+                    if last_off == offset {
+                        stack.push(("NhId", last_off));
+                        break;
+                    }
+                }
+                OpGetrouteDoReply::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetrouteDoReply", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetrouteDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetrouteDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushRtmsg) -> Self {
+        PushOpGetrouteDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpGetrouteDoRequest<&mut Vec<u8>> {
+        PushOpGetrouteDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetrouteDoRequest<'_> {
+    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpGetrouteDoReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 26u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetrouteDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetrouteDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Create a new route"]
 pub struct PushOpNewrouteDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -3603,11 +4338,17 @@ impl<Prev: Rec> Rec for PushOpNewrouteDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewrouteDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -3769,7 +4510,7 @@ impl<Prev: Rec> Drop for PushOpNewrouteDoRequest<Prev> {
     }
 }
 #[doc = "Create a new route"]
-#[doc = "Original name: \"OpNewrouteDoRequest\""]
+#[doc = "Original name: \"op-newroute-do-request\""]
 #[derive(Clone)]
 pub enum OpNewrouteDoRequest<'a> {
     Dst(&'a [u8]),
@@ -3802,313 +4543,285 @@ pub enum OpNewrouteDoRequest<'a> {
     Flowlabel(u32),
 }
 impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
-    pub fn get_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Dst(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Dst"))
     }
-    pub fn get_src(&self) -> Option<&'a [u8]> {
+    pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Src(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Src"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Iif(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Iif"))
     }
-    pub fn get_oif(&self) -> Option<u32> {
+    pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Oif(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Oif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Oif"))
     }
-    pub fn get_gateway(&self) -> Option<&'a [u8]> {
+    pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Gateway(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Gateway(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Gateway"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Priority(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Priority"))
     }
-    pub fn get_prefsrc(&self) -> Option<&'a [u8]> {
+    pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Prefsrc(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Prefsrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Prefsrc"))
     }
-    pub fn get_metrics(&self) -> Iterable<'a, Metrics<'a>> {
+    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Metrics(val) = attr {
-                return val;
+            if let OpNewrouteDoRequest::Metrics(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpNewrouteDoRequest", "Metrics"))
     }
-    pub fn get_multipath(&self) -> Option<&'a [u8]> {
+    pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Multipath(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Multipath(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Multipath"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Flow(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Flow"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushRtaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Cacheinfo"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Table(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Table"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Mark(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Mark"))
     }
-    pub fn get_mfc_stats(&self) -> Option<&'a [u8]> {
+    pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::MfcStats(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::MfcStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "MfcStats"))
     }
-    pub fn get_via(&self) -> Option<&'a [u8]> {
+    pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Via(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Via(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Via"))
     }
-    pub fn get_newdst(&self) -> Option<&'a [u8]> {
+    pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Newdst(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Newdst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Newdst"))
     }
-    pub fn get_pref(&self) -> Option<u8> {
+    pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Pref(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Pref(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Pref"))
     }
-    pub fn get_encap_type(&self) -> Option<u16> {
+    pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::EncapType(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::EncapType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "EncapType"))
     }
-    pub fn get_encap(&self) -> Option<&'a [u8]> {
+    pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Encap(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Encap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Encap"))
     }
-    pub fn get_expires(&self) -> Option<u32> {
+    pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Expires(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Expires(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Expires"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Pad(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Pad"))
     }
-    pub fn get_uid(&self) -> Option<u32> {
+    pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Uid(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Uid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Uid"))
     }
-    pub fn get_ttl_propagate(&self) -> Option<u8> {
+    pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::TtlPropagate(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::TtlPropagate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "TtlPropagate"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::IpProto(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "IpProto"))
     }
-    pub fn get_sport(&self) -> Option<u16> {
+    pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Sport(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Sport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Sport"))
     }
-    pub fn get_dport(&self) -> Option<u16> {
+    pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Dport(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Dport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Dport"))
     }
-    pub fn get_nh_id(&self) -> Option<u32> {
+    pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::NhId(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::NhId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "NhId"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewrouteDoRequest::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpNewrouteDoRequest::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewrouteDoRequest", "Flowlabel"))
     }
 }
 impl<'a> OpNewrouteDoRequest<'a> {
@@ -4119,45 +4832,11 @@ impl<'a> OpNewrouteDoRequest<'a> {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewrouteDoRequest<'a>> {
@@ -4370,6 +5049,208 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewrouteDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpNewrouteDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewrouteDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewrouteDoRequest::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Oif(val) => {
+                    if last_off == offset {
+                        stack.push(("Oif", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Gateway(val) => {
+                    if last_off == offset {
+                        stack.push(("Gateway", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Prefsrc(val) => {
+                    if last_off == offset {
+                        stack.push(("Prefsrc", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Metrics(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Multipath(val) => {
+                    if last_off == offset {
+                        stack.push(("Multipath", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::MfcStats(val) => {
+                    if last_off == offset {
+                        stack.push(("MfcStats", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Via(val) => {
+                    if last_off == offset {
+                        stack.push(("Via", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Newdst(val) => {
+                    if last_off == offset {
+                        stack.push(("Newdst", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Pref(val) => {
+                    if last_off == offset {
+                        stack.push(("Pref", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::EncapType(val) => {
+                    if last_off == offset {
+                        stack.push(("EncapType", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Encap(val) => {
+                    if last_off == offset {
+                        stack.push(("Encap", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Expires(val) => {
+                    if last_off == offset {
+                        stack.push(("Expires", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Uid(val) => {
+                    if last_off == offset {
+                        stack.push(("Uid", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::TtlPropagate(val) => {
+                    if last_off == offset {
+                        stack.push(("TtlPropagate", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Sport(val) => {
+                    if last_off == offset {
+                        stack.push(("Sport", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Dport(val) => {
+                    if last_off == offset {
+                        stack.push(("Dport", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::NhId(val) => {
+                    if last_off == offset {
+                        stack.push(("NhId", last_off));
+                        break;
+                    }
+                }
+                OpNewrouteDoRequest::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewrouteDoRequest", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Create a new route"]
 pub struct PushOpNewrouteDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -4382,11 +5263,17 @@ impl<Prev: Rec> Rec for PushOpNewrouteDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewrouteDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -4406,7 +5293,7 @@ impl<Prev: Rec> Drop for PushOpNewrouteDoReply<Prev> {
     }
 }
 #[doc = "Create a new route"]
-#[doc = "Original name: \"OpNewrouteDoReply\""]
+#[doc = "Original name: \"op-newroute-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewrouteDoReply {}
 impl<'a> Iterable<'a, OpNewrouteDoReply> {}
@@ -4418,45 +5305,11 @@ impl OpNewrouteDoReply {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewrouteDoReply> {
@@ -4500,6 +5353,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewrouteDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewrouteDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpNewrouteDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewrouteDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewrouteDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewrouteDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushRtmsg) -> Self {
+        PushOpNewrouteDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewrouteDoRequest<&mut Vec<u8>> {
+        PushOpNewrouteDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewrouteDoRequest<'_> {
+    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpNewrouteDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 24u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewrouteDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewrouteDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Delete an existing route"]
 pub struct PushOpDelrouteDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -4512,11 +5423,17 @@ impl<Prev: Rec> Rec for PushOpDelrouteDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDelrouteDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -4678,7 +5595,7 @@ impl<Prev: Rec> Drop for PushOpDelrouteDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing route"]
-#[doc = "Original name: \"OpDelrouteDoRequest\""]
+#[doc = "Original name: \"op-delroute-do-request\""]
 #[derive(Clone)]
 pub enum OpDelrouteDoRequest<'a> {
     Dst(&'a [u8]),
@@ -4711,313 +5628,285 @@ pub enum OpDelrouteDoRequest<'a> {
     Flowlabel(u32),
 }
 impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
-    pub fn get_dst(&self) -> Option<&'a [u8]> {
+    pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Dst(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Dst"))
     }
-    pub fn get_src(&self) -> Option<&'a [u8]> {
+    pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Src(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Src"))
     }
-    pub fn get_iif(&self) -> Option<u32> {
+    pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Iif(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Iif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Iif"))
     }
-    pub fn get_oif(&self) -> Option<u32> {
+    pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Oif(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Oif(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Oif"))
     }
-    pub fn get_gateway(&self) -> Option<&'a [u8]> {
+    pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Gateway(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Gateway(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Gateway"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Priority(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Priority"))
     }
-    pub fn get_prefsrc(&self) -> Option<&'a [u8]> {
+    pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Prefsrc(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Prefsrc(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Prefsrc"))
     }
-    pub fn get_metrics(&self) -> Iterable<'a, Metrics<'a>> {
+    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Metrics(val) = attr {
-                return val;
+            if let OpDelrouteDoRequest::Metrics(val) = attr? {
+                return Ok(val);
             }
         }
-        Iterable::new(&[])
+        Err(self.error_missing("OpDelrouteDoRequest", "Metrics"))
     }
-    pub fn get_multipath(&self) -> Option<&'a [u8]> {
+    pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Multipath(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Multipath(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Multipath"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Flow(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Flow"))
     }
-    pub fn get_cacheinfo(&self) -> Option<PushRtaCacheinfo> {
+    pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Cacheinfo(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Cacheinfo(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Cacheinfo"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Table(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Table"))
     }
-    pub fn get_mark(&self) -> Option<u32> {
+    pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Mark(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Mark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Mark"))
     }
-    pub fn get_mfc_stats(&self) -> Option<&'a [u8]> {
+    pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::MfcStats(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::MfcStats(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "MfcStats"))
     }
-    pub fn get_via(&self) -> Option<&'a [u8]> {
+    pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Via(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Via(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Via"))
     }
-    pub fn get_newdst(&self) -> Option<&'a [u8]> {
+    pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Newdst(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Newdst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Newdst"))
     }
-    pub fn get_pref(&self) -> Option<u8> {
+    pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Pref(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Pref(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Pref"))
     }
-    pub fn get_encap_type(&self) -> Option<u16> {
+    pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::EncapType(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::EncapType(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "EncapType"))
     }
-    pub fn get_encap(&self) -> Option<&'a [u8]> {
+    pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Encap(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Encap(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Encap"))
     }
-    pub fn get_expires(&self) -> Option<u32> {
+    pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Expires(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Expires(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Expires"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Pad(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Pad"))
     }
-    pub fn get_uid(&self) -> Option<u32> {
+    pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Uid(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Uid(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Uid"))
     }
-    pub fn get_ttl_propagate(&self) -> Option<u8> {
+    pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::TtlPropagate(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::TtlPropagate(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "TtlPropagate"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::IpProto(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "IpProto"))
     }
-    pub fn get_sport(&self) -> Option<u16> {
+    pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Sport(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Sport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Sport"))
     }
-    pub fn get_dport(&self) -> Option<u16> {
+    pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Dport(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Dport(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Dport"))
     }
-    pub fn get_nh_id(&self) -> Option<u32> {
+    pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::NhId(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::NhId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "NhId"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelrouteDoRequest::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpDelrouteDoRequest::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelrouteDoRequest", "Flowlabel"))
     }
 }
 impl<'a> OpDelrouteDoRequest<'a> {
@@ -5028,45 +5917,11 @@ impl<'a> OpDelrouteDoRequest<'a> {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpDelrouteDoRequest<'a>> {
@@ -5279,6 +6134,208 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelrouteDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpDelrouteDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelrouteDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpDelrouteDoRequest::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Iif(val) => {
+                    if last_off == offset {
+                        stack.push(("Iif", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Oif(val) => {
+                    if last_off == offset {
+                        stack.push(("Oif", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Gateway(val) => {
+                    if last_off == offset {
+                        stack.push(("Gateway", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Prefsrc(val) => {
+                    if last_off == offset {
+                        stack.push(("Prefsrc", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Metrics(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Multipath(val) => {
+                    if last_off == offset {
+                        stack.push(("Multipath", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Cacheinfo(val) => {
+                    if last_off == offset {
+                        stack.push(("Cacheinfo", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Mark(val) => {
+                    if last_off == offset {
+                        stack.push(("Mark", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::MfcStats(val) => {
+                    if last_off == offset {
+                        stack.push(("MfcStats", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Via(val) => {
+                    if last_off == offset {
+                        stack.push(("Via", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Newdst(val) => {
+                    if last_off == offset {
+                        stack.push(("Newdst", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Pref(val) => {
+                    if last_off == offset {
+                        stack.push(("Pref", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::EncapType(val) => {
+                    if last_off == offset {
+                        stack.push(("EncapType", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Encap(val) => {
+                    if last_off == offset {
+                        stack.push(("Encap", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Expires(val) => {
+                    if last_off == offset {
+                        stack.push(("Expires", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Uid(val) => {
+                    if last_off == offset {
+                        stack.push(("Uid", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::TtlPropagate(val) => {
+                    if last_off == offset {
+                        stack.push(("TtlPropagate", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Sport(val) => {
+                    if last_off == offset {
+                        stack.push(("Sport", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Dport(val) => {
+                    if last_off == offset {
+                        stack.push(("Dport", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::NhId(val) => {
+                    if last_off == offset {
+                        stack.push(("NhId", last_off));
+                        break;
+                    }
+                }
+                OpDelrouteDoRequest::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpDelrouteDoRequest", cur));
+        }
+        (stack, missing)
+    }
+}
 #[doc = "Delete an existing route"]
 pub struct PushOpDelrouteDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -5291,11 +6348,17 @@ impl<Prev: Rec> Rec for PushOpDelrouteDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDelrouteDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushRtmsg) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushRtmsg) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -5315,7 +6378,7 @@ impl<Prev: Rec> Drop for PushOpDelrouteDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing route"]
-#[doc = "Original name: \"OpDelrouteDoReply\""]
+#[doc = "Original name: \"op-delroute-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelrouteDoReply {}
 impl<'a> Iterable<'a, OpDelrouteDoReply> {}
@@ -5327,45 +6390,11 @@ impl OpDelrouteDoReply {
             .clone_from_slice(&buf[..PushRtmsg::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iif",
-            4u16 => "Oif",
-            5u16 => "Gateway",
-            6u16 => "Priority",
-            7u16 => "Prefsrc",
-            8u16 => "Metrics",
-            9u16 => "Multipath",
-            10u16 => "Protoinfo",
-            11u16 => "Flow",
-            12u16 => "Cacheinfo",
-            13u16 => "Session",
-            14u16 => "MpAlgo",
-            15u16 => "Table",
-            16u16 => "Mark",
-            17u16 => "MfcStats",
-            18u16 => "Via",
-            19u16 => "Newdst",
-            20u16 => "Pref",
-            21u16 => "EncapType",
-            22u16 => "Encap",
-            23u16 => "Expires",
-            24u16 => "Pad",
-            25u16 => "Uid",
-            26u16 => "TtlPropagate",
-            27u16 => "IpProto",
-            28u16 => "Sport",
-            29u16 => "Dport",
-            30u16 => "NhId",
-            31u16 => "Flowlabel",
-            _ => return None,
-        };
-        Some(res)
+        RouteAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDelrouteDoReply> {
@@ -5407,5 +6436,158 @@ impl std::fmt::Debug for Iterable<'_, OpDelrouteDoReply> {
             match attr {};
         }
         fmt.finish()
+    }
+}
+impl Iterable<'_, OpDelrouteDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushRtmsg::len() {
+            stack.push(("OpDelrouteDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelrouteDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDelrouteDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDelrouteDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushRtmsg) -> Self {
+        PushOpDelrouteDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDelrouteDoRequest<&mut Vec<u8>> {
+        PushOpDelrouteDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDelrouteDoRequest<'_> {
+    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpDelrouteDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 25u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDelrouteDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDelrouteDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
+#[derive(Debug)]
+enum RequestBuf<'buf> {
+    Ref(&'buf mut Vec<u8>),
+    Own(Vec<u8>),
+}
+#[derive(Debug)]
+pub struct Request<'buf> {
+    buf: RequestBuf<'buf>,
+    flags: u16,
+}
+impl Request<'static> {
+    pub fn new() -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(Vec::new()),
+        }
+    }
+    pub fn from_buf(buf: Vec<u8>) -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(buf),
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'buf> Request<'buf> {
+    pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
+        buf.clear();
+        Self {
+            flags: 0,
+            buf: RequestBuf::Ref(buf),
+        }
+    }
+    fn buf(&self) -> &Vec<u8> {
+        match &self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    fn buf_mut(&mut self) -> &mut Vec<u8> {
+        match &mut self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    pub fn set_create(mut self) -> Self {
+        self.flags |= consts::NLM_F_CREATE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    pub fn set_excl(mut self) -> Self {
+        self.flags |= consts::NLM_F_EXCL as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_replace(mut self) -> Self {
+        self.flags |= consts::NLM_F_REPLACE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_change(self) -> Self {
+        self.set_create().set_replace()
+    }
+    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    pub fn set_append(mut self) -> Self {
+        self.flags |= consts::NLM_F_APPEND as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    fn set_dump(mut self) -> Self {
+        self.flags |= consts::NLM_F_DUMP as u16;
+        self
+    }
+    pub fn op_getroute_dump_request(
+        self,
+        header: &PushRtmsg,
+    ) -> RequestOpGetrouteDumpRequest<'buf> {
+        RequestOpGetrouteDumpRequest::new(self, header)
+    }
+    pub fn op_getroute_do_request(self, header: &PushRtmsg) -> RequestOpGetrouteDoRequest<'buf> {
+        RequestOpGetrouteDoRequest::new(self, header)
+    }
+    pub fn op_newroute_do_request(self, header: &PushRtmsg) -> RequestOpNewrouteDoRequest<'buf> {
+        RequestOpNewrouteDoRequest::new(self, header)
+    }
+    pub fn op_delroute_do_request(self, header: &PushRtmsg) -> RequestOpDelrouteDoRequest<'buf> {
+        RequestOpDelrouteDoRequest::new(self, header)
     }
 }

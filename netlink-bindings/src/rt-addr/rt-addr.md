@@ -5,10 +5,14 @@
 
 ```rust
 PushOpNewaddrDoRequest::new(&mut vec)
-  .push_address(val) // &[u8]
+  .push_address(val) // IpAddr
   .push_label(val) // &CStr
-  .push_local(val) // &[u8]
+  .push_label_bytes(val) // &[u8]
+  .push_local(val) // IpAddr
   .push_cacheinfo(val) // PushIfaCacheinfo
+
+  // Associated type: "IfaFlags" (1 bit per enumeration)
+  .push_flags(val) // u32
   ;
 ```
 
@@ -26,8 +30,8 @@ let attrs = OpNewaddrDoReply::new(buf);
 
 ```rust
 PushOpDeladdrDoRequest::new(&mut vec)
-  .push_address(val) // &[u8]
-  .push_local(val) // &[u8]
+  .push_address(val) // IpAddr
+  .push_local(val) // IpAddr
   ;
 ```
 
@@ -53,10 +57,13 @@ PushOpGetaddrDumpRequest::new(&mut vec)
 ```rust
 let attrs = OpGetaddrDumpReply::new(buf);
 
-attrs.get_address(); // &[u8]
+attrs.get_address(); // IpAddr
 attrs.get_label(); // &CStr
-attrs.get_local(); // &[u8]
+attrs.get_local(); // IpAddr
 attrs.get_cacheinfo(); // PushIfaCacheinfo
+
+// Associated type: "IfaFlags" (1 bit per enumeration)
+attrs.get_flags(); // u32
 ```
 
 # Operation "getmulticast"

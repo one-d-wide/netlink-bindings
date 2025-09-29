@@ -52,20 +52,20 @@ gen_parse! {
     parse_le_i128 => from_le_bytes, i128;
 }
 
-pub fn parse_addr_v4(buf: &[u8]) -> Option<Ipv4Addr> {
+pub fn parse_ipv4(buf: &[u8]) -> Option<Ipv4Addr> {
     // TODO: check family
     parse_be_u32(buf).map(Ipv4Addr::from_bits)
 }
 
-pub fn parse_addr_v6(buf: &[u8]) -> Option<Ipv6Addr> {
+pub fn parse_ipv6(buf: &[u8]) -> Option<Ipv6Addr> {
     // TODO: check family
     parse_be_u128(buf).map(Ipv6Addr::from_bits)
 }
 
-pub fn parse_addr(buf: &[u8]) -> Option<IpAddr> {
+pub fn parse_ip(buf: &[u8]) -> Option<IpAddr> {
     match buf.len() {
-        4 => Some(IpAddr::V4(parse_addr_v4(buf).unwrap())),
-        8 => Some(IpAddr::V6(parse_addr_v6(buf).unwrap())),
+        4 => Some(IpAddr::V4(parse_ipv4(buf).unwrap())),
+        16 => Some(IpAddr::V6(parse_ipv6(buf).unwrap())),
         _ => None,
     }
 }
@@ -102,18 +102,18 @@ pub fn parse_sockaddr(buf: &[u8]) -> Option<SocketAddr> {
     }
 }
 
-pub fn encode_ip_v4(buf: &mut Vec<u8>, val: Ipv4Addr) {
+pub fn encode_ipv4(buf: &mut Vec<u8>, val: Ipv4Addr) {
     buf.extend(&val.to_bits().to_be_bytes())
 }
 
-pub fn encode_ip_v6(buf: &mut Vec<u8>, val: Ipv6Addr) {
+pub fn encode_ipv6(buf: &mut Vec<u8>, val: Ipv6Addr) {
     buf.extend(&val.to_bits().to_be_bytes())
 }
 
 pub fn encode_ip(buf: &mut Vec<u8>, val: IpAddr) {
     match val {
-        IpAddr::V4(addr) => encode_ip_v4(buf, addr),
-        IpAddr::V6(addr) => encode_ip_v6(buf, addr),
+        IpAddr::V4(addr) => encode_ipv4(buf, addr),
+        IpAddr::V6(addr) => encode_ipv6(buf, addr),
     }
 }
 

@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{fmt, marker::PhantomData};
 
 pub use crate::primitives::*;
 pub use std::{ffi::CStr, fmt::Debug, iter::Iterator};
@@ -38,9 +38,8 @@ pub fn dump_assert_eq(left: &[u8], right: &[u8]) {
 }
 
 pub struct FormatHex<'a>(pub &'a [u8]);
-
-impl<'a> Debug for FormatHex<'a> {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Debug for FormatHex<'_> {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "\"")?;
         for i in self.0 {
             write!(fmt, "{i:02x}")?
@@ -50,146 +49,72 @@ impl<'a> Debug for FormatHex<'a> {
     }
 }
 
-/// Generic family header. Used in genetlink protocol if spec doesn't specify it's own
-#[derive(Clone)]
-pub struct PushBuiltinNfgenmsg {
-    buf: [u8; 4usize],
-}
-
-impl PushBuiltinNfgenmsg {
-    #[doc = "Create zero-initialized struct"]
-    pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
-    }
-    #[doc = "Copy from contents from other slice. Panics if length is mismatched"]
-    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
-        if other.len() != Self::len() {
-            return None;
-        }
-        let mut buf = [0u8; Self::len()];
-        buf.clone_from_slice(other);
-        Some(Self { buf })
-    }
-    pub fn as_slice(&self) -> &[u8] {
-        &self.buf
-    }
-    pub fn as_mut_slice(&mut self) -> &mut [u8] {
-        &mut self.buf
-    }
-    pub const fn len() -> usize {
-        4usize
-    }
-    pub fn cmd(&self) -> u8 {
-        parse_u8(&self.buf[0usize..1usize]).unwrap()
-    }
-    pub fn set_cmd(&mut self, cmd: u8) {
-        self.buf[0usize..1usize].copy_from_slice(&cmd.to_ne_bytes())
-    }
-    pub fn set_version(&mut self, version: u8) {
-        self.buf[1usize..2usize].copy_from_slice(&version.to_ne_bytes())
-    }
-    pub fn version(&self) -> u8 {
-        parse_u8(&self.buf[1usize..2usize]).unwrap()
-    }
-    pub fn reserved(&self) -> u16 {
-        parse_be_u16(&self.buf[2usize..4usize]).unwrap()
-    }
-    pub fn set_reserved(&mut self, reserved: u16) {
-        self.buf[2usize..4usize].copy_from_slice(&reserved.to_be_bytes())
+pub struct DisplayAsDebug<T>(T);
+impl<T: fmt::Display> fmt::Debug for DisplayAsDebug<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
-impl Debug for PushBuiltinNfgenmsg {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fmt.debug_struct("PushBuiltinNfgenmsg")
-            .field("cmd", &self.cmd())
-            .field("version", &self.version())
-            .field("reserved", &self.reserved())
-            .finish()
-    }
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ErrorReason {
+    /// Only used in `.get_<attr>()` methods
+    AttrMissing,
+    /// Value of the attribute can't be parsed
+    ParsingError,
+    /// Found attribute of type not mentioned in the specification
+    UnknownAttr,
 }
 
-#[derive(Clone)]
-pub struct PushBuiltinBitfield32 {
-    buf: [u8; 8usize],
-}
-
-impl PushBuiltinBitfield32 {
-    #[doc = "Create zero-initialized struct"]
-    pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
-    }
-    #[doc = "Copy from contents from other slice. Panics if length is mismatched"]
-    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
-        if other.len() != Self::len() {
-            return None;
-        }
-        let mut buf = [0u8; Self::len()];
-        buf.clone_from_slice(other);
-        Some(Self { buf })
-    }
-    pub fn as_slice(&self) -> &[u8] {
-        &self.buf
-    }
-    pub fn as_mut_slice(&mut self) -> &mut [u8] {
-        &mut self.buf
-    }
-    pub const fn len() -> usize {
-        8usize
-    }
-    pub fn value(&self) -> u32 {
-        parse_u32(&self.buf[0usize..4usize]).unwrap()
-    }
-    pub fn set_value(&mut self, value: u32) {
-        self.buf[0usize..4usize].copy_from_slice(&value.to_ne_bytes())
-    }
-    pub fn selector(&self) -> u32 {
-        parse_u32(&self.buf[4usize..8usize]).unwrap()
-    }
-    pub fn set_selector(&mut self, selector: u32) {
-        self.buf[4usize..8usize].copy_from_slice(&selector.to_ne_bytes())
-    }
-}
-
-impl Debug for PushBuiltinBitfield32 {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fmt.debug_struct("PushBuiltinBitfield32")
-            .field("value", &self.value())
-            .field("selector", &self.selector())
-            .finish()
-    }
-}
-
-#[derive(Debug, Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct ErrorContext {
     pub attrs: &'static str,
     pub attr: Option<&'static str>,
     pub offset: usize,
+    pub reason: ErrorReason,
 }
 
 impl std::error::Error for ErrorContext {}
 
-impl std::fmt::Display for ErrorContext {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Error parsing ")?;
-        if let Some(attr) = self.attr {
-            write!(f, "attribute {:?} of {:?}", attr, self.attrs)?;
+impl fmt::Debug for ErrorContext {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ErrorContext")
+            .field("message", &DisplayAsDebug(&self))
+            .field("reason", &self.reason)
+            .field("attrs", &self.attrs)
+            .field("attr", &self.attr)
+            .field("offset", &self.offset)
+            .finish()
+    }
+}
+
+impl fmt::Display for ErrorContext {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let attrs = self.attrs;
+        if matches!(self.reason, ErrorReason::AttrMissing) {
+            let attr = self.attr.unwrap();
+            write!(f, "Missing attribute {attr:?} in {attrs:?}")?;
+            return Ok(());
         } else {
-            write!(f, "header of {:?}", self.attrs)?;
+            write!(f, "Error parsing ")?;
+            if let Some(attr) = self.attr {
+                write!(f, "attribute {attr:?} of {attrs:?}")?;
+            } else {
+                write!(f, "header of {attrs:?}")?;
+                if matches!(self.reason, ErrorReason::UnknownAttr) {
+                    write!(f, " (unknown attribute)")?;
+                }
+            }
         }
         write!(f, " at offset {}", self.offset)?;
         Ok(())
     }
 }
 
-pub struct FlattenErrorContext<T: Debug>(pub Result<T, ErrorContext>);
+pub struct FlattenErrorContext<T: fmt::Debug>(pub Result<T, ErrorContext>);
 
-impl<T: Debug> Debug for FlattenErrorContext<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<T: Debug> fmt::Debug for FlattenErrorContext<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.0 {
             Ok(ok) => ok.fmt(f),
             Err(err) => {
@@ -230,7 +155,7 @@ pub fn push_header(buf: &mut Vec<u8>, r#type: u16, len: u16) -> usize {
 }
 
 /// Returns header offset
-/// Kernel doesn't really check nor set byteorder bit it correctly
+/// The kernel doesn't really check byteorder bit nor set it correctly
 fn push_header_type(buf: &mut Vec<u8>, mut r#type: u16, len: u16, is_nested: bool) -> usize {
     align(buf);
 
@@ -305,23 +230,63 @@ pub struct Iterable<'a, AttrSet> {
     pub(crate) buf: &'a [u8],
     /// Current position of the iterable in the [`buf`]
     pub(crate) pos: usize,
-    /// Pointer to beginning of first slice in the chain.
-    /// Only used in calculating byte offset for error context
-    pub(crate) orig_loc: *const u8,
+    /// Pointer to the beginning of the first slice in the chain.
+    /// Only used in calculating byte offset for error context.
+    pub(crate) orig_loc: usize,
     pub(crate) phantom: PhantomData<AttrSet>,
+}
+
+impl<AttrSet: Clone> Copy for Iterable<'_, AttrSet> {}
+
+impl<'a, AttrSet> Default for Iterable<'a, AttrSet> {
+    fn default() -> Self {
+        Self {
+            buf: &[],
+            pos: 0,
+            orig_loc: 0,
+            phantom: PhantomData,
+        }
+    }
 }
 
 impl<'a, AttrSet> Iterable<'a, AttrSet> {
     pub(crate) fn new(buf: &'a [u8]) -> Self {
-        Iterable::with_loc(buf, buf.as_ptr())
+        Iterable::with_loc(buf, buf.as_ptr() as usize)
     }
 
-    pub(crate) fn with_loc(buf: &'a [u8], orig_loc: *const u8) -> Self {
+    pub(crate) fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
         Iterable {
             buf,
             pos: 0,
-            orig_loc,
+            orig_loc: orig_loc,
             phantom: PhantomData,
+        }
+    }
+
+    pub(crate) fn calc_offset(&self, loc: usize) -> usize {
+        let orig = self.orig_loc;
+        let loc = loc;
+
+        if orig <= loc && loc - orig <= u16::MAX as usize {
+            loc - orig
+        } else {
+            0
+        }
+    }
+
+    #[cold]
+    pub(crate) fn error_missing(&self, attrs: &'static str, attr: &'static str) -> ErrorContext {
+        let ctx = ErrorContext {
+            attrs,
+            attr: Some(attr),
+            offset: self.calc_offset(self.buf.as_ptr() as usize),
+            reason: ErrorReason::AttrMissing,
+        };
+
+        if cfg!(test) {
+            panic!("{ctx}")
+        } else {
+            ctx
         }
     }
 
@@ -334,19 +299,15 @@ impl<'a, AttrSet> Iterable<'a, AttrSet> {
     ) -> ErrorContext {
         self.buf = &[];
 
-        let orig = self.orig_loc as usize;
-        let loc = loc as usize;
-
-        let offset = if orig <= loc && loc - orig <= u16::MAX as usize {
-            loc - orig
-        } else {
-            0
-        };
-
         let ctx = ErrorContext {
             attrs,
             attr,
-            offset,
+            offset: self.calc_offset(loc as usize),
+            reason: if attr.is_some() {
+                ErrorReason::ParsingError
+            } else {
+                ErrorReason::UnknownAttr
+            },
         };
 
         if cfg!(test) {

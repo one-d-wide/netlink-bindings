@@ -1,0 +1,148 @@
+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
+---
+name: builtin
+protocol: netlink-raw
+
+doc: |
+  Auxilary types not porovided by any particular family
+
+definitions:
+  -
+    name: builtin-nfgenmsg
+    type: struct
+    doc: Generic family header
+    members:
+      -
+        name: cmd
+        type: u8
+      -
+        name: version
+        type: u8
+      -
+        name: reserved
+        type: u16
+  -
+    name: builtin-bitfield32
+    type: struct
+    doc: Wrapper for bitfield32 type
+    members:
+      -
+        name: value
+        type: u32
+      -
+        name: selector
+        type: u32
+  -
+    name: nlmsghdr
+    type: struct
+    doc: Header of a Netlink message
+    members:
+      - 
+        name: len
+        type: u32
+      - 
+        name: type
+        type: u16
+      - 
+        name: flags
+        type: u16
+      - 
+        name: seq
+        type: u32
+      - 
+        name: pid
+        type: u32
+
+attribute-sets:
+  -
+    name: nlmsgerr-attrs
+    doc: nlmsgerr attributes
+    attributes:
+      -
+        name: unused
+        type: unused
+        value: 0
+      -
+        name: msg
+        type: string
+        doc: error message string (string)
+      -
+        name: offset
+        type: u32
+        doc: offset of the invalid attribute in the original message, counting from the beginning of the header (u32)
+      -
+        name: cookie
+        type: binary
+        doc: arbitrary subsystem specific cookie to be used - in the success case - to identify a created object or operation or similar (binary)
+      -
+        name: policy
+        type: nest
+        nested-attributes: policy-type-attrs
+        doc: policy for a rejected attribute
+      -
+        name: missing-type
+        type: u16
+        doc: type of a missing required attribute, NLMSGERR_ATTR_MISS_NEST will not be present if the attribute was missing at the message level
+      -
+        name: missing-nest
+        type: u32
+        doc: offset of the nest where attribute was missing
+  -
+    name: policy-type-attrs
+    doc: policy type attributes
+    attributes:
+      -
+        name: unspec
+        type: unused
+        value: 0
+      -
+        name: type
+        type: u32
+        doc: type of the attribute, enum netlink_attribute_type (U32)
+      -
+        name: min-value-signed
+        type: s64
+        doc: minimum value for signed integers (S64)
+      -
+        name: max_value_signed
+        type: s64
+        doc: maximum value for signed integers (S64)
+      -
+        name: min_value_u
+        type: u64
+        doc: minimum value for unsigned integers (U64)
+      -
+        name: max_value_u
+        type: u64
+        doc: maximum value for unsigned integers (U64)
+      -
+        name: min_length
+        type: u32
+        doc: minimum length for binary attributes, no minimum if not given (U32)
+      -
+        name: max_length
+        type: u32
+        doc: maximum length for binary attributes, no maximum if not given (U32)
+      -
+        name: policy_idx
+        type: u32
+        doc: sub policy for nested and nested array types (U32)
+      -
+        name: policy_maxtype
+        type: u32
+        doc: maximum sub policy attribute for nested and nested array types, this can in theory be < the size of the policy pointed to by the index, if limited inside the nesting (U32)
+      -
+        name: bitfield32_mask
+        type: u32
+        doc: valid mask for the bitfield32 type (U32)
+      -
+        name: pad
+        type: pad
+        doc: pad attribute for 64-bit alignment
+      -
+        name: mask
+        type: u64
+        doc: mask of valid bits for unsigned integers (U64)
+
+operations:
+  list:

@@ -1,12 +1,18 @@
 #![doc = "FIB rule management over rtnetlink."]
 #![allow(clippy::all)]
+#![allow(unused_imports)]
+#![allow(unused_assignments)]
 #![allow(non_snake_case)]
 #![allow(unused_variables)]
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::consts;
 use crate::utils::*;
-pub const PROTONUM: u8 = 0u8;
+use crate::{NetlinkRequest, Protocol};
+pub const PROTONAME: &CStr = c"rt-rule";
+pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"fr-act\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Clone)]
 pub enum FrAct {
@@ -55,335 +61,305 @@ pub enum FibRuleAttrs<'a> {
     DscpMask(u8),
 }
 impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
-    pub fn get_dst(&self) -> Option<u32> {
+    pub fn get_dst(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Dst(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Dst(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Dst"))
     }
-    pub fn get_src(&self) -> Option<u32> {
+    pub fn get_src(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Src(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Src(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Src"))
     }
-    pub fn get_iifname(&self) -> Option<&'a CStr> {
+    pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Iifname(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Iifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Iifname"))
     }
-    pub fn get_goto(&self) -> Option<u32> {
+    pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Goto(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Goto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Goto"))
     }
-    pub fn get_unused2(&self) -> Option<&'a [u8]> {
+    pub fn get_unused2(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Unused2(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Unused2(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Unused2"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Priority(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Priority"))
     }
-    pub fn get_unused3(&self) -> Option<&'a [u8]> {
+    pub fn get_unused3(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Unused3(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Unused3(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Unused3"))
     }
-    pub fn get_unused4(&self) -> Option<&'a [u8]> {
+    pub fn get_unused4(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Unused4(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Unused4(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Unused4"))
     }
-    pub fn get_unused5(&self) -> Option<&'a [u8]> {
+    pub fn get_unused5(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Unused5(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Unused5(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Unused5"))
     }
-    pub fn get_fwmark(&self) -> Option<u32> {
+    pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Fwmark(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Fwmark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Fwmark"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Flow(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Flow"))
     }
-    pub fn get_tun_id(&self) -> Option<u64> {
+    pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::TunId(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::TunId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "TunId"))
     }
-    pub fn get_suppress_ifgroup(&self) -> Option<u32> {
+    pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::SuppressIfgroup(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::SuppressIfgroup(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "SuppressIfgroup"))
     }
-    pub fn get_suppress_prefixlen(&self) -> Option<u32> {
+    pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::SuppressPrefixlen(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::SuppressPrefixlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "SuppressPrefixlen"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Table(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Table"))
     }
-    pub fn get_fwmask(&self) -> Option<u32> {
+    pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Fwmask(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Fwmask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Fwmask"))
     }
-    pub fn get_oifname(&self) -> Option<&'a CStr> {
+    pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Oifname(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Oifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Oifname"))
     }
-    pub fn get_pad(&self) -> Option<&'a [u8]> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Pad(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Pad(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Pad"))
     }
-    pub fn get_l3mdev(&self) -> Option<u8> {
+    pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::L3mdev(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::L3mdev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "L3mdev"))
     }
-    pub fn get_uid_range(&self) -> Option<PushFibRuleUidRange> {
+    pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::UidRange(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::UidRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "UidRange"))
     }
-    pub fn get_protocol(&self) -> Option<u8> {
+    pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Protocol(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Protocol(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Protocol"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::IpProto(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "IpProto"))
     }
-    pub fn get_sport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::SportRange(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::SportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "SportRange"))
     }
-    pub fn get_dport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::DportRange(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::DportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "DportRange"))
     }
-    pub fn get_dscp(&self) -> Option<u8> {
+    pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Dscp(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Dscp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Dscp"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::Flowlabel(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "Flowlabel"))
     }
-    pub fn get_flowlabel_mask(&self) -> Option<u32> {
+    pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::FlowlabelMask(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::FlowlabelMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "FlowlabelMask"))
     }
-    pub fn get_sport_mask(&self) -> Option<u16> {
+    pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::SportMask(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::SportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "SportMask"))
     }
-    pub fn get_dport_mask(&self) -> Option<u16> {
+    pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::DportMask(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::DportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "DportMask"))
     }
-    pub fn get_dscp_mask(&self) -> Option<u8> {
+    pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let FibRuleAttrs::DscpMask(val) = attr {
-                return Some(val);
+            if let FibRuleAttrs::DscpMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("FibRuleAttrs", "DscpMask"))
     }
 }
 impl<'a> FibRuleAttrs<'a> {
@@ -649,6 +625,219 @@ impl<'a> std::fmt::Debug for Iterable<'a, FibRuleAttrs<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("FibRuleAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| FibRuleAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                FibRuleAttrs::Dst(val) => {
+                    if last_off == offset {
+                        stack.push(("Dst", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Src(val) => {
+                    if last_off == offset {
+                        stack.push(("Src", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Iifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Iifname", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Goto(val) => {
+                    if last_off == offset {
+                        stack.push(("Goto", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Unused2(val) => {
+                    if last_off == offset {
+                        stack.push(("Unused2", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Unused3(val) => {
+                    if last_off == offset {
+                        stack.push(("Unused3", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Unused4(val) => {
+                    if last_off == offset {
+                        stack.push(("Unused4", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Unused5(val) => {
+                    if last_off == offset {
+                        stack.push(("Unused5", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Fwmark(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmark", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::TunId(val) => {
+                    if last_off == offset {
+                        stack.push(("TunId", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::SuppressIfgroup(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressIfgroup", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::SuppressPrefixlen(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressPrefixlen", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Fwmask(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmask", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Oifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Oifname", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::L3mdev(val) => {
+                    if last_off == offset {
+                        stack.push(("L3mdev", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::UidRange(val) => {
+                    if last_off == offset {
+                        stack.push(("UidRange", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Protocol(val) => {
+                    if last_off == offset {
+                        stack.push(("Protocol", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::SportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("SportRange", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::DportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("DportRange", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Dscp(val) => {
+                    if last_off == offset {
+                        stack.push(("Dscp", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::FlowlabelMask(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowlabelMask", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::SportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("SportMask", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::DportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DportMask", last_off));
+                        break;
+                    }
+                }
+                FibRuleAttrs::DscpMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DscpMask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("FibRuleAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 pub struct PushFibRuleAttrs<Prev: Rec> {
     prev: Option<Prev>,
     header_offset: Option<usize>,
@@ -689,6 +878,12 @@ impl<Prev: Rec> PushFibRuleAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_iifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_goto(mut self, value: u32) -> Self {
@@ -763,6 +958,12 @@ impl<Prev: Rec> PushFibRuleAttrs<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_oifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 17u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_pad(mut self, value: &[u8]) -> Self {
@@ -1086,11 +1287,17 @@ impl<Prev: Rec> Rec for PushOpNewruleDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpNewruleDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushFibRuleHdr) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushFibRuleHdr) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1106,6 +1313,12 @@ impl<Prev: Rec> PushOpNewruleDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_iifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_goto(mut self, value: u32) -> Self {
@@ -1160,6 +1373,12 @@ impl<Prev: Rec> PushOpNewruleDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_oifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 17u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_l3mdev(mut self, value: u8) -> Self {
@@ -1233,7 +1452,7 @@ impl<Prev: Rec> Drop for PushOpNewruleDoRequest<Prev> {
     }
 }
 #[doc = "Add new FIB rule"]
-#[doc = "Original name: \"OpNewruleDoRequest\""]
+#[doc = "Original name: \"op-newrule-do-request\""]
 #[derive(Clone)]
 pub enum OpNewruleDoRequest<'a> {
     Iifname(&'a CStr),
@@ -1261,258 +1480,235 @@ pub enum OpNewruleDoRequest<'a> {
     DscpMask(u8),
 }
 impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
-    pub fn get_iifname(&self) -> Option<&'a CStr> {
+    pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Iifname(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Iifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Iifname"))
     }
-    pub fn get_goto(&self) -> Option<u32> {
+    pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Goto(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Goto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Goto"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Priority(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Priority"))
     }
-    pub fn get_fwmark(&self) -> Option<u32> {
+    pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Fwmark(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Fwmark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Fwmark"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Flow(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Flow"))
     }
-    pub fn get_tun_id(&self) -> Option<u64> {
+    pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::TunId(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::TunId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "TunId"))
     }
-    pub fn get_suppress_ifgroup(&self) -> Option<u32> {
+    pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::SuppressIfgroup(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::SuppressIfgroup(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "SuppressIfgroup"))
     }
-    pub fn get_suppress_prefixlen(&self) -> Option<u32> {
+    pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::SuppressPrefixlen(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::SuppressPrefixlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "SuppressPrefixlen"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Table(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Table"))
     }
-    pub fn get_fwmask(&self) -> Option<u32> {
+    pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Fwmask(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Fwmask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Fwmask"))
     }
-    pub fn get_oifname(&self) -> Option<&'a CStr> {
+    pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Oifname(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Oifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Oifname"))
     }
-    pub fn get_l3mdev(&self) -> Option<u8> {
+    pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::L3mdev(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::L3mdev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "L3mdev"))
     }
-    pub fn get_uid_range(&self) -> Option<PushFibRuleUidRange> {
+    pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::UidRange(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::UidRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "UidRange"))
     }
-    pub fn get_protocol(&self) -> Option<u8> {
+    pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Protocol(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Protocol(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Protocol"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::IpProto(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "IpProto"))
     }
-    pub fn get_sport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::SportRange(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::SportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "SportRange"))
     }
-    pub fn get_dport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::DportRange(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::DportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "DportRange"))
     }
-    pub fn get_dscp(&self) -> Option<u8> {
+    pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Dscp(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Dscp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Dscp"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "Flowlabel"))
     }
-    pub fn get_flowlabel_mask(&self) -> Option<u32> {
+    pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::FlowlabelMask(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::FlowlabelMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "FlowlabelMask"))
     }
-    pub fn get_sport_mask(&self) -> Option<u16> {
+    pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::SportMask(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::SportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "SportMask"))
     }
-    pub fn get_dport_mask(&self) -> Option<u16> {
+    pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::DportMask(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::DportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "DportMask"))
     }
-    pub fn get_dscp_mask(&self) -> Option<u8> {
+    pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpNewruleDoRequest::DscpMask(val) = attr {
-                return Some(val);
+            if let OpNewruleDoRequest::DscpMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpNewruleDoRequest", "DscpMask"))
     }
 }
 impl<'a> OpNewruleDoRequest<'a> {
@@ -1523,44 +1719,11 @@ impl<'a> OpNewruleDoRequest<'a> {
             .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iifname",
-            4u16 => "Goto",
-            5u16 => "Unused2",
-            6u16 => "Priority",
-            7u16 => "Unused3",
-            8u16 => "Unused4",
-            9u16 => "Unused5",
-            10u16 => "Fwmark",
-            11u16 => "Flow",
-            12u16 => "TunId",
-            13u16 => "SuppressIfgroup",
-            14u16 => "SuppressPrefixlen",
-            15u16 => "Table",
-            16u16 => "Fwmask",
-            17u16 => "Oifname",
-            18u16 => "Pad",
-            19u16 => "L3mdev",
-            20u16 => "UidRange",
-            21u16 => "Protocol",
-            22u16 => "IpProto",
-            23u16 => "SportRange",
-            24u16 => "DportRange",
-            25u16 => "Dscp",
-            26u16 => "Flowlabel",
-            27u16 => "FlowlabelMask",
-            28u16 => "SportMask",
-            29u16 => "DportMask",
-            30u16 => "DscpMask",
-            _ => return None,
-        };
-        Some(res)
+        FibRuleAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
@@ -1743,6 +1906,177 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewruleDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushFibRuleHdr::len() {
+            stack.push(("OpNewruleDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewruleDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpNewruleDoRequest::Iifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Iifname", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Goto(val) => {
+                    if last_off == offset {
+                        stack.push(("Goto", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Fwmark(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmark", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::TunId(val) => {
+                    if last_off == offset {
+                        stack.push(("TunId", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::SuppressIfgroup(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressIfgroup", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::SuppressPrefixlen(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressPrefixlen", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Fwmask(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmask", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Oifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Oifname", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::L3mdev(val) => {
+                    if last_off == offset {
+                        stack.push(("L3mdev", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::UidRange(val) => {
+                    if last_off == offset {
+                        stack.push(("UidRange", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Protocol(val) => {
+                    if last_off == offset {
+                        stack.push(("Protocol", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::SportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("SportRange", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::DportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("DportRange", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Dscp(val) => {
+                    if last_off == offset {
+                        stack.push(("Dscp", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::FlowlabelMask(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowlabelMask", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::SportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("SportMask", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::DportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DportMask", last_off));
+                        break;
+                    }
+                }
+                OpNewruleDoRequest::DscpMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DscpMask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpNewruleDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Add new FIB rule"]
 pub struct PushOpNewruleDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -1755,11 +2089,17 @@ impl<Prev: Rec> Rec for PushOpNewruleDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpNewruleDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushFibRuleHdr) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushFibRuleHdr) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1779,7 +2119,7 @@ impl<Prev: Rec> Drop for PushOpNewruleDoReply<Prev> {
     }
 }
 #[doc = "Add new FIB rule"]
-#[doc = "Original name: \"OpNewruleDoReply\""]
+#[doc = "Original name: \"op-newrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewruleDoReply {}
 impl<'a> Iterable<'a, OpNewruleDoReply> {}
@@ -1791,44 +2131,11 @@ impl OpNewruleDoReply {
             .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iifname",
-            4u16 => "Goto",
-            5u16 => "Unused2",
-            6u16 => "Priority",
-            7u16 => "Unused3",
-            8u16 => "Unused4",
-            9u16 => "Unused5",
-            10u16 => "Fwmark",
-            11u16 => "Flow",
-            12u16 => "TunId",
-            13u16 => "SuppressIfgroup",
-            14u16 => "SuppressPrefixlen",
-            15u16 => "Table",
-            16u16 => "Fwmask",
-            17u16 => "Oifname",
-            18u16 => "Pad",
-            19u16 => "L3mdev",
-            20u16 => "UidRange",
-            21u16 => "Protocol",
-            22u16 => "IpProto",
-            23u16 => "SportRange",
-            24u16 => "DportRange",
-            25u16 => "Dscp",
-            26u16 => "Flowlabel",
-            27u16 => "FlowlabelMask",
-            28u16 => "SportMask",
-            29u16 => "DportMask",
-            30u16 => "DscpMask",
-            _ => return None,
-        };
-        Some(res)
+        FibRuleAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpNewruleDoReply> {
@@ -1872,6 +2179,64 @@ impl std::fmt::Debug for Iterable<'_, OpNewruleDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpNewruleDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushFibRuleHdr::len() {
+            stack.push(("OpNewruleDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpNewruleDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpNewruleDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpNewruleDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushFibRuleHdr) -> Self {
+        PushOpNewruleDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpNewruleDoRequest<&mut Vec<u8>> {
+        PushOpNewruleDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpNewruleDoRequest<'_> {
+    type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpNewruleDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 32u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpNewruleDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpNewruleDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Remove an existing FIB rule"]
 pub struct PushOpDelruleDoRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -1884,11 +2249,17 @@ impl<Prev: Rec> Rec for PushOpDelruleDoRequest<Prev> {
 }
 impl<Prev: Rec> PushOpDelruleDoRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushFibRuleHdr) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushFibRuleHdr) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -1904,6 +2275,12 @@ impl<Prev: Rec> PushOpDelruleDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_iifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_goto(mut self, value: u32) -> Self {
@@ -1958,6 +2335,12 @@ impl<Prev: Rec> PushOpDelruleDoRequest<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_oifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 17u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_l3mdev(mut self, value: u8) -> Self {
@@ -2031,7 +2414,7 @@ impl<Prev: Rec> Drop for PushOpDelruleDoRequest<Prev> {
     }
 }
 #[doc = "Remove an existing FIB rule"]
-#[doc = "Original name: \"OpDelruleDoRequest\""]
+#[doc = "Original name: \"op-delrule-do-request\""]
 #[derive(Clone)]
 pub enum OpDelruleDoRequest<'a> {
     Iifname(&'a CStr),
@@ -2059,258 +2442,235 @@ pub enum OpDelruleDoRequest<'a> {
     DscpMask(u8),
 }
 impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
-    pub fn get_iifname(&self) -> Option<&'a CStr> {
+    pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Iifname(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Iifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Iifname"))
     }
-    pub fn get_goto(&self) -> Option<u32> {
+    pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Goto(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Goto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Goto"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Priority(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Priority"))
     }
-    pub fn get_fwmark(&self) -> Option<u32> {
+    pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Fwmark(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Fwmark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Fwmark"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Flow(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Flow"))
     }
-    pub fn get_tun_id(&self) -> Option<u64> {
+    pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::TunId(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::TunId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "TunId"))
     }
-    pub fn get_suppress_ifgroup(&self) -> Option<u32> {
+    pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::SuppressIfgroup(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::SuppressIfgroup(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "SuppressIfgroup"))
     }
-    pub fn get_suppress_prefixlen(&self) -> Option<u32> {
+    pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::SuppressPrefixlen(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::SuppressPrefixlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "SuppressPrefixlen"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Table(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Table"))
     }
-    pub fn get_fwmask(&self) -> Option<u32> {
+    pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Fwmask(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Fwmask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Fwmask"))
     }
-    pub fn get_oifname(&self) -> Option<&'a CStr> {
+    pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Oifname(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Oifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Oifname"))
     }
-    pub fn get_l3mdev(&self) -> Option<u8> {
+    pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::L3mdev(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::L3mdev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "L3mdev"))
     }
-    pub fn get_uid_range(&self) -> Option<PushFibRuleUidRange> {
+    pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::UidRange(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::UidRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "UidRange"))
     }
-    pub fn get_protocol(&self) -> Option<u8> {
+    pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Protocol(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Protocol(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Protocol"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::IpProto(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "IpProto"))
     }
-    pub fn get_sport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::SportRange(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::SportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "SportRange"))
     }
-    pub fn get_dport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::DportRange(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::DportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "DportRange"))
     }
-    pub fn get_dscp(&self) -> Option<u8> {
+    pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Dscp(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Dscp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Dscp"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "Flowlabel"))
     }
-    pub fn get_flowlabel_mask(&self) -> Option<u32> {
+    pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::FlowlabelMask(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::FlowlabelMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "FlowlabelMask"))
     }
-    pub fn get_sport_mask(&self) -> Option<u16> {
+    pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::SportMask(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::SportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "SportMask"))
     }
-    pub fn get_dport_mask(&self) -> Option<u16> {
+    pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::DportMask(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::DportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "DportMask"))
     }
-    pub fn get_dscp_mask(&self) -> Option<u8> {
+    pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpDelruleDoRequest::DscpMask(val) = attr {
-                return Some(val);
+            if let OpDelruleDoRequest::DscpMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpDelruleDoRequest", "DscpMask"))
     }
 }
 impl<'a> OpDelruleDoRequest<'a> {
@@ -2321,44 +2681,11 @@ impl<'a> OpDelruleDoRequest<'a> {
             .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iifname",
-            4u16 => "Goto",
-            5u16 => "Unused2",
-            6u16 => "Priority",
-            7u16 => "Unused3",
-            8u16 => "Unused4",
-            9u16 => "Unused5",
-            10u16 => "Fwmark",
-            11u16 => "Flow",
-            12u16 => "TunId",
-            13u16 => "SuppressIfgroup",
-            14u16 => "SuppressPrefixlen",
-            15u16 => "Table",
-            16u16 => "Fwmask",
-            17u16 => "Oifname",
-            18u16 => "Pad",
-            19u16 => "L3mdev",
-            20u16 => "UidRange",
-            21u16 => "Protocol",
-            22u16 => "IpProto",
-            23u16 => "SportRange",
-            24u16 => "DportRange",
-            25u16 => "Dscp",
-            26u16 => "Flowlabel",
-            27u16 => "FlowlabelMask",
-            28u16 => "SportMask",
-            29u16 => "DportMask",
-            30u16 => "DscpMask",
-            _ => return None,
-        };
-        Some(res)
+        FibRuleAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
@@ -2541,6 +2868,177 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelruleDoRequest<'a>> {
         fmt.finish()
     }
 }
+impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushFibRuleHdr::len() {
+            stack.push(("OpDelruleDoRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelruleDoRequest::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpDelruleDoRequest::Iifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Iifname", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Goto(val) => {
+                    if last_off == offset {
+                        stack.push(("Goto", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Fwmark(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmark", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::TunId(val) => {
+                    if last_off == offset {
+                        stack.push(("TunId", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::SuppressIfgroup(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressIfgroup", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::SuppressPrefixlen(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressPrefixlen", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Fwmask(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmask", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Oifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Oifname", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::L3mdev(val) => {
+                    if last_off == offset {
+                        stack.push(("L3mdev", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::UidRange(val) => {
+                    if last_off == offset {
+                        stack.push(("UidRange", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Protocol(val) => {
+                    if last_off == offset {
+                        stack.push(("Protocol", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::SportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("SportRange", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::DportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("DportRange", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Dscp(val) => {
+                    if last_off == offset {
+                        stack.push(("Dscp", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::FlowlabelMask(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowlabelMask", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::SportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("SportMask", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::DportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DportMask", last_off));
+                        break;
+                    }
+                }
+                OpDelruleDoRequest::DscpMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DscpMask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpDelruleDoRequest", cur));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Remove an existing FIB rule"]
 pub struct PushOpDelruleDoReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -2553,11 +3051,17 @@ impl<Prev: Rec> Rec for PushOpDelruleDoReply<Prev> {
 }
 impl<Prev: Rec> PushOpDelruleDoReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushFibRuleHdr) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushFibRuleHdr) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -2577,7 +3081,7 @@ impl<Prev: Rec> Drop for PushOpDelruleDoReply<Prev> {
     }
 }
 #[doc = "Remove an existing FIB rule"]
-#[doc = "Original name: \"OpDelruleDoReply\""]
+#[doc = "Original name: \"op-delrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelruleDoReply {}
 impl<'a> Iterable<'a, OpDelruleDoReply> {}
@@ -2589,44 +3093,11 @@ impl OpDelruleDoReply {
             .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iifname",
-            4u16 => "Goto",
-            5u16 => "Unused2",
-            6u16 => "Priority",
-            7u16 => "Unused3",
-            8u16 => "Unused4",
-            9u16 => "Unused5",
-            10u16 => "Fwmark",
-            11u16 => "Flow",
-            12u16 => "TunId",
-            13u16 => "SuppressIfgroup",
-            14u16 => "SuppressPrefixlen",
-            15u16 => "Table",
-            16u16 => "Fwmask",
-            17u16 => "Oifname",
-            18u16 => "Pad",
-            19u16 => "L3mdev",
-            20u16 => "UidRange",
-            21u16 => "Protocol",
-            22u16 => "IpProto",
-            23u16 => "SportRange",
-            24u16 => "DportRange",
-            25u16 => "Dscp",
-            26u16 => "Flowlabel",
-            27u16 => "FlowlabelMask",
-            28u16 => "SportMask",
-            29u16 => "DportMask",
-            30u16 => "DscpMask",
-            _ => return None,
-        };
-        Some(res)
+        FibRuleAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpDelruleDoReply> {
@@ -2670,6 +3141,64 @@ impl std::fmt::Debug for Iterable<'_, OpDelruleDoReply> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpDelruleDoReply> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushFibRuleHdr::len() {
+            stack.push(("OpDelruleDoReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpDelruleDoReply::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpDelruleDoRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpDelruleDoRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushFibRuleHdr) -> Self {
+        PushOpDelruleDoRequest::write_header(&mut request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode(&mut self) -> PushOpDelruleDoRequest<&mut Vec<u8>> {
+        PushOpDelruleDoRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpDelruleDoRequest<'_> {
+    type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpDelruleDoReply>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 33u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpDelruleDoReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpDelruleDoRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[doc = "Dump all FIB rules"]
 pub struct PushOpGetruleDumpRequest<Prev: Rec> {
     prev: Option<Prev>,
@@ -2682,11 +3211,17 @@ impl<Prev: Rec> Rec for PushOpGetruleDumpRequest<Prev> {
 }
 impl<Prev: Rec> PushOpGetruleDumpRequest<Prev> {
     pub fn new(mut prev: Prev, header: &PushFibRuleHdr) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushFibRuleHdr) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -2706,7 +3241,7 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpRequest<Prev> {
     }
 }
 #[doc = "Dump all FIB rules"]
-#[doc = "Original name: \"OpGetruleDumpRequest\""]
+#[doc = "Original name: \"op-getrule-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetruleDumpRequest {}
 impl<'a> Iterable<'a, OpGetruleDumpRequest> {}
@@ -2718,44 +3253,11 @@ impl OpGetruleDumpRequest {
             .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iifname",
-            4u16 => "Goto",
-            5u16 => "Unused2",
-            6u16 => "Priority",
-            7u16 => "Unused3",
-            8u16 => "Unused4",
-            9u16 => "Unused5",
-            10u16 => "Fwmark",
-            11u16 => "Flow",
-            12u16 => "TunId",
-            13u16 => "SuppressIfgroup",
-            14u16 => "SuppressPrefixlen",
-            15u16 => "Table",
-            16u16 => "Fwmask",
-            17u16 => "Oifname",
-            18u16 => "Pad",
-            19u16 => "L3mdev",
-            20u16 => "UidRange",
-            21u16 => "Protocol",
-            22u16 => "IpProto",
-            23u16 => "SportRange",
-            24u16 => "DportRange",
-            25u16 => "Dscp",
-            26u16 => "Flowlabel",
-            27u16 => "FlowlabelMask",
-            28u16 => "SportMask",
-            29u16 => "DportMask",
-            30u16 => "DscpMask",
-            _ => return None,
-        };
-        Some(res)
+        FibRuleAttrs::attr_from_type(r#type)
     }
 }
 impl Iterator for Iterable<'_, OpGetruleDumpRequest> {
@@ -2799,6 +3301,24 @@ impl std::fmt::Debug for Iterable<'_, OpGetruleDumpRequest> {
         fmt.finish()
     }
 }
+impl Iterable<'_, OpGetruleDumpRequest> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushFibRuleHdr::len() {
+            stack.push(("OpGetruleDumpRequest", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetruleDumpRequest::attr_from_type(t)),
+            );
+        }
+        (stack, None)
+    }
+}
 #[doc = "Dump all FIB rules"]
 pub struct PushOpGetruleDumpReply<Prev: Rec> {
     prev: Option<Prev>,
@@ -2811,11 +3331,17 @@ impl<Prev: Rec> Rec for PushOpGetruleDumpReply<Prev> {
 }
 impl<Prev: Rec> PushOpGetruleDumpReply<Prev> {
     pub fn new(mut prev: Prev, header: &PushFibRuleHdr) -> Self {
-        prev.as_rec_mut().extend(header.as_slice());
+        Self::write_header(&mut prev, header);
+        Self::new_without_header(prev)
+    }
+    fn new_without_header(prev: Prev) -> Self {
         Self {
             prev: Some(prev),
             header_offset: None,
         }
+    }
+    fn write_header(prev: &mut Prev, header: &PushFibRuleHdr) {
+        prev.as_rec_mut().extend(header.as_slice());
     }
     pub fn end_nested(mut self) -> Prev {
         let mut prev = self.prev.take().unwrap();
@@ -2831,6 +3357,12 @@ impl<Prev: Rec> PushOpGetruleDumpReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_iifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_goto(mut self, value: u32) -> Self {
@@ -2885,6 +3417,12 @@ impl<Prev: Rec> PushOpGetruleDumpReply<Prev> {
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_oifname_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 17u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     pub fn push_l3mdev(mut self, value: u8) -> Self {
@@ -2958,7 +3496,7 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpReply<Prev> {
     }
 }
 #[doc = "Dump all FIB rules"]
-#[doc = "Original name: \"OpGetruleDumpReply\""]
+#[doc = "Original name: \"op-getrule-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetruleDumpReply<'a> {
     Iifname(&'a CStr),
@@ -2986,258 +3524,235 @@ pub enum OpGetruleDumpReply<'a> {
     DscpMask(u8),
 }
 impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
-    pub fn get_iifname(&self) -> Option<&'a CStr> {
+    pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Iifname(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Iifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Iifname"))
     }
-    pub fn get_goto(&self) -> Option<u32> {
+    pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Goto(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Goto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Goto"))
     }
-    pub fn get_priority(&self) -> Option<u32> {
+    pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Priority(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Priority(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Priority"))
     }
-    pub fn get_fwmark(&self) -> Option<u32> {
+    pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Fwmark(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Fwmark(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Fwmark"))
     }
-    pub fn get_flow(&self) -> Option<u32> {
+    pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Flow(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Flow(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Flow"))
     }
-    pub fn get_tun_id(&self) -> Option<u64> {
+    pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::TunId(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::TunId(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "TunId"))
     }
-    pub fn get_suppress_ifgroup(&self) -> Option<u32> {
+    pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::SuppressIfgroup(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::SuppressIfgroup(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "SuppressIfgroup"))
     }
-    pub fn get_suppress_prefixlen(&self) -> Option<u32> {
+    pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::SuppressPrefixlen(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::SuppressPrefixlen(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "SuppressPrefixlen"))
     }
-    pub fn get_table(&self) -> Option<u32> {
+    pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Table(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Table(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Table"))
     }
-    pub fn get_fwmask(&self) -> Option<u32> {
+    pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Fwmask(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Fwmask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Fwmask"))
     }
-    pub fn get_oifname(&self) -> Option<&'a CStr> {
+    pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Oifname(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Oifname(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Oifname"))
     }
-    pub fn get_l3mdev(&self) -> Option<u8> {
+    pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::L3mdev(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::L3mdev(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "L3mdev"))
     }
-    pub fn get_uid_range(&self) -> Option<PushFibRuleUidRange> {
+    pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::UidRange(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::UidRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "UidRange"))
     }
-    pub fn get_protocol(&self) -> Option<u8> {
+    pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Protocol(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Protocol(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Protocol"))
     }
-    pub fn get_ip_proto(&self) -> Option<u8> {
+    pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::IpProto(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::IpProto(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "IpProto"))
     }
-    pub fn get_sport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::SportRange(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::SportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "SportRange"))
     }
-    pub fn get_dport_range(&self) -> Option<PushFibRulePortRange> {
+    pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::DportRange(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::DportRange(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "DportRange"))
     }
-    pub fn get_dscp(&self) -> Option<u8> {
+    pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Dscp(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Dscp(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Dscp"))
     }
-    pub fn get_flowlabel(&self) -> Option<u32> {
+    pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::Flowlabel(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::Flowlabel(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "Flowlabel"))
     }
-    pub fn get_flowlabel_mask(&self) -> Option<u32> {
+    pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::FlowlabelMask(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::FlowlabelMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "FlowlabelMask"))
     }
-    pub fn get_sport_mask(&self) -> Option<u16> {
+    pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::SportMask(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::SportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "SportMask"))
     }
-    pub fn get_dport_mask(&self) -> Option<u16> {
+    pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::DportMask(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::DportMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "DportMask"))
     }
-    pub fn get_dscp_mask(&self) -> Option<u8> {
+    pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            let Ok(attr) = attr else { break };
-            if let OpGetruleDumpReply::DscpMask(val) = attr {
-                return Some(val);
+            if let OpGetruleDumpReply::DscpMask(val) = attr? {
+                return Ok(val);
             }
         }
-        None
+        Err(self.error_missing("OpGetruleDumpReply", "DscpMask"))
     }
 }
 impl<'a> OpGetruleDumpReply<'a> {
@@ -3248,44 +3763,11 @@ impl<'a> OpGetruleDumpReply<'a> {
             .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
         (
             header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr()),
+            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Dst",
-            2u16 => "Src",
-            3u16 => "Iifname",
-            4u16 => "Goto",
-            5u16 => "Unused2",
-            6u16 => "Priority",
-            7u16 => "Unused3",
-            8u16 => "Unused4",
-            9u16 => "Unused5",
-            10u16 => "Fwmark",
-            11u16 => "Flow",
-            12u16 => "TunId",
-            13u16 => "SuppressIfgroup",
-            14u16 => "SuppressPrefixlen",
-            15u16 => "Table",
-            16u16 => "Fwmask",
-            17u16 => "Oifname",
-            18u16 => "Pad",
-            19u16 => "L3mdev",
-            20u16 => "UidRange",
-            21u16 => "Protocol",
-            22u16 => "IpProto",
-            23u16 => "SportRange",
-            24u16 => "DportRange",
-            25u16 => "Dscp",
-            26u16 => "Flowlabel",
-            27u16 => "FlowlabelMask",
-            28u16 => "SportMask",
-            29u16 => "DportMask",
-            30u16 => "DscpMask",
-            _ => return None,
-        };
-        Some(res)
+        FibRuleAttrs::attr_from_type(r#type)
     }
 }
 impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
@@ -3466,5 +3948,310 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpReply<'a>> {
             };
         }
         fmt.finish()
+    }
+}
+impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset + PushFibRuleHdr::len() {
+            stack.push(("OpGetruleDumpReply", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| OpGetruleDumpReply::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                OpGetruleDumpReply::Iifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Iifname", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Goto(val) => {
+                    if last_off == offset {
+                        stack.push(("Goto", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Priority(val) => {
+                    if last_off == offset {
+                        stack.push(("Priority", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Fwmark(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmark", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Flow(val) => {
+                    if last_off == offset {
+                        stack.push(("Flow", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::TunId(val) => {
+                    if last_off == offset {
+                        stack.push(("TunId", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::SuppressIfgroup(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressIfgroup", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::SuppressPrefixlen(val) => {
+                    if last_off == offset {
+                        stack.push(("SuppressPrefixlen", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Table(val) => {
+                    if last_off == offset {
+                        stack.push(("Table", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Fwmask(val) => {
+                    if last_off == offset {
+                        stack.push(("Fwmask", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Oifname(val) => {
+                    if last_off == offset {
+                        stack.push(("Oifname", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::L3mdev(val) => {
+                    if last_off == offset {
+                        stack.push(("L3mdev", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::UidRange(val) => {
+                    if last_off == offset {
+                        stack.push(("UidRange", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Protocol(val) => {
+                    if last_off == offset {
+                        stack.push(("Protocol", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::IpProto(val) => {
+                    if last_off == offset {
+                        stack.push(("IpProto", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::SportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("SportRange", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::DportRange(val) => {
+                    if last_off == offset {
+                        stack.push(("DportRange", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Dscp(val) => {
+                    if last_off == offset {
+                        stack.push(("Dscp", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::Flowlabel(val) => {
+                    if last_off == offset {
+                        stack.push(("Flowlabel", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::FlowlabelMask(val) => {
+                    if last_off == offset {
+                        stack.push(("FlowlabelMask", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::SportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("SportMask", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::DportMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DportMask", last_off));
+                        break;
+                    }
+                }
+                OpGetruleDumpReply::DscpMask(val) => {
+                    if last_off == offset {
+                        stack.push(("DscpMask", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("OpGetruleDumpReply", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Debug)]
+pub struct RequestOpGetruleDumpRequest<'r> {
+    request: Request<'r>,
+}
+impl<'r> RequestOpGetruleDumpRequest<'r> {
+    pub fn new(mut request: Request<'r>, header: &PushFibRuleHdr) -> Self {
+        PushOpGetruleDumpRequest::write_header(&mut request.buf_mut(), header);
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode(&mut self) -> PushOpGetruleDumpRequest<&mut Vec<u8>> {
+        PushOpGetruleDumpRequest::new_without_header(self.request.buf_mut())
+    }
+}
+impl NetlinkRequest for RequestOpGetruleDumpRequest<'_> {
+    type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpGetruleDumpReply<'buf>>);
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 34u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        OpGetruleDumpReply::new(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        OpGetruleDumpRequest::new(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
+#[derive(Debug)]
+enum RequestBuf<'buf> {
+    Ref(&'buf mut Vec<u8>),
+    Own(Vec<u8>),
+}
+#[derive(Debug)]
+pub struct Request<'buf> {
+    buf: RequestBuf<'buf>,
+    flags: u16,
+}
+impl Request<'static> {
+    pub fn new() -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(Vec::new()),
+        }
+    }
+    pub fn from_buf(buf: Vec<u8>) -> Self {
+        Self {
+            flags: 0,
+            buf: RequestBuf::Own(buf),
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'buf> Request<'buf> {
+    pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
+        buf.clear();
+        Self {
+            flags: 0,
+            buf: RequestBuf::Ref(buf),
+        }
+    }
+    fn buf(&self) -> &Vec<u8> {
+        match &self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    fn buf_mut(&mut self) -> &mut Vec<u8> {
+        match &mut self.buf {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    pub fn set_create(mut self) -> Self {
+        self.flags |= consts::NLM_F_CREATE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    pub fn set_excl(mut self) -> Self {
+        self.flags |= consts::NLM_F_EXCL as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_replace(mut self) -> Self {
+        self.flags |= consts::NLM_F_REPLACE as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    pub fn set_change(self) -> Self {
+        self.set_create().set_replace()
+    }
+    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    pub fn set_append(mut self) -> Self {
+        self.flags |= consts::NLM_F_APPEND as u16;
+        self
+    }
+    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    fn set_dump(mut self) -> Self {
+        self.flags |= consts::NLM_F_DUMP as u16;
+        self
+    }
+    pub fn op_newrule_do_request(self, header: &PushFibRuleHdr) -> RequestOpNewruleDoRequest<'buf> {
+        RequestOpNewruleDoRequest::new(self, header)
+    }
+    pub fn op_delrule_do_request(self, header: &PushFibRuleHdr) -> RequestOpDelruleDoRequest<'buf> {
+        RequestOpDelruleDoRequest::new(self, header)
+    }
+    pub fn op_getrule_dump_request(
+        self,
+        header: &PushFibRuleHdr,
+    ) -> RequestOpGetruleDumpRequest<'buf> {
+        RequestOpGetruleDumpRequest::new(self, header)
     }
 }

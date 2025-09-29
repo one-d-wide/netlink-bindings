@@ -6,12 +6,14 @@
 ```rust
 PushOpNewlinkDoRequest::new(&mut vec)
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
   .push_net_ns_pid(val) // u32
   .push_net_ns_fd(val) // u32
   .push_target_netnsid(val) // i32
   .push_link_netnsid(val) // i32
   .nested_linkinfo()
     .push_kind(val) // &CStr
+    .push_kind_bytes(val) // &[u8]
     .sub_nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
@@ -360,6 +362,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
     .end_nested()
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
+    .push_slave_kind_bytes(val) // &[u8]
     .sub_nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
@@ -574,6 +577,7 @@ let iter = OpNewlinkDoReply::new(buf);
 ```rust
 PushOpDellinkDoRequest::new(&mut vec)
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
   ;
 ```
 
@@ -623,7 +627,9 @@ let iter = OpDellinkDoReply::new(buf);
 ```rust
 PushOpGetlinkDoRequest::new(&mut vec)
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
   .push_alt_ifname(val) // &CStr
+  .push_alt_ifname_bytes(val) // &[u8]
 
   // Associated type: "RtextFilter" (1 bit per enumeration)
   .push_ext_mask(val) // u32
@@ -789,6 +795,14 @@ attrs.get_allmulti(); // u32
 attrs.get_devlink_port(); // &[u8]
 attrs.get_gso_ipv4_max_size(); // u32
 attrs.get_gro_ipv4_max_size(); // u32
+{ // Nested DpllPin
+  let attrs = attrs.get_dpll_pin();
+  attrs.get_id(); // u32
+}
+
+// EDT offload horizon supported by the device (in nsec).
+attrs.get_max_pacing_offload_horizon(); // u32
+attrs.get_netns_immutable(); // u8
 ```
 
 ### Do (reply)
@@ -798,15 +812,21 @@ PushOpGetlinkDoReply::new(&mut vec)
   .push_address(val) // &[u8]
   .push_broadcast(val) // &[u8]
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
   .push_mtu(val) // u32
   .push_link(val) // u32
   .push_qdisc(val) // &CStr
+  .push_qdisc_bytes(val) // &[u8]
   .push_stats(val) // PushRtnlLinkStats
   .push_cost(val) // &CStr
+  .push_cost_bytes(val) // &[u8]
   .push_priority(val) // &CStr
+  .push_priority_bytes(val) // &[u8]
   .push_master(val) // u32
   .push_wireless(val) // &CStr
+  .push_wireless_bytes(val) // &[u8]
   .push_protinfo(val) // &CStr
+  .push_protinfo_bytes(val) // &[u8]
   .push_txqlen(val) // u32
   .push_map(val) // PushRtnlLinkIfmap
   .push_weight(val) // u32
@@ -814,6 +834,7 @@ PushOpGetlinkDoReply::new(&mut vec)
   .push_linkmode(val) // u8
   .nested_linkinfo()
     .push_kind(val) // &CStr
+    .push_kind_bytes(val) // &[u8]
     .sub_nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
@@ -1162,6 +1183,7 @@ PushOpGetlinkDoReply::new(&mut vec)
     .end_nested()
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
+    .push_slave_kind_bytes(val) // &[u8]
     .sub_nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
@@ -1222,6 +1244,7 @@ PushOpGetlinkDoReply::new(&mut vec)
   .end_nested()
   .push_net_ns_pid(val) // u32
   .push_ifalias(val) // &CStr
+  .push_ifalias_bytes(val) // &[u8]
   .push_num_vf(val) // u32
   .nested_vfinfo_list()
 
@@ -1299,6 +1322,7 @@ PushOpGetlinkDoReply::new(&mut vec)
   .push_phys_switch_id(val) // &[u8]
   .push_link_netnsid(val) // i32
   .push_phys_port_name(val) // &CStr
+  .push_phys_port_name_bytes(val) // &[u8]
   .push_proto_down(val) // u8
   .push_gso_max_segs(val) // u32
   .push_gso_max_size(val) // u32
@@ -1323,11 +1347,15 @@ PushOpGetlinkDoReply::new(&mut vec)
   .push_max_mtu(val) // u32
   .nested_prop_list()
     .push_alt_ifname(val) // &CStr
+    .push_alt_ifname_bytes(val) // &[u8]
   .end_nested()
   .push_perm_address(val) // &[u8]
   .push_proto_down_reason(val) // &CStr
+  .push_proto_down_reason_bytes(val) // &[u8]
   .push_parent_dev_name(val) // &CStr
+  .push_parent_dev_name_bytes(val) // &[u8]
   .push_parent_dev_bus_name(val) // &CStr
+  .push_parent_dev_bus_name_bytes(val) // &[u8]
   .push_gro_max_size(val) // u32
   .push_tso_max_size(val) // u32
   .push_tso_max_segs(val) // u32
@@ -1335,6 +1363,13 @@ PushOpGetlinkDoReply::new(&mut vec)
   .push_devlink_port(val) // &[u8]
   .push_gso_ipv4_max_size(val) // u32
   .push_gro_ipv4_max_size(val) // u32
+  .nested_dpll_pin()
+    .push_id(val) // u32
+  .end_nested()
+
+  // EDT offload horizon supported by the device (in nsec).
+  .push_max_pacing_offload_horizon(val) // u32
+  .push_netns_immutable(val) // u8
   ;
 ```
 
@@ -1496,6 +1531,14 @@ attrs.get_allmulti(); // u32
 attrs.get_devlink_port(); // &[u8]
 attrs.get_gso_ipv4_max_size(); // u32
 attrs.get_gro_ipv4_max_size(); // u32
+{ // Nested DpllPin
+  let attrs = attrs.get_dpll_pin();
+  attrs.get_id(); // u32
+}
+
+// EDT offload horizon supported by the device (in nsec).
+attrs.get_max_pacing_offload_horizon(); // u32
+attrs.get_netns_immutable(); // u8
 ```
 
 ## Low-level decoding
@@ -1713,6 +1756,17 @@ for attr in iter {
     DevlinkPort(val) => {}, // &[u8]
     GsoIpv4MaxSize(val) => {}, // u32
     GroIpv4MaxSize(val) => {}, // u32
+    DpllPin(iter) => {
+      for attr in iter {
+        match attr {
+          Id(val) => {}, // u32
+        }
+      }
+    },
+
+    // EDT offload horizon supported by the device (in nsec).
+    MaxPacingOffloadHorizon(val) => {}, // u32
+    NetnsImmutable(val) => {}, // u8
   }
 }
 ```
@@ -1728,6 +1782,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
   .push_master(val) // u32
   .nested_linkinfo()
     .push_kind(val) // &CStr
+    .push_kind_bytes(val) // &[u8]
     .sub_nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
@@ -2076,6 +2131,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
     .end_nested()
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
+    .push_slave_kind_bytes(val) // &[u8]
     .sub_nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
@@ -2295,6 +2351,14 @@ attrs.get_allmulti(); // u32
 attrs.get_devlink_port(); // &[u8]
 attrs.get_gso_ipv4_max_size(); // u32
 attrs.get_gro_ipv4_max_size(); // u32
+{ // Nested DpllPin
+  let attrs = attrs.get_dpll_pin();
+  attrs.get_id(); // u32
+}
+
+// EDT offload horizon supported by the device (in nsec).
+attrs.get_max_pacing_offload_horizon(); // u32
+attrs.get_netns_immutable(); // u8
 ```
 
 ### Dump (reply)
@@ -2304,15 +2368,21 @@ PushOpGetlinkDumpReply::new(&mut vec)
   .push_address(val) // &[u8]
   .push_broadcast(val) // &[u8]
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
   .push_mtu(val) // u32
   .push_link(val) // u32
   .push_qdisc(val) // &CStr
+  .push_qdisc_bytes(val) // &[u8]
   .push_stats(val) // PushRtnlLinkStats
   .push_cost(val) // &CStr
+  .push_cost_bytes(val) // &[u8]
   .push_priority(val) // &CStr
+  .push_priority_bytes(val) // &[u8]
   .push_master(val) // u32
   .push_wireless(val) // &CStr
+  .push_wireless_bytes(val) // &[u8]
   .push_protinfo(val) // &CStr
+  .push_protinfo_bytes(val) // &[u8]
   .push_txqlen(val) // u32
   .push_map(val) // PushRtnlLinkIfmap
   .push_weight(val) // u32
@@ -2320,6 +2390,7 @@ PushOpGetlinkDumpReply::new(&mut vec)
   .push_linkmode(val) // u8
   .nested_linkinfo()
     .push_kind(val) // &CStr
+    .push_kind_bytes(val) // &[u8]
     .sub_nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
@@ -2668,6 +2739,7 @@ PushOpGetlinkDumpReply::new(&mut vec)
     .end_nested()
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
+    .push_slave_kind_bytes(val) // &[u8]
     .sub_nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
@@ -2728,6 +2800,7 @@ PushOpGetlinkDumpReply::new(&mut vec)
   .end_nested()
   .push_net_ns_pid(val) // u32
   .push_ifalias(val) // &CStr
+  .push_ifalias_bytes(val) // &[u8]
   .push_num_vf(val) // u32
   .nested_vfinfo_list()
 
@@ -2805,6 +2878,7 @@ PushOpGetlinkDumpReply::new(&mut vec)
   .push_phys_switch_id(val) // &[u8]
   .push_link_netnsid(val) // i32
   .push_phys_port_name(val) // &CStr
+  .push_phys_port_name_bytes(val) // &[u8]
   .push_proto_down(val) // u8
   .push_gso_max_segs(val) // u32
   .push_gso_max_size(val) // u32
@@ -2829,11 +2903,15 @@ PushOpGetlinkDumpReply::new(&mut vec)
   .push_max_mtu(val) // u32
   .nested_prop_list()
     .push_alt_ifname(val) // &CStr
+    .push_alt_ifname_bytes(val) // &[u8]
   .end_nested()
   .push_perm_address(val) // &[u8]
   .push_proto_down_reason(val) // &CStr
+  .push_proto_down_reason_bytes(val) // &[u8]
   .push_parent_dev_name(val) // &CStr
+  .push_parent_dev_name_bytes(val) // &[u8]
   .push_parent_dev_bus_name(val) // &CStr
+  .push_parent_dev_bus_name_bytes(val) // &[u8]
   .push_gro_max_size(val) // u32
   .push_tso_max_size(val) // u32
   .push_tso_max_segs(val) // u32
@@ -2841,6 +2919,13 @@ PushOpGetlinkDumpReply::new(&mut vec)
   .push_devlink_port(val) // &[u8]
   .push_gso_ipv4_max_size(val) // u32
   .push_gro_ipv4_max_size(val) // u32
+  .nested_dpll_pin()
+    .push_id(val) // u32
+  .end_nested()
+
+  // EDT offload horizon supported by the device (in nsec).
+  .push_max_pacing_offload_horizon(val) // u32
+  .push_netns_immutable(val) // u8
   ;
 ```
 
@@ -3002,6 +3087,14 @@ attrs.get_allmulti(); // u32
 attrs.get_devlink_port(); // &[u8]
 attrs.get_gso_ipv4_max_size(); // u32
 attrs.get_gro_ipv4_max_size(); // u32
+{ // Nested DpllPin
+  let attrs = attrs.get_dpll_pin();
+  attrs.get_id(); // u32
+}
+
+// EDT offload horizon supported by the device (in nsec).
+attrs.get_max_pacing_offload_horizon(); // u32
+attrs.get_netns_immutable(); // u8
 ```
 
 ## Low-level decoding
@@ -3229,6 +3322,17 @@ for attr in iter {
     DevlinkPort(val) => {}, // &[u8]
     GsoIpv4MaxSize(val) => {}, // u32
     GroIpv4MaxSize(val) => {}, // u32
+    DpllPin(iter) => {
+      for attr in iter {
+        match attr {
+          Id(val) => {}, // u32
+        }
+      }
+    },
+
+    // EDT offload horizon supported by the device (in nsec).
+    MaxPacingOffloadHorizon(val) => {}, // u32
+    NetnsImmutable(val) => {}, // u8
   }
 }
 ```
@@ -3242,15 +3346,21 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .push_address(val) // &[u8]
   .push_broadcast(val) // &[u8]
   .push_ifname(val) // &CStr
+  .push_ifname_bytes(val) // &[u8]
   .push_mtu(val) // u32
   .push_link(val) // u32
   .push_qdisc(val) // &CStr
+  .push_qdisc_bytes(val) // &[u8]
   .push_stats(val) // PushRtnlLinkStats
   .push_cost(val) // &CStr
+  .push_cost_bytes(val) // &[u8]
   .push_priority(val) // &CStr
+  .push_priority_bytes(val) // &[u8]
   .push_master(val) // u32
   .push_wireless(val) // &CStr
+  .push_wireless_bytes(val) // &[u8]
   .push_protinfo(val) // &CStr
+  .push_protinfo_bytes(val) // &[u8]
   .push_txqlen(val) // u32
   .push_map(val) // PushRtnlLinkIfmap
   .push_weight(val) // u32
@@ -3258,6 +3368,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .push_linkmode(val) // u8
   .nested_linkinfo()
     .push_kind(val) // &CStr
+    .push_kind_bytes(val) // &[u8]
     .sub_nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
@@ -3606,6 +3717,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
     .end_nested()
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
+    .push_slave_kind_bytes(val) // &[u8]
     .sub_nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
@@ -3666,6 +3778,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .end_nested()
   .push_net_ns_pid(val) // u32
   .push_ifalias(val) // &CStr
+  .push_ifalias_bytes(val) // &[u8]
   .push_num_vf(val) // u32
   .nested_vfinfo_list()
 
@@ -3743,6 +3856,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .push_phys_switch_id(val) // &[u8]
   .push_link_netnsid(val) // i32
   .push_phys_port_name(val) // &CStr
+  .push_phys_port_name_bytes(val) // &[u8]
   .push_proto_down(val) // u8
   .push_gso_max_segs(val) // u32
   .push_gso_max_size(val) // u32
@@ -3767,11 +3881,15 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .push_max_mtu(val) // u32
   .nested_prop_list()
     .push_alt_ifname(val) // &CStr
+    .push_alt_ifname_bytes(val) // &[u8]
   .end_nested()
   .push_perm_address(val) // &[u8]
   .push_proto_down_reason(val) // &CStr
+  .push_proto_down_reason_bytes(val) // &[u8]
   .push_parent_dev_name(val) // &CStr
+  .push_parent_dev_name_bytes(val) // &[u8]
   .push_parent_dev_bus_name(val) // &CStr
+  .push_parent_dev_bus_name_bytes(val) // &[u8]
   .push_gro_max_size(val) // u32
   .push_tso_max_size(val) // u32
   .push_tso_max_segs(val) // u32
@@ -3779,6 +3897,13 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .push_devlink_port(val) // &[u8]
   .push_gso_ipv4_max_size(val) // u32
   .push_gro_ipv4_max_size(val) // u32
+  .nested_dpll_pin()
+    .push_id(val) // u32
+  .end_nested()
+
+  // EDT offload horizon supported by the device (in nsec).
+  .push_max_pacing_offload_horizon(val) // u32
+  .push_netns_immutable(val) // u8
   ;
 ```
 
@@ -4000,6 +4125,17 @@ for attr in iter {
     DevlinkPort(val) => {}, // &[u8]
     GsoIpv4MaxSize(val) => {}, // u32
     GroIpv4MaxSize(val) => {}, // u32
+    DpllPin(iter) => {
+      for attr in iter {
+        match attr {
+          Id(val) => {}, // u32
+        }
+      }
+    },
+
+    // EDT offload horizon supported by the device (in nsec).
+    MaxPacingOffloadHorizon(val) => {}, // u32
+    NetnsImmutable(val) => {}, // u8
   }
 }
 ```

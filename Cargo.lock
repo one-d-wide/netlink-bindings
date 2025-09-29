@@ -170,7 +170,7 @@ checksum = "32a282da65faaf38286cf3be983213fcf1d2e2a58700e808f83f4ea9a4804bc0"
 
 [[package]]
 name = "netlink-bindings"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "libc",
 ]
@@ -186,6 +186,14 @@ dependencies = [
  "serde-aux",
  "serde_yaml",
  "syn",
+]
+
+[[package]]
+name = "netlink-socket"
+version = "0.1.0"
+dependencies = [
+ "libc",
+ "netlink-bindings",
 ]
 
 [[package]]
@@ -228,6 +236,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "reverse-lookup"
+version = "0.1.0"
+dependencies = [
+ "argh",
+ "libc",
+ "netlink-bindings",
+ "netlink-socket",
 ]
 
 [[package]]

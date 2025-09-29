@@ -138,6 +138,13 @@ pub enum AttrType {
     // And some weird ones
     /// Translated to a corresponding binary struct type in [`Spec::fixup()`]
     Bitfield32,
+    #[serde(rename_all = "kebab-case")]
+    NestTypeValue {
+        nested_attributes: String,
+        /// Name of the value extracted from the type of a nest-type-value attribute.
+        #[allow(unused)]
+        type_value: Vec<String>,
+    },
     /// Carry another type, specified by value of preceding "selector" attribute
     #[serde(rename_all = "kebab-case")]
     SubMessage {
@@ -320,7 +327,6 @@ pub struct AttrSet {
 pub struct Request {
     /// Numerical message ID, used in serialized Netlink messages. The same
     /// enumeration rules are applied as to attribute values.
-    #[allow(unused)]
     pub value: Option<String>,
     #[serde(default = "Default::default")]
     pub attributes: Vec<String>,
@@ -485,7 +491,7 @@ pub struct Spec {
     pub name: String,
     pub protocol: Option<String>,
     #[allow(unused)]
-    pub protonum: Option<u8>,
+    pub protonum: Option<u16>,
     pub doc: String,
     /// Path to the uAPI header, default is linux/${family-name}.h
     #[allow(unused)]
@@ -591,7 +597,21 @@ impl Spec {
             }
         }
 
-        // Remove forward declarations
+        // Replace NestTypeValue with just Nest
+        for attrs in &mut self.attribute_sets {
+            for attr in &mut attrs.attributes {
+                if let AttrType::NestTypeValue {
+                    nested_attributes, ..
+                } = &attr.r#type
+                {
+                    attr.r#type = AttrType::Nest {
+                        nested_attributes: nested_attributes.clone(),
+                    };
+                }
+            }
+        }
+
+        // Remove forward declarations (enums with no entries)
         self.definitions.retain(|d| match &d.def {
             DefType::Flags { entries, .. } | DefType::Enum { entries, .. } => !entries.is_empty(),
             _ => true,

@@ -2462,6 +2462,9 @@ operations:
             - devlink-port
             - gso-ipv4-max-size
             - gro-ipv4-max-size
+            - dpll-pin
+            - max-pacing-offload-horizon
+            - netns-immutable
       dump:
         request:
           value: 18

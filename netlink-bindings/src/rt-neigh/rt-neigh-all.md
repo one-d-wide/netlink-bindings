@@ -385,6 +385,7 @@ attrs.get_gc_interval(); // u64
 ```rust
 PushOpGetneightblDumpReply::new(&mut vec)
   .push_name(val) // &CStr
+  .push_name_bytes(val) // &[u8]
   .push_thresh1(val) // u32
   .push_thresh2(val) // u32
   .push_thresh3(val) // u32
@@ -507,6 +508,7 @@ for attr in iter {
 ```rust
 PushOpSetneightblDoRequest::new(&mut vec)
   .push_name(val) // &CStr
+  .push_name_bytes(val) // &[u8]
   .push_thresh1(val) // u32
   .push_thresh2(val) // u32
   .push_thresh3(val) // u32

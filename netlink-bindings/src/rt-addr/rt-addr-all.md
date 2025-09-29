@@ -5,10 +5,14 @@
 
 ```rust
 PushOpNewaddrDoRequest::new(&mut vec)
-  .push_address(val) // &[u8]
+  .push_address(val) // IpAddr
   .push_label(val) // &CStr
-  .push_local(val) // &[u8]
+  .push_label_bytes(val) // &[u8]
+  .push_local(val) // IpAddr
   .push_cacheinfo(val) // PushIfaCacheinfo
+
+  // Associated type: "IfaFlags" (1 bit per enumeration)
+  .push_flags(val) // u32
   ;
 ```
 
@@ -39,10 +43,13 @@ let attrs = OpNewaddrDoReply::new(buf);
 let iter = OpNewaddrDoRequest::new(buf);
 for attr in iter {
   match attr {
-    Address(val) => {}, // &[u8]
+    Address(val) => {}, // IpAddr
     Label(val) => {}, // &CStr
-    Local(val) => {}, // &[u8]
+    Local(val) => {}, // IpAddr
     Cacheinfo(val) => {}, // PushIfaCacheinfo
+
+    // Associated type: "IfaFlags" (1 bit per enumeration)
+    Flags(val) => {}, // u32
   }
 }
 ```
@@ -60,8 +67,8 @@ let iter = OpNewaddrDoReply::new(buf);
 
 ```rust
 PushOpDeladdrDoRequest::new(&mut vec)
-  .push_address(val) // &[u8]
-  .push_local(val) // &[u8]
+  .push_address(val) // IpAddr
+  .push_local(val) // IpAddr
   ;
 ```
 
@@ -92,8 +99,8 @@ let attrs = OpDeladdrDoReply::new(buf);
 let iter = OpDeladdrDoRequest::new(buf);
 for attr in iter {
   match attr {
-    Address(val) => {}, // &[u8]
-    Local(val) => {}, // &[u8]
+    Address(val) => {}, // IpAddr
+    Local(val) => {}, // IpAddr
   }
 }
 ```
@@ -117,30 +124,40 @@ PushOpGetaddrDumpRequest::new(&mut vec)
 ```rust
 let attrs = OpGetaddrDumpReply::new(buf);
 
-attrs.get_address(); // &[u8]
+attrs.get_address(); // IpAddr
 attrs.get_label(); // &CStr
-attrs.get_local(); // &[u8]
+attrs.get_local(); // IpAddr
 attrs.get_cacheinfo(); // PushIfaCacheinfo
+
+// Associated type: "IfaFlags" (1 bit per enumeration)
+attrs.get_flags(); // u32
 ```
 
 ### Dump (reply)
 
 ```rust
 PushOpGetaddrDumpReply::new(&mut vec)
-  .push_address(val) // &[u8]
+  .push_address(val) // IpAddr
   .push_label(val) // &CStr
-  .push_local(val) // &[u8]
+  .push_label_bytes(val) // &[u8]
+  .push_local(val) // IpAddr
   .push_cacheinfo(val) // PushIfaCacheinfo
+
+  // Associated type: "IfaFlags" (1 bit per enumeration)
+  .push_flags(val) // u32
   ;
 ```
 
 ```rust
 let attrs = OpGetaddrDumpReply::new(buf);
 
-attrs.get_address(); // &[u8]
+attrs.get_address(); // IpAddr
 attrs.get_label(); // &CStr
-attrs.get_local(); // &[u8]
+attrs.get_local(); // IpAddr
 attrs.get_cacheinfo(); // PushIfaCacheinfo
+
+// Associated type: "IfaFlags" (1 bit per enumeration)
+attrs.get_flags(); // u32
 ```
 
 ## Low-level decoding
@@ -158,10 +175,13 @@ let iter = OpGetaddrDumpRequest::new(buf);
 let iter = OpGetaddrDumpReply::new(buf);
 for attr in iter {
   match attr {
-    Address(val) => {}, // &[u8]
+    Address(val) => {}, // IpAddr
     Label(val) => {}, // &CStr
-    Local(val) => {}, // &[u8]
+    Local(val) => {}, // IpAddr
     Cacheinfo(val) => {}, // PushIfaCacheinfo
+
+    // Associated type: "IfaFlags" (1 bit per enumeration)
+    Flags(val) => {}, // u32
   }
 }
 ```
