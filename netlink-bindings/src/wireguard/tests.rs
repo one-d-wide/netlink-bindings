@@ -4,7 +4,9 @@ use crate::wireguard;
 use crate::wireguard::*;
 
 #[test]
-#[should_panic(expected = "Error parsing header of \"OpSetDeviceDoRequest\" at offset 4")]
+#[should_panic(
+    expected = "Error parsing header of \"OpSetDeviceDoRequest\" (unknown attribute) at offset 4"
+)]
 fn invalid_header_size() {
     let payload = &[0x01, 0x01, 0x00, 0x00, 0x01, 0x00];
 
@@ -15,7 +17,9 @@ fn invalid_header_size() {
 }
 
 #[test]
-#[should_panic(expected = "Error parsing header of \"OpSetDeviceDoRequest\" at offset 4")]
+#[should_panic(
+    expected = "Error parsing header of \"OpSetDeviceDoRequest\" (unknown attribute) at offset 4"
+)]
 fn overflowing_header_size() {
     let payload = &[0x01, 0x01, 0x00, 0x00, 0x04];
 
@@ -76,11 +80,7 @@ fn wg0_set_2_allowed_addresses() {
 
     dump_hex(payload);
 
-    let mut req = OpSetDeviceDoRequest::new(payload);
-    for i in 0..payload.len() {
-        println!("{i:02x?}: {:?}", req.find_missing(i));
-    }
-    println!("{:#?}", req);
+    let req = OpSetDeviceDoRequest::new(payload);
 
     // We should be binary compatible too
     assert_eq!(req.get_ifname(), Ok(c"wg0"));

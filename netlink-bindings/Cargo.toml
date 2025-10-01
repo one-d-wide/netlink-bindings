@@ -1,6 +1,6 @@
 [package]
 name = "netlink-bindings"
-version = "0.1.1"
+version = "0.2.0"
 authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
 categories = [ "network-programming", "os", "api-bindings" ]
 repository = "https://github.com/one-d-wide/netlink-bindings"

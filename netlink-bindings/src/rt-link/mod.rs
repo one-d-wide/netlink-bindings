@@ -1416,8 +1416,13 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1997,8 +2002,13 @@ impl<'a> Iterator for Iterable<'a, PropListLinkAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2147,8 +2157,13 @@ impl<'a> Iterator for Iterable<'a, AfSpecAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2281,8 +2296,13 @@ impl<'a> Iterator for Iterable<'a, VfinfoListAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2602,8 +2622,13 @@ impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2939,8 +2964,13 @@ impl<'a> Iterator for Iterable<'a, VfStatsAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3112,8 +3142,13 @@ impl Iterator for Iterable<'_, VfVlanAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3206,8 +3241,13 @@ impl Iterator for Iterable<'_, VfPortsAttrs> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3277,8 +3317,13 @@ impl Iterator for Iterable<'_, PortSelfAttrs> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3506,8 +3551,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -4218,8 +4268,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -4630,8 +4685,13 @@ impl<'a> Iterator for Iterable<'a, BondAdInfoAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -4910,8 +4970,13 @@ impl<'a> Iterator for Iterable<'a, BondSlaveAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -5902,8 +5967,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -7021,8 +7091,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBrportAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -7827,8 +7902,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGreAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -8440,8 +8520,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGre6Attrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -8781,8 +8866,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVtiAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -9017,8 +9107,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVti6Attrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -9398,8 +9493,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -9931,8 +10031,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoIptunAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -10399,8 +10504,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -10742,8 +10852,13 @@ impl Iterator for Iterable<'_, LinkinfoTunAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -10984,8 +11099,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVlanAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -11130,8 +11250,13 @@ impl Iterator for Iterable<'_, IflaVlanQos> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -11246,8 +11371,13 @@ impl Iterator for Iterable<'_, LinkinfoVrfAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -11481,8 +11611,13 @@ impl Iterator for Iterable<'_, XdpAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -11648,8 +11783,13 @@ impl<'a> Iterator for Iterable<'a, IflaAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -11902,8 +12042,13 @@ impl<'a> Iterator for Iterable<'a, Ifla6Attrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -12091,8 +12236,13 @@ impl Iterator for Iterable<'_, MctpAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -12284,8 +12434,13 @@ impl<'a> Iterator for Iterable<'a, StatsAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -12489,8 +12644,13 @@ impl<'a> Iterator for Iterable<'a, LinkOffloadXstats<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -12651,8 +12811,13 @@ impl Iterator for Iterable<'_, HwSInfoOne> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -12774,8 +12939,13 @@ impl Iterator for Iterable<'_, LinkDpllPinAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -13036,8 +13206,13 @@ impl<'a> Iterator for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -13210,8 +13385,13 @@ impl Iterator for Iterable<'_, LinkinfoOvpnAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -19032,8 +19212,13 @@ impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -19316,8 +19501,13 @@ impl Iterator for Iterable<'_, OpNewlinkDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -19509,8 +19699,13 @@ impl<'a> Iterator for Iterable<'a, OpDellinkDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -19652,8 +19847,13 @@ impl Iterator for Iterable<'_, OpDellinkDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -19903,8 +20103,13 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -21588,8 +21793,13 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -22340,8 +22550,13 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -24024,8 +24239,13 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -26185,8 +26405,13 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -26786,8 +27011,13 @@ impl Iterator for Iterable<'_, OpSetlinkDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -26946,8 +27176,13 @@ impl Iterator for Iterable<'_, OpGetstatsDumpRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -27177,8 +27412,13 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -27391,8 +27631,13 @@ impl Iterator for Iterable<'_, OpGetstatsDoRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -27622,8 +27867,13 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDoReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }

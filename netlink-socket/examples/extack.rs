@@ -8,7 +8,10 @@
 
 use netlink_bindings::rt_link;
 
-fn main() {
+#[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
+#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
+async fn main() {
     let header = rt_link::PushIfinfomsg::new();
     let mut request = rt_link::Request::new()
         .set_create()
@@ -22,8 +25,8 @@ fn main() {
 
     let mut sock = netlink_socket::NetlinkSocket::new();
 
-    let mut iter = sock.request(&request).unwrap();
-    while let Some(res) = iter.recv() {
+    let mut iter = sock.request(&request).await.unwrap();
+    while let Some(res) = iter.recv().await {
         println!("{:?}", res);
     }
 }

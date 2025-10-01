@@ -159,8 +159,13 @@ impl<'a> Iterator for Iterable<'a, NlmsgerrAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -523,8 +528,13 @@ impl<'a> Iterator for Iterable<'a, PolicyTypeAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }

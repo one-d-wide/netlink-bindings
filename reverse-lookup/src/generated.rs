@@ -1,3 +1,11 @@
+#![allow(clippy::all)]
+#![allow(unused_imports)]
+#![allow(unused_assignments)]
+#![allow(non_snake_case)]
+#![allow(unused_variables)]
+#![allow(irrefutable_let_patterns)]
+#![allow(unreachable_code)]
+#![allow(unreachable_patterns)]
 use netlink_bindings::Protocol;
 use std::fmt::Debug;
 #[derive(Clone)]

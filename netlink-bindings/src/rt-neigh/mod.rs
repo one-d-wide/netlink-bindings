@@ -396,8 +396,13 @@ impl<'a> Iterator for Iterable<'a, NeighbourAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -767,8 +772,13 @@ impl<'a> Iterator for Iterable<'a, NdtAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1246,8 +1256,13 @@ impl<'a> Iterator for Iterable<'a, NdtpaAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2515,8 +2530,13 @@ impl<'a> Iterator for Iterable<'a, OpNewneighDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2735,8 +2755,13 @@ impl Iterator for Iterable<'_, OpNewneighDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2939,8 +2964,13 @@ impl<'a> Iterator for Iterable<'a, OpDelneighDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3089,8 +3119,13 @@ impl Iterator for Iterable<'_, OpDelneighDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3293,8 +3328,13 @@ impl Iterator for Iterable<'_, OpGetneighDumpRequest> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3700,8 +3740,13 @@ impl<'a> Iterator for Iterable<'a, OpGetneighDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3985,8 +4030,13 @@ impl<'a> Iterator for Iterable<'a, OpGetneighDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -4385,8 +4435,13 @@ impl<'a> Iterator for Iterable<'a, OpGetneighDoReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -4645,8 +4700,13 @@ impl Iterator for Iterable<'_, OpGetneightblDumpRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -4947,8 +5007,13 @@ impl<'a> Iterator for Iterable<'a, OpGetneightblDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -5322,8 +5387,13 @@ impl<'a> Iterator for Iterable<'a, OpSetneightblDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -5501,8 +5571,13 @@ impl Iterator for Iterable<'_, OpSetneightblDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }

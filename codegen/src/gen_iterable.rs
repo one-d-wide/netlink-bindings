@@ -177,11 +177,11 @@ pub fn gen_iterable_attrs(
                     // TODO: check nested flag
                     let res = match header.r#type {
                         #variants
-                        // Zero variant is very likely an error
-                        0 => break,
-                        // Make undeclared attributes an error for now
-                        // TODO: fix this later
-                        n => break,
+                        n => if cfg!(test) {
+                            break
+                        } else {
+                            continue
+                        },
                     };
 
                     return Some(Ok(res));

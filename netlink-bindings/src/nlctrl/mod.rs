@@ -296,8 +296,13 @@ impl<'a> Iterator for Iterable<'a, CtrlAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -521,8 +526,13 @@ impl<'a> Iterator for Iterable<'a, McastGroupAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -663,8 +673,13 @@ impl Iterator for Iterable<'_, OpAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -972,8 +987,13 @@ impl<'a> Iterator for Iterable<'a, PolicyAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1182,8 +1202,13 @@ impl Iterator for Iterable<'_, OpPolicyAttrs> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1757,8 +1782,13 @@ impl Iterator for Iterable<'_, OpGetfamilyDumpRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2051,8 +2081,13 @@ impl<'a> Iterator for Iterable<'a, OpGetfamilyDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2324,8 +2359,13 @@ impl<'a> Iterator for Iterable<'a, OpGetfamilyDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2641,8 +2681,13 @@ impl<'a> Iterator for Iterable<'a, OpGetfamilyDoReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2954,8 +2999,13 @@ impl<'a> Iterator for Iterable<'a, OpGetpolicyDumpRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -3180,8 +3230,13 @@ impl<'a> Iterator for Iterable<'a, OpGetpolicyDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }

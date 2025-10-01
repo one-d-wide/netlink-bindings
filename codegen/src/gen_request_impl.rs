@@ -142,6 +142,7 @@ pub fn gen_request_struct(
     });
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn gen_request_wrapper(
     tokens: &mut TokenStream,
     _ctx: &mut Context,

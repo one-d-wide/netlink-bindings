@@ -1,6 +1,6 @@
 [package]
 name = "netlink-socket"
-version = "0.1.0"
+version = "0.2.0"
 authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
 categories = [ "network-programming", "os", "api-bindings" ]
 repository = "https://github.com/one-d-wide/netlink-bindings"
@@ -19,6 +19,23 @@ required-features = [ "netlink-bindings/conntrack" ]
 name = "extack"
 required-features = [ "netlink-bindings/rt-link" ]
 
+[features]
+# default = []
+# default = ["tokio"]
+# default = ["smol"]
+
+async = []
+tokio = ["async", "dep:tokio"]
+smol = ["async", "dep:smol", "dep:smol-macros", "dep:macro_rules_attribute"]
+
 [dependencies]
 libc = "0.2"
 netlink-bindings = { path = "../netlink-bindings", features = [ "nlctrl" ] }
+
+maybe-async = { version = "0", features = [ "is_sync" ] }
+
+tokio = { optional = true, version = "1", features = [ "net", "io-util", "rt", "macros" ] }
+
+smol = { optional = true, version = "2", features = [ ] }
+smol-macros = { optional = true, version = "0" }
+macro_rules_attribute = { optional = true, version = "0", features = [ ] }

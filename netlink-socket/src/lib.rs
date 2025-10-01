@@ -1,11 +1,25 @@
 use std::{
     collections::{hash_map::Entry, HashMap},
     fmt,
-    io::{self, ErrorKind, IoSlice, Read, Write},
+    io::{self, ErrorKind, IoSlice},
     marker::PhantomData,
-    net::TcpStream,
     os::fd::{AsRawFd, FromRawFd, OwnedFd},
     sync::Arc,
+};
+
+#[cfg(not(feature = "async"))]
+use std::{
+    io::{Read, Write},
+    net::TcpStream as Socket,
+};
+
+#[cfg(feature = "tokio")]
+use tokio::net::TcpStream as Socket;
+
+#[cfg(feature = "smol")]
+use smol::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::TcpStream as Socket,
 };
 
 use netlink_bindings::{
@@ -21,7 +35,7 @@ pub const RECV_BUF_SIZE: usize = 8192;
 pub struct NetlinkSocket {
     buf: Arc<[u8; RECV_BUF_SIZE]>,
     cache: HashMap<&'static [u8], u16>,
-    sock: HashMap<u16, TcpStream>,
+    sock: HashMap<u16, Socket>,
     seq: u32,
 }
 
@@ -36,7 +50,7 @@ impl NetlinkSocket {
         }
     }
 
-    fn get_socket(family: u16) -> io::Result<TcpStream> {
+    fn get_socket(family: u16) -> io::Result<Socket> {
         let fd = unsafe {
             libc::socket(
                 libc::AF_NETLINK,
@@ -63,41 +77,19 @@ impl NetlinkSocket {
             return Err(io::Error::from_raw_os_error(-res));
         }
 
-        Ok(fd.into())
+        let sock: std::net::TcpStream = fd.into();
+
+        #[cfg(feature = "async")]
+        {
+            sock.set_nonblocking(true)?;
+            Socket::try_from(sock)
+        }
+        #[cfg(not(feature = "async"))]
+        Ok(sock)
     }
 
-    pub fn resolve(&mut self, family_name: &'static [u8]) -> io::Result<u16> {
-        if let Some(id) = self.cache.get(family_name) {
-            return Ok(*id);
-        }
-
-        let mut request = nlctrl::Request::new().op_getfamily_do_request();
-        request.encode().push_family_name_bytes(family_name);
-
-        match request.protocol() {
-            Protocol::Raw {
-                protonum,
-                request_type,
-            } => {
-                assert_eq!(protonum, libc::NETLINK_GENERIC as u16);
-                assert_eq!(request_type, libc::GENL_ID_CTRL as u16);
-            }
-            _ => unreachable!(),
-        }
-
-        let mut iter = self.request(&request)?;
-        if let Some(reply) = iter.recv() {
-            let Ok(id) = reply?.get_family_id() else {
-                return Err(ErrorKind::Unsupported.into());
-            };
-            self.cache.insert(family_name, id);
-            return Ok(id);
-        }
-
-        Err(ErrorKind::UnexpectedEof.into())
-    }
-
-    pub fn request<'sock, Request>(
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn request<'sock, Request>(
         &'sock mut self,
         request: &Request,
     ) -> io::Result<NetlinkReply<'sock, Request>>
@@ -109,9 +101,53 @@ impl NetlinkSocket {
                 protonum,
                 request_type,
             } => (protonum, request_type),
-            Protocol::Generic(name) => (libc::GENL_ID_CTRL as u16, self.resolve(name)?),
+            Protocol::Generic(name) => (libc::GENL_ID_CTRL as u16, self.resolve(name).await?),
         };
 
+        self.request_raw(request, protonum, request_type).await
+    }
+
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn resolve(&mut self, family_name: &'static [u8]) -> io::Result<u16> {
+        if let Some(id) = self.cache.get(family_name) {
+            return Ok(*id);
+        }
+
+        let mut request = nlctrl::Request::new().op_getfamily_do_request();
+        request.encode().push_family_name_bytes(family_name);
+
+        let Protocol::Raw {
+            protonum,
+            request_type,
+        } = request.protocol()
+        else {
+            unreachable!()
+        };
+        assert_eq!(protonum, libc::NETLINK_GENERIC as u16);
+        assert_eq!(request_type, libc::GENL_ID_CTRL as u16);
+
+        let mut iter = self.request_raw(&request, protonum, request_type).await?;
+        if let Some(reply) = iter.recv().await {
+            let Ok(id) = reply?.get_family_id() else {
+                return Err(ErrorKind::Unsupported.into());
+            };
+            self.cache.insert(family_name, id);
+            return Ok(id);
+        }
+
+        Err(ErrorKind::UnexpectedEof.into())
+    }
+
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    async fn request_raw<'sock, Request>(
+        &'sock mut self,
+        request: &Request,
+        protonum: u16,
+        request_type: u16,
+    ) -> io::Result<NetlinkReply<'sock, Request>>
+    where
+        Request: NetlinkRequest,
+    {
         let mut header = PushNlmsghdr::new();
         header.set_len(header.as_slice().len() as u32 + request.payload().len() as u32);
         header.set_type(request_type);
@@ -129,10 +165,30 @@ impl NetlinkSocket {
             }
         };
 
-        let sent = sock.write_vectored(&[
-            IoSlice::new(header.as_slice()),
-            IoSlice::new(request.payload()),
-        ])?;
+        #[cfg(not(feature = "tokio"))]
+        let sent = sock
+            .write_vectored(&[
+                IoSlice::new(header.as_slice()),
+                IoSlice::new(request.payload()),
+            ])
+            .await?;
+
+        #[cfg(feature = "tokio")]
+        let sent = loop {
+            // Some subsystems don't correctly implement io notifications, which tokio runtime
+            // expects to receive before doing any actual io, hence we instead always attempt an io
+            // operation first.
+            let res = sock.try_write_vectored(&[
+                IoSlice::new(header.as_slice()),
+                IoSlice::new(request.payload()),
+            ]);
+            if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
+                sock.writable().await?;
+                continue;
+            }
+            break res?;
+        };
+
         if sent != header.get_len() as usize {
             return Err(io::Error::other("Couldn't send the whole message"));
         }
@@ -160,7 +216,8 @@ pub struct NetlinkReply<'sock, Request: NetlinkRequest> {
 }
 
 impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
-    pub fn recv(&mut self) -> Option<Result<Request::ReplyType<'_>, ReplyError>> {
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn recv(&mut self) -> Option<Result<Request::ReplyType<'_>, ReplyError>> {
         if self.done {
             return None;
         }
@@ -170,10 +227,29 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
 
             if self.buf_offset == self.buf_read {
                 let sock = self.sock.sock.get_mut(&self.protonum).unwrap();
-                let read = match sock.read(&mut buf[..]) {
+
+                #[cfg(not(feature = "tokio"))]
+                let res = sock.read(&mut buf[..]).await;
+
+                #[cfg(feature = "tokio")]
+                let res = loop {
+                    // Some subsystems don't correctly implement io notifications, which tokio
+                    // runtime expects to receive before doing any actual io, hence we instead
+                    // always attempt an io operation first.
+                    let res = sock.try_read(&mut buf[..]);
+                    if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
+                        if let Err(err) = sock.readable().await {
+                            return Some(Err(err.into()));
+                        }
+                        continue;
+                    }
+                    break res;
+                };
+
+                let read = match res {
                     Ok(read) => read,
                     Err(err) if err.kind() == ErrorKind::Interrupted => continue,
-                    Err(err) => return Some(Err(ReplyError::from_io_err::<Request>(err))),
+                    Err(err) => return Some(Err(err.into())),
                 };
 
                 self.buf_read = read;
@@ -182,11 +258,8 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
 
             let packet = &buf[self.buf_offset..self.buf_read];
 
-            let too_short_err = || {
-                Some(Err(ReplyError::from_io_err::<Request>(io::Error::other(
-                    "Received packet is too short",
-                ))))
-            };
+            let too_short_err =
+                || Some(Err(io::Error::other("Received packet is too short").into()));
 
             let Some(header) = packet.get(..PushNlmsghdr::len()) else {
                 return too_short_err();
@@ -243,9 +316,7 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
                     }));
                 }
                 libc::NLMSG_OVERRUN => {
-                    return Some(Err(ReplyError::from_io_err::<Request>(io::Error::other(
-                        "Received NLMSG_OVERRUN",
-                    ))));
+                    return Some(Err(io::Error::other("Received NLMSG_OVERRUN").into()));
                 }
                 _ => {
                     return Some(Ok(Request::decode_reply(
@@ -269,17 +340,19 @@ pub struct ReplyError {
     lookup: fn(&[u8], usize, Option<u16>) -> (Vec<(&'static str, usize)>, Option<&'static str>),
 }
 
-impl ReplyError {
-    fn from_io_err<Request: NetlinkRequest>(err: io::Error) -> Self {
+impl From<io::Error> for ReplyError {
+    fn from(value: io::Error) -> Self {
         Self {
-            code: err,
+            code: value,
             reply_buf: None,
             request_bounds: (0, 0),
             ext_ack_bounds: (0, 0),
-            lookup: Request::lookup,
+            lookup: |_, _, _| Default::default(),
         }
     }
+}
 
+impl ReplyError {
     pub fn ext_ack(&self) -> Option<Iterable<'_, NlmsgerrAttrs<'_>>> {
         let Some(reply_buf) = &self.reply_buf else {
             return None;

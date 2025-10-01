@@ -29,14 +29,13 @@ resolution is automatic.
 including: binary structures, nested types, multi-attribute arrays, indexed
 arrays, sub messages.
 - Zero unsafe code in encoder/decoder logic.
-- No additional dependencies (only std).
 
 ## Installation
 
 ```toml
 [dependencies]
-netlink-bindings = { version = "0.1", features = [ "wireguard" ] }
-netlink-socket = { version = "0.1", features = [] }
+netlink-bindings = { version = "0.2", features = [ "wireguard" ] }
+netlink-socket = { version = "0.2", features = [] }
 
 [patch.crates-io]
 netlink-bindings = { git = "https://github.com/one-d-wide/netlink-bindings.git" }
@@ -55,9 +54,12 @@ subsystems may imply different things. The typical request looks like this:
 
 ```rust
 use netlink_bindings::wireguard;
+use netlink_socket::NetlinkSocket;
 let ifname = "wg0";
 
-// A convenience gathering possible requests under one umbrella
+let mut sock = NetlinkSocket::new();
+
+// All available requests are conveniently accessible using `family::Request`
 let mut request = wireguard::Request::new()
     .op_get_device_dump_request();
 
@@ -65,7 +67,7 @@ let mut request = wireguard::Request::new()
 request.encode()
     .push_ifname_bytes(ifname.as_bytes());
 
-let mut iter = sock_wg.request(&request).unwrap();
+let mut iter = sock.request(&request).unwrap();
 while let Some(res) = iter.recv() {
     // Each request may return an error (literal error code), in some cases
     // with some additional info from the kernel, e.g. lacking a permission,
@@ -129,6 +131,32 @@ while let Some(res) = iter.recv() {
 ```
 
 See full code in the [example](./netlink-socket/examples/wireguard-setup.rs).
+
+## Async sockets
+
+Async functionality is available using the same interface, you just need to
+enable it, and to add `.await` keyword, in all places where async IO is
+expected.
+
+```toml
+[dependencies]
+netlink-socket = { version = "0.2", features = [ "tokio" ] } # or "smol"
+```
+
+An earlier example, but using async, would look like:
+
+```rust
+let mut request = wireguard::Request::new()
+    .op_get_device_dump_request();
+
+request.encode()
+    .push_ifname_bytes(b"wg0");
+
+let mut iter = sock.request(&request).await.unwrap();
+while let Some(res) = iter.recv().await {
+    println!("{:#?}", res);
+}
+```
 
 ## Other examples
 
@@ -210,9 +238,8 @@ documentation.
 
 A low-level decoding interface is exposed as an iterator, that yields enum
 variants, containing either a target type, e.g. SockAddr, or another iterator,
-in case of a nested attribute set.
-
-But as you can see, using it directly quickly turns very ugly.
+in case of a nested attribute set. But as you can see, using it directly
+quickly turns very ugly.
 
 ```rust
 for attr in OpGetDeviceDumpReply::new(next) {
@@ -326,7 +353,6 @@ Dumping all "netlink-bindings/src/wireguard/wireguard-all.md"
 
 ## To-do
 
-- Async netlink socket.
 - Testing (for each sensible netlink family and for parsing primitives).
 - Simplify codegen logic.
 - Clean up unintentional panics in encoding/decoding.

@@ -246,8 +246,13 @@ impl<'a> Iterator for Iterable<'a, AddrAttrs<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -842,8 +847,13 @@ impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1013,8 +1023,13 @@ impl Iterator for Iterable<'_, OpNewaddrDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1227,8 +1242,13 @@ impl Iterator for Iterable<'_, OpDeladdrDoRequest> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1377,8 +1397,13 @@ impl Iterator for Iterable<'_, OpDeladdrDoReply> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1537,8 +1562,13 @@ impl Iterator for Iterable<'_, OpGetaddrDumpRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -1787,8 +1817,13 @@ impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2000,8 +2035,13 @@ impl Iterator for Iterable<'_, OpGetmulticastDumpRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2164,8 +2204,13 @@ impl<'a> Iterator for Iterable<'a, OpGetmulticastDumpReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2356,8 +2401,13 @@ impl Iterator for Iterable<'_, OpGetmulticastDoRequest> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }
@@ -2520,8 +2570,13 @@ impl<'a> Iterator for Iterable<'a, OpGetmulticastDoReply<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
-                0 => break,
-                n => break,
+                n => {
+                    if cfg!(test) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
             };
             return Some(Ok(res));
         }

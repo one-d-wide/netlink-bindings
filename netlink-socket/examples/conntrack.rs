@@ -7,13 +7,16 @@ use std::net::IpAddr;
 
 use netlink_bindings::{conntrack, utils};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
+#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request = conntrack::Request::new().op_get_dump_request(&conntrack::PushNfgenmsg::new());
 
     let mut sock = netlink_socket::NetlinkSocket::new();
 
-    let mut iter = sock.request(&request)?;
-    while let Some(res) = iter.recv() {
+    let mut iter = sock.request(&request).await?;
+    while let Some(res) = iter.recv().await {
         let (_header, attrs) = res.unwrap();
         let orig = attrs.get_tuple_orig().unwrap();
         let reply = attrs.get_tuple_reply().unwrap();

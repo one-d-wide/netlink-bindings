@@ -113,7 +113,7 @@ pub fn gen_attr(
 
     let type_name = &m.type_name;
     let attrs_str = format!("{type_name}");
-    let attr_str = format!("{}", kebab_to_type(&attr.name));
+    let attr_str = kebab_to_type(&attr.name);
     let get_name = shorthand_name(&attr.name);
 
     doc_attr(attr, |doc| shorthands.extend(quote!(#[doc = #doc])));

@@ -1,18 +1,20 @@
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Protocol {
     /// Netlink-raw protocol.
-    /// Protonum is the protocol value the socket(2) was created with.
-    /// Request type is the type value from the message header.
+    /// Protonum is the `protocol` value supplied to socket(2).
+    /// Request type is the value of `type` field in the message header.
     Raw { protonum: u16, request_type: u16 },
-    /// Name of a generic netlink family
+    /// Generic netlink protocol.
+    /// Name of a generic netlink family.
     Generic(&'static [u8]),
 }
 
-/// Common trait describing how to handle a particular request.
-/// Designed to be used by the netlink socket implementations.
+/// A trait describing how to handle a particular request.
+/// It designed to be used by a netlink socket implementation.
 pub trait NetlinkRequest {
+    /// Netlink protocol to use
     fn protocol(&self) -> Protocol;
-    /// Additional flags specified in the message header
+    /// Additional `flags` specified in the message header
     fn flags(&self) -> u16;
 
     /// Encoded payload of the message (without message header)

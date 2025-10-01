@@ -238,7 +238,7 @@ pub struct Iterable<'a, AttrSet> {
 
 impl<AttrSet: Clone> Copy for Iterable<'_, AttrSet> {}
 
-impl<'a, AttrSet> Default for Iterable<'a, AttrSet> {
+impl<AttrSet> Default for Iterable<'_, AttrSet> {
     fn default() -> Self {
         Self {
             buf: &[],
@@ -258,14 +258,13 @@ impl<'a, AttrSet> Iterable<'a, AttrSet> {
         Iterable {
             buf,
             pos: 0,
-            orig_loc: orig_loc,
+            orig_loc,
             phantom: PhantomData,
         }
     }
 
     pub(crate) fn calc_offset(&self, loc: usize) -> usize {
         let orig = self.orig_loc;
-        let loc = loc;
 
         if orig <= loc && loc - orig <= u16::MAX as usize {
             loc - orig

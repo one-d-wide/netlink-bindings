@@ -147,6 +147,14 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
 
     let mut tokens = TokenStream::new();
     tokens.extend(quote! {
+        #![allow(clippy::all)]
+        #![allow(unused_imports)]
+        #![allow(unused_assignments)]
+        #![allow(non_snake_case)]
+        #![allow(unused_variables)]
+        #![allow(irrefutable_let_patterns)]
+        #![allow(unreachable_code)]
+        #![allow(unreachable_patterns)]
         use std::fmt::Debug;
         use netlink_bindings::Protocol;
 
