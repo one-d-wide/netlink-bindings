@@ -13,7 +13,7 @@ use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"nlctrl";
 #[doc = "Original name: \"op-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum OpFlags {
     AdminPerm = 1 << 0,
     CmdCapDo = 1 << 1,
@@ -21,8 +21,20 @@ pub enum OpFlags {
     CmdCapHaspol = 1 << 3,
     UnsAdminPerm = 1 << 4,
 }
+impl OpFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::AdminPerm,
+            n if n == 1 << 1 => Self::CmdCapDo,
+            n if n == 1 << 2 => Self::CmdCapDump,
+            n if n == 1 << 3 => Self::CmdCapHaspol,
+            n if n == 1 << 4 => Self::UnsAdminPerm,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"attr-type\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum AttrType {
     Invalid = 0,
     Flag = 1,
@@ -42,6 +54,31 @@ pub enum AttrType {
     Bitfield32 = 15,
     Sint = 16,
     Uint = 17,
+}
+impl AttrType {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Invalid,
+            1 => Self::Flag,
+            2 => Self::U8,
+            3 => Self::U16,
+            4 => Self::U32,
+            5 => Self::U64,
+            6 => Self::S8,
+            7 => Self::S16,
+            8 => Self::S32,
+            9 => Self::S64,
+            10 => Self::Binary,
+            11 => Self::String,
+            12 => Self::NulString,
+            13 => Self::Nested,
+            14 => Self::NestedArray,
+            15 => Self::Bitfield32,
+            16 => Self::Sint,
+            17 => Self::Uint,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"ctrl-attrs\""]
 #[derive(Clone)]
@@ -297,7 +334,7 @@ impl<'a> Iterator for Iterable<'a, CtrlAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -527,7 +564,7 @@ impl<'a> Iterator for Iterable<'a, McastGroupAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -674,7 +711,7 @@ impl Iterator for Iterable<'_, OpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -705,7 +742,9 @@ impl std::fmt::Debug for Iterable<'_, OpAttrs> {
             };
             match attr {
                 OpAttrs::Id(val) => fmt.field("Id", &val),
-                OpAttrs::Flags(val) => fmt.field("Flags", &val),
+                OpAttrs::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), OpFlags::from_value))
+                }
             };
         }
         fmt.finish()
@@ -988,7 +1027,7 @@ impl<'a> Iterator for Iterable<'a, PolicyAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1018,7 +1057,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, PolicyAttrs<'a>> {
                 }
             };
             match attr {
-                PolicyAttrs::Type(val) => fmt.field("Type", &val),
+                PolicyAttrs::Type(val) => {
+                    fmt.field("Type", &FormatEnum(val.into(), AttrType::from_value))
+                }
                 PolicyAttrs::MinValueS(val) => fmt.field("MinValueS", &val),
                 PolicyAttrs::MaxValueS(val) => fmt.field("MaxValueS", &val),
                 PolicyAttrs::MinValueU(val) => fmt.field("MinValueU", &val),
@@ -1203,7 +1244,7 @@ impl Iterator for Iterable<'_, OpPolicyAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1783,7 +1824,7 @@ impl Iterator for Iterable<'_, OpGetfamilyDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2082,7 +2123,7 @@ impl<'a> Iterator for Iterable<'a, OpGetfamilyDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2360,7 +2401,7 @@ impl<'a> Iterator for Iterable<'a, OpGetfamilyDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2682,7 +2723,7 @@ impl<'a> Iterator for Iterable<'a, OpGetfamilyDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3000,7 +3041,7 @@ impl<'a> Iterator for Iterable<'a, OpGetpolicyDumpRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3231,7 +3272,7 @@ impl<'a> Iterator for Iterable<'a, OpGetpolicyDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

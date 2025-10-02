@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"rt-neigh";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"nud-state\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NudState {
     Incomplete = 1 << 0,
     Reachable = 1 << 1,
@@ -25,8 +25,23 @@ pub enum NudState {
     Noarp = 1 << 6,
     Permanent = 1 << 7,
 }
+impl NudState {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Incomplete,
+            n if n == 1 << 1 => Self::Reachable,
+            n if n == 1 << 2 => Self::Stale,
+            n if n == 1 << 3 => Self::Delay,
+            n if n == 1 << 4 => Self::Probe,
+            n if n == 1 << 5 => Self::Failed,
+            n if n == 1 << 6 => Self::Noarp,
+            n if n == 1 << 7 => Self::Permanent,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ntf-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NtfFlags {
     Use = 1 << 0,
     _Self = 1 << 1,
@@ -37,15 +52,40 @@ pub enum NtfFlags {
     Sticky = 1 << 6,
     Router = 1 << 7,
 }
+impl NtfFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Use,
+            n if n == 1 << 1 => Self::_Self,
+            n if n == 1 << 2 => Self::Master,
+            n if n == 1 << 3 => Self::Proxy,
+            n if n == 1 << 4 => Self::ExtLearned,
+            n if n == 1 << 5 => Self::Offloaded,
+            n if n == 1 << 6 => Self::Sticky,
+            n if n == 1 << 7 => Self::Router,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ntf-ext-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NtfExtFlags {
     Managed = 1 << 0,
     Locked = 1 << 1,
     ExtValidated = 1 << 2,
 }
+impl NtfExtFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Managed,
+            n if n == 1 << 1 => Self::Locked,
+            n if n == 1 << 2 => Self::ExtValidated,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"rtm-type\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum RtmType {
     Unspec = 0,
     Unicast = 1,
@@ -59,6 +99,25 @@ pub enum RtmType {
     Throw = 9,
     Nat = 10,
     Xresolve = 11,
+}
+impl RtmType {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Unspec,
+            1 => Self::Unicast,
+            2 => Self::Local,
+            3 => Self::Broadcast,
+            4 => Self::Anycast,
+            5 => Self::Multicast,
+            6 => Self::Blackhole,
+            7 => Self::Unreachable,
+            8 => Self::Prohibit,
+            9 => Self::Throw,
+            10 => Self::Nat,
+            11 => Self::Xresolve,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"neighbour-attrs\""]
 #[derive(Clone)]
@@ -397,7 +456,7 @@ impl<'a> Iterator for Iterable<'a, NeighbourAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -442,7 +501,10 @@ impl<'a> std::fmt::Debug for Iterable<'a, NeighbourAttrs<'a>> {
                 NeighbourAttrs::Protocol(val) => fmt.field("Protocol", &val),
                 NeighbourAttrs::NhId(val) => fmt.field("NhId", &val),
                 NeighbourAttrs::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &val),
-                NeighbourAttrs::FlagsExt(val) => fmt.field("FlagsExt", &val),
+                NeighbourAttrs::FlagsExt(val) => fmt.field(
+                    "FlagsExt",
+                    &FormatFlags(val.into(), NtfExtFlags::from_value),
+                ),
                 NeighbourAttrs::NdmStateMask(val) => fmt.field("NdmStateMask", &val),
                 NeighbourAttrs::NdmFlagsMask(val) => fmt.field("NdmFlagsMask", &val),
             };
@@ -773,7 +835,7 @@ impl<'a> Iterator for Iterable<'a, NdtAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1257,7 +1319,7 @@ impl<'a> Iterator for Iterable<'a, NdtpaAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2531,7 +2593,7 @@ impl<'a> Iterator for Iterable<'a, OpNewneighDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2572,7 +2634,10 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewneighDoRequest<'a>> {
                 OpNewneighDoRequest::Protocol(val) => fmt.field("Protocol", &val),
                 OpNewneighDoRequest::NhId(val) => fmt.field("NhId", &val),
                 OpNewneighDoRequest::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &val),
-                OpNewneighDoRequest::FlagsExt(val) => fmt.field("FlagsExt", &val),
+                OpNewneighDoRequest::FlagsExt(val) => fmt.field(
+                    "FlagsExt",
+                    &FormatFlags(val.into(), NtfExtFlags::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -2756,7 +2821,7 @@ impl Iterator for Iterable<'_, OpNewneighDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2965,7 +3030,7 @@ impl<'a> Iterator for Iterable<'a, OpDelneighDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3120,7 +3185,7 @@ impl Iterator for Iterable<'_, OpDelneighDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3329,7 +3394,7 @@ impl Iterator for Iterable<'_, OpGetneighDumpRequest> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3741,7 +3806,7 @@ impl<'a> Iterator for Iterable<'a, OpGetneighDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3782,7 +3847,10 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetneighDumpReply<'a>> {
                 OpGetneighDumpReply::Protocol(val) => fmt.field("Protocol", &val),
                 OpGetneighDumpReply::NhId(val) => fmt.field("NhId", &val),
                 OpGetneighDumpReply::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &val),
-                OpGetneighDumpReply::FlagsExt(val) => fmt.field("FlagsExt", &val),
+                OpGetneighDumpReply::FlagsExt(val) => fmt.field(
+                    "FlagsExt",
+                    &FormatFlags(val.into(), NtfExtFlags::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -4031,7 +4099,7 @@ impl<'a> Iterator for Iterable<'a, OpGetneighDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4436,7 +4504,7 @@ impl<'a> Iterator for Iterable<'a, OpGetneighDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4477,7 +4545,10 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetneighDoReply<'a>> {
                 OpGetneighDoReply::Protocol(val) => fmt.field("Protocol", &val),
                 OpGetneighDoReply::NhId(val) => fmt.field("NhId", &val),
                 OpGetneighDoReply::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &val),
-                OpGetneighDoReply::FlagsExt(val) => fmt.field("FlagsExt", &val),
+                OpGetneighDoReply::FlagsExt(val) => fmt.field(
+                    "FlagsExt",
+                    &FormatFlags(val.into(), NtfExtFlags::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -4701,7 +4772,7 @@ impl Iterator for Iterable<'_, OpGetneightblDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5008,7 +5079,7 @@ impl<'a> Iterator for Iterable<'a, OpGetneightblDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5388,7 +5459,7 @@ impl<'a> Iterator for Iterable<'a, OpSetneightblDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5572,7 +5643,7 @@ impl Iterator for Iterable<'_, OpSetneightblDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

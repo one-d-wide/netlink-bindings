@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"rt-rule";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"fr-act\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum FrAct {
     Unspec = 0,
     ToTbl = 1,
@@ -25,6 +25,22 @@ pub enum FrAct {
     Blackhole = 6,
     Unreachable = 7,
     Prohibit = 8,
+}
+impl FrAct {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Unspec,
+            1 => Self::ToTbl,
+            2 => Self::Goto,
+            3 => Self::Nop,
+            4 => Self::Res3,
+            5 => Self::Res4,
+            6 => Self::Blackhole,
+            7 => Self::Unreachable,
+            8 => Self::Prohibit,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"fib-rule-attrs\""]
 #[derive(Clone)]
@@ -565,7 +581,7 @@ impl<'a> Iterator for Iterable<'a, FibRuleAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1858,7 +1874,7 @@ impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2160,7 +2176,7 @@ impl Iterator for Iterable<'_, OpNewruleDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2830,7 +2846,7 @@ impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3132,7 +3148,7 @@ impl Iterator for Iterable<'_, OpDelruleDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3297,7 +3313,7 @@ impl Iterator for Iterable<'_, OpGetruleDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3927,7 +3943,7 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

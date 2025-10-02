@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"rt-link";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"ifinfo-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum IfinfoFlags {
     Up = 1 << 0,
     Broadcast = 1 << 1,
@@ -36,14 +36,49 @@ pub enum IfinfoFlags {
     Dormant = 1 << 17,
     Echo = 1 << 18,
 }
+impl IfinfoFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Up,
+            n if n == 1 << 1 => Self::Broadcast,
+            n if n == 1 << 2 => Self::Debug,
+            n if n == 1 << 3 => Self::Loopback,
+            n if n == 1 << 4 => Self::PointToPoint,
+            n if n == 1 << 5 => Self::NoTrailers,
+            n if n == 1 << 6 => Self::Running,
+            n if n == 1 << 7 => Self::NoArp,
+            n if n == 1 << 8 => Self::Promisc,
+            n if n == 1 << 9 => Self::AllMulti,
+            n if n == 1 << 10 => Self::Master,
+            n if n == 1 << 11 => Self::Slave,
+            n if n == 1 << 12 => Self::Multicast,
+            n if n == 1 << 13 => Self::Portsel,
+            n if n == 1 << 14 => Self::AutoMedia,
+            n if n == 1 << 15 => Self::Dynamic,
+            n if n == 1 << 16 => Self::LowerUp,
+            n if n == 1 << 17 => Self::Dormant,
+            n if n == 1 << 18 => Self::Echo,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"vlan-protocols\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum VlanProtocols {
     _8021q = 33024,
     _8021ad = 34984,
 }
+impl VlanProtocols {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            33024 => Self::_8021q,
+            34984 => Self::_8021ad,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ipv4-devconf\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Ipv4Devconf {
     Forwarding = 0,
     McForwarding = 1,
@@ -79,8 +114,48 @@ pub enum Ipv4Devconf {
     BcForwarding = 31,
     ArpEvictNocarrier = 32,
 }
+impl Ipv4Devconf {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Forwarding,
+            1 => Self::McForwarding,
+            2 => Self::ProxyArp,
+            3 => Self::AcceptRedirects,
+            4 => Self::SecureRedirects,
+            5 => Self::SendRedirects,
+            6 => Self::SharedMedia,
+            7 => Self::RpFilter,
+            8 => Self::AcceptSourceRoute,
+            9 => Self::BootpRelay,
+            10 => Self::LogMartians,
+            11 => Self::Tag,
+            12 => Self::Arpfilter,
+            13 => Self::MediumId,
+            14 => Self::Noxfrm,
+            15 => Self::Nopolicy,
+            16 => Self::ForceIgmpVersion,
+            17 => Self::ArpAnnounce,
+            18 => Self::ArpIgnore,
+            19 => Self::PromoteSecondaries,
+            20 => Self::ArpAccept,
+            21 => Self::ArpNotify,
+            22 => Self::AcceptLocal,
+            23 => Self::SrcVmark,
+            24 => Self::ProxyArpPvlan,
+            25 => Self::RouteLocalnet,
+            26 => Self::Igmpv2UnsolicitedReportInterval,
+            27 => Self::Igmpv3UnsolicitedReportInterval,
+            28 => Self::IgnoreRoutesWithLinkdown,
+            29 => Self::DropUnicastInL2Multicast,
+            30 => Self::DropGratuitousArp,
+            31 => Self::BcForwarding,
+            32 => Self::ArpEvictNocarrier,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ipv6-devconf\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Ipv6Devconf {
     Forwarding = 0,
     Hoplimit = 1,
@@ -141,8 +216,73 @@ pub enum Ipv6Devconf {
     NdiscEvictNocarrier = 56,
     AcceptUntrackedNa = 57,
 }
+impl Ipv6Devconf {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Forwarding,
+            1 => Self::Hoplimit,
+            2 => Self::Mtu6,
+            3 => Self::AcceptRa,
+            4 => Self::AcceptRedirects,
+            5 => Self::Autoconf,
+            6 => Self::DadTransmits,
+            7 => Self::RtrSolicits,
+            8 => Self::RtrSolicitInterval,
+            9 => Self::RtrSolicitDelay,
+            10 => Self::UseTempaddr,
+            11 => Self::TempValidLft,
+            12 => Self::TempPreferedLft,
+            13 => Self::RegenMaxRetry,
+            14 => Self::MaxDesyncFactor,
+            15 => Self::MaxAddresses,
+            16 => Self::ForceMldVersion,
+            17 => Self::AcceptRaDefrtr,
+            18 => Self::AcceptRaPinfo,
+            19 => Self::AcceptRaRtrPref,
+            20 => Self::RtrProbeInterval,
+            21 => Self::AcceptRaRtInfoMaxPlen,
+            22 => Self::ProxyNdp,
+            23 => Self::OptimisticDad,
+            24 => Self::AcceptSourceRoute,
+            25 => Self::McForwarding,
+            26 => Self::DisableIpv6,
+            27 => Self::AcceptDad,
+            28 => Self::ForceTllao,
+            29 => Self::NdiscNotify,
+            30 => Self::Mldv1UnsolicitedReportInterval,
+            31 => Self::Mldv2UnsolicitedReportInterval,
+            32 => Self::SuppressFragNdisc,
+            33 => Self::AcceptRaFromLocal,
+            34 => Self::UseOptimistic,
+            35 => Self::AcceptRaMtu,
+            36 => Self::StableSecret,
+            37 => Self::UseOifAddrsOnly,
+            38 => Self::AcceptRaMinHopLimit,
+            39 => Self::IgnoreRoutesWithLinkdown,
+            40 => Self::DropUnicastInL2Multicast,
+            41 => Self::DropUnsolicitedNa,
+            42 => Self::KeepAddrOnDown,
+            43 => Self::RtrSolicitMaxInterval,
+            44 => Self::Seg6Enabled,
+            45 => Self::Seg6RequireHmac,
+            46 => Self::EnhancedDad,
+            47 => Self::AddrGenMode,
+            48 => Self::DisablePolicy,
+            49 => Self::AcceptRaRtInfoMinPlen,
+            50 => Self::NdiscTclass,
+            51 => Self::RplSegEnabled,
+            52 => Self::RaDefrtrMetric,
+            53 => Self::Ioam6Enabled,
+            54 => Self::Ioam6Id,
+            55 => Self::Ioam6IdWide,
+            56 => Self::NdiscEvictNocarrier,
+            57 => Self::AcceptUntrackedNa,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ifla-icmp6-stats\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum IflaIcmp6Stats {
     Num = 0,
     Inmsgs = 1,
@@ -152,8 +292,22 @@ pub enum IflaIcmp6Stats {
     Csumerrors = 5,
     Ratelimithost = 6,
 }
+impl IflaIcmp6Stats {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Num,
+            1 => Self::Inmsgs,
+            2 => Self::Inerrors,
+            3 => Self::Outmsgs,
+            4 => Self::Outerrors,
+            5 => Self::Csumerrors,
+            6 => Self::Ratelimithost,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ifla-inet6-stats\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum IflaInet6Stats {
     Num = 0,
     Inpkts = 1,
@@ -193,8 +347,52 @@ pub enum IflaInet6Stats {
     Cepkts = 35,
     ReasmOverlaps = 36,
 }
+impl IflaInet6Stats {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Num,
+            1 => Self::Inpkts,
+            2 => Self::Inoctets,
+            3 => Self::Indelivers,
+            4 => Self::Outforwdatagrams,
+            5 => Self::Outpkts,
+            6 => Self::Outoctets,
+            7 => Self::Inhdrerrors,
+            8 => Self::Intoobigerrors,
+            9 => Self::Innoroutes,
+            10 => Self::Inaddrerrors,
+            11 => Self::Inunknownprotos,
+            12 => Self::Intruncatedpkts,
+            13 => Self::Indiscards,
+            14 => Self::Outdiscards,
+            15 => Self::Outnoroutes,
+            16 => Self::Reasmtimeout,
+            17 => Self::Reasmreqds,
+            18 => Self::Reasmoks,
+            19 => Self::Reasmfails,
+            20 => Self::Fragoks,
+            21 => Self::Fragfails,
+            22 => Self::Fragcreates,
+            23 => Self::Inmcastpkts,
+            24 => Self::Outmcastpkts,
+            25 => Self::Inbcastpkts,
+            26 => Self::Outbcastpkts,
+            27 => Self::Inmcastoctets,
+            28 => Self::Outmcastoctets,
+            29 => Self::Inbcastoctets,
+            30 => Self::Outbcastoctets,
+            31 => Self::Csumerrors,
+            32 => Self::Noectpkts,
+            33 => Self::Ect1Pkts,
+            34 => Self::Ect0Pkts,
+            35 => Self::Cepkts,
+            36 => Self::ReasmOverlaps,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"vlan-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum VlanFlags {
     ReorderHdr = 1 << 0,
     Gvrp = 1 << 1,
@@ -202,15 +400,37 @@ pub enum VlanFlags {
     Mvrp = 1 << 3,
     BridgeBinding = 1 << 4,
 }
+impl VlanFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::ReorderHdr,
+            n if n == 1 << 1 => Self::Gvrp,
+            n if n == 1 << 2 => Self::LooseBinding,
+            n if n == 1 << 3 => Self::Mvrp,
+            n if n == 1 << 4 => Self::BridgeBinding,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ifla-vf-link-state-enum\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum IflaVfLinkStateEnum {
     Auto = 0,
     Enable = 1,
     Disable = 2,
 }
+impl IflaVfLinkStateEnum {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Auto,
+            1 => Self::Enable,
+            2 => Self::Disable,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"rtext-filter\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum RtextFilter {
     Vf = 1 << 0,
     Brvlan = 1 << 1,
@@ -221,29 +441,80 @@ pub enum RtextFilter {
     CfmStatus = 1 << 6,
     Mst = 1 << 7,
 }
+impl RtextFilter {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Vf,
+            n if n == 1 << 1 => Self::Brvlan,
+            n if n == 1 << 2 => Self::BrvlanCompressed,
+            n if n == 1 << 3 => Self::SkipStats,
+            n if n == 1 << 4 => Self::Mrp,
+            n if n == 1 << 5 => Self::CfmConfig,
+            n if n == 1 << 6 => Self::CfmStatus,
+            n if n == 1 << 7 => Self::Mst,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"netkit-policy\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NetkitPolicy {
     Forward = 0,
     Blackhole = 2,
 }
+impl NetkitPolicy {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Forward,
+            2 => Self::Blackhole,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"netkit-mode\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NetkitMode {
     L2 = 0,
     L3 = 1,
 }
+impl NetkitMode {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::L2,
+            1 => Self::L3,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"netkit-scrub\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NetkitScrub {
     None = 0,
     Default = 1,
 }
+impl NetkitScrub {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::None,
+            1 => Self::Default,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"ovpn-mode\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum OvpnMode {
     P2p = 0,
     Mp = 1,
+}
+impl OvpnMode {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::P2p,
+            1 => Self::Mp,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"link-attrs\""]
 #[derive(Clone)]
@@ -1417,7 +1688,7 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1475,7 +1746,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkAttrs<'a>> {
                 LinkAttrs::AfSpec(val) => fmt.field("AfSpec", &val),
                 LinkAttrs::Group(val) => fmt.field("Group", &val),
                 LinkAttrs::NetNsFd(val) => fmt.field("NetNsFd", &val),
-                LinkAttrs::ExtMask(val) => fmt.field("ExtMask", &val),
+                LinkAttrs::ExtMask(val) => {
+                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                }
                 LinkAttrs::Promiscuity(val) => fmt.field("Promiscuity", &val),
                 LinkAttrs::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
                 LinkAttrs::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
@@ -2003,7 +2276,7 @@ impl<'a> Iterator for Iterable<'a, PropListLinkAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2158,7 +2431,7 @@ impl<'a> Iterator for Iterable<'a, AfSpecAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2297,7 +2570,7 @@ impl<'a> Iterator for Iterable<'a, VfinfoListAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2623,7 +2896,7 @@ impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2965,7 +3238,7 @@ impl<'a> Iterator for Iterable<'a, VfStatsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3143,7 +3416,7 @@ impl Iterator for Iterable<'_, VfVlanAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3242,7 +3515,7 @@ impl Iterator for Iterable<'_, VfPortsAttrs> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3318,7 +3591,7 @@ impl Iterator for Iterable<'_, PortSelfAttrs> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3552,7 +3825,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4269,7 +4542,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4686,7 +4959,7 @@ impl<'a> Iterator for Iterable<'a, BondAdInfoAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4971,7 +5244,7 @@ impl<'a> Iterator for Iterable<'a, BondSlaveAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5968,7 +6241,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -7092,7 +7365,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBrportAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -7903,7 +8176,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGreAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8521,7 +8794,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGre6Attrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8867,7 +9140,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVtiAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -9108,7 +9381,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVti6Attrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -9494,7 +9767,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -10032,7 +10305,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoIptunAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -10505,7 +10778,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -10853,7 +11126,7 @@ impl Iterator for Iterable<'_, LinkinfoTunAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11100,7 +11373,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVlanAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11134,7 +11407,10 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVlanAttrs<'a>> {
                 LinkinfoVlanAttrs::Flags(val) => fmt.field("Flags", &val),
                 LinkinfoVlanAttrs::EgressQos(val) => fmt.field("EgressQos", &val),
                 LinkinfoVlanAttrs::IngressQos(val) => fmt.field("IngressQos", &val),
-                LinkinfoVlanAttrs::Protocol(val) => fmt.field("Protocol", &val),
+                LinkinfoVlanAttrs::Protocol(val) => fmt.field(
+                    "Protocol",
+                    &FormatEnum(val.into(), VlanProtocols::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -11251,7 +11527,7 @@ impl Iterator for Iterable<'_, IflaVlanQos> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11372,7 +11648,7 @@ impl Iterator for Iterable<'_, LinkinfoVrfAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11612,7 +11888,7 @@ impl Iterator for Iterable<'_, XdpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11784,7 +12060,7 @@ impl<'a> Iterator for Iterable<'a, IflaAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12043,7 +12319,7 @@ impl<'a> Iterator for Iterable<'a, Ifla6Attrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12237,7 +12513,7 @@ impl Iterator for Iterable<'_, MctpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12435,7 +12711,7 @@ impl<'a> Iterator for Iterable<'a, StatsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12645,7 +12921,7 @@ impl<'a> Iterator for Iterable<'a, LinkOffloadXstats<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12812,7 +13088,7 @@ impl Iterator for Iterable<'_, HwSInfoOne> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12940,7 +13216,7 @@ impl Iterator for Iterable<'_, LinkDpllPinAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13207,7 +13483,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13239,11 +13515,23 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
             match attr {
                 LinkinfoNetkitAttrs::PeerInfo(val) => fmt.field("PeerInfo", &val),
                 LinkinfoNetkitAttrs::Primary(val) => fmt.field("Primary", &val),
-                LinkinfoNetkitAttrs::Policy(val) => fmt.field("Policy", &val),
-                LinkinfoNetkitAttrs::PeerPolicy(val) => fmt.field("PeerPolicy", &val),
-                LinkinfoNetkitAttrs::Mode(val) => fmt.field("Mode", &val),
-                LinkinfoNetkitAttrs::Scrub(val) => fmt.field("Scrub", &val),
-                LinkinfoNetkitAttrs::PeerScrub(val) => fmt.field("PeerScrub", &val),
+                LinkinfoNetkitAttrs::Policy(val) => {
+                    fmt.field("Policy", &FormatEnum(val.into(), NetkitPolicy::from_value))
+                }
+                LinkinfoNetkitAttrs::PeerPolicy(val) => fmt.field(
+                    "PeerPolicy",
+                    &FormatEnum(val.into(), NetkitPolicy::from_value),
+                ),
+                LinkinfoNetkitAttrs::Mode(val) => {
+                    fmt.field("Mode", &FormatEnum(val.into(), NetkitMode::from_value))
+                }
+                LinkinfoNetkitAttrs::Scrub(val) => {
+                    fmt.field("Scrub", &FormatEnum(val.into(), NetkitScrub::from_value))
+                }
+                LinkinfoNetkitAttrs::PeerScrub(val) => fmt.field(
+                    "PeerScrub",
+                    &FormatEnum(val.into(), NetkitScrub::from_value),
+                ),
                 LinkinfoNetkitAttrs::Headroom(val) => fmt.field("Headroom", &val),
                 LinkinfoNetkitAttrs::Tailroom(val) => fmt.field("Tailroom", &val),
             };
@@ -13386,7 +13674,7 @@ impl Iterator for Iterable<'_, LinkinfoOvpnAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13416,7 +13704,9 @@ impl std::fmt::Debug for Iterable<'_, LinkinfoOvpnAttrs> {
                 }
             };
             match attr {
-                LinkinfoOvpnAttrs::Mode(val) => fmt.field("Mode", &val),
+                LinkinfoOvpnAttrs::Mode(val) => {
+                    fmt.field("Mode", &FormatEnum(val.into(), OvpnMode::from_value))
+                }
             };
         }
         fmt.finish()
@@ -19213,7 +19503,7 @@ impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19502,7 +19792,7 @@ impl Iterator for Iterable<'_, OpNewlinkDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19700,7 +19990,7 @@ impl<'a> Iterator for Iterable<'a, OpDellinkDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19848,7 +20138,7 @@ impl Iterator for Iterable<'_, OpDellinkDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20104,7 +20394,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20136,7 +20426,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpRequest<'a>> {
             match attr {
                 OpGetlinkDumpRequest::Master(val) => fmt.field("Master", &val),
                 OpGetlinkDumpRequest::Linkinfo(val) => fmt.field("Linkinfo", &val),
-                OpGetlinkDumpRequest::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDumpRequest::ExtMask(val) => {
+                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                }
                 OpGetlinkDumpRequest::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
             };
         }
@@ -21794,7 +22086,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -21852,7 +22144,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpReply<'a>> {
                 OpGetlinkDumpReply::AfSpec(val) => fmt.field("AfSpec", &val),
                 OpGetlinkDumpReply::Group(val) => fmt.field("Group", &val),
                 OpGetlinkDumpReply::NetNsFd(val) => fmt.field("NetNsFd", &val),
-                OpGetlinkDumpReply::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDumpReply::ExtMask(val) => {
+                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                }
                 OpGetlinkDumpReply::Promiscuity(val) => fmt.field("Promiscuity", &val),
                 OpGetlinkDumpReply::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
                 OpGetlinkDumpReply::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
@@ -22551,7 +22845,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -22582,7 +22876,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoRequest<'a>> {
             };
             match attr {
                 OpGetlinkDoRequest::Ifname(val) => fmt.field("Ifname", &val),
-                OpGetlinkDoRequest::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDoRequest::ExtMask(val) => {
+                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                }
                 OpGetlinkDoRequest::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
                 OpGetlinkDoRequest::AltIfname(val) => fmt.field("AltIfname", &val),
             };
@@ -24240,7 +24536,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -24298,7 +24594,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoReply<'a>> {
                 OpGetlinkDoReply::AfSpec(val) => fmt.field("AfSpec", &val),
                 OpGetlinkDoReply::Group(val) => fmt.field("Group", &val),
                 OpGetlinkDoReply::NetNsFd(val) => fmt.field("NetNsFd", &val),
-                OpGetlinkDoReply::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpGetlinkDoReply::ExtMask(val) => {
+                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                }
                 OpGetlinkDoReply::Promiscuity(val) => fmt.field("Promiscuity", &val),
                 OpGetlinkDoReply::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
                 OpGetlinkDoReply::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
@@ -26406,7 +26704,7 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -26464,7 +26762,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpSetlinkDoRequest<'a>> {
                 OpSetlinkDoRequest::AfSpec(val) => fmt.field("AfSpec", &val),
                 OpSetlinkDoRequest::Group(val) => fmt.field("Group", &val),
                 OpSetlinkDoRequest::NetNsFd(val) => fmt.field("NetNsFd", &val),
-                OpSetlinkDoRequest::ExtMask(val) => fmt.field("ExtMask", &val),
+                OpSetlinkDoRequest::ExtMask(val) => {
+                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                }
                 OpSetlinkDoRequest::Promiscuity(val) => fmt.field("Promiscuity", &val),
                 OpSetlinkDoRequest::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
                 OpSetlinkDoRequest::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
@@ -27012,7 +27312,7 @@ impl Iterator for Iterable<'_, OpSetlinkDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -27177,7 +27477,7 @@ impl Iterator for Iterable<'_, OpGetstatsDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -27413,7 +27713,7 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -27632,7 +27932,7 @@ impl Iterator for Iterable<'_, OpGetstatsDoRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -27868,7 +28168,7 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

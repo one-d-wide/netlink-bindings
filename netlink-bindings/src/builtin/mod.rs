@@ -160,7 +160,7 @@ impl<'a> Iterator for Iterable<'a, NlmsgerrAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -529,7 +529,7 @@ impl<'a> Iterator for Iterable<'a, PolicyTypeAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

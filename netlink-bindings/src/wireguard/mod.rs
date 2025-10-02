@@ -16,21 +16,47 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"wireguard";
 pub const KEY_LEN: u64 = 32u64;
 #[doc = "Original name: \"wgdevice-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum WgdeviceFlags {
     ReplacePeers = 1 << 0,
 }
+impl WgdeviceFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::ReplacePeers,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"wgpeer-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum WgpeerFlags {
     RemoveMe = 1 << 0,
     ReplaceAllowedips = 1 << 1,
     UpdateOnly = 1 << 2,
 }
+impl WgpeerFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::RemoveMe,
+            n if n == 1 << 1 => Self::ReplaceAllowedips,
+            n if n == 1 << 2 => Self::UpdateOnly,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"wgallowedip-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum WgallowedipFlags {
     RemoveMe = 1 << 0,
+}
+impl WgallowedipFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::RemoveMe,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"wgdevice\""]
 #[derive(Clone)]
@@ -232,7 +258,7 @@ impl<'a> Iterator for Iterable<'a, Wgdevice<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -273,7 +299,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, Wgdevice<'a>> {
                 Wgdevice::Ifname(val) => fmt.field("Ifname", &val),
                 Wgdevice::PrivateKey(val) => fmt.field("PrivateKey", &FormatHex(val)),
                 Wgdevice::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
-                Wgdevice::Flags(val) => fmt.field("Flags", &val),
+                Wgdevice::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), WgdeviceFlags::from_value))
+                }
                 Wgdevice::ListenPort(val) => fmt.field("ListenPort", &val),
                 Wgdevice::Fwmark(val) => fmt.field("Fwmark", &val),
                 Wgdevice::Peers(val) => fmt.field("Peers", &val),
@@ -607,7 +635,7 @@ impl<'a> Iterator for Iterable<'a, Wgpeer<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -646,7 +674,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, Wgpeer<'a>> {
             match attr {
                 Wgpeer::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
                 Wgpeer::PresharedKey(val) => fmt.field("PresharedKey", &FormatHex(val)),
-                Wgpeer::Flags(val) => fmt.field("Flags", &val),
+                Wgpeer::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), WgpeerFlags::from_value))
+                }
                 Wgpeer::Endpoint(val) => fmt.field("Endpoint", &val),
                 Wgpeer::PersistentKeepaliveInterval(val) => {
                     fmt.field("PersistentKeepaliveInterval", &val)
@@ -861,7 +891,7 @@ impl Iterator for Iterable<'_, Wgallowedip> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -894,7 +924,10 @@ impl std::fmt::Debug for Iterable<'_, Wgallowedip> {
                 Wgallowedip::Family(val) => fmt.field("Family", &val),
                 Wgallowedip::Ipaddr(val) => fmt.field("Ipaddr", &val),
                 Wgallowedip::CidrMask(val) => fmt.field("CidrMask", &val),
-                Wgallowedip::Flags(val) => fmt.field("Flags", &val),
+                Wgallowedip::Flags(val) => fmt.field(
+                    "Flags",
+                    &FormatFlags(val.into(), WgallowedipFlags::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -1617,7 +1650,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1651,7 +1684,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 OpGetDeviceDumpRequest::Ifname(val) => fmt.field("Ifname", &val),
                 OpGetDeviceDumpRequest::PrivateKey(val) => fmt.field("PrivateKey", &FormatHex(val)),
                 OpGetDeviceDumpRequest::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
-                OpGetDeviceDumpRequest::Flags(val) => fmt.field("Flags", &val),
+                OpGetDeviceDumpRequest::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), WgdeviceFlags::from_value))
+                }
                 OpGetDeviceDumpRequest::ListenPort(val) => fmt.field("ListenPort", &val),
                 OpGetDeviceDumpRequest::Fwmark(val) => fmt.field("Fwmark", &val),
                 OpGetDeviceDumpRequest::Peers(val) => fmt.field("Peers", &val),
@@ -2020,7 +2055,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2054,7 +2089,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 OpGetDeviceDumpReply::Ifname(val) => fmt.field("Ifname", &val),
                 OpGetDeviceDumpReply::PrivateKey(val) => fmt.field("PrivateKey", &FormatHex(val)),
                 OpGetDeviceDumpReply::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
-                OpGetDeviceDumpReply::Flags(val) => fmt.field("Flags", &val),
+                OpGetDeviceDumpReply::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), WgdeviceFlags::from_value))
+                }
                 OpGetDeviceDumpReply::ListenPort(val) => fmt.field("ListenPort", &val),
                 OpGetDeviceDumpReply::Fwmark(val) => fmt.field("Fwmark", &val),
                 OpGetDeviceDumpReply::Peers(val) => fmt.field("Peers", &val),
@@ -2460,7 +2497,7 @@ impl<'a> Iterator for Iterable<'a, OpSetDeviceDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2494,7 +2531,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 OpSetDeviceDoRequest::Ifname(val) => fmt.field("Ifname", &val),
                 OpSetDeviceDoRequest::PrivateKey(val) => fmt.field("PrivateKey", &FormatHex(val)),
                 OpSetDeviceDoRequest::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
-                OpSetDeviceDoRequest::Flags(val) => fmt.field("Flags", &val),
+                OpSetDeviceDoRequest::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), WgdeviceFlags::from_value))
+                }
                 OpSetDeviceDoRequest::ListenPort(val) => fmt.field("ListenPort", &val),
                 OpSetDeviceDoRequest::Fwmark(val) => fmt.field("Fwmark", &val),
                 OpSetDeviceDoRequest::Peers(val) => fmt.field("Peers", &val),
@@ -2665,7 +2704,7 @@ impl Iterator for Iterable<'_, OpSetDeviceDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

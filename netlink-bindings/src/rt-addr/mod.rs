@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"rt-addr";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"ifa-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum IfaFlags {
     Secondary = 1 << 0,
     Nodad = 1 << 1,
@@ -28,6 +28,25 @@ pub enum IfaFlags {
     Noprefixroute = 1 << 9,
     Mcautojoin = 1 << 10,
     StablePrivacy = 1 << 11,
+}
+impl IfaFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Secondary,
+            n if n == 1 << 1 => Self::Nodad,
+            n if n == 1 << 2 => Self::Optimistic,
+            n if n == 1 << 3 => Self::Dadfailed,
+            n if n == 1 << 4 => Self::Homeaddress,
+            n if n == 1 << 5 => Self::Deprecated,
+            n if n == 1 << 6 => Self::Tentative,
+            n if n == 1 << 7 => Self::Permanent,
+            n if n == 1 << 8 => Self::Managetempaddr,
+            n if n == 1 << 9 => Self::Noprefixroute,
+            n if n == 1 << 10 => Self::Mcautojoin,
+            n if n == 1 << 11 => Self::StablePrivacy,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"addr-attrs\""]
 #[derive(Clone)]
@@ -247,7 +266,7 @@ impl<'a> Iterator for Iterable<'a, AddrAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -284,7 +303,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, AddrAttrs<'a>> {
                 AddrAttrs::Anycast(val) => fmt.field("Anycast", &val),
                 AddrAttrs::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
                 AddrAttrs::Multicast(val) => fmt.field("Multicast", &val),
-                AddrAttrs::Flags(val) => fmt.field("Flags", &val),
+                AddrAttrs::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), IfaFlags::from_value))
+                }
                 AddrAttrs::RtPriority(val) => fmt.field("RtPriority", &val),
                 AddrAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
                 AddrAttrs::Proto(val) => fmt.field("Proto", &val),
@@ -848,7 +869,7 @@ impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -882,7 +903,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewaddrDoRequest<'a>> {
                 OpNewaddrDoRequest::Local(val) => fmt.field("Local", &val),
                 OpNewaddrDoRequest::Label(val) => fmt.field("Label", &val),
                 OpNewaddrDoRequest::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
-                OpNewaddrDoRequest::Flags(val) => fmt.field("Flags", &val),
+                OpNewaddrDoRequest::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), IfaFlags::from_value))
+                }
             };
         }
         fmt.finish()
@@ -1024,7 +1047,7 @@ impl Iterator for Iterable<'_, OpNewaddrDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1243,7 +1266,7 @@ impl Iterator for Iterable<'_, OpDeladdrDoRequest> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1398,7 +1421,7 @@ impl Iterator for Iterable<'_, OpDeladdrDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1563,7 +1586,7 @@ impl Iterator for Iterable<'_, OpGetaddrDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1818,7 +1841,7 @@ impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1852,7 +1875,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetaddrDumpReply<'a>> {
                 OpGetaddrDumpReply::Local(val) => fmt.field("Local", &val),
                 OpGetaddrDumpReply::Label(val) => fmt.field("Label", &val),
                 OpGetaddrDumpReply::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
-                OpGetaddrDumpReply::Flags(val) => fmt.field("Flags", &val),
+                OpGetaddrDumpReply::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), IfaFlags::from_value))
+                }
             };
         }
         fmt.finish()
@@ -2036,7 +2061,7 @@ impl Iterator for Iterable<'_, OpGetmulticastDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2205,7 +2230,7 @@ impl<'a> Iterator for Iterable<'a, OpGetmulticastDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2402,7 +2427,7 @@ impl Iterator for Iterable<'_, OpGetmulticastDoRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2571,7 +2596,7 @@ impl<'a> Iterator for Iterable<'a, OpGetmulticastDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

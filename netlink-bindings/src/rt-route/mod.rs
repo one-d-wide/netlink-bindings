@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"rt-route";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"rtm-type\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum RtmType {
     Unspec = 0,
     Unicast = 1,
@@ -28,6 +28,25 @@ pub enum RtmType {
     Throw = 9,
     Nat = 10,
     Xresolve = 11,
+}
+impl RtmType {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Unspec,
+            1 => Self::Unicast,
+            2 => Self::Local,
+            3 => Self::Broadcast,
+            4 => Self::Anycast,
+            5 => Self::Multicast,
+            6 => Self::Blackhole,
+            7 => Self::Unreachable,
+            8 => Self::Prohibit,
+            9 => Self::Throw,
+            10 => Self::Nat,
+            11 => Self::Xresolve,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"route-attrs\""]
 #[derive(Clone)]
@@ -585,7 +604,7 @@ impl<'a> Iterator for Iterable<'a, RouteAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1190,7 +1209,7 @@ impl<'a> Iterator for Iterable<'a, Metrics<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1939,7 +1958,7 @@ impl Iterator for Iterable<'_, OpGetrouteDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2656,7 +2675,7 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3248,7 +3267,7 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4051,7 +4070,7 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5021,7 +5040,7 @@ impl<'a> Iterator for Iterable<'a, OpNewrouteDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5359,7 +5378,7 @@ impl Iterator for Iterable<'_, OpNewrouteDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -6116,7 +6135,7 @@ impl<'a> Iterator for Iterable<'a, OpDelrouteDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -6454,7 +6473,7 @@ impl Iterator for Iterable<'_, OpDelrouteDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

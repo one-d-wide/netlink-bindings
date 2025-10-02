@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"conntrack";
 pub const PROTONUM: u16 = 12u16;
 #[doc = "Original name: \"nf-ct-tcp-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NfCtTcpFlags {
     WindowScale = 1 << 0,
     SackPerm = 1 << 1,
@@ -25,8 +25,23 @@ pub enum NfCtTcpFlags {
     ChallengeAck = 1 << 6,
     SimultaneousOpen = 1 << 7,
 }
+impl NfCtTcpFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::WindowScale,
+            n if n == 1 << 1 => Self::SackPerm,
+            n if n == 1 << 2 => Self::CloseInit,
+            n if n == 1 << 3 => Self::BeLiberal,
+            n if n == 1 << 4 => Self::Unacked,
+            n if n == 1 << 5 => Self::Maxack,
+            n if n == 1 << 6 => Self::ChallengeAck,
+            n if n == 1 << 7 => Self::SimultaneousOpen,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"nf-ct-tcp-state\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NfCtTcpState {
     None = 0,
     SynSent = 1,
@@ -44,8 +59,30 @@ pub enum NfCtTcpState {
     Unack = 13,
     TimeoutMax = 14,
 }
+impl NfCtTcpState {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::None,
+            1 => Self::SynSent,
+            2 => Self::SynRecv,
+            3 => Self::Established,
+            4 => Self::FinWait,
+            5 => Self::CloseWait,
+            6 => Self::LastAck,
+            7 => Self::TimeWait,
+            8 => Self::Close,
+            9 => Self::SynSent2,
+            10 => Self::Max,
+            11 => Self::Ignore,
+            12 => Self::Retrans,
+            13 => Self::Unack,
+            14 => Self::TimeoutMax,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"nf-ct-sctp-state\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NfCtSctpState {
     None = 0,
     Cloned = 1,
@@ -57,8 +94,24 @@ pub enum NfCtSctpState {
     ShutdownAckSent = 7,
     ShutdownHeartbeatSent = 8,
 }
+impl NfCtSctpState {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::None,
+            1 => Self::Cloned,
+            2 => Self::CookieWait,
+            3 => Self::CookieEchoed,
+            4 => Self::Established,
+            5 => Self::ShutdownSent,
+            6 => Self::ShutdownReceived,
+            7 => Self::ShutdownAckSent,
+            8 => Self::ShutdownHeartbeatSent,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"nf-ct-status\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum NfCtStatus {
     Expected = 1 << 0,
     SeenReply = 1 << 1,
@@ -76,6 +129,29 @@ pub enum NfCtStatus {
     Helper = 1 << 13,
     Offload = 1 << 14,
     HwOffload = 1 << 15,
+}
+impl NfCtStatus {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Expected,
+            n if n == 1 << 1 => Self::SeenReply,
+            n if n == 1 << 2 => Self::Assured,
+            n if n == 1 << 3 => Self::Confirmed,
+            n if n == 1 << 4 => Self::SrcNat,
+            n if n == 1 << 5 => Self::DstNat,
+            n if n == 1 << 6 => Self::SeqAdj,
+            n if n == 1 << 7 => Self::SrcNatDone,
+            n if n == 1 << 8 => Self::DstNatDone,
+            n if n == 1 << 9 => Self::Dying,
+            n if n == 1 << 10 => Self::FixedTimeout,
+            n if n == 1 << 11 => Self::Template,
+            n if n == 1 << 12 => Self::NatClash,
+            n if n == 1 << 13 => Self::Helper,
+            n if n == 1 << 14 => Self::Offload,
+            n if n == 1 << 15 => Self::HwOffload,
+            _ => return None,
+        })
+    }
 }
 #[doc = "Original name: \"counter-attrs\""]
 #[derive(Clone)]
@@ -191,7 +267,7 @@ impl<'a> Iterator for Iterable<'a, CounterAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -486,7 +562,7 @@ impl Iterator for Iterable<'_, TupleProtoAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -722,7 +798,7 @@ impl Iterator for Iterable<'_, TupleIpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -904,7 +980,7 @@ impl<'a> Iterator for Iterable<'a, TupleAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1114,7 +1190,7 @@ impl Iterator for Iterable<'_, ProtoinfoTcpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1144,7 +1220,10 @@ impl std::fmt::Debug for Iterable<'_, ProtoinfoTcpAttrs> {
                 }
             };
             match attr {
-                ProtoinfoTcpAttrs::TcpState(val) => fmt.field("TcpState", &val),
+                ProtoinfoTcpAttrs::TcpState(val) => fmt.field(
+                    "TcpState",
+                    &FormatEnum(val.into(), NfCtTcpState::from_value),
+                ),
                 ProtoinfoTcpAttrs::TcpWscaleOriginal(val) => fmt.field("TcpWscaleOriginal", &val),
                 ProtoinfoTcpAttrs::TcpWscaleReply(val) => fmt.field("TcpWscaleReply", &val),
                 ProtoinfoTcpAttrs::TcpFlagsOriginal(val) => fmt.field("TcpFlagsOriginal", &val),
@@ -1316,7 +1395,7 @@ impl<'a> Iterator for Iterable<'a, ProtoinfoDccpAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1494,7 +1573,7 @@ impl Iterator for Iterable<'_, ProtoinfoSctpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1524,7 +1603,10 @@ impl std::fmt::Debug for Iterable<'_, ProtoinfoSctpAttrs> {
                 }
             };
             match attr {
-                ProtoinfoSctpAttrs::SctpState(val) => fmt.field("SctpState", &val),
+                ProtoinfoSctpAttrs::SctpState(val) => fmt.field(
+                    "SctpState",
+                    &FormatEnum(val.into(), NfCtSctpState::from_value),
+                ),
                 ProtoinfoSctpAttrs::VtagOriginal(val) => fmt.field("VtagOriginal", &val),
                 ProtoinfoSctpAttrs::VtagReply(val) => fmt.field("VtagReply", &val),
             };
@@ -1669,7 +1751,7 @@ impl<'a> Iterator for Iterable<'a, ProtoinfoAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1807,7 +1889,7 @@ impl<'a> Iterator for Iterable<'a, HelpAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1945,7 +2027,7 @@ impl Iterator for Iterable<'_, NatProtoAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2141,7 +2223,7 @@ impl<'a> Iterator for Iterable<'a, NatAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2325,7 +2407,7 @@ impl Iterator for Iterable<'_, SeqadjAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2460,7 +2542,7 @@ impl<'a> Iterator for Iterable<'a, SecctxAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2615,7 +2697,7 @@ impl Iterator for Iterable<'_, SynproxyAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3204,7 +3286,7 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3236,7 +3318,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, ConntrackAttrs<'a>> {
             match attr {
                 ConntrackAttrs::TupleOrig(val) => fmt.field("TupleOrig", &val),
                 ConntrackAttrs::TupleReply(val) => fmt.field("TupleReply", &val),
-                ConntrackAttrs::Status(val) => fmt.field("Status", &val),
+                ConntrackAttrs::Status(val) => {
+                    fmt.field("Status", &FormatFlags(val.into(), NfCtStatus::from_value))
+                }
                 ConntrackAttrs::Protoinfo(val) => fmt.field("Protoinfo", &val),
                 ConntrackAttrs::Help(val) => fmt.field("Help", &val),
                 ConntrackAttrs::NatSrc(val) => fmt.field("NatSrc", &val),
@@ -3259,7 +3343,10 @@ impl<'a> std::fmt::Debug for Iterable<'a, ConntrackAttrs<'a>> {
                 ConntrackAttrs::LabelsMask(val) => fmt.field("LabelsMask", &val),
                 ConntrackAttrs::Synproxy(val) => fmt.field("Synproxy", &val),
                 ConntrackAttrs::Filter(val) => fmt.field("Filter", &val),
-                ConntrackAttrs::StatusMask(val) => fmt.field("StatusMask", &val),
+                ConntrackAttrs::StatusMask(val) => fmt.field(
+                    "StatusMask",
+                    &FormatFlags(val.into(), NfCtStatus::from_value),
+                ),
                 ConntrackAttrs::TimestampEvent(val) => fmt.field("TimestampEvent", &val),
             };
         }
@@ -3758,7 +3845,7 @@ impl Iterator for Iterable<'_, ConntrackStatsAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5298,7 +5385,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5328,7 +5415,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpRequest<'a>> {
                 }
             };
             match attr {
-                OpGetDumpRequest::Status(val) => fmt.field("Status", &val),
+                OpGetDumpRequest::Status(val) => {
+                    fmt.field("Status", &FormatFlags(val.into(), NfCtStatus::from_value))
+                }
                 OpGetDumpRequest::Mark(val) => fmt.field("Mark", &val),
                 OpGetDumpRequest::Zone(val) => fmt.field("Zone", &val),
                 OpGetDumpRequest::Filter(val) => fmt.field("Filter", &val),
@@ -5928,7 +6017,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5960,7 +6049,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpReply<'a>> {
             match attr {
                 OpGetDumpReply::TupleOrig(val) => fmt.field("TupleOrig", &val),
                 OpGetDumpReply::TupleReply(val) => fmt.field("TupleReply", &val),
-                OpGetDumpReply::Status(val) => fmt.field("Status", &val),
+                OpGetDumpReply::Status(val) => {
+                    fmt.field("Status", &FormatFlags(val.into(), NfCtStatus::from_value))
+                }
                 OpGetDumpReply::Protoinfo(val) => fmt.field("Protoinfo", &val),
                 OpGetDumpReply::Help(val) => fmt.field("Help", &val),
                 OpGetDumpReply::NatSrc(val) => fmt.field("NatSrc", &val),
@@ -6330,7 +6421,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -6953,7 +7044,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -6985,7 +7076,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoReply<'a>> {
             match attr {
                 OpGetDoReply::TupleOrig(val) => fmt.field("TupleOrig", &val),
                 OpGetDoReply::TupleReply(val) => fmt.field("TupleReply", &val),
-                OpGetDoReply::Status(val) => fmt.field("Status", &val),
+                OpGetDoReply::Status(val) => {
+                    fmt.field("Status", &FormatFlags(val.into(), NfCtStatus::from_value))
+                }
                 OpGetDoReply::Protoinfo(val) => fmt.field("Protoinfo", &val),
                 OpGetDoReply::Help(val) => fmt.field("Help", &val),
                 OpGetDoReply::NatSrc(val) => fmt.field("NatSrc", &val),
@@ -7273,7 +7366,7 @@ impl Iterator for Iterable<'_, OpGetStatsDumpRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -7613,7 +7706,7 @@ impl Iterator for Iterable<'_, OpGetStatsDumpReply> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;

@@ -590,6 +590,626 @@ impl Debug for ReverseLookup<'_> {
                     ),
                     #[cfg(not(feature = "conntrack"))]
                     (260u16, Some(260u16), true) => consider(fmt, "conntrack"),
+                    #[cfg(feature = "nftables")]
+                    (2816u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpCompatGetDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2816u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2816u16, Some(2816u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpCompatGetDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2816u16, Some(2816u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2816u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpCompatGetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2816u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2816u16, Some(2816u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpCompatGetDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2816u16, Some(2816u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (16u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpBatchBeginDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (16u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (16u16, Some(16u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpBatchBeginDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (16u16, Some(16u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (17u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpBatchEndDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (17u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (17u16, Some(17u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpBatchEndDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (17u16, Some(17u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2560u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewtableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2560u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2560u16, Some(2560u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewtableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2560u16, Some(2560u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2561u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGettableDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2561u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2560u16, Some(2561u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGettableDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2560u16, Some(2561u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2561u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGettableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2561u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2560u16, Some(2561u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGettableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2560u16, Some(2561u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2562u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDeltableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2562u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2562u16, Some(2562u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDeltableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2562u16, Some(2562u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2586u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroytableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2586u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2586u16, Some(2586u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroytableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2586u16, Some(2586u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2563u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewchainDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2563u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2563u16, Some(2563u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewchainDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2563u16, Some(2563u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2564u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetchainDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2564u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2563u16, Some(2564u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetchainDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2563u16, Some(2564u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2564u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetchainDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2564u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2563u16, Some(2564u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetchainDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2563u16, Some(2564u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2565u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelchainDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2565u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2565u16, Some(2565u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelchainDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2565u16, Some(2565u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2587u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroychainDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2587u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2587u16, Some(2587u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroychainDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2587u16, Some(2587u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2566u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewruleDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2566u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2566u16, Some(2566u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpNewruleDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2566u16, Some(2566u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2567u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2567u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2566u16, Some(2567u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2566u16, Some(2567u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2567u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2567u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2566u16, Some(2567u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpGetruleDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2566u16, Some(2567u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2585u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleResetDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2585u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2566u16, Some(2585u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleResetDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2566u16, Some(2585u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2585u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleResetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2585u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2566u16, Some(2585u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetruleResetDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2566u16, Some(2585u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2568u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelruleDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2568u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2568u16, Some(2568u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpDelruleDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2568u16, Some(2568u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2588u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroyruleDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2588u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2588u16, Some(2588u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroyruleDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2588u16, Some(2588u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2569u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewsetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2569u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2569u16, Some(2569u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpNewsetDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2569u16, Some(2569u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2570u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2570u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2569u16, Some(2570u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2569u16, Some(2570u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2570u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2570u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2569u16, Some(2570u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpGetsetDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2569u16, Some(2570u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2571u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelsetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2571u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2571u16, Some(2571u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpDelsetDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2571u16, Some(2571u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2589u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroysetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2589u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2589u16, Some(2589u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroysetDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2589u16, Some(2589u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2572u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewsetelemDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2572u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2572u16, Some(2572u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewsetelemDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2572u16, Some(2572u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2573u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2573u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2572u16, Some(2573u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2572u16, Some(2573u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2573u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2573u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2572u16, Some(2573u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2572u16, Some(2573u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2593u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemResetDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2593u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2572u16, Some(2593u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemResetDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2572u16, Some(2593u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2593u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemResetDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2593u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2572u16, Some(2593u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetsetelemResetDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2572u16, Some(2593u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2574u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelsetelemDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2574u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2574u16, Some(2574u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelsetelemDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2574u16, Some(2574u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2590u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroysetelemDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2590u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2590u16, Some(2590u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroysetelemDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2590u16, Some(2590u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2576u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetgenDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2576u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2575u16, Some(2576u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetgenDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2575u16, Some(2576u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2576u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetgenDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2576u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2575u16, Some(2576u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpGetgenDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2575u16, Some(2576u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2578u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewobjDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2578u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2578u16, Some(2578u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpNewobjDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2578u16, Some(2578u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2579u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetobjDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2579u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2578u16, Some(2579u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetobjDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2578u16, Some(2579u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2579u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetobjDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2579u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2578u16, Some(2579u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpGetobjDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2578u16, Some(2579u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2580u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelobjDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2580u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2580u16, Some(2580u16), false) => {
+                        Debug::fmt(&netlink_bindings::nftables::OpDelobjDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "nftables"))]
+                    (2580u16, Some(2580u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2591u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroyobjDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2591u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2591u16, Some(2591u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroyobjDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2591u16, Some(2591u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2582u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewflowtableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2582u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2582u16, Some(2582u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpNewflowtableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2582u16, Some(2582u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2583u16, None, true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetflowtableDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2583u16, None, true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2582u16, Some(2583u16), true) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetflowtableDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2582u16, Some(2583u16), true) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2583u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetflowtableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2583u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2582u16, Some(2583u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpGetflowtableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2582u16, Some(2583u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2584u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelflowtableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2584u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2584u16, Some(2584u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDelflowtableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2584u16, Some(2584u16), false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2592u16, None, false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroyflowtableDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2592u16, None, false) => consider(fmt, "nftables"),
+                    #[cfg(feature = "nftables")]
+                    (2592u16, Some(2592u16), false) => Debug::fmt(
+                        &netlink_bindings::nftables::OpDestroyflowtableDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "nftables"))]
+                    (2592u16, Some(2592u16), false) => consider(fmt, "nftables"),
                     _ => write!(
                         fmt,
                         "(Unknown operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"

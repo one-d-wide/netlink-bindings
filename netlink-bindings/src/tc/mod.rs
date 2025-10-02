@@ -14,7 +14,7 @@ use crate::{NetlinkRequest, Protocol};
 pub const PROTONAME: &CStr = c"tc";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Original name: \"cls-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum ClsFlags {
     SkipHw = 1 << 0,
     SkipSw = 1 << 1,
@@ -22,8 +22,20 @@ pub enum ClsFlags {
     NotInNw = 1 << 3,
     Verbose = 1 << 4,
 }
+impl ClsFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::SkipHw,
+            n if n == 1 << 1 => Self::SkipSw,
+            n if n == 1 << 2 => Self::InHw,
+            n if n == 1 << 3 => Self::NotInNw,
+            n if n == 1 << 4 => Self::Verbose,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"flower-key-ctrl-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum FlowerKeyCtrlFlags {
     Frag = 1 << 0,
     Firstfrag = 1 << 1,
@@ -32,30 +44,80 @@ pub enum FlowerKeyCtrlFlags {
     Tunoam = 1 << 4,
     Tuncrit = 1 << 5,
 }
+impl FlowerKeyCtrlFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::Frag,
+            n if n == 1 << 1 => Self::Firstfrag,
+            n if n == 1 << 2 => Self::Tuncsum,
+            n if n == 1 << 3 => Self::Tundf,
+            n if n == 1 << 4 => Self::Tunoam,
+            n if n == 1 << 5 => Self::Tuncrit,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"dualpi2-drop-overload\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Dualpi2DropOverload {
     Overflow = 0,
     Drop = 1,
 }
+impl Dualpi2DropOverload {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Overflow,
+            1 => Self::Drop,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"dualpi2-drop-early\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Dualpi2DropEarly {
     DropDequeue = 0,
     DropEnqueue = 1,
 }
+impl Dualpi2DropEarly {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::DropDequeue,
+            1 => Self::DropEnqueue,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"dualpi2-ecn-mask\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Dualpi2EcnMask {
     L4sEct = 1,
     ClaEct = 2,
     AnyEct = 3,
 }
+impl Dualpi2EcnMask {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            1 => Self::L4sEct,
+            2 => Self::ClaEct,
+            3 => Self::AnyEct,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Original name: \"dualpi2-split-gso\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Dualpi2SplitGso {
     NoSplitGso = 0,
     SplitGso = 1,
+}
+impl Dualpi2SplitGso {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::NoSplitGso,
+            1 => Self::SplitGso,
+            _ => return None,
+        })
+    }
 }
 #[doc = "State transition probabilities for 4 state model"]
 #[doc = "Gilbert-Elliot models"]
@@ -506,7 +568,7 @@ impl<'a> Iterator for Iterable<'a, Attrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -935,7 +997,7 @@ impl<'a> Iterator for Iterable<'a, ActAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1256,7 +1318,7 @@ impl<'a> Iterator for Iterable<'a, ActBpfAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1467,7 +1529,7 @@ impl<'a> Iterator for Iterable<'a, ActConnmarkAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -1636,7 +1698,7 @@ impl<'a> Iterator for Iterable<'a, ActCsumAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2060,7 +2122,7 @@ impl<'a> Iterator for Iterable<'a, ActCtAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2453,7 +2515,7 @@ impl<'a> Iterator for Iterable<'a, ActCtinfoAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -2790,7 +2852,7 @@ impl<'a> Iterator for Iterable<'a, ActGateAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3076,7 +3138,7 @@ impl<'a> Iterator for Iterable<'a, ActIfeAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3290,7 +3352,7 @@ impl<'a> Iterator for Iterable<'a, ActMirredAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3551,7 +3613,7 @@ impl<'a> Iterator for Iterable<'a, ActMplsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3755,7 +3817,7 @@ impl<'a> Iterator for Iterable<'a, ActNatAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -3975,7 +4037,7 @@ impl<'a> Iterator for Iterable<'a, ActPeditAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4182,7 +4244,7 @@ impl<'a> Iterator for Iterable<'a, ActSimpleAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4477,7 +4539,7 @@ impl<'a> Iterator for Iterable<'a, ActSkbeditAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -4746,7 +4808,7 @@ impl<'a> Iterator for Iterable<'a, ActSkbmodAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5119,7 +5181,7 @@ impl<'a> Iterator for Iterable<'a, ActTunnelKeyAttrs<'a>> {
                 }),
                 14u16 => ActTunnelKeyAttrs::NoFrag(()),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5450,7 +5512,7 @@ impl<'a> Iterator for Iterable<'a, ActVlanAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -5731,7 +5793,7 @@ impl<'a> Iterator for Iterable<'a, BasicAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -6075,7 +6137,7 @@ impl<'a> Iterator for Iterable<'a, BpfAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -6563,7 +6625,7 @@ impl<'a> Iterator for Iterable<'a, CakeAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -7087,7 +7149,7 @@ impl<'a> Iterator for Iterable<'a, CakeStatsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -7736,7 +7798,7 @@ impl<'a> Iterator for Iterable<'a, CakeTinStatsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8025,7 +8087,7 @@ impl Iterator for Iterable<'_, CbsAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8183,7 +8245,7 @@ impl<'a> Iterator for Iterable<'a, CgroupAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8360,7 +8422,7 @@ impl<'a> Iterator for Iterable<'a, ChokeAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8563,7 +8625,7 @@ impl Iterator for Iterable<'_, CodelAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -8712,7 +8774,7 @@ impl Iterator for Iterable<'_, DrrAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -9101,7 +9163,7 @@ impl Iterator for Iterable<'_, Dualpi2Attrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -9141,11 +9203,23 @@ impl std::fmt::Debug for Iterable<'_, Dualpi2Attrs> {
                 Dualpi2Attrs::StepThreshUs(val) => fmt.field("StepThreshUs", &val),
                 Dualpi2Attrs::MinQlenStep(val) => fmt.field("MinQlenStep", &val),
                 Dualpi2Attrs::Coupling(val) => fmt.field("Coupling", &val),
-                Dualpi2Attrs::DropOverload(val) => fmt.field("DropOverload", &val),
-                Dualpi2Attrs::DropEarly(val) => fmt.field("DropEarly", &val),
+                Dualpi2Attrs::DropOverload(val) => fmt.field(
+                    "DropOverload",
+                    &FormatEnum(val.into(), Dualpi2DropOverload::from_value),
+                ),
+                Dualpi2Attrs::DropEarly(val) => fmt.field(
+                    "DropEarly",
+                    &FormatEnum(val.into(), Dualpi2DropEarly::from_value),
+                ),
                 Dualpi2Attrs::CProtection(val) => fmt.field("CProtection", &val),
-                Dualpi2Attrs::EcnMask(val) => fmt.field("EcnMask", &val),
-                Dualpi2Attrs::SplitGso(val) => fmt.field("SplitGso", &val),
+                Dualpi2Attrs::EcnMask(val) => fmt.field(
+                    "EcnMask",
+                    &FormatEnum(val.into(), Dualpi2EcnMask::from_value),
+                ),
+                Dualpi2Attrs::SplitGso(val) => fmt.field(
+                    "SplitGso",
+                    &FormatEnum(val.into(), Dualpi2SplitGso::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -9337,7 +9411,7 @@ impl<'a> Iterator for Iterable<'a, EmatchAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -9652,7 +9726,7 @@ impl<'a> Iterator for Iterable<'a, FlowAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11738,7 +11812,7 @@ impl<'a> Iterator for Iterable<'a, FlowerAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -11789,7 +11863,9 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowerAttrs<'a>> {
                 FlowerAttrs::KeyTcpDst(val) => fmt.field("KeyTcpDst", &val),
                 FlowerAttrs::KeyUdpSrc(val) => fmt.field("KeyUdpSrc", &val),
                 FlowerAttrs::KeyUdpDst(val) => fmt.field("KeyUdpDst", &val),
-                FlowerAttrs::Flags(val) => fmt.field("Flags", &val),
+                FlowerAttrs::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), ClsFlags::from_value))
+                }
                 FlowerAttrs::KeyVlanId(val) => fmt.field("KeyVlanId", &val),
                 FlowerAttrs::KeyVlanPrio(val) => fmt.field("KeyVlanPrio", &val),
                 FlowerAttrs::KeyVlanEthType(val) => fmt.field("KeyVlanEthType", &val),
@@ -11814,8 +11890,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowerAttrs<'a>> {
                 FlowerAttrs::KeyEncUdpSrcPortMask(val) => fmt.field("KeyEncUdpSrcPortMask", &val),
                 FlowerAttrs::KeyEncUdpDstPort(val) => fmt.field("KeyEncUdpDstPort", &val),
                 FlowerAttrs::KeyEncUdpDstPortMask(val) => fmt.field("KeyEncUdpDstPortMask", &val),
-                FlowerAttrs::KeyFlags(val) => fmt.field("KeyFlags", &val),
-                FlowerAttrs::KeyFlagsMask(val) => fmt.field("KeyFlagsMask", &val),
+                FlowerAttrs::KeyFlags(val) => fmt.field(
+                    "KeyFlags",
+                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                ),
+                FlowerAttrs::KeyFlagsMask(val) => fmt.field(
+                    "KeyFlagsMask",
+                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                ),
                 FlowerAttrs::KeyIcmpv4Code(val) => fmt.field("KeyIcmpv4Code", &val),
                 FlowerAttrs::KeyIcmpv4CodeMask(val) => fmt.field("KeyIcmpv4CodeMask", &val),
                 FlowerAttrs::KeyIcmpv4Type(val) => fmt.field("KeyIcmpv4Type", &val),
@@ -11877,8 +11959,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowerAttrs<'a>> {
                 FlowerAttrs::KeyCfm(val) => fmt.field("KeyCfm", &val),
                 FlowerAttrs::KeySpi(val) => fmt.field("KeySpi", &val),
                 FlowerAttrs::KeySpiMask(val) => fmt.field("KeySpiMask", &val),
-                FlowerAttrs::KeyEncFlags(val) => fmt.field("KeyEncFlags", &val),
-                FlowerAttrs::KeyEncFlagsMask(val) => fmt.field("KeyEncFlagsMask", &val),
+                FlowerAttrs::KeyEncFlags(val) => fmt.field(
+                    "KeyEncFlags",
+                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                ),
+                FlowerAttrs::KeyEncFlagsMask(val) => fmt.field(
+                    "KeyEncFlagsMask",
+                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -12688,7 +12776,7 @@ impl<'a> Iterator for Iterable<'a, FlowerKeyEncOptsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -12865,7 +12953,7 @@ impl<'a> Iterator for Iterable<'a, FlowerKeyEncOptGeneveAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13000,7 +13088,7 @@ impl Iterator for Iterable<'_, FlowerKeyEncOptVxlanAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13172,7 +13260,7 @@ impl Iterator for Iterable<'_, FlowerKeyEncOptErspanAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13331,7 +13419,7 @@ impl Iterator for Iterable<'_, FlowerKeyEncOptGtpAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13527,7 +13615,7 @@ impl Iterator for Iterable<'_, FlowerKeyMplsOptAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13693,7 +13781,7 @@ impl Iterator for Iterable<'_, FlowerKeyCfmAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -13892,7 +13980,7 @@ impl<'a> Iterator for Iterable<'a, FwAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -14131,7 +14219,7 @@ impl<'a> Iterator for Iterable<'a, GredAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -14292,7 +14380,7 @@ impl<'a> Iterator for Iterable<'a, TcaGredVqListAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -14601,7 +14689,7 @@ impl<'a> Iterator for Iterable<'a, TcaGredVqEntryAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -14833,7 +14921,7 @@ impl<'a> Iterator for Iterable<'a, HfscAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -15070,7 +15158,7 @@ impl Iterator for Iterable<'_, HhfAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -15365,7 +15453,7 @@ impl<'a> Iterator for Iterable<'a, HtbAttrs<'a>> {
                 }),
                 9u16 => HtbAttrs::Offload(()),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -15613,7 +15701,7 @@ impl<'a> Iterator for Iterable<'a, MatchallAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -15770,7 +15858,7 @@ impl Iterator for Iterable<'_, EtfAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -15978,7 +16066,7 @@ impl<'a> Iterator for Iterable<'a, EtsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -16437,7 +16525,7 @@ impl<'a> Iterator for Iterable<'a, FqAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -16837,7 +16925,7 @@ impl Iterator for Iterable<'_, FqCodelAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -17215,7 +17303,7 @@ impl Iterator for Iterable<'_, FqPieAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -17634,7 +17722,7 @@ impl<'a> Iterator for Iterable<'a, NetemAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -17868,7 +17956,7 @@ impl Iterator for Iterable<'_, NetemLossAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -18115,7 +18203,7 @@ impl Iterator for Iterable<'_, PieAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -18455,7 +18543,7 @@ impl<'a> Iterator for Iterable<'a, PoliceAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -18663,7 +18751,7 @@ impl Iterator for Iterable<'_, QfqAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -18876,7 +18964,7 @@ impl<'a> Iterator for Iterable<'a, RedAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19120,7 +19208,7 @@ impl<'a> Iterator for Iterable<'a, RouteAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19473,7 +19561,7 @@ impl<'a> Iterator for Iterable<'a, TaprioAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19677,7 +19765,7 @@ impl<'a> Iterator for Iterable<'a, TaprioSchedEntryList<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -19850,7 +19938,7 @@ impl Iterator for Iterable<'_, TaprioSchedEntry> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20026,7 +20114,7 @@ impl Iterator for Iterable<'_, TaprioTcEntryAttrs> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20280,7 +20368,7 @@ impl<'a> Iterator for Iterable<'a, TbfAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20535,7 +20623,7 @@ impl<'a> Iterator for Iterable<'a, ActSampleAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20742,7 +20830,7 @@ impl<'a> Iterator for Iterable<'a, ActGactAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -20901,7 +20989,7 @@ impl<'a> Iterator for Iterable<'a, TcaStabAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -21143,7 +21231,7 @@ impl<'a> Iterator for Iterable<'a, TcaStatsAttrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -21503,7 +21591,7 @@ impl<'a> Iterator for Iterable<'a, U32Attrs<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -33357,7 +33445,7 @@ impl<'a> Iterator for Iterable<'a, OpNewqdiscDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -33540,7 +33628,7 @@ impl Iterator for Iterable<'_, OpNewqdiscDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -34244,7 +34332,7 @@ impl<'a> Iterator for Iterable<'a, OpDelqdiscDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -34427,7 +34515,7 @@ impl Iterator for Iterable<'_, OpDelqdiscDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -34610,7 +34698,7 @@ impl Iterator for Iterable<'_, OpGetqdiscDumpRequest> {
             let res = match header.r#type {
                 10u16 => OpGetqdiscDumpRequest::DumpInvisible(()),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -35502,7 +35590,7 @@ impl<'a> Iterator for Iterable<'a, OpGetqdiscDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -35781,7 +35869,7 @@ impl Iterator for Iterable<'_, OpGetqdiscDoRequest> {
             let res = match header.r#type {
                 10u16 => OpGetqdiscDoRequest::DumpInvisible(()),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -36673,7 +36761,7 @@ impl<'a> Iterator for Iterable<'a, OpGetqdiscDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -37471,7 +37559,7 @@ impl<'a> Iterator for Iterable<'a, OpNewtclassDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -37654,7 +37742,7 @@ impl Iterator for Iterable<'_, OpNewtclassDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -37819,7 +37907,7 @@ impl Iterator for Iterable<'_, OpDeltclassDoRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -37944,7 +38032,7 @@ impl Iterator for Iterable<'_, OpDeltclassDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -38109,7 +38197,7 @@ impl Iterator for Iterable<'_, OpGettclassDoRequest> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -38978,7 +39066,7 @@ impl<'a> Iterator for Iterable<'a, OpGettclassDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -39776,7 +39864,7 @@ impl<'a> Iterator for Iterable<'a, OpNewtfilterDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -39959,7 +40047,7 @@ impl Iterator for Iterable<'_, OpNewtfilterDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -40178,7 +40266,7 @@ impl<'a> Iterator for Iterable<'a, OpDeltfilterDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -40333,7 +40421,7 @@ impl Iterator for Iterable<'_, OpDeltfilterDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -40542,7 +40630,7 @@ impl Iterator for Iterable<'_, OpGettfilterDumpRequest> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -41441,7 +41529,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDumpReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -41756,7 +41844,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -42655,7 +42743,7 @@ impl<'a> Iterator for Iterable<'a, OpGettfilterDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -43453,7 +43541,7 @@ impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -43636,7 +43724,7 @@ impl Iterator for Iterable<'_, OpNewchainDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -43824,7 +43912,7 @@ impl Iterator for Iterable<'_, OpDelchainDoRequest> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -43972,7 +44060,7 @@ impl Iterator for Iterable<'_, OpDelchainDoReply> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -44160,7 +44248,7 @@ impl Iterator for Iterable<'_, OpGetchainDoRequest> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
@@ -45052,7 +45140,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
                     val
                 }),
                 n => {
-                    if cfg!(test) {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
                     } else {
                         continue;
