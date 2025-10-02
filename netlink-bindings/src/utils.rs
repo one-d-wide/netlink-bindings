@@ -49,6 +49,60 @@ impl Debug for FormatHex<'_> {
     }
 }
 
+pub struct FormatEnum<T: Debug>(pub u64, pub fn(u64) -> Option<T>);
+impl<T: Debug> Debug for FormatEnum<T> {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{} ", self.0)?;
+
+        if let Some(var) = (self.1)(self.0) {
+            write!(fmt, "[{var:?}]")?;
+        } else {
+            write!(fmt, "(unknown variant)")?;
+        }
+
+        Ok(())
+    }
+}
+
+pub struct FormatFlags<T: Debug>(pub u64, pub fn(u64) -> Option<T>);
+impl<T: Debug> Debug for FormatFlags<T> {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{} ", self.0)?;
+
+        if self.0 == 0 {
+            write!(fmt, "(empty)")?;
+            return Ok(());
+        }
+
+        let mut seen_variant = false;
+        for i in 0..u64::BITS {
+            let bit = self.0 & (1 << i);
+            if bit == 0 {
+                continue;
+            }
+
+            if !seen_variant {
+                seen_variant = true;
+                write!(fmt, "[")?;
+            } else {
+                write!(fmt, ",")?;
+            }
+
+            if let Some(var) = (self.1)(bit) {
+                write!(fmt, "{var:?}")?;
+            } else {
+                write!(fmt, "(unknown bit {i})")?;
+            }
+        }
+
+        if seen_variant {
+            write!(fmt, "]")?;
+        }
+
+        Ok(())
+    }
+}
+
 pub struct DisplayAsDebug<T>(T);
 impl<T: fmt::Display> fmt::Debug for DisplayAsDebug<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

@@ -77,7 +77,8 @@ fn gen_def_enum(
     update: fn(u64) -> TokenStream,
     comment: &str,
 ) {
-    let mut inner_tokens = TokenStream::new();
+    let mut variants = TokenStream::new();
+    let mut from_value = TokenStream::new();
 
     let mut next_id: u64 = value_start.unwrap_or(default);
     for variant in entries {
@@ -89,7 +90,7 @@ fn gen_def_enum(
                 }
 
                 if let Some(doc) = &doc {
-                    inner_tokens.extend(quote!(#[doc = #doc]));
+                    variants.extend(quote!(#[doc = #doc]));
                 };
 
                 name
@@ -98,9 +99,16 @@ fn gen_def_enum(
         let variant = sanitize_ident(&kebab_to_type(name));
         let expr = update(next_id);
 
-        inner_tokens.extend(quote! {
+        variants.extend(quote! {
             #variant = #expr,
         });
+
+        if expr.clone().into_iter().count() == 1 {
+            from_value.extend(quote!(#expr => Self::#variant,));
+        } else {
+            from_value.extend(quote!(n if n == #expr => Self::#variant,));
+        }
+
         next_id += 1;
     }
 
@@ -108,9 +116,18 @@ fn gen_def_enum(
     let doc = format!("Original name: {name:?} {comment}");
     tokens.extend(quote! {
         #[doc = #doc]
-        #[derive(Clone)]
+        #[derive(Debug, Clone, Copy)]
         pub enum #type_name {
-            #inner_tokens
+            #variants
+        }
+
+        impl #type_name {
+            pub fn from_value(value: u64) -> Option<Self> {
+                Some(match value {
+                    #from_value
+                    _ => return None,
+                })
+            }
         }
     });
 }
