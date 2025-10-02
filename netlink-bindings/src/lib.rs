@@ -53,9 +53,9 @@ pub mod conntrack;
 // #[cfg(feature = "nfsd")]
 // pub mod nfsd;
 //
-// #[cfg(feature = "nftables")]
-// pub mod nftables;
-//
+#[cfg(feature = "nftables")]
+pub mod nftables;
+
 // #[cfg(feature = "nl80211")]
 // pub mod nl80211;
 

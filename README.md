@@ -291,7 +291,7 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | [rt-route](./netlink-bindings/src/rt-route/rt-route.md) | ✔️ | |
 | [rt-rule](./netlink-bindings/src/rt-rule/rt-rule.md) | ✔️ | |
 | [tc](./netlink-bindings/src/tc/tc.md) | ✔️ | |
-| nftables | • | operations reference a non-existent "name", generate with --no-operations |
+| [nftables](./netlink-bindings/src/nftables/nftables.md) | ✔️ | |
 | devlink | • | |
 | ethtool | • | |
 | dpll | ? | |
