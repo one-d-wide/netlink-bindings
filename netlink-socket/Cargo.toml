@@ -20,13 +20,9 @@ name = "extack"
 required-features = [ "netlink-bindings/rt-link" ]
 
 [features]
-# default = []
-# default = ["tokio"]
-# default = ["smol"]
-
 async = []
-tokio = ["async", "dep:tokio"]
-smol = ["async", "dep:smol", "dep:smol-macros", "dep:macro_rules_attribute"]
+tokio = [ "async", "dep:tokio"]
+smol = [ "async", "dep:smol", "dep:smol-macros", "dep:macro_rules_attribute" ]
 
 [dependencies]
 libc = "0.2"

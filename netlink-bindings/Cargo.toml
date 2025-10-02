@@ -12,6 +12,8 @@ name = "wireguard"
 required-features = [ "wireguard", "nlctrl" ]
 
 [features]
+deny-unknown-attrs = []
+
 conntrack = []
 # devlink = []
 # dpll = []

@@ -177,7 +177,7 @@ pub fn gen_iterable_attrs(
                     // TODO: check nested flag
                     let res = match header.r#type {
                         #variants
-                        n => if cfg!(test) {
+                        n => if cfg!(any(test, feature = "deny-unknown-attrs")) {
                             break
                         } else {
                             continue

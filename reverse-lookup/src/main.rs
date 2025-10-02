@@ -136,7 +136,7 @@ fn read(args: &CliArgs, reader: impl Read) {
                         (
                             Protocol::Raw {
                                 protonum: *protonum,
-                                request_type: 0, // Not used in the lookup
+                                request_type, // Not used in the lookup
                             },
                             request_type,
                         )
