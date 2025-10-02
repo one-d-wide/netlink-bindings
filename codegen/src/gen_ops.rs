@@ -125,7 +125,9 @@ pub fn gen_op(
 
     let mut generate = |op_name: &str, op: &Operation| {
         let mut request_attrs = attrs.clone();
-        whitelist_op_attrs(&mut request_attrs.attributes, &op.request.attributes);
+        if !spec.operations.all_attrs && !ops.all_attrs {
+            whitelist_op_attrs(&mut request_attrs.attributes, &op.request.attributes);
+        }
         let request_name = request_kebab_name(&ops.name, op_name);
         request_attrs.name = request_name.clone();
         let request_header = || fixed_header(&op.request, ops.r#do.as_ref().map(|op| &op.request));
@@ -147,7 +149,9 @@ pub fn gen_op(
 
         let reply_header = fixed_header(&op.reply, ops.r#do.as_ref().map(|op| &op.reply));
         let mut reply_attrs = attrs.clone();
-        whitelist_op_attrs(&mut reply_attrs.attributes, &op.reply.attributes);
+        if !spec.operations.all_attrs && !ops.all_attrs {
+            whitelist_op_attrs(&mut reply_attrs.attributes, &op.reply.attributes);
+        }
         let reply_name = reply_kebab_name(&ops.name, op_name);
         reply_attrs.name = reply_name.clone();
 

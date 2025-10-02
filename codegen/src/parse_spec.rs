@@ -372,6 +372,9 @@ pub struct OperationSpec {
     pub name: String,
     /// Specifies the attribute set contained within the message.
     pub attribute_set: Option<String>,
+    /// Assume operation uses all known attributes (debug only)
+    #[serde(default)]
+    pub all_attrs: bool,
 
     /// ID of this message if value for request and response differ, i.e.
     /// requests and responses have different message enums.
@@ -426,6 +429,9 @@ pub struct Operations {
     /// operations, notifications etc.
     pub list: Vec<OperationSpec>,
     pub fixed_header: Option<String>,
+    /// Assume operation uses all known attributes (debug only)
+    #[serde(default)]
+    pub all_attrs: bool,
 }
 
 #[derive(Debug, Clone, Deserialize)]
