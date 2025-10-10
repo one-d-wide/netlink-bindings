@@ -166,6 +166,9 @@ configure wireguard interface.
 connections, similar to `conntrack -L`.
 - [extack](./netlink-socket/examples/extack.rs) - Showcase handing of extended
 ack attributes in error reporting.
+- [nftables](./netlink-socket/examples/nftables.rs) - Create nftables rules.
+- [nftables-api](./netlink-socket/examples/nftables-api.rs) - A high-level
+wrapper for creating nftables rules.
 
 ## Attribute encoding
 
@@ -286,12 +289,12 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | [rt-addr](./netlink-bindings/src/rt-addr/rt-addr.md) | ✅ | |
 | [rt-link](./netlink-bindings/src/rt-link/rt-link.md) | ✅ | |
 | [wireguard](./netlink-bindings/src/wireguard/wireguard.md) | ✅ | |
+| [nftables](./netlink-bindings/src/nftables/nftables.md) | ✅ | |
 | [conntrack](./netlink-bindings/src/conntrack/conntrack.md) | ✔️ | |
 | [rt-neigh](./netlink-bindings/src/rt-neigh/rt-neigh.md) | ✔️ | |
 | [rt-route](./netlink-bindings/src/rt-route/rt-route.md) | ✔️ | |
 | [rt-rule](./netlink-bindings/src/rt-rule/rt-rule.md) | ✔️ | |
 | [tc](./netlink-bindings/src/tc/tc.md) | ✔️ | |
-| [nftables](./netlink-bindings/src/nftables/nftables.md) | ✔️ | |
 | devlink | • | |
 | ethtool | • | |
 | dpll | ? | |

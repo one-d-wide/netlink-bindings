@@ -19,6 +19,14 @@ required-features = [ "netlink-bindings/conntrack" ]
 name = "extack"
 required-features = [ "netlink-bindings/rt-link" ]
 
+[[example]]
+name = "nftables"
+required-features = [ "netlink-bindings/nftables" ]
+
+[[example]]
+name = "nftables-api"
+required-features = [ "netlink-bindings/nftables" ]
+
 [features]
 async = []
 tokio = [ "async", "dep:tokio"]
