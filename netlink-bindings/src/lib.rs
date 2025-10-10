@@ -1,8 +1,8 @@
 mod primitives;
-mod traits;
 
 pub mod builtin;
 pub mod consts;
+pub mod traits;
 pub mod utils;
 
 pub use traits::{NetlinkRequest, Protocol};

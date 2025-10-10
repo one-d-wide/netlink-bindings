@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
 ---
 name: builtin
 protocol: netlink-raw
@@ -54,6 +53,10 @@ definitions:
         type: u32
 
 attribute-sets:
+  -
+    name: dummy
+    doc: attrset with no attributes, only can .end_nested()
+    attributes:
   -
     name: nlmsgerr-attrs
     doc: nlmsgerr attributes

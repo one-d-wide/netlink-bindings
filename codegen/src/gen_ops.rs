@@ -26,7 +26,7 @@ pub fn gen_ops(spec: &Spec, ctx: &mut Context) -> TokenStream {
         gen_op(&mut tokens, spec, ctx, op, &mut request_names);
     }
 
-    gen_request_impl::gen_request_struct(&mut tokens, ctx, spec, &request_names);
+    gen_request_impl::gen_request(&mut tokens, ctx, spec, &request_names);
 
     tokens
 }

@@ -64,8 +64,8 @@ pub fn gen_writable_attrset(
 
     tokens.extend(quote! {
         pub struct #type_name<Prev: Rec> {
-            prev: Option<Prev>,
-            header_offset: Option<usize>,
+            pub(crate) prev: Option<Prev>,
+            pub(crate) header_offset: Option<usize>,
         }
     });
 
@@ -207,20 +207,35 @@ pub fn gen_writable_attrset(
                     }
                     (None, Some(nested_type)) => {
                         impls.extend(quote! {
-                            pub fn #func(mut self) -> #nested_type<Self> {
+                            pub fn #func(mut self) -> #nested_type<PushDummy<Prev>> {
                                 self = self.#push_selector(#sel_val);
-                                let header_offset = push_nested_header(self.as_rec_mut(), #id);
-                                #nested_type { prev: Some(self), header_offset: Some(header_offset) }
+                                let new_header_offset = push_nested_header(self.as_rec_mut(), #id);
+
+                                // Pushing attributes after the sub message is a common pitfall
+                                let dummy = PushDummy {
+                                    prev: self.prev.take(),
+                                    header_offset: self.header_offset.take(),
+                                };
+
+                                #nested_type { prev: Some(dummy), header_offset: Some(new_header_offset) }
                             }
                         });
                     }
                     (Some(h), Some(nested_type)) => {
                         impls.extend(quote! {
-                            pub fn #func(mut self, fixed_header: &#h) -> #nested_type<Self> {
+                            pub fn #func(mut self, fixed_header: &#h) -> #nested_type<PushDummy<Prev>> {
                                 self = self.#push_selector(#sel_val);
-                                let header_offset = push_nested_header(self.as_rec_mut(), #id);
+                                let new_header_offset = push_nested_header(self.as_rec_mut(), #id);
                                 self.as_rec_mut().extend(fixed_header.as_slice());
-                                #nested_type { prev: Some(self), header_offset: Some(header_offset) }
+
+                                // Pushing attributes after the sub message is a common pitfall
+                                let Self { prev, header_offset } = self;
+                                let dummy = PushDummy {
+                                    prev: self.prev.take(),
+                                    header_offset: self.header_offset.take(),
+                                };
+
+                                #nested_type { prev: Some(dummy), header_offset: Some(new_header_offset) }
                             }
                         });
                     }
@@ -614,7 +629,7 @@ pub fn gen_writable_struct(
         #[doc = #doc]
         #[derive(Clone)]
         pub struct #type_name {
-            buf: [u8; #len],
+            pub(crate) buf: [u8; #len],
         }
 
         impl #type_name {

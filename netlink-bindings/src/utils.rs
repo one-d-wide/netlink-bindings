@@ -435,3 +435,31 @@ where
         }
     }
 }
+
+#[derive(Debug)]
+pub enum RequestBuf<'a> {
+    Ref(&'a mut Vec<u8>),
+    Own(Vec<u8>),
+}
+
+impl RequestBuf<'_> {
+    pub fn buf(&self) -> &Vec<u8> {
+        match self {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        match self {
+            RequestBuf::Ref(buf) => buf,
+            RequestBuf::Own(buf) => buf,
+        }
+    }
+}
+
+impl Rec for RequestBuf<'_> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.buf_mut()
+    }
+}

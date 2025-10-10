@@ -1,6 +1,5 @@
 use std::{
     collections::{hash_map::Entry, HashMap},
-    fmt,
     io::{self, ErrorKind, IoSlice},
     marker::PhantomData,
     os::fd::{AsRawFd, FromRawFd, OwnedFd},
@@ -22,12 +21,13 @@ use smol::{
     net::TcpStream as Socket,
 };
 
-use netlink_bindings::{
-    builtin::{NlmsgerrAttrs, PushNlmsghdr},
-    nlctrl,
-    utils::{self, Iterable},
-    NetlinkRequest, Protocol,
-};
+use netlink_bindings::{builtin::PushNlmsghdr, nlctrl, utils, NetlinkRequest, Protocol};
+
+mod chained;
+mod error;
+
+pub use chained::NetlinkReplyChained;
+pub use error::ReplyError;
 
 // Netlink documentation recommends max(8192, page_size)
 pub const RECV_BUF_SIZE: usize = 8192;
@@ -46,11 +46,24 @@ impl NetlinkSocket {
             buf: Arc::new([0u8; RECV_BUF_SIZE]),
             cache: HashMap::default(),
             sock: HashMap::new(),
-            seq: 0,
+            seq: 1,
         }
     }
 
-    fn get_socket(family: u16) -> io::Result<Socket> {
+    fn get_socket_cached(
+        cache: &mut HashMap<u16, Socket>,
+        protonum: u16,
+    ) -> io::Result<&mut Socket> {
+        match cache.entry(protonum) {
+            Entry::Occupied(sock) => Ok(sock.into_mut()),
+            Entry::Vacant(ent) => {
+                let sock = Self::get_socket_new(protonum)?;
+                Ok(ent.insert(sock))
+            }
+        }
+    }
+
+    fn get_socket_new(family: u16) -> io::Result<Socket> {
         let fd = unsafe {
             libc::socket(
                 libc::AF_NETLINK,
@@ -84,8 +97,15 @@ impl NetlinkSocket {
             sock.set_nonblocking(true)?;
             Socket::try_from(sock)
         }
+
         #[cfg(not(feature = "async"))]
         Ok(sock)
+    }
+
+    pub fn reserve_seq(&mut self, len: u32) -> u32 {
+        let seq = self.seq;
+        self.seq = self.seq.wrapping_add(len);
+        seq
     }
 
     #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
@@ -148,156 +168,145 @@ impl NetlinkSocket {
     where
         Request: NetlinkRequest,
     {
+        let seq = self.reserve_seq(1);
+        let sock = Self::get_socket_cached(&mut self.sock, protonum)?;
+
         let mut header = PushNlmsghdr::new();
         header.set_len(header.as_slice().len() as u32 + request.payload().len() as u32);
         header.set_type(request_type);
         header.set_flags(request.flags() | libc::NLM_F_REQUEST as u16 | libc::NLM_F_ACK as u16);
-        header.set_seq({
-            self.seq = self.seq.wrapping_add(1);
-            self.seq
-        });
+        header.set_seq(seq);
 
-        let sock = match self.sock.entry(protonum) {
-            Entry::Occupied(sock) => sock.into_mut(),
-            Entry::Vacant(ent) => {
-                let sock = Self::get_socket(protonum)?;
-                ent.insert(sock)
-            }
-        };
-
-        #[cfg(not(feature = "tokio"))]
-        let sent = sock
-            .write_vectored(&[
+        Self::write_buf(
+            sock,
+            &[
                 IoSlice::new(header.as_slice()),
                 IoSlice::new(request.payload()),
-            ])
-            .await?;
-
-        #[cfg(feature = "tokio")]
-        let sent = loop {
-            // Some subsystems don't correctly implement io notifications, which tokio runtime
-            // expects to receive before doing any actual io, hence we instead always attempt an io
-            // operation first.
-            let res = sock.try_write_vectored(&[
-                IoSlice::new(header.as_slice()),
-                IoSlice::new(request.payload()),
-            ]);
-            if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
-                sock.writable().await?;
-                continue;
-            }
-            break res?;
-        };
-
-        if sent != header.get_len() as usize {
-            return Err(io::Error::other("Couldn't send the whole message"));
-        }
+            ],
+        )
+        .await?;
 
         Ok(NetlinkReply {
-            sock: self,
-            buf_offset: 0,
-            buf_read: 0,
-            protonum,
+            sock,
+            buf: &mut self.buf,
+            inner: NetlinkReplyInner {
+                buf_offset: 0,
+                buf_read: 0,
+            },
             seq: header.seq(),
             done: false,
             phantom: PhantomData,
         })
     }
+
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    async fn write_buf(sock: &mut Socket, payload: &[IoSlice<'_>]) -> io::Result<()> {
+        loop {
+            #[cfg(not(feature = "tokio"))]
+            let res = sock.write_vectored(payload).await;
+
+            #[cfg(feature = "tokio")]
+            let res = loop {
+                // Some subsystems don't correctly implement io notifications, which tokio runtime
+                // expects to receive before doing any actual io, hence we instead always attempt an io
+                // operation first.
+                let res = sock.try_write_vectored(payload);
+                if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
+                    sock.writable().await?;
+                    continue;
+                }
+                break res;
+            };
+
+            match res {
+                Ok(sent) if sent != payload.iter().map(|s| s.len()).sum() => {
+                    return Err(io::Error::other("Couldn't send the whole message"));
+                }
+                Ok(_) => return Ok(()),
+                Err(err) if err.kind() == ErrorKind::Interrupted => continue,
+                Err(err) => return Err(err),
+            }
+        }
+    }
 }
 
-pub struct NetlinkReply<'sock, Request: NetlinkRequest> {
-    sock: &'sock mut NetlinkSocket,
+struct NetlinkReplyInner {
     buf_offset: usize,
     buf_read: usize,
-    protonum: u16,
-    seq: u32,
-    done: bool,
-    phantom: PhantomData<Request>,
 }
 
-impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
+impl NetlinkReplyInner {
     #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
-    pub async fn recv(&mut self) -> Option<Result<Request::ReplyType<'_>, ReplyError>> {
-        if self.done {
-            return None;
+    async fn read_buf(sock: &mut Socket, buf: &mut [u8]) -> io::Result<usize> {
+        loop {
+            #[cfg(not(feature = "tokio"))]
+            let res = sock.read(&mut buf[..]).await;
+
+            #[cfg(feature = "tokio")]
+            let res = {
+                // Some subsystems don't correctly implement io notifications, which tokio
+                // runtime expects to receive before doing any actual io, hence we instead
+                // always attempt an io operation first.
+                let res = sock.try_read(&mut buf[..]);
+                if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
+                    sock.readable().await?;
+                    continue;
+                }
+                res
+            };
+
+            match res {
+                Ok(read) => return Ok(read),
+                Err(err) if err.kind() == ErrorKind::Interrupted => continue,
+                Err(err) => return Err(err),
+            }
+        }
+    }
+
+    #[allow(clippy::type_complexity)]
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn recv(
+        &mut self,
+        sock: &mut Socket,
+        buf: &mut [u8; RECV_BUF_SIZE],
+    ) -> io::Result<(u32, Result<(usize, usize), ReplyError>)> {
+        if self.buf_offset == self.buf_read {
+            self.buf_read = Self::read_buf(sock, &mut buf[..]).await?;
+            self.buf_offset = 0;
         }
 
-        loop {
-            let buf = Arc::make_mut(&mut self.sock.buf);
+        let packet = &buf[self.buf_offset..self.buf_read];
 
-            if self.buf_offset == self.buf_read {
-                let sock = self.sock.sock.get_mut(&self.protonum).unwrap();
+        let too_short_err = || io::Error::other("Received packet is too short");
 
-                #[cfg(not(feature = "tokio"))]
-                let res = sock.read(&mut buf[..]).await;
+        let Some(header) = packet.get(..PushNlmsghdr::len()) else {
+            return Err(too_short_err());
+        };
+        let header = PushNlmsghdr::new_from_slice(header).unwrap();
 
-                #[cfg(feature = "tokio")]
-                let res = loop {
-                    // Some subsystems don't correctly implement io notifications, which tokio
-                    // runtime expects to receive before doing any actual io, hence we instead
-                    // always attempt an io operation first.
-                    let res = sock.try_read(&mut buf[..]);
-                    if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
-                        if let Err(err) = sock.readable().await {
-                            return Some(Err(err.into()));
-                        }
-                        continue;
-                    }
-                    break res;
+        let payload_start = self.buf_offset + PushNlmsghdr::len();
+        self.buf_offset += header.get_len() as usize;
+
+        match header.get_type() as i32 {
+            libc::NLMSG_DONE | libc::NLMSG_ERROR => {
+                let Some(code) = packet.get(16..20) else {
+                    return Err(too_short_err());
                 };
+                let code = utils::parse_i32(code).unwrap();
 
-                let read = match res {
-                    Ok(read) => read,
-                    Err(err) if err.kind() == ErrorKind::Interrupted => continue,
-                    Err(err) => return Some(Err(err.into())),
-                };
-
-                self.buf_read = read;
-                self.buf_offset = 0;
-            }
-
-            let packet = &buf[self.buf_offset..self.buf_read];
-
-            let too_short_err =
-                || Some(Err(io::Error::other("Received packet is too short").into()));
-
-            let Some(header) = packet.get(..PushNlmsghdr::len()) else {
-                return too_short_err();
-            };
-            let header = PushNlmsghdr::new_from_slice(header).unwrap();
-
-            let payload_start = self.buf_offset + PushNlmsghdr::len();
-            self.buf_offset += header.get_len() as usize;
-
-            if header.seq() != self.seq {
-                continue;
-            }
-
-            match header.get_type() as i32 {
-                libc::NLMSG_NOOP => continue,
-                libc::NLMSG_DONE | libc::NLMSG_ERROR => {
-                    self.done = true;
-
-                    let Some(code) = packet.get(16..20) else {
-                        return too_short_err();
-                    };
-                    let code = utils::parse_i32(code).unwrap();
-                    if code == 0 {
-                        return None;
-                    }
-
-                    let (echo_start, echo_end) = if header.get_type() == libc::NLMSG_DONE as u16 {
+                let (echo_start, echo_end) =
+                    if code == 0 || header.get_type() == libc::NLMSG_DONE as u16 {
                         (20, 20)
                     } else {
                         let Some(echo_header) = packet.get(20..(20 + PushNlmsghdr::len())) else {
-                            return too_short_err();
+                            return Err(too_short_err());
                         };
                         let echo_header = PushNlmsghdr::new_from_slice(echo_header).unwrap();
 
                         if echo_header.flags() & libc::NLM_F_CAPPED as u16 == 0 {
                             let start = echo_header.get_len();
                             if packet.len() < start as usize + 20 {
-                                return too_short_err();
+                                return Err(too_short_err());
                             }
 
                             (20 + 16, 20 + start as usize)
@@ -307,138 +316,93 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
                         }
                     };
 
-                    return Some(Err(ReplyError {
+                Ok((
+                    header.seq(),
+                    Err(ReplyError {
                         code: io::Error::from_raw_os_error(-code),
-                        reply_buf: Some(self.sock.buf.clone()),
                         request_bounds: (echo_start as u32, echo_end as u32),
                         ext_ack_bounds: (echo_end as u32, self.buf_offset as u32),
-                        lookup: Request::lookup,
-                    }));
-                }
-                libc::NLMSG_OVERRUN => {
-                    return Some(Err(io::Error::other("Received NLMSG_OVERRUN").into()));
-                }
-                _ => {
-                    return Some(Ok(Request::decode_reply(
-                        &self.sock.buf[payload_start..self.buf_offset],
-                    )))
-                }
+                        reply_buf: None,
+                        chained_name: None,
+                        lookup: |_, _, _| Default::default(),
+                    }),
+                ))
             }
+            libc::NLMSG_NOOP => Ok((
+                header.seq(),
+                Err(io::Error::other("Received NLMSG_NOOP").into()),
+            )),
+            libc::NLMSG_OVERRUN => Ok((
+                header.seq(),
+                Err(io::Error::other("Received NLMSG_OVERRUN").into()),
+            )),
+            _ => Ok((header.seq(), Ok((payload_start, self.buf_offset)))),
         }
     }
 }
 
-// For an error type to be convenient to use it has to be unconstrained by
-// lifetime bounds and generics, so it can be freely passed around in a call
-// chain, therefore the data buffers are ref counter.
-pub struct ReplyError {
-    code: io::Error,
-    reply_buf: Option<Arc<[u8; RECV_BUF_SIZE]>>,
-    ext_ack_bounds: (u32, u32),
-    request_bounds: (u32, u32),
-    #[allow(clippy::type_complexity)]
-    lookup: fn(&[u8], usize, Option<u16>) -> (Vec<(&'static str, usize)>, Option<&'static str>),
+pub struct NetlinkReply<'sock, Request: NetlinkRequest> {
+    inner: NetlinkReplyInner,
+    sock: &'sock mut Socket,
+    buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
+    seq: u32,
+    done: bool,
+    phantom: PhantomData<Request>,
 }
 
-impl From<io::Error> for ReplyError {
-    fn from(value: io::Error) -> Self {
-        Self {
-            code: value,
-            reply_buf: None,
-            request_bounds: (0, 0),
-            ext_ack_bounds: (0, 0),
-            lookup: |_, _, _| Default::default(),
+impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn recv_one(&mut self) -> Result<Request::ReplyType<'_>, ReplyError> {
+        if let Some(res) = self.recv().await {
+            return res;
         }
-    }
-}
-
-impl ReplyError {
-    pub fn ext_ack(&self) -> Option<Iterable<'_, NlmsgerrAttrs<'_>>> {
-        let Some(reply_buf) = &self.reply_buf else {
-            return None;
-        };
-        Some(NlmsgerrAttrs::new(
-            &reply_buf[self.ext_ack_bounds.0 as usize..self.ext_ack_bounds.1 as usize],
-        ))
+        Err(io::Error::other("Reply didn't contain data").into())
     }
 
-    pub fn request(&self) -> Option<&[u8]> {
-        let Some(reply_buf) = &self.reply_buf else {
-            return None;
-        };
-        Some(&reply_buf[self.request_bounds.0 as usize..self.request_bounds.1 as usize])
-    }
-}
-
-impl From<ReplyError> for io::Error {
-    fn from(value: ReplyError) -> Self {
-        value.code
-    }
-}
-
-impl std::error::Error for ReplyError {}
-
-impl fmt::Debug for ReplyError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(self, f)
-    }
-}
-
-impl fmt::Display for ReplyError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.code)?;
-
-        let Some(ext_ack) = self.ext_ack() else {
-            return Ok(());
-        };
-
-        if let Ok(msg) = ext_ack.get_msg() {
-            f.write_str(": ")?;
-            match msg.to_str() {
-                Ok(m) => write!(f, "{m}")?,
-                Err(_) => write!(f, "{msg:?}")?,
-            }
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn recv_ack(&mut self) -> Result<(), ReplyError> {
+        if let Some(res) = self.recv().await {
+            res?;
+            return Err(io::Error::other("Reply isn't just an ack").into());
         }
-
-        if let Ok(missing_offset) = ext_ack.get_missing_nest() {
-            let missing_attr = ext_ack.get_missing_type().ok();
-
-            let (trace, attr) = (self.lookup)(
-                self.request().unwrap(),
-                missing_offset as usize - PushNlmsghdr::len(),
-                missing_attr,
-            );
-
-            if let Some(attr) = attr {
-                write!(f, ": missing {attr:?}")?;
-            }
-            for (attrs, _) in trace.iter() {
-                write!(f, " in {attrs:?}")?;
-            }
-        }
-
-        if let Ok(invalid_offset) = ext_ack.get_offset() {
-            let (trace, _) = (self.lookup)(
-                self.request().unwrap(),
-                invalid_offset as usize - PushNlmsghdr::len(),
-                None,
-            );
-
-            if let Some((attr, _)) = trace.first() {
-                write!(f, ": attribute {attr:?}")?;
-            }
-            for (attrs, _) in trace.iter().skip(1) {
-                write!(f, " in {attrs:?}")?;
-            }
-            if let Ok(policy) = ext_ack.get_policy() {
-                write!(f, ": {policy:?}")?;
-            }
-        }
-
-        if ext_ack.get_buf().is_empty() {
-            write!(f, " (no extended ack)")?;
-        }
-
         Ok(())
+    }
+
+    #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
+    pub async fn recv(&mut self) -> Option<Result<Request::ReplyType<'_>, ReplyError>> {
+        if self.done {
+            return None;
+        }
+
+        let buf = Arc::make_mut(self.buf);
+
+        loop {
+            match self.inner.recv(self.sock, buf).await {
+                Err(io_err) => {
+                    self.done = true;
+                    return Some(Err(io_err.into()));
+                }
+                Ok((seq, res)) => {
+                    if seq != self.seq {
+                        continue;
+                    }
+                    return match res {
+                        Ok((l, r)) => Some(Ok(Request::decode_reply(&self.buf[l..r]))),
+                        Err(mut err) => {
+                            self.done = true;
+                            if err.code.raw_os_error().unwrap() == 0 {
+                                None
+                            } else {
+                                if err.has_context() {
+                                    err.lookup = Request::lookup;
+                                    err.reply_buf = Some(self.buf.clone());
+                                }
+                                Some(Err(err))
+                            }
+                        }
+                    };
+                }
+            };
+        }
     }
 }

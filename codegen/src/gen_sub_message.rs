@@ -15,7 +15,7 @@ pub fn sub_message_name(name: &str) -> Ident {
 
 pub fn sub_message_push_name(attr_name: &str, value_name: &str) -> Ident {
     format_ident!(
-        "sub_nested_{}_{}",
+        "nested_{}_{}",
         kebab_to_rust(attr_name),
         kebab_to_rust(value_name)
     )

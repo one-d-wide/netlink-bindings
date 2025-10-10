@@ -35,3 +35,27 @@ pub trait NetlinkRequest {
         (Vec::new(), None)
     }
 }
+
+/// Signature of [`NetlinkRequest::lookup`]
+pub type LookupFn =
+    fn(&[u8], usize, Option<u16>) -> (Vec<(&'static str, usize)>, Option<&'static str>);
+
+/// Chained requests encoded into the single buffer (experimental)
+pub trait NetlinkChained {
+    fn protonum(&self) -> u16;
+
+    /// Encoded payload of the message (including message headers)
+    fn payload(&self) -> &[u8];
+
+    /// Number of chained messaged
+    fn chain_len(&self) -> usize;
+
+    fn get_index(&self, seq: u32) -> Option<usize>;
+
+    fn name(&self, index: usize) -> &'static str;
+
+    fn lookup(&self, index: usize) -> LookupFn {
+        let _ = index;
+        |_, _, _| Default::default()
+    }
+}

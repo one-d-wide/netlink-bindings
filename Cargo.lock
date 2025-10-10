@@ -503,7 +503,7 @@ dependencies = [
 
 [[package]]
 name = "netlink-bindings"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "libc",
 ]
@@ -523,7 +523,7 @@ dependencies = [
 
 [[package]]
 name = "netlink-socket"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "libc",
  "macro_rules_attribute",
