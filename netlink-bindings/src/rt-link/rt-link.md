@@ -14,7 +14,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
   .nested_linkinfo()
     .push_kind(val) // &CStr
     .push_kind_bytes(val) // &[u8]
-    .sub_nested_data_bond()
+    .nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
       .push_miimon(val) // u32
@@ -58,7 +58,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .end_array()
       .push_coupled_control(val) // u8
     .end_nested()
-    .sub_nested_data_bridge()
+    .nested_data_bridge()
       .push_forward_delay(val) // u32
       .push_hello_time(val) // u32
       .push_max_age(val) // u32
@@ -109,7 +109,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_fdb_n_learned(val) // u32
       .push_fdb_max_learned(val) // u32
     .end_nested()
-    .sub_nested_data_erspan()
+    .nested_data_erspan()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -135,7 +135,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_gre()
+    .nested_data_gre()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -161,7 +161,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_gretap()
+    .nested_data_gretap()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -187,7 +187,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_ip6gre()
+    .nested_data_ip6gre()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -210,7 +210,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_geneve()
+    .nested_data_geneve()
       .push_id(val) // u32
       .push_remote(val) // &[u8]
       .push_ttl(val) // u8
@@ -227,7 +227,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_inner_proto_inherit(val) // ()
       .push_port_range(val) // PushIflaGenevePortRange
     .end_nested()
-    .sub_nested_data_ipip()
+    .nested_data_ipip()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -249,7 +249,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_ip6tnl()
+    .nested_data_ip6tnl()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -265,7 +265,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_sit()
+    .nested_data_sit()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -287,7 +287,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_tun()
+    .nested_data_tun()
       .push_owner(val) // u32
       .push_group(val) // u32
       .push_type(val) // u8
@@ -298,7 +298,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_num_queues(val) // u32
       .push_num_disabled_queues(val) // u32
     .end_nested()
-    .sub_nested_data_vlan()
+    .nested_data_vlan()
       .push_id(val) // u16
       .push_flags(val) // PushIflaVlanFlags
       .nested_egress_qos()
@@ -315,10 +315,10 @@ PushOpNewlinkDoRequest::new(&mut vec)
       // Associated type: "VlanProtocols" (enum)
       .push_protocol(val) // u16
     .end_nested()
-    .sub_nested_data_vrf()
+    .nested_data_vrf()
       .push_table(val) // u32
     .end_nested()
-    .sub_nested_data_vti()
+    .nested_data_vti()
       .push_link(val) // u32
       .push_ikey(val) // u32
       .push_okey(val) // u32
@@ -326,7 +326,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_remote(val) // &[u8]
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_vti6()
+    .nested_data_vti6()
       .push_link(val) // u32
       .push_ikey(val) // u32
       .push_okey(val) // u32
@@ -334,7 +334,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_remote(val) // &[u8]
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_netkit()
+    .nested_data_netkit()
       .push_peer_info(val) // &[u8]
       .push_primary(val) // u8
 
@@ -355,7 +355,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_headroom(val) // u16
       .push_tailroom(val) // u16
     .end_nested()
-    .sub_nested_data_ovpn()
+    .nested_data_ovpn()
 
       // Associated type: "OvpnMode" (enum)
       .push_mode(val) // u8
@@ -363,7 +363,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
     .push_slave_kind_bytes(val) // &[u8]
-    .sub_nested_slave_data_bridge()
+    .nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
       .push_cost(val) // u32
@@ -409,7 +409,7 @@ PushOpNewlinkDoRequest::new(&mut vec)
       .push_neigh_vlan_suppress(val) // ()
       .push_backup_nhid(val) // u32
     .end_nested()
-    .sub_nested_slave_data_bond()
+    .nested_slave_data_bond()
       .push_state(val) // u8
       .push_mii_status(val) // u8
       .push_link_failure_count(val) // u32
@@ -688,7 +688,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
   .nested_linkinfo()
     .push_kind(val) // &CStr
     .push_kind_bytes(val) // &[u8]
-    .sub_nested_data_bond()
+    .nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
       .push_miimon(val) // u32
@@ -732,7 +732,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .end_array()
       .push_coupled_control(val) // u8
     .end_nested()
-    .sub_nested_data_bridge()
+    .nested_data_bridge()
       .push_forward_delay(val) // u32
       .push_hello_time(val) // u32
       .push_max_age(val) // u32
@@ -783,7 +783,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_fdb_n_learned(val) // u32
       .push_fdb_max_learned(val) // u32
     .end_nested()
-    .sub_nested_data_erspan()
+    .nested_data_erspan()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -809,7 +809,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_gre()
+    .nested_data_gre()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -835,7 +835,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_gretap()
+    .nested_data_gretap()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -861,7 +861,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_ip6gre()
+    .nested_data_ip6gre()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -884,7 +884,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_geneve()
+    .nested_data_geneve()
       .push_id(val) // u32
       .push_remote(val) // &[u8]
       .push_ttl(val) // u8
@@ -901,7 +901,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_inner_proto_inherit(val) // ()
       .push_port_range(val) // PushIflaGenevePortRange
     .end_nested()
-    .sub_nested_data_ipip()
+    .nested_data_ipip()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -923,7 +923,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_ip6tnl()
+    .nested_data_ip6tnl()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -939,7 +939,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_sit()
+    .nested_data_sit()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -961,7 +961,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_tun()
+    .nested_data_tun()
       .push_owner(val) // u32
       .push_group(val) // u32
       .push_type(val) // u8
@@ -972,7 +972,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_num_queues(val) // u32
       .push_num_disabled_queues(val) // u32
     .end_nested()
-    .sub_nested_data_vlan()
+    .nested_data_vlan()
       .push_id(val) // u16
       .push_flags(val) // PushIflaVlanFlags
       .nested_egress_qos()
@@ -989,10 +989,10 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       // Associated type: "VlanProtocols" (enum)
       .push_protocol(val) // u16
     .end_nested()
-    .sub_nested_data_vrf()
+    .nested_data_vrf()
       .push_table(val) // u32
     .end_nested()
-    .sub_nested_data_vti()
+    .nested_data_vti()
       .push_link(val) // u32
       .push_ikey(val) // u32
       .push_okey(val) // u32
@@ -1000,7 +1000,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_remote(val) // &[u8]
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_vti6()
+    .nested_data_vti6()
       .push_link(val) // u32
       .push_ikey(val) // u32
       .push_okey(val) // u32
@@ -1008,7 +1008,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_remote(val) // &[u8]
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_netkit()
+    .nested_data_netkit()
       .push_peer_info(val) // &[u8]
       .push_primary(val) // u8
 
@@ -1029,7 +1029,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_headroom(val) // u16
       .push_tailroom(val) // u16
     .end_nested()
-    .sub_nested_data_ovpn()
+    .nested_data_ovpn()
 
       // Associated type: "OvpnMode" (enum)
       .push_mode(val) // u8
@@ -1037,7 +1037,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
     .push_slave_kind_bytes(val) // &[u8]
-    .sub_nested_slave_data_bridge()
+    .nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
       .push_cost(val) // u32
@@ -1083,7 +1083,7 @@ PushOpGetlinkDumpRequest::new(&mut vec)
       .push_neigh_vlan_suppress(val) // ()
       .push_backup_nhid(val) // u32
     .end_nested()
-    .sub_nested_slave_data_bond()
+    .nested_slave_data_bond()
       .push_state(val) // u8
       .push_mii_status(val) // u8
       .push_link_failure_count(val) // u32
@@ -1300,7 +1300,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
   .nested_linkinfo()
     .push_kind(val) // &CStr
     .push_kind_bytes(val) // &[u8]
-    .sub_nested_data_bond()
+    .nested_data_bond()
       .push_mode(val) // u8
       .push_active_slave(val) // u32
       .push_miimon(val) // u32
@@ -1344,7 +1344,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .end_array()
       .push_coupled_control(val) // u8
     .end_nested()
-    .sub_nested_data_bridge()
+    .nested_data_bridge()
       .push_forward_delay(val) // u32
       .push_hello_time(val) // u32
       .push_max_age(val) // u32
@@ -1395,7 +1395,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_fdb_n_learned(val) // u32
       .push_fdb_max_learned(val) // u32
     .end_nested()
-    .sub_nested_data_erspan()
+    .nested_data_erspan()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -1421,7 +1421,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_gre()
+    .nested_data_gre()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -1447,7 +1447,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_gretap()
+    .nested_data_gretap()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -1473,7 +1473,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_ip6gre()
+    .nested_data_ip6gre()
       .push_link(val) // u32
       .push_iflags(val) // u16
       .push_oflags(val) // u16
@@ -1496,7 +1496,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_erspan_dir(val) // u8
       .push_erspan_hwid(val) // u16
     .end_nested()
-    .sub_nested_data_geneve()
+    .nested_data_geneve()
       .push_id(val) // u32
       .push_remote(val) // &[u8]
       .push_ttl(val) // u8
@@ -1513,7 +1513,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_inner_proto_inherit(val) // ()
       .push_port_range(val) // PushIflaGenevePortRange
     .end_nested()
-    .sub_nested_data_ipip()
+    .nested_data_ipip()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -1535,7 +1535,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_ip6tnl()
+    .nested_data_ip6tnl()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -1551,7 +1551,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_sit()
+    .nested_data_sit()
       .push_link(val) // u32
       .push_local(val) // &[u8]
       .push_remote(val) // &[u8]
@@ -1573,7 +1573,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_collect_metadata(val) // ()
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_tun()
+    .nested_data_tun()
       .push_owner(val) // u32
       .push_group(val) // u32
       .push_type(val) // u8
@@ -1584,7 +1584,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_num_queues(val) // u32
       .push_num_disabled_queues(val) // u32
     .end_nested()
-    .sub_nested_data_vlan()
+    .nested_data_vlan()
       .push_id(val) // u16
       .push_flags(val) // PushIflaVlanFlags
       .nested_egress_qos()
@@ -1601,10 +1601,10 @@ PushOpSetlinkDoRequest::new(&mut vec)
       // Associated type: "VlanProtocols" (enum)
       .push_protocol(val) // u16
     .end_nested()
-    .sub_nested_data_vrf()
+    .nested_data_vrf()
       .push_table(val) // u32
     .end_nested()
-    .sub_nested_data_vti()
+    .nested_data_vti()
       .push_link(val) // u32
       .push_ikey(val) // u32
       .push_okey(val) // u32
@@ -1612,7 +1612,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_remote(val) // &[u8]
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_vti6()
+    .nested_data_vti6()
       .push_link(val) // u32
       .push_ikey(val) // u32
       .push_okey(val) // u32
@@ -1620,7 +1620,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_remote(val) // &[u8]
       .push_fwmark(val) // u32
     .end_nested()
-    .sub_nested_data_netkit()
+    .nested_data_netkit()
       .push_peer_info(val) // &[u8]
       .push_primary(val) // u8
 
@@ -1641,7 +1641,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_headroom(val) // u16
       .push_tailroom(val) // u16
     .end_nested()
-    .sub_nested_data_ovpn()
+    .nested_data_ovpn()
 
       // Associated type: "OvpnMode" (enum)
       .push_mode(val) // u8
@@ -1649,7 +1649,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
     .push_xstats(val) // &[u8]
     .push_slave_kind(val) // &CStr
     .push_slave_kind_bytes(val) // &[u8]
-    .sub_nested_slave_data_bridge()
+    .nested_slave_data_bridge()
       .push_state(val) // u8
       .push_priority(val) // u16
       .push_cost(val) // u32
@@ -1695,7 +1695,7 @@ PushOpSetlinkDoRequest::new(&mut vec)
       .push_neigh_vlan_suppress(val) // ()
       .push_backup_nhid(val) // u32
     .end_nested()
-    .sub_nested_slave_data_bond()
+    .nested_slave_data_bond()
       .push_state(val) // u8
       .push_mii_status(val) // u8
       .push_link_failure_count(val) // u32

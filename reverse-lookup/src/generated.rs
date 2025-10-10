@@ -592,28 +592,28 @@ impl Debug for ReverseLookup<'_> {
                     (260u16, Some(260u16), true) => consider(fmt, "conntrack"),
                     #[cfg(feature = "nftables")]
                     (2816u16, None, true) => Debug::fmt(
-                        &netlink_bindings::nftables::OpCompatGetDumpRequest::new(buf),
+                        &netlink_bindings::nftables::OpGetcompatDumpRequest::new(buf),
                         fmt,
                     ),
                     #[cfg(not(feature = "nftables"))]
                     (2816u16, None, true) => consider(fmt, "nftables"),
                     #[cfg(feature = "nftables")]
                     (2816u16, Some(2816u16), true) => Debug::fmt(
-                        &netlink_bindings::nftables::OpCompatGetDumpReply::new(buf),
+                        &netlink_bindings::nftables::OpGetcompatDumpReply::new(buf),
                         fmt,
                     ),
                     #[cfg(not(feature = "nftables"))]
                     (2816u16, Some(2816u16), true) => consider(fmt, "nftables"),
                     #[cfg(feature = "nftables")]
                     (2816u16, None, false) => Debug::fmt(
-                        &netlink_bindings::nftables::OpCompatGetDoRequest::new(buf),
+                        &netlink_bindings::nftables::OpGetcompatDoRequest::new(buf),
                         fmt,
                     ),
                     #[cfg(not(feature = "nftables"))]
                     (2816u16, None, false) => consider(fmt, "nftables"),
                     #[cfg(feature = "nftables")]
                     (2816u16, Some(2816u16), false) => Debug::fmt(
-                        &netlink_bindings::nftables::OpCompatGetDoReply::new(buf),
+                        &netlink_bindings::nftables::OpGetcompatDoReply::new(buf),
                         fmt,
                     ),
                     #[cfg(not(feature = "nftables"))]

@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -13752,8 +13752,8 @@ impl Iterable<'_, LinkinfoOvpnAttrs> {
     }
 }
 pub struct PushLinkAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14258,8 +14258,8 @@ impl<Prev: Rec> Drop for PushLinkAttrs<Prev> {
     }
 }
 pub struct PushPropListLinkAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushPropListLinkAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14306,8 +14306,8 @@ impl<Prev: Rec> Drop for PushPropListLinkAttrs<Prev> {
     }
 }
 pub struct PushAfSpecAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushAfSpecAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14360,8 +14360,8 @@ impl<Prev: Rec> Drop for PushAfSpecAttrs<Prev> {
     }
 }
 pub struct PushVfinfoListAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushVfinfoListAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14401,8 +14401,8 @@ impl<Prev: Rec> Drop for PushVfinfoListAttrs<Prev> {
     }
 }
 pub struct PushVfinfoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushVfinfoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14503,8 +14503,8 @@ impl<Prev: Rec> Drop for PushVfinfoAttrs<Prev> {
     }
 }
 pub struct PushVfStatsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushVfStatsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14581,8 +14581,8 @@ impl<Prev: Rec> Drop for PushVfStatsAttrs<Prev> {
     }
 }
 pub struct PushVfVlanAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushVfVlanAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14620,8 +14620,8 @@ impl<Prev: Rec> Drop for PushVfVlanAttrs<Prev> {
     }
 }
 pub struct PushVfPortsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushVfPortsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14653,8 +14653,8 @@ impl<Prev: Rec> Drop for PushVfPortsAttrs<Prev> {
     }
 }
 pub struct PushPortSelfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushPortSelfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14686,8 +14686,8 @@ impl<Prev: Rec> Drop for PushPortSelfAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -14725,172 +14725,240 @@ impl<Prev: Rec> PushLinkinfoAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_bond(mut self) -> PushLinkinfoBondAttrs<Self> {
+    pub fn nested_data_bond(mut self) -> PushLinkinfoBondAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bond");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoBondAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_bridge(mut self) -> PushLinkinfoBridgeAttrs<Self> {
+    pub fn nested_data_bridge(mut self) -> PushLinkinfoBridgeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bridge");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoBridgeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_erspan(mut self) -> PushLinkinfoGreAttrs<Self> {
+    pub fn nested_data_erspan(mut self) -> PushLinkinfoGreAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"erspan");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoGreAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_gre(mut self) -> PushLinkinfoGreAttrs<Self> {
+    pub fn nested_data_gre(mut self) -> PushLinkinfoGreAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gre");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoGreAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_gretap(mut self) -> PushLinkinfoGreAttrs<Self> {
+    pub fn nested_data_gretap(mut self) -> PushLinkinfoGreAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gretap");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoGreAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_ip6gre(mut self) -> PushLinkinfoGre6Attrs<Self> {
+    pub fn nested_data_ip6gre(mut self) -> PushLinkinfoGre6Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"ip6gre");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoGre6Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_geneve(mut self) -> PushLinkinfoGeneveAttrs<Self> {
+    pub fn nested_data_geneve(mut self) -> PushLinkinfoGeneveAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"geneve");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoGeneveAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_ipip(mut self) -> PushLinkinfoIptunAttrs<Self> {
+    pub fn nested_data_ipip(mut self) -> PushLinkinfoIptunAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ipip");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoIptunAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_ip6tnl(mut self) -> PushLinkinfoIp6tnlAttrs<Self> {
+    pub fn nested_data_ip6tnl(mut self) -> PushLinkinfoIp6tnlAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ip6tnl");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoIp6tnlAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_sit(mut self) -> PushLinkinfoIptunAttrs<Self> {
+    pub fn nested_data_sit(mut self) -> PushLinkinfoIptunAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"sit");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoIptunAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_tun(mut self) -> PushLinkinfoTunAttrs<Self> {
+    pub fn nested_data_tun(mut self) -> PushLinkinfoTunAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tun");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoTunAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_vlan(mut self) -> PushLinkinfoVlanAttrs<Self> {
+    pub fn nested_data_vlan(mut self) -> PushLinkinfoVlanAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"vlan");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoVlanAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_vrf(mut self) -> PushLinkinfoVrfAttrs<Self> {
+    pub fn nested_data_vrf(mut self) -> PushLinkinfoVrfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"vrf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoVrfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_vti(mut self) -> PushLinkinfoVtiAttrs<Self> {
+    pub fn nested_data_vti(mut self) -> PushLinkinfoVtiAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"vti");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoVtiAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_vti6(mut self) -> PushLinkinfoVti6Attrs<Self> {
+    pub fn nested_data_vti6(mut self) -> PushLinkinfoVti6Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"vti6");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoVti6Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_netkit(mut self) -> PushLinkinfoNetkitAttrs<Self> {
+    pub fn nested_data_netkit(mut self) -> PushLinkinfoNetkitAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netkit");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoNetkitAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_data_ovpn(mut self) -> PushLinkinfoOvpnAttrs<Self> {
+    pub fn nested_data_ovpn(mut self) -> PushLinkinfoOvpnAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ovpn");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoOvpnAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_xstats(mut self, value: &[u8]) -> Self {
@@ -14915,22 +14983,30 @@ impl<Prev: Rec> PushLinkinfoAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_slave_data_bridge(mut self) -> PushLinkinfoBrportAttrs<Self> {
+    pub fn nested_slave_data_bridge(mut self) -> PushLinkinfoBrportAttrs<PushDummy<Prev>> {
         self = self.push_slave_kind(c"bridge");
-        let header_offset = push_nested_header(self.as_rec_mut(), 5u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 5u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushLinkinfoBrportAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_slave_data_bond(mut self) -> PushBondSlaveAttrs<Self> {
+    pub fn nested_slave_data_bond(mut self) -> PushBondSlaveAttrs<PushDummy<Prev>> {
         self = self.push_slave_kind(c"bond");
-        let header_offset = push_nested_header(self.as_rec_mut(), 5u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 5u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBondSlaveAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
 }
@@ -14944,8 +15020,8 @@ impl<Prev: Rec> Drop for PushLinkinfoAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoBondAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoBondAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -15229,8 +15305,8 @@ impl<Prev: Rec> Drop for PushLinkinfoBondAttrs<Prev> {
     }
 }
 pub struct PushBondAdInfoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushBondAdInfoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -15287,8 +15363,8 @@ impl<Prev: Rec> Drop for PushBondAdInfoAttrs<Prev> {
     }
 }
 pub struct PushBondSlaveAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushBondSlaveAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -15365,8 +15441,8 @@ impl<Prev: Rec> Drop for PushBondSlaveAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoBridgeAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoBridgeAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -15643,8 +15719,8 @@ impl<Prev: Rec> Drop for PushLinkinfoBridgeAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoBrportAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoBrportAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -15875,8 +15951,8 @@ impl<Prev: Rec> Drop for PushLinkinfoBrportAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoGreAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoGreAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16027,8 +16103,8 @@ impl<Prev: Rec> Drop for PushLinkinfoGreAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoGre6Attrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoGre6Attrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16164,8 +16240,8 @@ impl<Prev: Rec> Drop for PushLinkinfoGre6Attrs<Prev> {
     }
 }
 pub struct PushLinkinfoVtiAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoVtiAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16227,8 +16303,8 @@ impl<Prev: Rec> Drop for PushLinkinfoVtiAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoVti6Attrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoVti6Attrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16290,8 +16366,8 @@ impl<Prev: Rec> Drop for PushLinkinfoVti6Attrs<Prev> {
     }
 }
 pub struct PushLinkinfoGeneveAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoGeneveAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16396,8 +16472,8 @@ impl<Prev: Rec> Drop for PushLinkinfoGeneveAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoIptunAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoIptunAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16528,8 +16604,8 @@ impl<Prev: Rec> Drop for PushLinkinfoIptunAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoIp6tnlAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoIp6tnlAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16630,8 +16706,8 @@ impl<Prev: Rec> Drop for PushLinkinfoIp6tnlAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoTunAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoTunAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16708,8 +16784,8 @@ impl<Prev: Rec> Drop for PushLinkinfoTunAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoVlanAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoVlanAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16771,8 +16847,8 @@ impl<Prev: Rec> Drop for PushLinkinfoVlanAttrs<Prev> {
     }
 }
 pub struct PushIflaVlanQos<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushIflaVlanQos<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16810,8 +16886,8 @@ impl<Prev: Rec> Drop for PushIflaVlanQos<Prev> {
     }
 }
 pub struct PushLinkinfoVrfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoVrfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16848,8 +16924,8 @@ impl<Prev: Rec> Drop for PushLinkinfoVrfAttrs<Prev> {
     }
 }
 pub struct PushXdpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushXdpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16921,8 +16997,8 @@ impl<Prev: Rec> Drop for PushXdpAttrs<Prev> {
     }
 }
 pub struct PushIflaAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushIflaAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -16960,8 +17036,8 @@ impl<Prev: Rec> Drop for PushIflaAttrs<Prev> {
     }
 }
 pub struct PushIfla6Attrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushIfla6Attrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17039,8 +17115,8 @@ impl<Prev: Rec> Drop for PushIfla6Attrs<Prev> {
     }
 }
 pub struct PushMctpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushMctpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17082,8 +17158,8 @@ impl<Prev: Rec> Drop for PushMctpAttrs<Prev> {
     }
 }
 pub struct PushStatsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushStatsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17142,8 +17218,8 @@ impl<Prev: Rec> Drop for PushStatsAttrs<Prev> {
     }
 }
 pub struct PushLinkOffloadXstats<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkOffloadXstats<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17237,8 +17313,8 @@ impl<Prev: Rec> Drop for PushLinkOffloadXstats<Prev> {
     }
 }
 pub struct PushHwSInfoOne<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushHwSInfoOne<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17280,8 +17356,8 @@ impl<Prev: Rec> Drop for PushHwSInfoOne<Prev> {
     }
 }
 pub struct PushLinkDpllPinAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkDpllPinAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17318,8 +17394,8 @@ impl<Prev: Rec> Drop for PushLinkDpllPinAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoNetkitAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoNetkitAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17401,8 +17477,8 @@ impl<Prev: Rec> Drop for PushLinkinfoNetkitAttrs<Prev> {
     }
 }
 pub struct PushLinkinfoOvpnAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushLinkinfoOvpnAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -17442,7 +17518,7 @@ impl<Prev: Rec> Drop for PushLinkinfoOvpnAttrs<Prev> {
 #[doc = "Original name: \"rtgenmsg\""]
 #[derive(Clone)]
 pub struct PushRtgenmsg {
-    buf: [u8; 1usize],
+    pub(crate) buf: [u8; 1usize],
 }
 impl PushRtgenmsg {
     #[doc = "Create zero-initialized struct"]
@@ -17486,7 +17562,7 @@ impl std::fmt::Debug for PushRtgenmsg {
 #[doc = "Original name: \"ifinfomsg\""]
 #[derive(Clone)]
 pub struct PushIfinfomsg {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushIfinfomsg {
     #[doc = "Create zero-initialized struct"]
@@ -17560,7 +17636,7 @@ impl std::fmt::Debug for PushIfinfomsg {
 #[doc = "Original name: \"ifla-bridge-id\""]
 #[derive(Clone)]
 pub struct PushIflaBridgeId {
-    buf: [u8; 2usize],
+    pub(crate) buf: [u8; 2usize],
 }
 impl PushIflaBridgeId {
     #[doc = "Create zero-initialized struct"]
@@ -17611,7 +17687,7 @@ impl std::fmt::Debug for PushIflaBridgeId {
 #[doc = "Original name: \"ifla-cacheinfo\""]
 #[derive(Clone)]
 pub struct PushIflaCacheinfo {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushIflaCacheinfo {
     #[doc = "Create zero-initialized struct"]
@@ -17676,7 +17752,7 @@ impl std::fmt::Debug for PushIflaCacheinfo {
 #[doc = "Original name: \"rtnl-link-stats\""]
 #[derive(Clone)]
 pub struct PushRtnlLinkStats {
-    buf: [u8; 96usize],
+    pub(crate) buf: [u8; 96usize],
 }
 impl PushRtnlLinkStats {
     #[doc = "Create zero-initialized struct"]
@@ -17881,7 +17957,7 @@ impl std::fmt::Debug for PushRtnlLinkStats {
 #[doc = "Original name: \"rtnl-link-stats64\""]
 #[derive(Clone)]
 pub struct PushRtnlLinkStats64 {
-    buf: [u8; 200usize],
+    pub(crate) buf: [u8; 200usize],
 }
 impl PushRtnlLinkStats64 {
     #[doc = "Create zero-initialized struct"]
@@ -18093,7 +18169,7 @@ impl std::fmt::Debug for PushRtnlLinkStats64 {
 #[doc = "Original name: \"rtnl-link-ifmap\""]
 #[derive(Clone)]
 pub struct PushRtnlLinkIfmap {
-    buf: [u8; 32usize],
+    pub(crate) buf: [u8; 32usize],
 }
 impl PushRtnlLinkIfmap {
     #[doc = "Create zero-initialized struct"]
@@ -18172,7 +18248,7 @@ impl std::fmt::Debug for PushRtnlLinkIfmap {
 #[doc = "Original name: \"br-boolopt-multi\""]
 #[derive(Clone)]
 pub struct PushBrBooloptMulti {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushBrBooloptMulti {
     #[doc = "Create zero-initialized struct"]
@@ -18223,7 +18299,7 @@ impl std::fmt::Debug for PushBrBooloptMulti {
 #[doc = "Original name: \"if-stats-msg\""]
 #[derive(Clone)]
 pub struct PushIfStatsMsg {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushIfStatsMsg {
     #[doc = "Create zero-initialized struct"]
@@ -18281,7 +18357,7 @@ impl std::fmt::Debug for PushIfStatsMsg {
 #[doc = "Original name: \"ifla-vlan-flags\""]
 #[derive(Clone)]
 pub struct PushIflaVlanFlags {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVlanFlags {
     #[doc = "Create zero-initialized struct"]
@@ -18334,7 +18410,7 @@ impl std::fmt::Debug for PushIflaVlanFlags {
 #[doc = "Original name: \"ifla-vlan-qos-mapping\""]
 #[derive(Clone)]
 pub struct PushIflaVlanQosMapping {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVlanQosMapping {
     #[doc = "Create zero-initialized struct"]
@@ -18385,7 +18461,7 @@ impl std::fmt::Debug for PushIflaVlanQosMapping {
 #[doc = "Original name: \"ifla-geneve-port-range\""]
 #[derive(Clone)]
 pub struct PushIflaGenevePortRange {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushIflaGenevePortRange {
     #[doc = "Create zero-initialized struct"]
@@ -18436,7 +18512,7 @@ impl std::fmt::Debug for PushIflaGenevePortRange {
 #[doc = "Original name: \"ifla-vf-mac\""]
 #[derive(Clone)]
 pub struct PushIflaVfMac {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushIflaVfMac {
     #[doc = "Create zero-initialized struct"]
@@ -18487,7 +18563,7 @@ impl std::fmt::Debug for PushIflaVfMac {
 #[doc = "Original name: \"ifla-vf-vlan\""]
 #[derive(Clone)]
 pub struct PushIflaVfVlan {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushIflaVfVlan {
     #[doc = "Create zero-initialized struct"]
@@ -18545,7 +18621,7 @@ impl std::fmt::Debug for PushIflaVfVlan {
 #[doc = "Original name: \"ifla-vf-tx-rate\""]
 #[derive(Clone)]
 pub struct PushIflaVfTxRate {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVfTxRate {
     #[doc = "Create zero-initialized struct"]
@@ -18596,7 +18672,7 @@ impl std::fmt::Debug for PushIflaVfTxRate {
 #[doc = "Original name: \"ifla-vf-spoofchk\""]
 #[derive(Clone)]
 pub struct PushIflaVfSpoofchk {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVfSpoofchk {
     #[doc = "Create zero-initialized struct"]
@@ -18647,7 +18723,7 @@ impl std::fmt::Debug for PushIflaVfSpoofchk {
 #[doc = "Original name: \"ifla-vf-link-state\""]
 #[derive(Clone)]
 pub struct PushIflaVfLinkState {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVfLinkState {
     #[doc = "Create zero-initialized struct"]
@@ -18700,7 +18776,7 @@ impl std::fmt::Debug for PushIflaVfLinkState {
 #[doc = "Original name: \"ifla-vf-rate\""]
 #[derive(Clone)]
 pub struct PushIflaVfRate {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushIflaVfRate {
     #[doc = "Create zero-initialized struct"]
@@ -18758,7 +18834,7 @@ impl std::fmt::Debug for PushIflaVfRate {
 #[doc = "Original name: \"ifla-vf-rss-query-en\""]
 #[derive(Clone)]
 pub struct PushIflaVfRssQueryEn {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVfRssQueryEn {
     #[doc = "Create zero-initialized struct"]
@@ -18809,7 +18885,7 @@ impl std::fmt::Debug for PushIflaVfRssQueryEn {
 #[doc = "Original name: \"ifla-vf-trust\""]
 #[derive(Clone)]
 pub struct PushIflaVfTrust {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIflaVfTrust {
     #[doc = "Create zero-initialized struct"]
@@ -18860,7 +18936,7 @@ impl std::fmt::Debug for PushIflaVfTrust {
 #[doc = "Original name: \"ifla-vf-guid\""]
 #[derive(Clone)]
 pub struct PushIflaVfGuid {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushIflaVfGuid {
     #[doc = "Create zero-initialized struct"]
@@ -18911,7 +18987,7 @@ impl std::fmt::Debug for PushIflaVfGuid {
 #[doc = "Original name: \"ifla-vf-vlan-info\""]
 #[derive(Clone)]
 pub struct PushIflaVfVlanInfo {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushIflaVfVlanInfo {
     #[doc = "Create zero-initialized struct"]
@@ -18975,8 +19051,8 @@ impl std::fmt::Debug for PushIflaVfVlanInfo {
 }
 #[doc = "Create a new link."]
 pub struct PushOpNewlinkDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewlinkDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -19721,8 +19797,8 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
 }
 #[doc = "Create a new link."]
 pub struct PushOpNewlinkDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewlinkDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -19856,6 +19932,9 @@ impl<'r> RequestOpNewlinkDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewlinkDoRequest<&mut Vec<u8>> {
         PushOpNewlinkDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewlinkDoRequest<RequestBuf<'r>> {
+        PushOpNewlinkDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewlinkDoRequest<'_> {
     type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpNewlinkDoReply>);
@@ -19886,8 +19965,8 @@ impl NetlinkRequest for RequestOpNewlinkDoRequest<'_> {
 }
 #[doc = "Delete an existing link."]
 pub struct PushOpDellinkDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDellinkDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -20067,8 +20146,8 @@ impl<'a> Iterable<'a, OpDellinkDoRequest<'a>> {
 }
 #[doc = "Delete an existing link."]
 pub struct PushOpDellinkDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDellinkDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -20202,6 +20281,9 @@ impl<'r> RequestOpDellinkDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDellinkDoRequest<&mut Vec<u8>> {
         PushOpDellinkDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDellinkDoRequest<RequestBuf<'r>> {
+        PushOpDellinkDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDellinkDoRequest<'_> {
     type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpDellinkDoReply>);
@@ -20232,8 +20314,8 @@ impl NetlinkRequest for RequestOpDellinkDoRequest<'_> {
 }
 #[doc = "Get / dump information about a link."]
 pub struct PushOpGetlinkDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetlinkDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -20495,8 +20577,8 @@ impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
 }
 #[doc = "Get / dump information about a link."]
 pub struct PushOpGetlinkDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetlinkDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22635,6 +22717,9 @@ impl<'r> RequestOpGetlinkDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetlinkDumpRequest<&mut Vec<u8>> {
         PushOpGetlinkDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetlinkDumpRequest<RequestBuf<'r>> {
+        PushOpGetlinkDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetlinkDumpRequest<'_> {
     type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpGetlinkDumpReply<'buf>>);
@@ -22665,8 +22750,8 @@ impl NetlinkRequest for RequestOpGetlinkDumpRequest<'_> {
 }
 #[doc = "Get / dump information about a link."]
 pub struct PushOpGetlinkDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetlinkDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22945,8 +23030,8 @@ impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
 }
 #[doc = "Get / dump information about a link."]
 pub struct PushOpGetlinkDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetlinkDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25083,6 +25168,9 @@ impl<'r> RequestOpGetlinkDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetlinkDoRequest<&mut Vec<u8>> {
         PushOpGetlinkDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetlinkDoRequest<RequestBuf<'r>> {
+        PushOpGetlinkDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetlinkDoRequest<'_> {
     type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpGetlinkDoReply<'buf>>);
@@ -25113,8 +25201,8 @@ impl NetlinkRequest for RequestOpGetlinkDoRequest<'_> {
 }
 #[doc = "Set information about a link."]
 pub struct PushOpSetlinkDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpSetlinkDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27241,8 +27329,8 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
 }
 #[doc = "Set information about a link."]
 pub struct PushOpSetlinkDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpSetlinkDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27376,6 +27464,9 @@ impl<'r> RequestOpSetlinkDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpSetlinkDoRequest<&mut Vec<u8>> {
         PushOpSetlinkDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpSetlinkDoRequest<RequestBuf<'r>> {
+        PushOpSetlinkDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpSetlinkDoRequest<'_> {
     type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpSetlinkDoReply>);
@@ -27406,8 +27497,8 @@ impl NetlinkRequest for RequestOpSetlinkDoRequest<'_> {
 }
 #[doc = "Get / dump link stats."]
 pub struct PushOpGetstatsDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetstatsDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27531,8 +27622,8 @@ impl Iterable<'_, OpGetstatsDumpRequest> {
 }
 #[doc = "Get / dump link stats."]
 pub struct PushOpGetstatsDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetstatsDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27831,6 +27922,9 @@ impl<'r> RequestOpGetstatsDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetstatsDumpRequest<&mut Vec<u8>> {
         PushOpGetstatsDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetstatsDumpRequest<RequestBuf<'r>> {
+        PushOpGetstatsDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetstatsDumpRequest<'_> {
     type ReplyType<'buf> = (PushIfStatsMsg, Iterable<'buf, OpGetstatsDumpReply<'buf>>);
@@ -27861,8 +27955,8 @@ impl NetlinkRequest for RequestOpGetstatsDumpRequest<'_> {
 }
 #[doc = "Get / dump link stats."]
 pub struct PushOpGetstatsDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetstatsDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27986,8 +28080,8 @@ impl Iterable<'_, OpGetstatsDoRequest> {
 }
 #[doc = "Get / dump link stats."]
 pub struct PushOpGetstatsDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetstatsDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -28284,6 +28378,9 @@ impl<'r> RequestOpGetstatsDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetstatsDoRequest<&mut Vec<u8>> {
         PushOpGetstatsDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetstatsDoRequest<RequestBuf<'r>> {
+        PushOpGetstatsDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetstatsDoRequest<'_> {
     type ReplyType<'buf> = (PushIfStatsMsg, Iterable<'buf, OpGetstatsDoReply<'buf>>);
@@ -28313,26 +28410,171 @@ impl NetlinkRequest for RequestOpGetstatsDoRequest<'_> {
     }
 }
 #[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
+pub struct ChainedFinal<'a> {
+    inner: Chained<'a>,
 }
+#[derive(Debug)]
+pub struct Chained<'a> {
+    buf: RequestBuf<'a>,
+    first_seq: u32,
+    lookups: Vec<(&'static str, LookupFn)>,
+    last_header_offset: usize,
+    last_kind: Option<RequestInfo>,
+}
+impl<'a> ChainedFinal<'a> {
+    pub fn into_chained(self) -> Chained<'a> {
+        self.inner
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.inner.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.inner.buf_mut()
+    }
+    fn get_index(&self, seq: u32) -> Option<u32> {
+        let min = self.inner.first_seq;
+        let max = min.wrapping_add(self.inner.lookups.len() as u32);
+        return if min <= max {
+            (min..max).contains(&seq).then(|| seq - min)
+        } else if min <= seq {
+            Some(seq - min)
+        } else if seq < max {
+            Some(u32::MAX - min + seq)
+        } else {
+            None
+        };
+    }
+}
+impl crate::traits::NetlinkChained for ChainedFinal<'_> {
+    fn protonum(&self) -> u16 {
+        PROTONUM
+    }
+    fn payload(&self) -> &[u8] {
+        self.buf()
+    }
+    fn chain_len(&self) -> usize {
+        self.inner.lookups.len()
+    }
+    fn get_index(&self, seq: u32) -> Option<usize> {
+        self.get_index(seq).map(|n| n as usize)
+    }
+    fn name(&self, index: usize) -> &'static str {
+        self.inner.lookups[index].0
+    }
+    fn lookup(&self, index: usize) -> LookupFn {
+        self.inner.lookups[index].1
+    }
+}
+impl Chained<'static> {
+    pub fn new(first_seq: u32) -> Self {
+        Self::new_from_buf(Vec::new(), first_seq)
+    }
+    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Own(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'a> Chained<'a> {
+    pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Ref(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn finalize(mut self) -> ChainedFinal<'a> {
+        self.update_header();
+        ChainedFinal { inner: self }
+    }
+    pub fn request(&mut self) -> Request<'_> {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut()
+            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        let mut request = Request::new_extend(self.buf.buf_mut());
+        self.last_kind = None;
+        request.writeback = Some(&mut self.last_kind);
+        request
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
+    }
+    fn update_header(&mut self) {
+        let Some(RequestInfo {
+            protocol,
+            flags,
+            name,
+            lookup,
+        }) = self.last_kind
+        else {
+            if !self.buf().is_empty() {
+                assert_eq!(
+                    self.last_header_offset + PushNlmsghdr::len(),
+                    self.buf().len()
+                );
+                self.buf.buf_mut().truncate(self.last_header_offset);
+            }
+            return;
+        };
+        let header_offset = self.last_header_offset;
+        let request_type = match protocol {
+            Protocol::Raw { request_type, .. } => request_type,
+            Protocol::Generic(_) => unreachable!(),
+        };
+        let index = self.lookups.len();
+        let seq = self.first_seq.wrapping_add(index as u32);
+        self.lookups.push((name, lookup));
+        let buf = self.buf_mut();
+        align(buf);
+        let mut header = PushNlmsghdr::new();
+        header.set_len((buf.len() - header_offset) as u32);
+        header.set_type(request_type);
+        header.set_flags(flags | consts::NLM_F_REQUEST as u16 | consts::NLM_F_ACK as u16);
+        header.set_seq(seq);
+        buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+    }
+}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -28345,22 +28587,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -28392,33 +28643,75 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_newlink_do_request(self, header: &PushIfinfomsg) -> RequestOpNewlinkDoRequest<'buf> {
-        RequestOpNewlinkDoRequest::new(self, header)
+        let mut res = RequestOpNewlinkDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newlink-do-request",
+            RequestOpNewlinkDoRequest::lookup,
+        );
+        res
     }
     pub fn op_dellink_do_request(self, header: &PushIfinfomsg) -> RequestOpDellinkDoRequest<'buf> {
-        RequestOpDellinkDoRequest::new(self, header)
+        let mut res = RequestOpDellinkDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-dellink-do-request",
+            RequestOpDellinkDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getlink_dump_request(
         self,
         header: &PushIfinfomsg,
     ) -> RequestOpGetlinkDumpRequest<'buf> {
-        RequestOpGetlinkDumpRequest::new(self, header)
+        let mut res = RequestOpGetlinkDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getlink-dump-request",
+            RequestOpGetlinkDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getlink_do_request(self, header: &PushIfinfomsg) -> RequestOpGetlinkDoRequest<'buf> {
-        RequestOpGetlinkDoRequest::new(self, header)
+        let mut res = RequestOpGetlinkDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getlink-do-request",
+            RequestOpGetlinkDoRequest::lookup,
+        );
+        res
     }
     pub fn op_setlink_do_request(self, header: &PushIfinfomsg) -> RequestOpSetlinkDoRequest<'buf> {
-        RequestOpSetlinkDoRequest::new(self, header)
+        let mut res = RequestOpSetlinkDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-setlink-do-request",
+            RequestOpSetlinkDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getstats_dump_request(
         self,
         header: &PushIfStatsMsg,
     ) -> RequestOpGetstatsDumpRequest<'buf> {
-        RequestOpGetstatsDumpRequest::new(self, header)
+        let mut res = RequestOpGetstatsDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getstats-dump-request",
+            RequestOpGetstatsDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getstats_do_request(
         self,
         header: &PushIfStatsMsg,
     ) -> RequestOpGetstatsDoRequest<'buf> {
-        RequestOpGetstatsDoRequest::new(self, header)
+        let mut res = RequestOpGetstatsDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getstats-do-request",
+            RequestOpGetstatsDoRequest::lookup,
+        );
+        res
     }
 }

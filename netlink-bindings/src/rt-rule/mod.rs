@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -860,8 +860,8 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
     }
 }
 pub struct PushFibRuleAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFibRuleAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1065,7 +1065,7 @@ impl<Prev: Rec> Drop for PushFibRuleAttrs<Prev> {
 #[doc = "Original name: \"rtgenmsg\""]
 #[derive(Clone)]
 pub struct PushRtgenmsg {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushRtgenmsg {
     #[doc = "Create zero-initialized struct"]
@@ -1109,7 +1109,7 @@ impl std::fmt::Debug for PushRtgenmsg {
 #[doc = "Original name: \"fib-rule-hdr\""]
 #[derive(Clone)]
 pub struct PushFibRuleHdr {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushFibRuleHdr {
     #[doc = "Create zero-initialized struct"]
@@ -1197,7 +1197,7 @@ impl std::fmt::Debug for PushFibRuleHdr {
 #[doc = "Original name: \"fib-rule-port-range\""]
 #[derive(Clone)]
 pub struct PushFibRulePortRange {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushFibRulePortRange {
     #[doc = "Create zero-initialized struct"]
@@ -1248,7 +1248,7 @@ impl std::fmt::Debug for PushFibRulePortRange {
 #[doc = "Original name: \"fib-rule-uid-range\""]
 #[derive(Clone)]
 pub struct PushFibRuleUidRange {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushFibRuleUidRange {
     #[doc = "Create zero-initialized struct"]
@@ -1298,8 +1298,8 @@ impl std::fmt::Debug for PushFibRuleUidRange {
 }
 #[doc = "Add new FIB rule"]
 pub struct PushOpNewruleDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewruleDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2105,8 +2105,8 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
 }
 #[doc = "Add new FIB rule"]
 pub struct PushOpNewruleDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewruleDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2240,6 +2240,9 @@ impl<'r> RequestOpNewruleDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewruleDoRequest<&mut Vec<u8>> {
         PushOpNewruleDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewruleDoRequest<RequestBuf<'r>> {
+        PushOpNewruleDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewruleDoRequest<'_> {
     type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpNewruleDoReply>);
@@ -2270,8 +2273,8 @@ impl NetlinkRequest for RequestOpNewruleDoRequest<'_> {
 }
 #[doc = "Remove an existing FIB rule"]
 pub struct PushOpDelruleDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelruleDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -3077,8 +3080,8 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
 }
 #[doc = "Remove an existing FIB rule"]
 pub struct PushOpDelruleDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelruleDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -3212,6 +3215,9 @@ impl<'r> RequestOpDelruleDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDelruleDoRequest<&mut Vec<u8>> {
         PushOpDelruleDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDelruleDoRequest<RequestBuf<'r>> {
+        PushOpDelruleDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDelruleDoRequest<'_> {
     type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpDelruleDoReply>);
@@ -3242,8 +3248,8 @@ impl NetlinkRequest for RequestOpDelruleDoRequest<'_> {
 }
 #[doc = "Dump all FIB rules"]
 pub struct PushOpGetruleDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetruleDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -3367,8 +3373,8 @@ impl Iterable<'_, OpGetruleDumpRequest> {
 }
 #[doc = "Dump all FIB rules"]
 pub struct PushOpGetruleDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetruleDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4186,6 +4192,9 @@ impl<'r> RequestOpGetruleDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetruleDumpRequest<&mut Vec<u8>> {
         PushOpGetruleDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetruleDumpRequest<RequestBuf<'r>> {
+        PushOpGetruleDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetruleDumpRequest<'_> {
     type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpGetruleDumpReply<'buf>>);
@@ -4215,26 +4224,171 @@ impl NetlinkRequest for RequestOpGetruleDumpRequest<'_> {
     }
 }
 #[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
+pub struct ChainedFinal<'a> {
+    inner: Chained<'a>,
 }
+#[derive(Debug)]
+pub struct Chained<'a> {
+    buf: RequestBuf<'a>,
+    first_seq: u32,
+    lookups: Vec<(&'static str, LookupFn)>,
+    last_header_offset: usize,
+    last_kind: Option<RequestInfo>,
+}
+impl<'a> ChainedFinal<'a> {
+    pub fn into_chained(self) -> Chained<'a> {
+        self.inner
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.inner.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.inner.buf_mut()
+    }
+    fn get_index(&self, seq: u32) -> Option<u32> {
+        let min = self.inner.first_seq;
+        let max = min.wrapping_add(self.inner.lookups.len() as u32);
+        return if min <= max {
+            (min..max).contains(&seq).then(|| seq - min)
+        } else if min <= seq {
+            Some(seq - min)
+        } else if seq < max {
+            Some(u32::MAX - min + seq)
+        } else {
+            None
+        };
+    }
+}
+impl crate::traits::NetlinkChained for ChainedFinal<'_> {
+    fn protonum(&self) -> u16 {
+        PROTONUM
+    }
+    fn payload(&self) -> &[u8] {
+        self.buf()
+    }
+    fn chain_len(&self) -> usize {
+        self.inner.lookups.len()
+    }
+    fn get_index(&self, seq: u32) -> Option<usize> {
+        self.get_index(seq).map(|n| n as usize)
+    }
+    fn name(&self, index: usize) -> &'static str {
+        self.inner.lookups[index].0
+    }
+    fn lookup(&self, index: usize) -> LookupFn {
+        self.inner.lookups[index].1
+    }
+}
+impl Chained<'static> {
+    pub fn new(first_seq: u32) -> Self {
+        Self::new_from_buf(Vec::new(), first_seq)
+    }
+    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Own(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'a> Chained<'a> {
+    pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Ref(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn finalize(mut self) -> ChainedFinal<'a> {
+        self.update_header();
+        ChainedFinal { inner: self }
+    }
+    pub fn request(&mut self) -> Request<'_> {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut()
+            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        let mut request = Request::new_extend(self.buf.buf_mut());
+        self.last_kind = None;
+        request.writeback = Some(&mut self.last_kind);
+        request
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
+    }
+    fn update_header(&mut self) {
+        let Some(RequestInfo {
+            protocol,
+            flags,
+            name,
+            lookup,
+        }) = self.last_kind
+        else {
+            if !self.buf().is_empty() {
+                assert_eq!(
+                    self.last_header_offset + PushNlmsghdr::len(),
+                    self.buf().len()
+                );
+                self.buf.buf_mut().truncate(self.last_header_offset);
+            }
+            return;
+        };
+        let header_offset = self.last_header_offset;
+        let request_type = match protocol {
+            Protocol::Raw { request_type, .. } => request_type,
+            Protocol::Generic(_) => unreachable!(),
+        };
+        let index = self.lookups.len();
+        let seq = self.first_seq.wrapping_add(index as u32);
+        self.lookups.push((name, lookup));
+        let buf = self.buf_mut();
+        align(buf);
+        let mut header = PushNlmsghdr::new();
+        header.set_len((buf.len() - header_offset) as u32);
+        header.set_type(request_type);
+        header.set_flags(flags | consts::NLM_F_REQUEST as u16 | consts::NLM_F_ACK as u16);
+        header.set_seq(seq);
+        buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+    }
+}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -4247,22 +4401,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -4294,15 +4457,33 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_newrule_do_request(self, header: &PushFibRuleHdr) -> RequestOpNewruleDoRequest<'buf> {
-        RequestOpNewruleDoRequest::new(self, header)
+        let mut res = RequestOpNewruleDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newrule-do-request",
+            RequestOpNewruleDoRequest::lookup,
+        );
+        res
     }
     pub fn op_delrule_do_request(self, header: &PushFibRuleHdr) -> RequestOpDelruleDoRequest<'buf> {
-        RequestOpDelruleDoRequest::new(self, header)
+        let mut res = RequestOpDelruleDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-delrule-do-request",
+            RequestOpDelruleDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getrule_dump_request(
         self,
         header: &PushFibRuleHdr,
     ) -> RequestOpGetruleDumpRequest<'buf> {
-        RequestOpGetruleDumpRequest::new(self, header)
+        let mut res = RequestOpGetruleDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getrule-dump-request",
+            RequestOpGetruleDumpRequest::lookup,
+        );
+        res
     }
 }

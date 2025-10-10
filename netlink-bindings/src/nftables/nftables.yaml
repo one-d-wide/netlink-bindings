@@ -4,7 +4,7 @@ name: nftables
 protocol: netlink-raw
 protonum: 12
 
-doc:
+doc: |
   Netfilter nftables configuration over netlink.
 
 definitions:
@@ -67,9 +67,9 @@ definitions:
     type: enum
     entries:
       -
-        name: mask-xor # aka bool (old name)
+        name: mask-xor  # aka bool (old name)
         doc: |
-          mask-and-xor operation used to implement NOT, AND, OR and XOR boolean operations
+          mask-and-xor operation used to implement NOT, AND, OR and XOR
             dreg = (sreg & mask) ^ xor
           with these mask and xor values:
                     mask    xor
@@ -268,29 +268,29 @@ definitions:
       NFT_REG32_00 - NFT_REG32_15.
     type: enum
     entries:
-      - reg_verdict
-      - reg_1
-      - reg_2
-      - reg_3
-      - reg_4
+      - reg-verdict
+      - reg-1
+      - reg-2
+      - reg-3
+      - reg-4
       -
-        name: reg32_00
+        name: reg32-00
         value: 8
-      - reg32_01
-      - reg32_02
-      - reg32_03
-      - reg32_04
-      - reg32_05
-      - reg32_06
-      - reg32_07
-      - reg32_08
-      - reg32_09
-      - reg32_10
-      - reg32_11
-      - reg32_12
-      - reg32_13
-      - reg32_14
-      - reg32_15
+      - reg32-01
+      - reg32-02
+      - reg32-03
+      - reg32-04
+      - reg32-05
+      - reg32-06
+      - reg32-07
+      - reg32-08
+      - reg32-09
+      - reg32-10
+      - reg32-11
+      - reg32-12
+      - reg32-13
+      - reg32-14
+      - reg32-15
   -
     # Defined in include/linux/netfilter/nf_tables.h
     name: numgen-types
@@ -336,7 +336,7 @@ definitions:
     doc: nf_tables log flags
     type: flags
     entries:
-      - 
+      -
         name: tcpseq
         doc: Log TCP sequence numbers
       -
@@ -393,7 +393,6 @@ attribute-sets:
         type: u32
         enum: log-flags
         byte-order: big-endian
-
   -
     # Defined in include/linux/netfilter/nf_tables.h
     name: numgen-attrs
@@ -453,6 +452,7 @@ attribute-sets:
     attributes:
       -
         name: genid
+        doc: generation ID for this changeset
         type: u32
         byte-order: big-endian
   -
@@ -480,9 +480,17 @@ attribute-sets:
         byte-order: big-endian
         doc: numeric handle of the table
       -
+        name: pad
+        type: pad
+      -
         name: userdata
         type: binary
         doc: user data
+      -
+        name: owner
+        type: u32
+        byte-order: big-endian
+        doc: owner of this table through netlink portID
   -
     name: chain-attrs
     attributes:
@@ -760,6 +768,15 @@ attribute-sets:
         type: nest
         nested-attributes: set-list-attrs
         doc: list of expressions
+      -
+        name: type
+        type: string
+        doc: set backend type
+      -
+        name: count
+        type: u32
+        byte-order: big-endian
+        doc: number of set elements
   -
     name: set-desc-attrs
     attributes:
@@ -1013,6 +1030,8 @@ attribute-sets:
         type: u32
         byte-order: big-endian
         enum: bitwise-ops
+        checks:
+          max: 255
       -
         name: data
         type: nest
@@ -1062,7 +1081,7 @@ attribute-sets:
         name: chain-id
         doc: jump target chain ID
         type: u32
-        byte-order: big-endian # Accessed in nft_chain_lookup_byid
+        byte-order: big-endian
   -
     name: expr-counter-attrs
     attributes:
@@ -1142,7 +1161,7 @@ attribute-sets:
         type: string
         doc: Name of set to use
       -
-        name: set id
+        name: set-id
         type: u32
         byte-order: big-endian
         doc: ID of set to use
@@ -1320,7 +1339,7 @@ attribute-sets:
         byte-order: big-endian
         doc: id of object map
   -
-    # Defined as nft_target_attributes in include/uapi/linux/netfilter/nf_tables_compat.h
+    # Defined in include/uapi/linux/netfilter/nf_tables_compat.h
     name: compat-target-attrs
     attributes:
       -
@@ -1332,13 +1351,11 @@ attribute-sets:
         name: rev
         type: u32
         byte-order: big-endian
-        checks:
-          max: 255
       -
         name: info
         type: binary
   -
-    # Defined as nft_match_attributes in include/uapi/linux/netfilter/nf_tables_compat.h
+    # Defined in include/uapi/linux/netfilter/nf_tables_compat.h
     name: compat-match-attrs
     attributes:
       -
@@ -1439,7 +1456,9 @@ sub-messages:
       -
         value: log
         attribute-set: log-attrs
-      # There're more to go: grep -A10 nft_expr_type and look for .name\s*=\s*"..."
+        # There're more sub-messages to go:
+        #   grep -A10 nft_expr_type
+        # and look for .name\s*=\s*"..."
   -
     name: obj-data
     formats:
@@ -1452,13 +1471,13 @@ sub-messages:
 
 operations:
   enum-model: directional
-  all-attrs: true # Enable for now, since many attributes are still not fully annotated
   list:
     -
       # Defined as nfnl_compat_subsys in net/netfilter/nft_compat.c
-      name: compat-get
+      name: getcompat
       attribute-set: compat-attrs
       fixed-header: nfgenmsg
+      doc: Get / dump nft_compat info
       do:
         request:
           value: 0xb00
@@ -1474,6 +1493,10 @@ operations:
             - type
       dump:
         reply:
+          attributes:
+            - name
+            - rev
+            - type
     -
       name: batch-begin
       doc: Start a batch of operations
@@ -1507,7 +1530,10 @@ operations:
         request:
           value: 0xa00
           attributes:
+            # Mentioned in nf_tables_newtable()
             - name
+            - flags
+            - userdata
     -
       name: gettable
       doc: Get / dump tables.
@@ -1517,18 +1543,21 @@ operations:
         request:
           value: 0xa01
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_gettable()
+            - name
         reply:
           value: 0xa00
-          attributes:
-            # TODO:
-      dump:
-        reply:
-          attributes:
+          attributes: &get-table
+            # Mentioned in nf_tables_fill_table_info()
             - name
             - use
             - handle
             - flags
+            - owner
+            - userdata
+      dump:
+        reply:
+          attributes: *get-table
     -
       name: deltable
       doc: Delete an existing table.
@@ -1537,8 +1566,10 @@ operations:
       do:
         request:
           value: 0xa02
-          attributes:
+          attributes: &del-table
+            # Mentioned in nf_tables_deltable()
             - name
+            - handle
     -
       name: destroytable
       doc: |
@@ -1549,8 +1580,7 @@ operations:
       do:
         request:
           value: 0xa1a
-          attributes:
-            - name
+          attributes: *del-table
     -
       name: newchain
       doc: Create a new chain.
@@ -1560,7 +1590,21 @@ operations:
         request:
           value: 0xa03
           attributes:
+            # Mentioned in nf_tables_newchain()
+            - table
+            - handle
+            - policy
+            - flags
+            # Mentioned in nf_tables_updchain()
+            - hook
             - name
+            - counters
+            - policy
+            # Mentioned in nf_tables_addchain()
+            - hook
+            - name
+            - counters
+            - userdata
     -
       name: getchain
       doc: Get / dump chains.
@@ -1570,23 +1614,27 @@ operations:
         request:
           value: 0xa04
           attributes:
+            # Mentioned in nf_tables_getchain()
+            - table
             - name
         reply:
           value: 0xa03
-          attributes:
-            - name
-      dump:
-        reply:
-          attributes:
+          attributes: &get-chain
+            # Mentioned in nf_tables_fill_chain_info()
             - table
             - name
             - handle
             - hook
             - policy
             - type
+            - flags
             - counters
             - id
             - use
+            - userdata
+      dump:
+        reply:
+          attributes: *get-chain
     -
       name: delchain
       doc: Delete an existing chain.
@@ -1595,8 +1643,12 @@ operations:
       do:
         request:
           value: 0xa05
-          attributes:
+          attributes: &del-chain
+            # Mentioned in nf_tables_delchain()
+            - table
+            - handle
             - name
+            - hook
     -
       name: destroychain
       doc: |
@@ -1607,8 +1659,7 @@ operations:
       do:
         request:
           value: 0xa1b
-          attributes:
-            - name
+          attributes: *del-chain
     -
       name: newrule
       doc: Create a new rule.
@@ -1618,11 +1669,16 @@ operations:
         request:
           value: 0xa06
           attributes:
+            # Mentioned in nf_tables_newrule()
             - table
             - chain
+            - chain-id
+            - handle
+            - position
+            - position-id
             - expressions
+            - userdata
             - compat
-        reply:
     -
       name: getrule
       doc: Get / dump rules.
@@ -1631,24 +1687,30 @@ operations:
       do:
         request:
           value: 0xa07
-          attributes:
-            # TODO:
-        reply:
-          value: 0xa06
-          attributes:
-            # TODO:
-      dump:
-        request:
-          attributes:
+          attributes: &get-rule-request
+            # Mentioned in nf_tables_getrule_single()
             - table
             - chain
+            - handle
         reply:
-          attributes:
+          value: 0xa06
+          attributes: &get-rule
+            # Mentioned in nf_tables_fill_rule_info()
             - table
             - chain
             - handle
             - position
             - expressions
+            - userdata
+      dump:
+        request:
+          attributes:
+            # Mentioned in nf_tables_dump_rules_start()
+            - table
+            - chain
+        reply:
+          attributes: *get-rule
+
     -
       name: getrule-reset
       doc: Get / dump rules and reset stateful expressions.
@@ -1657,14 +1719,15 @@ operations:
       do:
         request:
           value: 0xa19
-          attributes:
-            # TODO:
+          attributes: *get-rule-request
         reply:
           value: 0xa06
-          attributes:
-            # TODO:
+          attributes: *get-rule
       dump:
+        request:
+          attributes: *get-rule-request
         reply:
+          attributes: *get-rule
     -
       name: delrule
       doc: Delete an existing rule.
@@ -1673,8 +1736,11 @@ operations:
       do:
         request:
           value: 0xa08
-          attributes:
-            # TODO:
+          attributes: &del-rule
+            - table
+            - chain
+            - handle
+            - id
     -
       name: destroyrule
       doc: |
@@ -1684,8 +1750,7 @@ operations:
       do:
         request:
           value: 0xa1c
-          attributes:
-            # TODO:
+          attributes: *del-rule
     -
       name: newset
       doc: Create a new set.
@@ -1695,7 +1760,24 @@ operations:
         request:
           value: 0xa09
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_newset()
+            - table
+            - name
+            - key-len
+            - id
+            - key-type
+            - key-len
+            - flags
+            - data-type
+            - data-len
+            - obj-type
+            - timeout
+            - gc-interval
+            - policy
+            - desc
+            - table
+            - name
+            - userdata
     -
       name: getset
       doc: Get / dump sets.
@@ -1705,17 +1787,35 @@ operations:
         request:
           value: 0xa0a
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_getset()
+            - table
+            - name
         reply:
           value: 0xa09
-          attributes:
-            # TODO:
+          attributes: &get-set
+            # Mentioned in nf_tables_fill_set()
+            - table
+            - name
+            - handle
+            - flags
+            - key-len
+            - key-type
+            - data-type
+            - data-len
+            - obj-type
+            - gc-interval
+            - policy
+            - userdata
+            - desc
+            - expr
+            - expressions
       dump:
         request:
           attributes:
+            # Mentioned in nf_tables_getset()
             - table
         reply:
-          # TODO:
+          attributes: *get-set
     -
       name: delset
       doc: Delete an existing set.
@@ -1724,7 +1824,10 @@ operations:
       do:
         request:
           value: 0xa0b
-          attributes:
+          attributes: &del-set
+            # Mentioned in nf_tables_delset()
+            - table
+            - handle
             - name
     -
       name: destroyset
@@ -1735,8 +1838,7 @@ operations:
       do:
         request:
           value: 0xa1d
-          attributes:
-            - name
+          attributes: *del-set
     -
       name: newsetelem
       doc: Create a new set element.
@@ -1746,7 +1848,11 @@ operations:
         request:
           value: 0xa0c
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_newsetelem()
+            - table
+            - set
+            - set-id
+            - elements
     -
       name: getsetelem
       doc: Get / dump set elements.
@@ -1756,13 +1862,27 @@ operations:
         request:
           value: 0xa0d
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_getsetelem()
+            - table
+            - set
+            - elements
         reply:
           value: 0xa0c
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_fill_setelem_info()
+            - elements
       dump:
+        request:
+          attributes: &dump-set-request
+            # Mentioned in nft_set_dump_ctx_init()
+            - table
+            - set
         reply:
+          attributes: &dump-set
+            # Mentioned in nf_tables_dump_set()
+            - table
+            - set
+            - elements
     -
       name: getsetelem-reset
       doc: Get / dump set elements and reset stateful expressions.
@@ -1772,13 +1892,20 @@ operations:
         request:
           value: 0xa21
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_getsetelem_reset()
+            - elements
         reply:
           value: 0xa0c
           attributes:
-            # TODO:
+            # Mentioned in nf_tables_dumpreset_set()
+            - table
+            - set
+            - elements
       dump:
+        request:
+          attributes: *dump-set-request
         reply:
+          attributes: *dump-set
     -
       name: delsetelem
       doc: Delete an existing set element.
@@ -1787,8 +1914,11 @@ operations:
       do:
         request:
           value: 0xa0e
-          attributes:
-            # TODO:
+          attributes: &del-setelem
+            # Mentioned in nf_tables_delsetelem()
+            - table
+            - set
+            - elements
     -
       name: destroysetelem
       doc: Delete an existing set element with destroy semantics.
@@ -1797,8 +1927,7 @@ operations:
       do:
         request:
           value: 0xa1e
-          attributes:
-            # TODO:
+          attributes: *del-setelem
     -
       name: getgen
       doc: Get / dump rule-set generation.
@@ -1807,16 +1936,16 @@ operations:
       do:
         request:
           value: 0xa10
-          attributes:
-            # TODO:
         reply:
           value: 0xa0f
-          attributes:
+          attributes: &get-gen
+            # Mentioned in nf_tables_fill_gen_info()
             - id
             - proc-pid
             - proc-name
       dump:
         reply:
+          attributes: *get-gen
     -
       name: newobj
       doc: Create a new stateful object.
@@ -1826,7 +1955,12 @@ operations:
         request:
           value: 0xa12
           attributes:
+            # Mentioned in nf_tables_newobj()
+            - type
             - name
+            - data
+            - table
+            - userdata
     -
       name: getobj
       doc: Get / dump stateful objects.
@@ -1836,13 +1970,29 @@ operations:
         request:
           value: 0xa13
           attributes:
+            # Mentioned in nf_tables_getobj_single()
             - name
+            - type
+            - table
         reply:
           value: 0xa12
-          attributes:
+          attributes: &obj-info
+            # Mentioned in nf_tables_fill_obj_info()
+            - table
             - name
+            - type
+            - handle
+            - use
+            - data
+            - userdata
       dump:
+        request:
+          attributes:
+            # Mentioned in nf_tables_dump_obj_start()
+            - table
+            - type
         reply:
+          attributes: *obj-info
     -
       name: delobj
       doc: Delete an existing stateful object.
@@ -1852,7 +2002,11 @@ operations:
         request:
           value: 0xa14
           attributes:
+            # Mentioned in nf_tables_delobj()
+            - table
             - name
+            - type
+            - handle
     -
       name: destroyobj
       doc: Delete an existing stateful object with destroy semantics.
@@ -1862,7 +2016,11 @@ operations:
         request:
           value: 0xa1f
           attributes:
+            # Mentioned in nf_tables_delobj()
+            - table
             - name
+            - type
+            - handle
     -
       name: newflowtable
       doc: Create a new flow table.
@@ -1872,7 +2030,11 @@ operations:
         request:
           value: 0xa16
           attributes:
+            # Mentioned in nf_tables_newflowtable()
+            - table
             - name
+            - hook
+            - flags
     -
       name: getflowtable
       doc: Get / dump flow tables.
@@ -1882,13 +2044,22 @@ operations:
         request:
           value: 0xa17
           attributes:
+            # Mentioned in nf_tables_getflowtable()
             - name
+            - table
         reply:
           value: 0xa16
-          attributes:
+          attributes: &flowtable-info
+            # Mentioned in nf_tables_fill_flowtable_info()
+            - table
             - name
+            - handle
+            - use
+            - flags
+            - hook
       dump:
         reply:
+          attributes: *flowtable-info
     -
       name: delflowtable
       doc: Delete an existing flow table.
@@ -1897,8 +2068,12 @@ operations:
       do:
         request:
           value: 0xa18
-          attributes:
+          attributes: &del-flowtable
+            # Mentioned in nf_tables_delflowtable()
+            - table
             - name
+            - handle
+            - hook
     -
       name: destroyflowtable
       doc: Delete an existing flow table with destroy semantics.
@@ -1907,8 +2082,7 @@ operations:
       do:
         request:
           value: 0xa20
-          attributes:
-            - name
+          attributes: *del-flowtable
 
 mcast-groups:
   list:

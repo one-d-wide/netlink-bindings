@@ -16,6 +16,79 @@ pub const PROTONAME: &CStr = c"builtin";
 #[doc = "Generic family header"]
 #[doc = "Wrapper for bitfield32 type"]
 #[doc = "Header of a Netlink message"]
+#[doc = "Original name: \"dummy\""]
+#[derive(Clone)]
+pub enum Dummy {}
+impl<'a> Iterable<'a, Dummy> {}
+impl Dummy {
+    pub fn new(buf: &'_ [u8]) -> Iterable<'_, Dummy> {
+        Iterable::new(buf)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        None
+    }
+}
+impl Iterator for Iterable<'_, Dummy> {
+    type Item = Result<Dummy, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                n => {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(self.error_context(
+            "Dummy",
+            r#type.and_then(|t| Dummy::attr_from_type(t)),
+            self.buf.as_ptr().wrapping_add(pos),
+        )))
+    }
+}
+impl std::fmt::Debug for Iterable<'_, Dummy> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("Dummy");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {};
+        }
+        fmt.finish()
+    }
+}
+impl Iterable<'_, Dummy> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("Dummy", offset));
+            return (stack, missing_type.and_then(|t| Dummy::attr_from_type(t)));
+        }
+        (stack, None)
+    }
+}
 #[doc = "Original name: \"nlmsgerr-attrs\""]
 #[derive(Clone)]
 pub enum NlmsgerrAttrs<'a> {
@@ -681,9 +754,42 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
         (stack, None)
     }
 }
+pub struct PushDummy<Prev: Rec> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushDummy<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushDummy<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+}
+impl<Prev: Rec> Drop for PushDummy<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
 pub struct PushNlmsgerrAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushNlmsgerrAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -764,8 +870,8 @@ impl<Prev: Rec> Drop for PushNlmsgerrAttrs<Prev> {
     }
 }
 pub struct PushPolicyTypeAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushPolicyTypeAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -871,7 +977,7 @@ impl<Prev: Rec> Drop for PushPolicyTypeAttrs<Prev> {
 #[doc = "Original name: \"builtin-nfgenmsg\""]
 #[derive(Clone)]
 pub struct PushBuiltinNfgenmsg {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushBuiltinNfgenmsg {
     #[doc = "Create zero-initialized struct"]
@@ -929,7 +1035,7 @@ impl std::fmt::Debug for PushBuiltinNfgenmsg {
 #[doc = "Original name: \"builtin-bitfield32\""]
 #[derive(Clone)]
 pub struct PushBuiltinBitfield32 {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushBuiltinBitfield32 {
     #[doc = "Create zero-initialized struct"]
@@ -980,7 +1086,7 @@ impl std::fmt::Debug for PushBuiltinBitfield32 {
 #[doc = "Original name: \"nlmsghdr\""]
 #[derive(Clone)]
 pub struct PushNlmsghdr {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushNlmsghdr {
     #[doc = "Create zero-initialized struct"]

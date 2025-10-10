@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -414,8 +414,8 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
     }
 }
 pub struct PushAddrAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushAddrAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -530,7 +530,7 @@ impl<Prev: Rec> Drop for PushAddrAttrs<Prev> {
 #[doc = "Original name: \"ifaddrmsg\""]
 #[derive(Clone)]
 pub struct PushIfaddrmsg {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushIfaddrmsg {
     #[doc = "Create zero-initialized struct"]
@@ -604,7 +604,7 @@ impl std::fmt::Debug for PushIfaddrmsg {
 #[doc = "Original name: \"ifa-cacheinfo\""]
 #[derive(Clone)]
 pub struct PushIfaCacheinfo {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushIfaCacheinfo {
     #[doc = "Create zero-initialized struct"]
@@ -668,8 +668,8 @@ impl std::fmt::Debug for PushIfaCacheinfo {
 }
 #[doc = "Add new address"]
 pub struct PushOpNewaddrDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewaddrDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -976,8 +976,8 @@ impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
 }
 #[doc = "Add new address"]
 pub struct PushOpNewaddrDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewaddrDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1111,6 +1111,9 @@ impl<'r> RequestOpNewaddrDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewaddrDoRequest<&mut Vec<u8>> {
         PushOpNewaddrDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewaddrDoRequest<RequestBuf<'r>> {
+        PushOpNewaddrDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewaddrDoRequest<'_> {
     type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpNewaddrDoReply>);
@@ -1141,8 +1144,8 @@ impl NetlinkRequest for RequestOpNewaddrDoRequest<'_> {
 }
 #[doc = "Remove address"]
 pub struct PushOpDeladdrDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDeladdrDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1350,8 +1353,8 @@ impl Iterable<'_, OpDeladdrDoRequest> {
 }
 #[doc = "Remove address"]
 pub struct PushOpDeladdrDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDeladdrDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1485,6 +1488,9 @@ impl<'r> RequestOpDeladdrDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDeladdrDoRequest<&mut Vec<u8>> {
         PushOpDeladdrDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDeladdrDoRequest<RequestBuf<'r>> {
+        PushOpDeladdrDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDeladdrDoRequest<'_> {
     type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpDeladdrDoReply>);
@@ -1515,8 +1521,8 @@ impl NetlinkRequest for RequestOpDeladdrDoRequest<'_> {
 }
 #[doc = "Dump address information."]
 pub struct PushOpGetaddrDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetaddrDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1640,8 +1646,8 @@ impl Iterable<'_, OpGetaddrDumpRequest> {
 }
 #[doc = "Dump address information."]
 pub struct PushOpGetaddrDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetaddrDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1960,6 +1966,9 @@ impl<'r> RequestOpGetaddrDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetaddrDumpRequest<&mut Vec<u8>> {
         PushOpGetaddrDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetaddrDumpRequest<RequestBuf<'r>> {
+        PushOpGetaddrDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetaddrDumpRequest<'_> {
     type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetaddrDumpReply<'buf>>);
@@ -1990,8 +1999,8 @@ impl NetlinkRequest for RequestOpGetaddrDumpRequest<'_> {
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetmulticastDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2115,8 +2124,8 @@ impl Iterable<'_, OpGetmulticastDumpRequest> {
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetmulticastDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2326,6 +2335,9 @@ impl<'r> RequestOpGetmulticastDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetmulticastDumpRequest<&mut Vec<u8>> {
         PushOpGetmulticastDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetmulticastDumpRequest<RequestBuf<'r>> {
+        PushOpGetmulticastDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetmulticastDumpRequest<'_> {
     type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetmulticastDumpReply<'buf>>);
@@ -2356,8 +2368,8 @@ impl NetlinkRequest for RequestOpGetmulticastDumpRequest<'_> {
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetmulticastDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2481,8 +2493,8 @@ impl Iterable<'_, OpGetmulticastDoRequest> {
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
 pub struct PushOpGetmulticastDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetmulticastDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2690,6 +2702,9 @@ impl<'r> RequestOpGetmulticastDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetmulticastDoRequest<&mut Vec<u8>> {
         PushOpGetmulticastDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetmulticastDoRequest<RequestBuf<'r>> {
+        PushOpGetmulticastDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetmulticastDoRequest<'_> {
     type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetmulticastDoReply<'buf>>);
@@ -2719,26 +2734,171 @@ impl NetlinkRequest for RequestOpGetmulticastDoRequest<'_> {
     }
 }
 #[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
+pub struct ChainedFinal<'a> {
+    inner: Chained<'a>,
 }
+#[derive(Debug)]
+pub struct Chained<'a> {
+    buf: RequestBuf<'a>,
+    first_seq: u32,
+    lookups: Vec<(&'static str, LookupFn)>,
+    last_header_offset: usize,
+    last_kind: Option<RequestInfo>,
+}
+impl<'a> ChainedFinal<'a> {
+    pub fn into_chained(self) -> Chained<'a> {
+        self.inner
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.inner.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.inner.buf_mut()
+    }
+    fn get_index(&self, seq: u32) -> Option<u32> {
+        let min = self.inner.first_seq;
+        let max = min.wrapping_add(self.inner.lookups.len() as u32);
+        return if min <= max {
+            (min..max).contains(&seq).then(|| seq - min)
+        } else if min <= seq {
+            Some(seq - min)
+        } else if seq < max {
+            Some(u32::MAX - min + seq)
+        } else {
+            None
+        };
+    }
+}
+impl crate::traits::NetlinkChained for ChainedFinal<'_> {
+    fn protonum(&self) -> u16 {
+        PROTONUM
+    }
+    fn payload(&self) -> &[u8] {
+        self.buf()
+    }
+    fn chain_len(&self) -> usize {
+        self.inner.lookups.len()
+    }
+    fn get_index(&self, seq: u32) -> Option<usize> {
+        self.get_index(seq).map(|n| n as usize)
+    }
+    fn name(&self, index: usize) -> &'static str {
+        self.inner.lookups[index].0
+    }
+    fn lookup(&self, index: usize) -> LookupFn {
+        self.inner.lookups[index].1
+    }
+}
+impl Chained<'static> {
+    pub fn new(first_seq: u32) -> Self {
+        Self::new_from_buf(Vec::new(), first_seq)
+    }
+    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Own(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'a> Chained<'a> {
+    pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Ref(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn finalize(mut self) -> ChainedFinal<'a> {
+        self.update_header();
+        ChainedFinal { inner: self }
+    }
+    pub fn request(&mut self) -> Request<'_> {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut()
+            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        let mut request = Request::new_extend(self.buf.buf_mut());
+        self.last_kind = None;
+        request.writeback = Some(&mut self.last_kind);
+        request
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
+    }
+    fn update_header(&mut self) {
+        let Some(RequestInfo {
+            protocol,
+            flags,
+            name,
+            lookup,
+        }) = self.last_kind
+        else {
+            if !self.buf().is_empty() {
+                assert_eq!(
+                    self.last_header_offset + PushNlmsghdr::len(),
+                    self.buf().len()
+                );
+                self.buf.buf_mut().truncate(self.last_header_offset);
+            }
+            return;
+        };
+        let header_offset = self.last_header_offset;
+        let request_type = match protocol {
+            Protocol::Raw { request_type, .. } => request_type,
+            Protocol::Generic(_) => unreachable!(),
+        };
+        let index = self.lookups.len();
+        let seq = self.first_seq.wrapping_add(index as u32);
+        self.lookups.push((name, lookup));
+        let buf = self.buf_mut();
+        align(buf);
+        let mut header = PushNlmsghdr::new();
+        header.set_len((buf.len() - header_offset) as u32);
+        header.set_type(request_type);
+        header.set_flags(flags | consts::NLM_F_REQUEST as u16 | consts::NLM_F_ACK as u16);
+        header.set_seq(seq);
+        buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+    }
+}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -2751,22 +2911,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -2798,27 +2967,57 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_newaddr_do_request(self, header: &PushIfaddrmsg) -> RequestOpNewaddrDoRequest<'buf> {
-        RequestOpNewaddrDoRequest::new(self, header)
+        let mut res = RequestOpNewaddrDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newaddr-do-request",
+            RequestOpNewaddrDoRequest::lookup,
+        );
+        res
     }
     pub fn op_deladdr_do_request(self, header: &PushIfaddrmsg) -> RequestOpDeladdrDoRequest<'buf> {
-        RequestOpDeladdrDoRequest::new(self, header)
+        let mut res = RequestOpDeladdrDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-deladdr-do-request",
+            RequestOpDeladdrDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getaddr_dump_request(
         self,
         header: &PushIfaddrmsg,
     ) -> RequestOpGetaddrDumpRequest<'buf> {
-        RequestOpGetaddrDumpRequest::new(self, header)
+        let mut res = RequestOpGetaddrDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getaddr-dump-request",
+            RequestOpGetaddrDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getmulticast_dump_request(
         self,
         header: &PushIfaddrmsg,
     ) -> RequestOpGetmulticastDumpRequest<'buf> {
-        RequestOpGetmulticastDumpRequest::new(self, header)
+        let mut res = RequestOpGetmulticastDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getmulticast-dump-request",
+            RequestOpGetmulticastDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getmulticast_do_request(
         self,
         header: &PushIfaddrmsg,
     ) -> RequestOpGetmulticastDoRequest<'buf> {
-        RequestOpGetmulticastDoRequest::new(self, header)
+        let mut res = RequestOpGetmulticastDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getmulticast-do-request",
+            RequestOpGetmulticastDoRequest::lookup,
+        );
+        res
     }
 }

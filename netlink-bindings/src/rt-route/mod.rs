@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -1394,8 +1394,8 @@ impl<'a> Iterable<'a, Metrics<'a>> {
     }
 }
 pub struct PushRouteAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushRouteAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1584,8 +1584,8 @@ impl<Prev: Rec> Drop for PushRouteAttrs<Prev> {
     }
 }
 pub struct PushMetrics<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushMetrics<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1714,7 +1714,7 @@ impl<Prev: Rec> Drop for PushMetrics<Prev> {
 #[doc = "Original name: \"rtmsg\""]
 #[derive(Clone)]
 pub struct PushRtmsg {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushRtmsg {
     #[doc = "Create zero-initialized struct"]
@@ -1816,7 +1816,7 @@ impl std::fmt::Debug for PushRtmsg {
 #[doc = "Original name: \"rta-cacheinfo\""]
 #[derive(Clone)]
 pub struct PushRtaCacheinfo {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushRtaCacheinfo {
     #[doc = "Create zero-initialized struct"]
@@ -1887,8 +1887,8 @@ impl std::fmt::Debug for PushRtaCacheinfo {
 }
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetrouteDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2012,8 +2012,8 @@ impl Iterable<'_, OpGetrouteDumpRequest> {
 }
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetrouteDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2954,6 +2954,9 @@ impl<'r> RequestOpGetrouteDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetrouteDumpRequest<&mut Vec<u8>> {
         PushOpGetrouteDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetrouteDumpRequest<RequestBuf<'r>> {
+        PushOpGetrouteDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetrouteDumpRequest<'_> {
     type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpGetrouteDumpReply<'buf>>);
@@ -2984,8 +2987,8 @@ impl NetlinkRequest for RequestOpGetrouteDumpRequest<'_> {
 }
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetrouteDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -3407,8 +3410,8 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
 }
 #[doc = "Dump route information."]
 pub struct PushOpGetrouteDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetrouteDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4347,6 +4350,9 @@ impl<'r> RequestOpGetrouteDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetrouteDoRequest<&mut Vec<u8>> {
         PushOpGetrouteDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetrouteDoRequest<RequestBuf<'r>> {
+        PushOpGetrouteDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetrouteDoRequest<'_> {
     type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpGetrouteDoReply<'buf>>);
@@ -4377,8 +4383,8 @@ impl NetlinkRequest for RequestOpGetrouteDoRequest<'_> {
 }
 #[doc = "Create a new route"]
 pub struct PushOpNewrouteDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewrouteDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -5307,8 +5313,8 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
 }
 #[doc = "Create a new route"]
 pub struct PushOpNewrouteDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewrouteDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -5442,6 +5448,9 @@ impl<'r> RequestOpNewrouteDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewrouteDoRequest<&mut Vec<u8>> {
         PushOpNewrouteDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewrouteDoRequest<RequestBuf<'r>> {
+        PushOpNewrouteDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewrouteDoRequest<'_> {
     type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpNewrouteDoReply>);
@@ -5472,8 +5481,8 @@ impl NetlinkRequest for RequestOpNewrouteDoRequest<'_> {
 }
 #[doc = "Delete an existing route"]
 pub struct PushOpDelrouteDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelrouteDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -6402,8 +6411,8 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
 }
 #[doc = "Delete an existing route"]
 pub struct PushOpDelrouteDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelrouteDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -6537,6 +6546,9 @@ impl<'r> RequestOpDelrouteDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDelrouteDoRequest<&mut Vec<u8>> {
         PushOpDelrouteDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDelrouteDoRequest<RequestBuf<'r>> {
+        PushOpDelrouteDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDelrouteDoRequest<'_> {
     type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpDelrouteDoReply>);
@@ -6566,26 +6578,171 @@ impl NetlinkRequest for RequestOpDelrouteDoRequest<'_> {
     }
 }
 #[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
+pub struct ChainedFinal<'a> {
+    inner: Chained<'a>,
 }
+#[derive(Debug)]
+pub struct Chained<'a> {
+    buf: RequestBuf<'a>,
+    first_seq: u32,
+    lookups: Vec<(&'static str, LookupFn)>,
+    last_header_offset: usize,
+    last_kind: Option<RequestInfo>,
+}
+impl<'a> ChainedFinal<'a> {
+    pub fn into_chained(self) -> Chained<'a> {
+        self.inner
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.inner.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.inner.buf_mut()
+    }
+    fn get_index(&self, seq: u32) -> Option<u32> {
+        let min = self.inner.first_seq;
+        let max = min.wrapping_add(self.inner.lookups.len() as u32);
+        return if min <= max {
+            (min..max).contains(&seq).then(|| seq - min)
+        } else if min <= seq {
+            Some(seq - min)
+        } else if seq < max {
+            Some(u32::MAX - min + seq)
+        } else {
+            None
+        };
+    }
+}
+impl crate::traits::NetlinkChained for ChainedFinal<'_> {
+    fn protonum(&self) -> u16 {
+        PROTONUM
+    }
+    fn payload(&self) -> &[u8] {
+        self.buf()
+    }
+    fn chain_len(&self) -> usize {
+        self.inner.lookups.len()
+    }
+    fn get_index(&self, seq: u32) -> Option<usize> {
+        self.get_index(seq).map(|n| n as usize)
+    }
+    fn name(&self, index: usize) -> &'static str {
+        self.inner.lookups[index].0
+    }
+    fn lookup(&self, index: usize) -> LookupFn {
+        self.inner.lookups[index].1
+    }
+}
+impl Chained<'static> {
+    pub fn new(first_seq: u32) -> Self {
+        Self::new_from_buf(Vec::new(), first_seq)
+    }
+    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Own(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'a> Chained<'a> {
+    pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Ref(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn finalize(mut self) -> ChainedFinal<'a> {
+        self.update_header();
+        ChainedFinal { inner: self }
+    }
+    pub fn request(&mut self) -> Request<'_> {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut()
+            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        let mut request = Request::new_extend(self.buf.buf_mut());
+        self.last_kind = None;
+        request.writeback = Some(&mut self.last_kind);
+        request
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
+    }
+    fn update_header(&mut self) {
+        let Some(RequestInfo {
+            protocol,
+            flags,
+            name,
+            lookup,
+        }) = self.last_kind
+        else {
+            if !self.buf().is_empty() {
+                assert_eq!(
+                    self.last_header_offset + PushNlmsghdr::len(),
+                    self.buf().len()
+                );
+                self.buf.buf_mut().truncate(self.last_header_offset);
+            }
+            return;
+        };
+        let header_offset = self.last_header_offset;
+        let request_type = match protocol {
+            Protocol::Raw { request_type, .. } => request_type,
+            Protocol::Generic(_) => unreachable!(),
+        };
+        let index = self.lookups.len();
+        let seq = self.first_seq.wrapping_add(index as u32);
+        self.lookups.push((name, lookup));
+        let buf = self.buf_mut();
+        align(buf);
+        let mut header = PushNlmsghdr::new();
+        header.set_len((buf.len() - header_offset) as u32);
+        header.set_type(request_type);
+        header.set_flags(flags | consts::NLM_F_REQUEST as u16 | consts::NLM_F_ACK as u16);
+        header.set_seq(seq);
+        buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+    }
+}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -6598,22 +6755,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -6648,15 +6814,39 @@ impl<'buf> Request<'buf> {
         self,
         header: &PushRtmsg,
     ) -> RequestOpGetrouteDumpRequest<'buf> {
-        RequestOpGetrouteDumpRequest::new(self, header)
+        let mut res = RequestOpGetrouteDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getroute-dump-request",
+            RequestOpGetrouteDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getroute_do_request(self, header: &PushRtmsg) -> RequestOpGetrouteDoRequest<'buf> {
-        RequestOpGetrouteDoRequest::new(self, header)
+        let mut res = RequestOpGetrouteDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getroute-do-request",
+            RequestOpGetrouteDoRequest::lookup,
+        );
+        res
     }
     pub fn op_newroute_do_request(self, header: &PushRtmsg) -> RequestOpNewrouteDoRequest<'buf> {
-        RequestOpNewrouteDoRequest::new(self, header)
+        let mut res = RequestOpNewrouteDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newroute-do-request",
+            RequestOpNewrouteDoRequest::lookup,
+        );
+        res
     }
     pub fn op_delroute_do_request(self, header: &PushRtmsg) -> RequestOpDelrouteDoRequest<'buf> {
-        RequestOpDelrouteDoRequest::new(self, header)
+        let mut res = RequestOpDelrouteDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-delroute-do-request",
+            RequestOpDelrouteDoRequest::lookup,
+        );
+        res
     }
 }

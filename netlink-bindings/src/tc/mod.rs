@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -21752,8 +21752,8 @@ impl<'a> Iterable<'a, U32Attrs<'a>> {
     }
 }
 pub struct PushAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -21791,27 +21791,35 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -21819,174 +21827,238 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -21994,51 +22066,63 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22046,7 +22130,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22054,21 +22138,29 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22076,7 +22168,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22084,7 +22176,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22092,17 +22184,21 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22110,7 +22206,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22118,37 +22214,49 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22156,7 +22264,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22164,32 +22272,44 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -22199,17 +22319,21 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22217,7 +22341,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22225,7 +22349,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22233,7 +22357,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22241,7 +22365,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22249,7 +22373,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22257,7 +22381,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22265,7 +22389,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22273,7 +22397,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22281,7 +22405,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22289,7 +22413,7 @@ impl<Prev: Rec> PushAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -22379,8 +22503,8 @@ impl<Prev: Rec> Drop for PushAttrs<Prev> {
     }
 }
 pub struct PushActAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22418,192 +22542,268 @@ impl<Prev: Rec> PushActAttrs<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushActBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushActBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_connmark(mut self) -> PushActConnmarkAttrs<Self> {
+    pub fn nested_options_connmark(mut self) -> PushActConnmarkAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"connmark");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActConnmarkAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_csum(mut self) -> PushActCsumAttrs<Self> {
+    pub fn nested_options_csum(mut self) -> PushActCsumAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"csum");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActCsumAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ct(mut self) -> PushActCtAttrs<Self> {
+    pub fn nested_options_ct(mut self) -> PushActCtAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ct");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActCtAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ctinfo(mut self) -> PushActCtinfoAttrs<Self> {
+    pub fn nested_options_ctinfo(mut self) -> PushActCtinfoAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ctinfo");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActCtinfoAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gact(mut self) -> PushActGactAttrs<Self> {
+    pub fn nested_options_gact(mut self) -> PushActGactAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gact");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActGactAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gate(mut self) -> PushActGateAttrs<Self> {
+    pub fn nested_options_gate(mut self) -> PushActGateAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gate");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActGateAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ife(mut self) -> PushActIfeAttrs<Self> {
+    pub fn nested_options_ife(mut self) -> PushActIfeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ife");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActIfeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mirred(mut self) -> PushActMirredAttrs<Self> {
+    pub fn nested_options_mirred(mut self) -> PushActMirredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"mirred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActMirredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mpls(mut self) -> PushActMplsAttrs<Self> {
+    pub fn nested_options_mpls(mut self) -> PushActMplsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"mpls");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActMplsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_nat(mut self) -> PushActNatAttrs<Self> {
+    pub fn nested_options_nat(mut self) -> PushActNatAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"nat");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActNatAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pedit(mut self) -> PushActPeditAttrs<Self> {
+    pub fn nested_options_pedit(mut self) -> PushActPeditAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pedit");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActPeditAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_police(mut self) -> PushPoliceAttrs<Self> {
+    pub fn nested_options_police(mut self) -> PushPoliceAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"police");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPoliceAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sample(mut self) -> PushActSampleAttrs<Self> {
+    pub fn nested_options_sample(mut self) -> PushActSampleAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"sample");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActSampleAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_simple(mut self) -> PushActSimpleAttrs<Self> {
+    pub fn nested_options_simple(mut self) -> PushActSimpleAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"simple");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActSimpleAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_skbedit(mut self) -> PushActSkbeditAttrs<Self> {
+    pub fn nested_options_skbedit(mut self) -> PushActSkbeditAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"skbedit");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActSkbeditAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_skbmod(mut self) -> PushActSkbmodAttrs<Self> {
+    pub fn nested_options_skbmod(mut self) -> PushActSkbmodAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"skbmod");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActSkbmodAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tunnel_key(mut self) -> PushActTunnelKeyAttrs<Self> {
+    pub fn nested_options_tunnel_key(mut self) -> PushActTunnelKeyAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tunnel_key");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActTunnelKeyAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_vlan(mut self) -> PushActVlanAttrs<Self> {
+    pub fn nested_options_vlan(mut self) -> PushActVlanAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"vlan");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushActVlanAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_index(mut self, value: u32) -> Self {
@@ -22659,8 +22859,8 @@ impl<Prev: Rec> Drop for PushActAttrs<Prev> {
     }
 }
 pub struct PushActBpfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActBpfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22747,8 +22947,8 @@ impl<Prev: Rec> Drop for PushActBpfAttrs<Prev> {
     }
 }
 pub struct PushActConnmarkAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActConnmarkAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22795,8 +22995,8 @@ impl<Prev: Rec> Drop for PushActConnmarkAttrs<Prev> {
     }
 }
 pub struct PushActCsumAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActCsumAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22843,8 +23043,8 @@ impl<Prev: Rec> Drop for PushActCsumAttrs<Prev> {
     }
 }
 pub struct PushActCtAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActCtAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -22976,8 +23176,8 @@ impl<Prev: Rec> Drop for PushActCtAttrs<Prev> {
     }
 }
 pub struct PushActCtinfoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActCtinfoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23059,8 +23259,8 @@ impl<Prev: Rec> Drop for PushActCtinfoAttrs<Prev> {
     }
 }
 pub struct PushActGateAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActGateAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23142,8 +23342,8 @@ impl<Prev: Rec> Drop for PushActGateAttrs<Prev> {
     }
 }
 pub struct PushActIfeAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActIfeAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23210,8 +23410,8 @@ impl<Prev: Rec> Drop for PushActIfeAttrs<Prev> {
     }
 }
 pub struct PushActMirredAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActMirredAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23263,8 +23463,8 @@ impl<Prev: Rec> Drop for PushActMirredAttrs<Prev> {
     }
 }
 pub struct PushActMplsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActMplsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23336,8 +23536,8 @@ impl<Prev: Rec> Drop for PushActMplsAttrs<Prev> {
     }
 }
 pub struct PushActNatAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActNatAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23384,8 +23584,8 @@ impl<Prev: Rec> Drop for PushActNatAttrs<Prev> {
     }
 }
 pub struct PushActPeditAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActPeditAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23447,8 +23647,8 @@ impl<Prev: Rec> Drop for PushActPeditAttrs<Prev> {
     }
 }
 pub struct PushActSimpleAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActSimpleAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23500,8 +23700,8 @@ impl<Prev: Rec> Drop for PushActSimpleAttrs<Prev> {
     }
 }
 pub struct PushActSkbeditAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActSkbeditAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23583,8 +23783,8 @@ impl<Prev: Rec> Drop for PushActSkbeditAttrs<Prev> {
     }
 }
 pub struct PushActSkbmodAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActSkbmodAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23646,8 +23846,8 @@ impl<Prev: Rec> Drop for PushActSkbmodAttrs<Prev> {
     }
 }
 pub struct PushActTunnelKeyAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActTunnelKeyAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23748,8 +23948,8 @@ impl<Prev: Rec> Drop for PushActTunnelKeyAttrs<Prev> {
     }
 }
 pub struct PushActVlanAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActVlanAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23821,8 +24021,8 @@ impl<Prev: Rec> Drop for PushActVlanAttrs<Prev> {
     }
 }
 pub struct PushBasicAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushBasicAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -23935,8 +24135,8 @@ impl<Prev: Rec> Drop for PushBasicAttrs<Prev> {
     }
 }
 pub struct PushBpfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushBpfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24038,8 +24238,8 @@ impl<Prev: Rec> Drop for PushBpfAttrs<Prev> {
     }
 }
 pub struct PushCakeAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCakeAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24161,8 +24361,8 @@ impl<Prev: Rec> Drop for PushCakeAttrs<Prev> {
     }
 }
 pub struct PushCakeStatsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCakeStatsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24321,8 +24521,8 @@ impl<Prev: Rec> Drop for PushCakeStatsAttrs<Prev> {
     }
 }
 pub struct PushCakeTinStatsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCakeTinStatsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24479,8 +24679,8 @@ impl<Prev: Rec> Drop for PushCakeTinStatsAttrs<Prev> {
     }
 }
 pub struct PushCbsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCbsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24517,8 +24717,8 @@ impl<Prev: Rec> Drop for PushCbsAttrs<Prev> {
     }
 }
 pub struct PushCgroupAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCgroupAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24570,8 +24770,8 @@ impl<Prev: Rec> Drop for PushCgroupAttrs<Prev> {
     }
 }
 pub struct PushChokeAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushChokeAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24618,8 +24818,8 @@ impl<Prev: Rec> Drop for PushChokeAttrs<Prev> {
     }
 }
 pub struct PushCodelAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCodelAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24676,8 +24876,8 @@ impl<Prev: Rec> Drop for PushCodelAttrs<Prev> {
     }
 }
 pub struct PushDrrAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushDrrAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24714,8 +24914,8 @@ impl<Prev: Rec> Drop for PushDrrAttrs<Prev> {
     }
 }
 pub struct PushDualpi2Attrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushDualpi2Attrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24837,8 +25037,8 @@ impl<Prev: Rec> Drop for PushDualpi2Attrs<Prev> {
     }
 }
 pub struct PushEmatchAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushEmatchAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24880,8 +25080,8 @@ impl<Prev: Rec> Drop for PushEmatchAttrs<Prev> {
     }
 }
 pub struct PushFlowAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -24975,8 +25175,8 @@ impl<Prev: Rec> Drop for PushFlowAttrs<Prev> {
     }
 }
 pub struct PushFlowerAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25589,8 +25789,8 @@ impl<Prev: Rec> Drop for PushFlowerAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyEncOptsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyEncOptsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25650,8 +25850,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyEncOptsAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyEncOptGeneveAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyEncOptGeneveAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25698,8 +25898,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyEncOptGeneveAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyEncOptVxlanAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyEncOptVxlanAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25736,8 +25936,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyEncOptVxlanAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyEncOptErspanAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyEncOptErspanAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25789,8 +25989,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyEncOptErspanAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyEncOptGtpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyEncOptGtpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25832,8 +26032,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyEncOptGtpAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyMplsOptAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyMplsOptAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25890,8 +26090,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyMplsOptAttrs<Prev> {
     }
 }
 pub struct PushFlowerKeyCfmAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFlowerKeyCfmAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -25933,8 +26133,8 @@ impl<Prev: Rec> Drop for PushFlowerKeyCfmAttrs<Prev> {
     }
 }
 pub struct PushFwAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFwAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26006,8 +26206,8 @@ impl<Prev: Rec> Drop for PushFwAttrs<Prev> {
     }
 }
 pub struct PushGredAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushGredAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26071,8 +26271,8 @@ impl<Prev: Rec> Drop for PushGredAttrs<Prev> {
     }
 }
 pub struct PushTcaGredVqListAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTcaGredVqListAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26112,8 +26312,8 @@ impl<Prev: Rec> Drop for PushTcaGredVqListAttrs<Prev> {
     }
 }
 pub struct PushTcaGredVqEntryAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTcaGredVqEntryAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26205,8 +26405,8 @@ impl<Prev: Rec> Drop for PushTcaGredVqEntryAttrs<Prev> {
     }
 }
 pub struct PushHfscAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushHfscAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26253,8 +26453,8 @@ impl<Prev: Rec> Drop for PushHfscAttrs<Prev> {
     }
 }
 pub struct PushHhfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushHhfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26321,8 +26521,8 @@ impl<Prev: Rec> Drop for PushHhfAttrs<Prev> {
     }
 }
 pub struct PushHtbAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushHtbAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26398,8 +26598,8 @@ impl<Prev: Rec> Drop for PushHtbAttrs<Prev> {
     }
 }
 pub struct PushMatchallAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushMatchallAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26459,8 +26659,8 @@ impl<Prev: Rec> Drop for PushMatchallAttrs<Prev> {
     }
 }
 pub struct PushEtfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushEtfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26497,8 +26697,8 @@ impl<Prev: Rec> Drop for PushEtfAttrs<Prev> {
     }
 }
 pub struct PushEtsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushEtsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26566,8 +26766,8 @@ impl<Prev: Rec> Drop for PushEtsAttrs<Prev> {
     }
 }
 pub struct PushFqAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFqAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26699,8 +26899,8 @@ impl<Prev: Rec> Drop for PushFqAttrs<Prev> {
     }
 }
 pub struct PushFqCodelAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFqCodelAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26787,8 +26987,8 @@ impl<Prev: Rec> Drop for PushFqCodelAttrs<Prev> {
     }
 }
 pub struct PushFqPieAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushFqPieAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26880,8 +27080,8 @@ impl<Prev: Rec> Drop for PushFqPieAttrs<Prev> {
     }
 }
 pub struct PushNetemAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushNetemAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -26985,8 +27185,8 @@ impl<Prev: Rec> Drop for PushNetemAttrs<Prev> {
     }
 }
 pub struct PushNetemLossAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushNetemLossAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27030,8 +27230,8 @@ impl<Prev: Rec> Drop for PushNetemLossAttrs<Prev> {
     }
 }
 pub struct PushPieAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushPieAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27103,8 +27303,8 @@ impl<Prev: Rec> Drop for PushPieAttrs<Prev> {
     }
 }
 pub struct PushPoliceAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushPoliceAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27191,8 +27391,8 @@ impl<Prev: Rec> Drop for PushPoliceAttrs<Prev> {
     }
 }
 pub struct PushQfqAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushQfqAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27234,8 +27434,8 @@ impl<Prev: Rec> Drop for PushQfqAttrs<Prev> {
     }
 }
 pub struct PushRedAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushRedAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27297,8 +27497,8 @@ impl<Prev: Rec> Drop for PushRedAttrs<Prev> {
     }
 }
 pub struct PushRouteAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushRouteAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27365,8 +27565,8 @@ impl<Prev: Rec> Drop for PushRouteAttrs<Prev> {
     }
 }
 pub struct PushTaprioAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTaprioAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27464,8 +27664,8 @@ impl<Prev: Rec> Drop for PushTaprioAttrs<Prev> {
     }
 }
 pub struct PushTaprioSchedEntryList<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTaprioSchedEntryList<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27505,8 +27705,8 @@ impl<Prev: Rec> Drop for PushTaprioSchedEntryList<Prev> {
     }
 }
 pub struct PushTaprioSchedEntry<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTaprioSchedEntry<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27558,8 +27758,8 @@ impl<Prev: Rec> Drop for PushTaprioSchedEntry<Prev> {
     }
 }
 pub struct PushTaprioTcEntryAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTaprioTcEntryAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27606,8 +27806,8 @@ impl<Prev: Rec> Drop for PushTaprioTcEntryAttrs<Prev> {
     }
 }
 pub struct PushTbfAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTbfAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27679,8 +27879,8 @@ impl<Prev: Rec> Drop for PushTbfAttrs<Prev> {
     }
 }
 pub struct PushActSampleAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActSampleAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27742,8 +27942,8 @@ impl<Prev: Rec> Drop for PushActSampleAttrs<Prev> {
     }
 }
 pub struct PushActGactAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushActGactAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27795,8 +27995,8 @@ impl<Prev: Rec> Drop for PushActGactAttrs<Prev> {
     }
 }
 pub struct PushTcaStabAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTcaStabAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27838,8 +28038,8 @@ impl<Prev: Rec> Drop for PushTcaStabAttrs<Prev> {
     }
 }
 pub struct PushTcaStatsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTcaStatsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -27906,8 +28106,8 @@ impl<Prev: Rec> Drop for PushTcaStatsAttrs<Prev> {
     }
 }
 pub struct PushU32Attrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushU32Attrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -28016,7 +28216,7 @@ impl<Prev: Rec> Drop for PushU32Attrs<Prev> {
 #[doc = "Original name: \"tcmsg\""]
 #[derive(Clone)]
 pub struct PushTcmsg {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcmsg {
     #[doc = "Create zero-initialized struct"]
@@ -28088,7 +28288,7 @@ impl std::fmt::Debug for PushTcmsg {
 #[doc = "Original name: \"tc-stats\""]
 #[derive(Clone)]
 pub struct PushTcStats {
-    buf: [u8; 40usize],
+    pub(crate) buf: [u8; 40usize],
 }
 impl PushTcStats {
     #[doc = "Create zero-initialized struct"]
@@ -28193,7 +28393,7 @@ impl std::fmt::Debug for PushTcStats {
 #[doc = "Original name: \"tc-cbs-qopt\""]
 #[derive(Clone)]
 pub struct PushTcCbsQopt {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcCbsQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28265,7 +28465,7 @@ impl std::fmt::Debug for PushTcCbsQopt {
 #[doc = "Original name: \"tc-etf-qopt\""]
 #[derive(Clone)]
 pub struct PushTcEtfQopt {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushTcEtfQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28323,7 +28523,7 @@ impl std::fmt::Debug for PushTcEtfQopt {
 #[doc = "Original name: \"tc-fifo-qopt\""]
 #[derive(Clone)]
 pub struct PushTcFifoQopt {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushTcFifoQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28369,7 +28569,7 @@ impl std::fmt::Debug for PushTcFifoQopt {
 #[doc = "Original name: \"tc-htb-opt\""]
 #[derive(Clone)]
 pub struct PushTcHtbOpt {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcHtbOpt {
     #[doc = "Create zero-initialized struct"]
@@ -28455,7 +28655,7 @@ impl std::fmt::Debug for PushTcHtbOpt {
 #[doc = "Original name: \"tc-htb-glob\""]
 #[derive(Clone)]
 pub struct PushTcHtbGlob {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcHtbGlob {
     #[doc = "Create zero-initialized struct"]
@@ -28535,7 +28735,7 @@ impl std::fmt::Debug for PushTcHtbGlob {
 #[doc = "Original name: \"tc-gred-qopt\""]
 #[derive(Clone)]
 pub struct PushTcGredQopt {
-    buf: [u8; 52usize],
+    pub(crate) buf: [u8; 52usize],
 }
 impl PushTcGredQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28700,7 +28900,7 @@ impl std::fmt::Debug for PushTcGredQopt {
 #[doc = "Original name: \"tc-gred-sopt\""]
 #[derive(Clone)]
 pub struct PushTcGredSopt {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushTcGredSopt {
     #[doc = "Create zero-initialized struct"]
@@ -28765,7 +28965,7 @@ impl std::fmt::Debug for PushTcGredSopt {
 #[doc = "Original name: \"tc-hfsc-qopt\""]
 #[derive(Clone)]
 pub struct PushTcHfscQopt {
-    buf: [u8; 2usize],
+    pub(crate) buf: [u8; 2usize],
 }
 impl PushTcHfscQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28809,7 +29009,7 @@ impl std::fmt::Debug for PushTcHfscQopt {
 #[doc = "Original name: \"tc-mqprio-qopt\""]
 #[derive(Clone)]
 pub struct PushTcMqprioQopt {
-    buf: [u8; 2usize],
+    pub(crate) buf: [u8; 2usize],
 }
 impl PushTcMqprioQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28881,7 +29081,7 @@ impl std::fmt::Debug for PushTcMqprioQopt {
 #[doc = "Original name: \"tc-multiq-qopt\""]
 #[derive(Clone)]
 pub struct PushTcMultiqQopt {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushTcMultiqQopt {
     #[doc = "Create zero-initialized struct"]
@@ -28936,7 +29136,7 @@ impl std::fmt::Debug for PushTcMultiqQopt {
 #[doc = "Original name: \"tc-netem-qopt\""]
 #[derive(Clone)]
 pub struct PushTcNetemQopt {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcNetemQopt {
     #[doc = "Create zero-initialized struct"]
@@ -29027,7 +29227,7 @@ impl std::fmt::Debug for PushTcNetemQopt {
 #[doc = "Original name: \"tc-netem-gimodel\""]
 #[derive(Clone)]
 pub struct PushTcNetemGimodel {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcNetemGimodel {
     #[doc = "Create zero-initialized struct"]
@@ -29099,7 +29299,7 @@ impl std::fmt::Debug for PushTcNetemGimodel {
 #[doc = "Original name: \"tc-netem-gemodel\""]
 #[derive(Clone)]
 pub struct PushTcNetemGemodel {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcNetemGemodel {
     #[doc = "Create zero-initialized struct"]
@@ -29164,7 +29364,7 @@ impl std::fmt::Debug for PushTcNetemGemodel {
 #[doc = "Original name: \"tc-netem-corr\""]
 #[derive(Clone)]
 pub struct PushTcNetemCorr {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushTcNetemCorr {
     #[doc = "Create zero-initialized struct"]
@@ -29228,7 +29428,7 @@ impl std::fmt::Debug for PushTcNetemCorr {
 #[doc = "Original name: \"tc-netem-reorder\""]
 #[derive(Clone)]
 pub struct PushTcNetemReorder {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushTcNetemReorder {
     #[doc = "Create zero-initialized struct"]
@@ -29279,7 +29479,7 @@ impl std::fmt::Debug for PushTcNetemReorder {
 #[doc = "Original name: \"tc-netem-corrupt\""]
 #[derive(Clone)]
 pub struct PushTcNetemCorrupt {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushTcNetemCorrupt {
     #[doc = "Create zero-initialized struct"]
@@ -29330,7 +29530,7 @@ impl std::fmt::Debug for PushTcNetemCorrupt {
 #[doc = "Original name: \"tc-netem-rate\""]
 #[derive(Clone)]
 pub struct PushTcNetemRate {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcNetemRate {
     #[doc = "Create zero-initialized struct"]
@@ -29395,7 +29595,7 @@ impl std::fmt::Debug for PushTcNetemRate {
 #[doc = "Original name: \"tc-netem-slot\""]
 #[derive(Clone)]
 pub struct PushTcNetemSlot {
-    buf: [u8; 40usize],
+    pub(crate) buf: [u8; 40usize],
 }
 impl PushTcNetemSlot {
     #[doc = "Create zero-initialized struct"]
@@ -29474,7 +29674,7 @@ impl std::fmt::Debug for PushTcNetemSlot {
 #[doc = "Original name: \"tc-plug-qopt\""]
 #[derive(Clone)]
 pub struct PushTcPlugQopt {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushTcPlugQopt {
     #[doc = "Create zero-initialized struct"]
@@ -29525,7 +29725,7 @@ impl std::fmt::Debug for PushTcPlugQopt {
 #[doc = "Original name: \"tc-prio-qopt\""]
 #[derive(Clone)]
 pub struct PushTcPrioQopt {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushTcPrioQopt {
     #[doc = "Create zero-initialized struct"]
@@ -29580,7 +29780,7 @@ impl std::fmt::Debug for PushTcPrioQopt {
 #[doc = "Original name: \"tc-red-qopt\""]
 #[derive(Clone)]
 pub struct PushTcRedQopt {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcRedQopt {
     #[doc = "Create zero-initialized struct"]
@@ -29678,7 +29878,7 @@ impl std::fmt::Debug for PushTcRedQopt {
 #[doc = "Original name: \"tc-sfb-qopt\""]
 #[derive(Clone)]
 pub struct PushTcSfbQopt {
-    buf: [u8; 36usize],
+    pub(crate) buf: [u8; 36usize],
 }
 impl PushTcSfbQopt {
     #[doc = "Create zero-initialized struct"]
@@ -29778,7 +29978,7 @@ impl std::fmt::Debug for PushTcSfbQopt {
 #[doc = "Original name: \"tc-sfq-qopt\""]
 #[derive(Clone)]
 pub struct PushTcSfqQopt {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcSfqQopt {
     #[doc = "Create zero-initialized struct"]
@@ -29860,7 +30060,7 @@ impl std::fmt::Debug for PushTcSfqQopt {
 #[doc = "Original name: \"tc-sfqred-stats\""]
 #[derive(Clone)]
 pub struct PushTcSfqredStats {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcSfqredStats {
     #[doc = "Create zero-initialized struct"]
@@ -29951,7 +30151,7 @@ impl std::fmt::Debug for PushTcSfqredStats {
 #[doc = "Original name: \"tc-sfq-qopt-v1\""]
 #[derive(Clone)]
 pub struct PushTcSfqQoptV1 {
-    buf: [u8; 28usize],
+    pub(crate) buf: [u8; 28usize],
 }
 impl PushTcSfqQoptV1 {
     #[doc = "Create zero-initialized struct"]
@@ -30088,7 +30288,7 @@ impl std::fmt::Debug for PushTcSfqQoptV1 {
 #[doc = "Original name: \"tc-ratespec\""]
 #[derive(Clone)]
 pub struct PushTcRatespec {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushTcRatespec {
     #[doc = "Create zero-initialized struct"]
@@ -30167,7 +30367,7 @@ impl std::fmt::Debug for PushTcRatespec {
 #[doc = "Original name: \"tc-tbf-qopt\""]
 #[derive(Clone)]
 pub struct PushTcTbfQopt {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushTcTbfQopt {
     #[doc = "Create zero-initialized struct"]
@@ -30239,7 +30439,7 @@ impl std::fmt::Debug for PushTcTbfQopt {
 #[doc = "Original name: \"tc-sizespec\""]
 #[derive(Clone)]
 pub struct PushTcSizespec {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcSizespec {
     #[doc = "Create zero-initialized struct"]
@@ -30332,7 +30532,7 @@ impl std::fmt::Debug for PushTcSizespec {
 #[doc = "Original name: \"gnet-estimator\""]
 #[derive(Clone)]
 pub struct PushGnetEstimator {
-    buf: [u8; 2usize],
+    pub(crate) buf: [u8; 2usize],
 }
 impl PushGnetEstimator {
     #[doc = "Create zero-initialized struct"]
@@ -30387,7 +30587,7 @@ impl std::fmt::Debug for PushGnetEstimator {
 #[doc = "Original name: \"tc-choke-xstats\""]
 #[derive(Clone)]
 pub struct PushTcChokeXstats {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcChokeXstats {
     #[doc = "Create zero-initialized struct"]
@@ -30469,7 +30669,7 @@ impl std::fmt::Debug for PushTcChokeXstats {
 #[doc = "Original name: \"tc-codel-xstats\""]
 #[derive(Clone)]
 pub struct PushTcCodelXstats {
-    buf: [u8; 36usize],
+    pub(crate) buf: [u8; 36usize],
 }
 impl PushTcCodelXstats {
     #[doc = "Create zero-initialized struct"]
@@ -30587,7 +30787,7 @@ impl std::fmt::Debug for PushTcCodelXstats {
 #[doc = "Original name: \"tc-fq-codel-xstats\""]
 #[derive(Clone)]
 pub struct PushTcFqCodelXstats {
-    buf: [u8; 40usize],
+    pub(crate) buf: [u8; 40usize],
 }
 impl PushTcFqCodelXstats {
     #[doc = "Create zero-initialized struct"]
@@ -30710,7 +30910,7 @@ impl std::fmt::Debug for PushTcFqCodelXstats {
 #[doc = "Original name: \"tc-dualpi2-xstats\""]
 #[derive(Clone)]
 pub struct PushTcDualpi2Xstats {
-    buf: [u8; 48usize],
+    pub(crate) buf: [u8; 48usize],
 }
 impl PushTcDualpi2Xstats {
     #[doc = "Create zero-initialized struct"]
@@ -30855,7 +31055,7 @@ impl std::fmt::Debug for PushTcDualpi2Xstats {
 #[doc = "Original name: \"tc-fq-pie-xstats\""]
 #[derive(Clone)]
 pub struct PushTcFqPieXstats {
-    buf: [u8; 36usize],
+    pub(crate) buf: [u8; 36usize],
 }
 impl PushTcFqPieXstats {
     #[doc = "Create zero-initialized struct"]
@@ -30973,7 +31173,7 @@ impl std::fmt::Debug for PushTcFqPieXstats {
 #[doc = "Original name: \"tc-fq-qd-stats\""]
 #[derive(Clone)]
 pub struct PushTcFqQdStats {
-    buf: [u8; 120usize],
+    pub(crate) buf: [u8; 120usize],
 }
 impl PushTcFqQdStats {
     #[doc = "Create zero-initialized struct"]
@@ -31142,7 +31342,7 @@ impl std::fmt::Debug for PushTcFqQdStats {
 #[doc = "Original name: \"tc-hhf-xstats\""]
 #[derive(Clone)]
 pub struct PushTcHhfXstats {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcHhfXstats {
     #[doc = "Create zero-initialized struct"]
@@ -31215,7 +31415,7 @@ impl std::fmt::Debug for PushTcHhfXstats {
 #[doc = "Original name: \"tc-pie-xstats\""]
 #[derive(Clone)]
 pub struct PushTcPieXstats {
-    buf: [u8; 40usize],
+    pub(crate) buf: [u8; 40usize],
 }
 impl PushTcPieXstats {
     #[doc = "Create zero-initialized struct"]
@@ -31333,7 +31533,7 @@ impl std::fmt::Debug for PushTcPieXstats {
 #[doc = "Original name: \"tc-red-xstats\""]
 #[derive(Clone)]
 pub struct PushTcRedXstats {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcRedXstats {
     #[doc = "Create zero-initialized struct"]
@@ -31406,7 +31606,7 @@ impl std::fmt::Debug for PushTcRedXstats {
 #[doc = "Original name: \"tc-sfb-xstats\""]
 #[derive(Clone)]
 pub struct PushTcSfbXstats {
-    buf: [u8; 36usize],
+    pub(crate) buf: [u8; 36usize],
 }
 impl PushTcSfbXstats {
     #[doc = "Create zero-initialized struct"]
@@ -31508,7 +31708,7 @@ impl std::fmt::Debug for PushTcSfbXstats {
 #[doc = "Original name: \"tc-sfq-xstats\""]
 #[derive(Clone)]
 pub struct PushTcSfqXstats {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushTcSfqXstats {
     #[doc = "Create zero-initialized struct"]
@@ -31552,7 +31752,7 @@ impl std::fmt::Debug for PushTcSfqXstats {
 #[doc = "Original name: \"gnet-stats-basic\""]
 #[derive(Clone)]
 pub struct PushGnetStatsBasic {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushGnetStatsBasic {
     #[doc = "Create zero-initialized struct"]
@@ -31603,7 +31803,7 @@ impl std::fmt::Debug for PushGnetStatsBasic {
 #[doc = "Original name: \"gnet-stats-rate-est\""]
 #[derive(Clone)]
 pub struct PushGnetStatsRateEst {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushGnetStatsRateEst {
     #[doc = "Create zero-initialized struct"]
@@ -31654,7 +31854,7 @@ impl std::fmt::Debug for PushGnetStatsRateEst {
 #[doc = "Original name: \"gnet-stats-rate-est64\""]
 #[derive(Clone)]
 pub struct PushGnetStatsRateEst64 {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushGnetStatsRateEst64 {
     #[doc = "Create zero-initialized struct"]
@@ -31705,7 +31905,7 @@ impl std::fmt::Debug for PushGnetStatsRateEst64 {
 #[doc = "Original name: \"gnet-stats-queue\""]
 #[derive(Clone)]
 pub struct PushGnetStatsQueue {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushGnetStatsQueue {
     #[doc = "Create zero-initialized struct"]
@@ -31777,7 +31977,7 @@ impl std::fmt::Debug for PushGnetStatsQueue {
 #[doc = "Original name: \"tc-u32-key\""]
 #[derive(Clone)]
 pub struct PushTcU32Key {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcU32Key {
     #[doc = "Create zero-initialized struct"]
@@ -31842,7 +32042,7 @@ impl std::fmt::Debug for PushTcU32Key {
 #[doc = "Original name: \"tc-u32-mark\""]
 #[derive(Clone)]
 pub struct PushTcU32Mark {
-    buf: [u8; 12usize],
+    pub(crate) buf: [u8; 12usize],
 }
 impl PushTcU32Mark {
     #[doc = "Create zero-initialized struct"]
@@ -31900,7 +32100,7 @@ impl std::fmt::Debug for PushTcU32Mark {
 #[doc = "Original name: \"tc-u32-sel\""]
 #[derive(Clone)]
 pub struct PushTcU32Sel {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcU32Sel {
     #[doc = "Create zero-initialized struct"]
@@ -32000,7 +32200,7 @@ impl std::fmt::Debug for PushTcU32Sel {
 #[doc = "Original name: \"tc-u32-pcnt\""]
 #[derive(Clone)]
 pub struct PushTcU32Pcnt {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcU32Pcnt {
     #[doc = "Create zero-initialized struct"]
@@ -32058,7 +32258,7 @@ impl std::fmt::Debug for PushTcU32Pcnt {
 #[doc = "Original name: \"tcf-t\""]
 #[derive(Clone)]
 pub struct PushTcfT {
-    buf: [u8; 32usize],
+    pub(crate) buf: [u8; 32usize],
 }
 impl PushTcfT {
     #[doc = "Create zero-initialized struct"]
@@ -32123,7 +32323,7 @@ impl std::fmt::Debug for PushTcfT {
 #[doc = "Original name: \"tc-gact\""]
 #[derive(Clone)]
 pub struct PushTcGact {
-    buf: [u8; 20usize],
+    pub(crate) buf: [u8; 20usize],
 }
 impl PushTcGact {
     #[doc = "Create zero-initialized struct"]
@@ -32195,7 +32395,7 @@ impl std::fmt::Debug for PushTcGact {
 #[doc = "Original name: \"tc-gact-p\""]
 #[derive(Clone)]
 pub struct PushTcGactP {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushTcGactP {
     #[doc = "Create zero-initialized struct"]
@@ -32253,7 +32453,7 @@ impl std::fmt::Debug for PushTcGactP {
 #[doc = "Original name: \"tcf-ematch-tree-hdr\""]
 #[derive(Clone)]
 pub struct PushTcfEmatchTreeHdr {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushTcfEmatchTreeHdr {
     #[doc = "Create zero-initialized struct"]
@@ -32304,7 +32504,7 @@ impl std::fmt::Debug for PushTcfEmatchTreeHdr {
 #[doc = "Original name: \"tc-basic-pcnt\""]
 #[derive(Clone)]
 pub struct PushTcBasicPcnt {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushTcBasicPcnt {
     #[doc = "Create zero-initialized struct"]
@@ -32355,7 +32555,7 @@ impl std::fmt::Debug for PushTcBasicPcnt {
 #[doc = "Original name: \"tc-matchall-pcnt\""]
 #[derive(Clone)]
 pub struct PushTcMatchallPcnt {
-    buf: [u8; 8usize],
+    pub(crate) buf: [u8; 8usize],
 }
 impl PushTcMatchallPcnt {
     #[doc = "Create zero-initialized struct"]
@@ -32399,7 +32599,7 @@ impl std::fmt::Debug for PushTcMatchallPcnt {
 #[doc = "Original name: \"tc-mpls\""]
 #[derive(Clone)]
 pub struct PushTcMpls {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcMpls {
     #[doc = "Create zero-initialized struct"]
@@ -32478,7 +32678,7 @@ impl std::fmt::Debug for PushTcMpls {
 #[doc = "Original name: \"tc-police\""]
 #[derive(Clone)]
 pub struct PushTcPolice {
-    buf: [u8; 32usize],
+    pub(crate) buf: [u8; 32usize],
 }
 impl PushTcPolice {
     #[doc = "Create zero-initialized struct"]
@@ -32585,7 +32785,7 @@ impl std::fmt::Debug for PushTcPolice {
 #[doc = "Original name: \"tc-pedit-sel\""]
 #[derive(Clone)]
 pub struct PushTcPeditSel {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcPeditSel {
     #[doc = "Create zero-initialized struct"]
@@ -32678,7 +32878,7 @@ impl std::fmt::Debug for PushTcPeditSel {
 #[doc = "Original name: \"tc-pedit-key\""]
 #[derive(Clone)]
 pub struct PushTcPeditKey {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcPeditKey {
     #[doc = "Create zero-initialized struct"]
@@ -32757,7 +32957,7 @@ impl std::fmt::Debug for PushTcPeditKey {
 #[doc = "Original name: \"tc-vlan\""]
 #[derive(Clone)]
 pub struct PushTcVlan {
-    buf: [u8; 24usize],
+    pub(crate) buf: [u8; 24usize],
 }
 impl PushTcVlan {
     #[doc = "Create zero-initialized struct"]
@@ -32835,8 +33035,8 @@ impl std::fmt::Debug for PushTcVlan {
 }
 #[doc = "Create new tc qdisc."]
 pub struct PushOpNewqdiscDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewqdiscDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -32881,27 +33081,35 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -32909,174 +33117,238 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33084,51 +33356,63 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33136,7 +33420,7 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33144,21 +33428,29 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33166,7 +33458,7 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33174,7 +33466,7 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33182,17 +33474,21 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33200,7 +33496,7 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33208,37 +33504,49 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33246,7 +33554,7 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33254,32 +33562,44 @@ impl<Prev: Rec> PushOpNewqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_rate(mut self, value: PushGnetEstimator) -> Self {
@@ -33557,8 +33877,8 @@ impl<'a> Iterable<'a, OpNewqdiscDoRequest<'a>> {
 }
 #[doc = "Create new tc qdisc."]
 pub struct PushOpNewqdiscDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewqdiscDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -33692,6 +34012,9 @@ impl<'r> RequestOpNewqdiscDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewqdiscDoRequest<&mut Vec<u8>> {
         PushOpNewqdiscDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewqdiscDoRequest<RequestBuf<'r>> {
+        PushOpNewqdiscDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewqdiscDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewqdiscDoReply>);
@@ -33722,8 +34045,8 @@ impl NetlinkRequest for RequestOpNewqdiscDoRequest<'_> {
 }
 #[doc = "Delete existing tc qdisc."]
 pub struct PushOpDelqdiscDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelqdiscDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -33768,27 +34091,35 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33796,174 +34127,238 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -33971,51 +34366,63 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34023,7 +34430,7 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34031,21 +34438,29 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34053,7 +34468,7 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34061,7 +34476,7 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34069,17 +34484,21 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34087,7 +34506,7 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34095,37 +34514,49 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34133,7 +34564,7 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34141,32 +34572,44 @@ impl<Prev: Rec> PushOpDelqdiscDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_rate(mut self, value: PushGnetEstimator) -> Self {
@@ -34444,8 +34887,8 @@ impl<'a> Iterable<'a, OpDelqdiscDoRequest<'a>> {
 }
 #[doc = "Delete existing tc qdisc."]
 pub struct PushOpDelqdiscDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelqdiscDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -34579,6 +35022,9 @@ impl<'r> RequestOpDelqdiscDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDelqdiscDoRequest<&mut Vec<u8>> {
         PushOpDelqdiscDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDelqdiscDoRequest<RequestBuf<'r>> {
+        PushOpDelqdiscDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDelqdiscDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDelqdiscDoReply>);
@@ -34609,8 +35055,8 @@ impl NetlinkRequest for RequestOpDelqdiscDoRequest<'_> {
 }
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetqdiscDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -34775,8 +35221,8 @@ impl Iterable<'_, OpGetqdiscDumpRequest> {
 }
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetqdiscDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -34821,27 +35267,35 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -34849,174 +35303,238 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35024,51 +35542,63 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35076,7 +35606,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35084,21 +35614,29 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35106,7 +35644,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35114,7 +35652,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35122,17 +35660,21 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35140,7 +35682,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35148,37 +35690,49 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35186,7 +35740,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35194,32 +35748,44 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -35229,17 +35795,21 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35247,7 +35817,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35255,7 +35825,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35263,7 +35833,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35271,7 +35841,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35279,7 +35849,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35287,7 +35857,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35295,7 +35865,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35303,7 +35873,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35311,7 +35881,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35319,7 +35889,7 @@ impl<Prev: Rec> PushOpGetqdiscDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -35750,6 +36320,9 @@ impl<'r> RequestOpGetqdiscDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetqdiscDumpRequest<&mut Vec<u8>> {
         PushOpGetqdiscDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetqdiscDumpRequest<RequestBuf<'r>> {
+        PushOpGetqdiscDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetqdiscDumpRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGetqdiscDumpReply<'buf>>);
@@ -35780,8 +36353,8 @@ impl NetlinkRequest for RequestOpGetqdiscDumpRequest<'_> {
 }
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetqdiscDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -35946,8 +36519,8 @@ impl Iterable<'_, OpGetqdiscDoRequest> {
 }
 #[doc = "Get / dump tc qdisc information."]
 pub struct PushOpGetqdiscDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetqdiscDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -35992,27 +36565,35 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36020,174 +36601,238 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36195,51 +36840,63 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36247,7 +36904,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36255,21 +36912,29 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36277,7 +36942,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36285,7 +36950,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36293,17 +36958,21 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36311,7 +36980,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36319,37 +36988,49 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36357,7 +37038,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36365,32 +37046,44 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -36400,17 +37093,21 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36418,7 +37115,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36426,7 +37123,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36434,7 +37131,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36442,7 +37139,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36450,7 +37147,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36458,7 +37155,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36466,7 +37163,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36474,7 +37171,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36482,7 +37179,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36490,7 +37187,7 @@ impl<Prev: Rec> PushOpGetqdiscDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -36919,6 +37616,9 @@ impl<'r> RequestOpGetqdiscDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetqdiscDoRequest<&mut Vec<u8>> {
         PushOpGetqdiscDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetqdiscDoRequest<RequestBuf<'r>> {
+        PushOpGetqdiscDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetqdiscDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGetqdiscDoReply<'buf>>);
@@ -36949,8 +37649,8 @@ impl NetlinkRequest for RequestOpGetqdiscDoRequest<'_> {
 }
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpNewtclassDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewtclassDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -36995,27 +37695,35 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37023,174 +37731,238 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37198,51 +37970,63 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37250,7 +38034,7 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37258,21 +38042,29 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37280,7 +38072,7 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37288,7 +38080,7 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37296,17 +38088,21 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37314,7 +38110,7 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37322,37 +38118,49 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37360,7 +38168,7 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -37368,32 +38176,44 @@ impl<Prev: Rec> PushOpNewtclassDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_rate(mut self, value: PushGnetEstimator) -> Self {
@@ -37671,8 +38491,8 @@ impl<'a> Iterable<'a, OpNewtclassDoRequest<'a>> {
 }
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpNewtclassDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewtclassDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -37806,6 +38626,9 @@ impl<'r> RequestOpNewtclassDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewtclassDoRequest<&mut Vec<u8>> {
         PushOpNewtclassDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewtclassDoRequest<RequestBuf<'r>> {
+        PushOpNewtclassDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewtclassDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewtclassDoReply>);
@@ -37836,8 +38659,8 @@ impl NetlinkRequest for RequestOpNewtclassDoRequest<'_> {
 }
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpDeltclassDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDeltclassDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -37961,8 +38784,8 @@ impl Iterable<'_, OpDeltclassDoRequest> {
 }
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpDeltclassDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDeltclassDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -38096,6 +38919,9 @@ impl<'r> RequestOpDeltclassDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDeltclassDoRequest<&mut Vec<u8>> {
         PushOpDeltclassDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDeltclassDoRequest<RequestBuf<'r>> {
+        PushOpDeltclassDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDeltclassDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDeltclassDoReply>);
@@ -38126,8 +38952,8 @@ impl NetlinkRequest for RequestOpDeltclassDoRequest<'_> {
 }
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpGettclassDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGettclassDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -38251,8 +39077,8 @@ impl Iterable<'_, OpGettclassDoRequest> {
 }
 #[doc = "Get / dump tc traffic class information."]
 pub struct PushOpGettclassDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGettclassDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -38297,27 +39123,35 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38325,174 +39159,238 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38500,51 +39398,63 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38552,7 +39462,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38560,21 +39470,29 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38582,7 +39500,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38590,7 +39508,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38598,17 +39516,21 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38616,7 +39538,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38624,37 +39546,49 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38662,7 +39596,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38670,32 +39604,44 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -38705,17 +39651,21 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38723,7 +39673,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38731,7 +39681,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38739,7 +39689,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38747,7 +39697,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38755,7 +39705,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38763,7 +39713,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38771,7 +39721,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38779,7 +39729,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38787,7 +39737,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -38795,7 +39745,7 @@ impl<Prev: Rec> PushOpGettclassDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39224,6 +40174,9 @@ impl<'r> RequestOpGettclassDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGettclassDoRequest<&mut Vec<u8>> {
         PushOpGettclassDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGettclassDoRequest<RequestBuf<'r>> {
+        PushOpGettclassDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGettclassDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGettclassDoReply<'buf>>);
@@ -39254,8 +40207,8 @@ impl NetlinkRequest for RequestOpGettclassDoRequest<'_> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpNewtfilterDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewtfilterDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -39300,27 +40253,35 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39328,174 +40289,238 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39503,51 +40528,63 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39555,7 +40592,7 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39563,21 +40600,29 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39585,7 +40630,7 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39593,7 +40638,7 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39601,17 +40646,21 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39619,7 +40668,7 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39627,37 +40676,49 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39665,7 +40726,7 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -39673,32 +40734,44 @@ impl<Prev: Rec> PushOpNewtfilterDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_rate(mut self, value: PushGnetEstimator) -> Self {
@@ -39976,8 +41049,8 @@ impl<'a> Iterable<'a, OpNewtfilterDoRequest<'a>> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpNewtfilterDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewtfilterDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -40111,6 +41184,9 @@ impl<'r> RequestOpNewtfilterDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewtfilterDoRequest<&mut Vec<u8>> {
         PushOpNewtfilterDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewtfilterDoRequest<RequestBuf<'r>> {
+        PushOpNewtfilterDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewtfilterDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewtfilterDoReply>);
@@ -40141,8 +41217,8 @@ impl NetlinkRequest for RequestOpNewtfilterDoRequest<'_> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpDeltfilterDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDeltfilterDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -40350,8 +41426,8 @@ impl<'a> Iterable<'a, OpDeltfilterDoRequest<'a>> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpDeltfilterDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDeltfilterDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -40485,6 +41561,9 @@ impl<'r> RequestOpDeltfilterDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDeltfilterDoRequest<&mut Vec<u8>> {
         PushOpDeltfilterDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDeltfilterDoRequest<RequestBuf<'r>> {
+        PushOpDeltfilterDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDeltfilterDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDeltfilterDoReply>);
@@ -40515,8 +41594,8 @@ impl NetlinkRequest for RequestOpDeltfilterDoRequest<'_> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGettfilterDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -40714,8 +41793,8 @@ impl Iterable<'_, OpGettfilterDumpRequest> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGettfilterDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -40760,27 +41839,35 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -40788,174 +41875,238 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -40963,51 +42114,63 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41015,7 +42178,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41023,21 +42186,29 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41045,7 +42216,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41053,7 +42224,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41061,17 +42232,21 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41079,7 +42254,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41087,37 +42262,49 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41125,7 +42312,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41133,32 +42320,44 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -41168,17 +42367,21 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41186,7 +42389,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41194,7 +42397,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41202,7 +42405,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41210,7 +42413,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41218,7 +42421,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41226,7 +42429,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41234,7 +42437,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41242,7 +42445,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41250,7 +42453,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41258,7 +42461,7 @@ impl<Prev: Rec> PushOpGettfilterDumpReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -41689,6 +42892,9 @@ impl<'r> RequestOpGettfilterDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGettfilterDumpRequest<&mut Vec<u8>> {
         PushOpGettfilterDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGettfilterDumpRequest<RequestBuf<'r>> {
+        PushOpGettfilterDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGettfilterDumpRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGettfilterDumpReply<'buf>>);
@@ -41719,8 +42925,8 @@ impl NetlinkRequest for RequestOpGettfilterDumpRequest<'_> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGettfilterDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -41928,8 +43134,8 @@ impl<'a> Iterable<'a, OpGettfilterDoRequest<'a>> {
 }
 #[doc = "Get / dump tc filter information."]
 pub struct PushOpGettfilterDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGettfilterDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -41974,27 +43180,35 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42002,174 +43216,238 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42177,51 +43455,63 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42229,7 +43519,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42237,21 +43527,29 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42259,7 +43557,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42267,7 +43565,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42275,17 +43573,21 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42293,7 +43595,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42301,37 +43603,49 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42339,7 +43653,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42347,32 +43661,44 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -42382,17 +43708,21 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42400,7 +43730,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42408,7 +43738,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42416,7 +43746,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42424,7 +43754,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42432,7 +43762,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42440,7 +43770,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42448,7 +43778,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42456,7 +43786,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42464,7 +43794,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42472,7 +43802,7 @@ impl<Prev: Rec> PushOpGettfilterDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -42901,6 +44231,9 @@ impl<'r> RequestOpGettfilterDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGettfilterDoRequest<&mut Vec<u8>> {
         PushOpGettfilterDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGettfilterDoRequest<RequestBuf<'r>> {
+        PushOpGettfilterDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGettfilterDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGettfilterDoReply<'buf>>);
@@ -42931,8 +44264,8 @@ impl NetlinkRequest for RequestOpGettfilterDoRequest<'_> {
 }
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpNewchainDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewchainDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -42977,27 +44310,35 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43005,174 +44346,238 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43180,51 +44585,63 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43232,7 +44649,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43240,21 +44657,29 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43262,7 +44687,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43270,7 +44695,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43278,17 +44703,21 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43296,7 +44725,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43304,37 +44733,49 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43342,7 +44783,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -43350,32 +44791,44 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_rate(mut self, value: PushGnetEstimator) -> Self {
@@ -43653,8 +45106,8 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
 }
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpNewchainDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpNewchainDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -43788,6 +45241,9 @@ impl<'r> RequestOpNewchainDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpNewchainDoRequest<&mut Vec<u8>> {
         PushOpNewchainDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpNewchainDoRequest<RequestBuf<'r>> {
+        PushOpNewchainDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpNewchainDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpNewchainDoReply>);
@@ -43818,8 +45274,8 @@ impl NetlinkRequest for RequestOpNewchainDoRequest<'_> {
 }
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpDelchainDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelchainDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -43989,8 +45445,8 @@ impl Iterable<'_, OpDelchainDoRequest> {
 }
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpDelchainDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpDelchainDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -44124,6 +45580,9 @@ impl<'r> RequestOpDelchainDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpDelchainDoRequest<&mut Vec<u8>> {
         PushOpDelchainDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpDelchainDoRequest<RequestBuf<'r>> {
+        PushOpDelchainDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpDelchainDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpDelchainDoReply>);
@@ -44154,8 +45613,8 @@ impl NetlinkRequest for RequestOpDelchainDoRequest<'_> {
 }
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpGetchainDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetchainDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -44325,8 +45784,8 @@ impl Iterable<'_, OpGetchainDoRequest> {
 }
 #[doc = "Get / dump tc chain information."]
 pub struct PushOpGetchainDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetchainDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -44371,27 +45830,35 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_basic(mut self) -> PushBasicAttrs<Self> {
+    pub fn nested_options_basic(mut self) -> PushBasicAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"basic");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBasicAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bpf(mut self) -> PushBpfAttrs<Self> {
+    pub fn nested_options_bpf(mut self) -> PushBpfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"bpf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushBpfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_bfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"bfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44399,174 +45866,238 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cake(mut self) -> PushCakeAttrs<Self> {
+    pub fn nested_options_cake(mut self) -> PushCakeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cbs(mut self) -> PushCbsAttrs<Self> {
+    pub fn nested_options_cbs(mut self) -> PushCbsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cbs");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCbsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_cgroup(mut self) -> PushCgroupAttrs<Self> {
+    pub fn nested_options_cgroup(mut self) -> PushCgroupAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cgroup");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCgroupAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_choke(mut self) -> PushChokeAttrs<Self> {
+    pub fn nested_options_choke(mut self) -> PushChokeAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"choke");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushChokeAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_clsact(mut self) -> Self {
+    pub fn nested_options_clsact(mut self) -> Self {
         self = self.push_kind(c"clsact");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_codel(mut self) -> PushCodelAttrs<Self> {
+    pub fn nested_options_codel(mut self) -> PushCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_drr(mut self) -> PushDrrAttrs<Self> {
+    pub fn nested_options_drr(mut self) -> PushDrrAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"drr");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDrrAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_dualpi2(mut self) -> PushDualpi2Attrs<Self> {
+    pub fn nested_options_dualpi2(mut self) -> PushDualpi2Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"dualpi2");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushDualpi2Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_etf(mut self) -> PushEtfAttrs<Self> {
+    pub fn nested_options_etf(mut self) -> PushEtfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"etf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ets(mut self) -> PushEtsAttrs<Self> {
+    pub fn nested_options_ets(mut self) -> PushEtsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"ets");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushEtsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flow(mut self) -> PushFlowAttrs<Self> {
+    pub fn nested_options_flow(mut self) -> PushFlowAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flow");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_flower(mut self) -> PushFlowerAttrs<Self> {
+    pub fn nested_options_flower(mut self) -> PushFlowerAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"flower");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFlowerAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq(mut self) -> PushFqAttrs<Self> {
+    pub fn nested_options_fq(mut self) -> PushFqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_codel(mut self) -> PushFqCodelAttrs<Self> {
+    pub fn nested_options_fq_codel(mut self) -> PushFqCodelAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_codel");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqCodelAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fq_pie(mut self) -> PushFqPieAttrs<Self> {
+    pub fn nested_options_fq_pie(mut self) -> PushFqPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fq_pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFqPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_fw(mut self) -> PushFwAttrs<Self> {
+    pub fn nested_options_fw(mut self) -> PushFwAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"fw");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushFwAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_gred(mut self) -> PushGredAttrs<Self> {
+    pub fn nested_options_gred(mut self) -> PushGredAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"gred");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushGredAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
+    pub fn nested_options_hfsc(mut self, fixed_header: &PushTcHfscQopt) -> Self {
         self = self.push_kind(c"hfsc");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44574,51 +46105,63 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_hhf(mut self) -> PushHhfAttrs<Self> {
+    pub fn nested_options_hhf(mut self) -> PushHhfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"hhf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHhfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_htb(mut self) -> PushHtbAttrs<Self> {
+    pub fn nested_options_htb(mut self) -> PushHtbAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"htb");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushHtbAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_ingress(mut self) -> Self {
+    pub fn nested_options_ingress(mut self) -> Self {
         self = self.push_kind(c"ingress");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_matchall(mut self) -> PushMatchallAttrs<Self> {
+    pub fn nested_options_matchall(mut self) -> PushMatchallAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"matchall");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushMatchallAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mq(mut self) -> Self {
+    pub fn nested_options_mq(mut self) -> Self {
         self = self.push_kind(c"mq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
+    pub fn nested_options_mqprio(mut self, fixed_header: &PushTcMqprioQopt) -> Self {
         self = self.push_kind(c"mqprio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44626,7 +46169,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
+    pub fn nested_options_multiq(mut self, fixed_header: &PushTcMultiqQopt) -> Self {
         self = self.push_kind(c"multiq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44634,21 +46177,29 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_netem(
+    pub fn nested_options_netem(
         mut self,
         fixed_header: &PushTcNetemQopt,
-    ) -> PushNetemAttrs<Self> {
+    ) -> PushNetemAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"netem");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
+        let Self {
+            prev,
+            header_offset,
+        } = self;
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushNetemAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44656,7 +46207,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_pfifo_fast(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"pfifo_fast");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44664,7 +46215,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
+    pub fn nested_options_pfifo_head_drop(mut self, fixed_header: &PushTcFifoQopt) -> Self {
         self = self.push_kind(c"pfifo_head_drop");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44672,17 +46223,21 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_pie(mut self) -> PushPieAttrs<Self> {
+    pub fn nested_options_pie(mut self) -> PushPieAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"pie");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushPieAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
+    pub fn nested_options_plug(mut self, fixed_header: &PushTcPlugQopt) -> Self {
         self = self.push_kind(c"plug");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44690,7 +46245,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
+    pub fn nested_options_prio(mut self, fixed_header: &PushTcPrioQopt) -> Self {
         self = self.push_kind(c"prio");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44698,37 +46253,49 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_qfq(mut self) -> PushQfqAttrs<Self> {
+    pub fn nested_options_qfq(mut self) -> PushQfqAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"qfq");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushQfqAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_red(mut self) -> PushRedAttrs<Self> {
+    pub fn nested_options_red(mut self) -> PushRedAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"red");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRedAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_route(mut self) -> PushRouteAttrs<Self> {
+    pub fn nested_options_route(mut self) -> PushRouteAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"route");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushRouteAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
+    pub fn nested_options_sfb(mut self, fixed_header: &PushTcSfbQopt) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44736,7 +46303,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
+    pub fn nested_options_sfq(mut self, fixed_header: &PushTcSfqQoptV1) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 2u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44744,32 +46311,44 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_taprio(mut self) -> PushTaprioAttrs<Self> {
+    pub fn nested_options_taprio(mut self) -> PushTaprioAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"taprio");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTaprioAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_tbf(mut self) -> PushTbfAttrs<Self> {
+    pub fn nested_options_tbf(mut self) -> PushTbfAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"tbf");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushTbfAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_options_u32(mut self) -> PushU32Attrs<Self> {
+    pub fn nested_options_u32(mut self) -> PushU32Attrs<PushDummy<Prev>> {
         self = self.push_kind(c"u32");
-        let header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushU32Attrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     pub fn push_stats(mut self, value: PushTcStats) -> Self {
@@ -44779,17 +46358,21 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_cake(mut self) -> PushCakeStatsAttrs<Self> {
+    pub fn nested_xstats_cake(mut self) -> PushCakeStatsAttrs<PushDummy<Prev>> {
         self = self.push_kind(c"cake");
-        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
         PushCakeStatsAttrs {
-            prev: Some(self),
-            header_offset: Some(header_offset),
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
         }
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
+    pub fn nested_xstats_choke(mut self, fixed_header: &PushTcChokeXstats) -> Self {
         self = self.push_kind(c"choke");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44797,7 +46380,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
+    pub fn nested_xstats_codel(mut self, fixed_header: &PushTcCodelXstats) -> Self {
         self = self.push_kind(c"codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44805,7 +46388,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
+    pub fn nested_xstats_dualpi2(mut self, fixed_header: &PushTcDualpi2Xstats) -> Self {
         self = self.push_kind(c"dualpi2");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44813,7 +46396,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
+    pub fn nested_xstats_fq(mut self, fixed_header: &PushTcFqQdStats) -> Self {
         self = self.push_kind(c"fq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44821,7 +46404,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
+    pub fn nested_xstats_fq_codel(mut self, fixed_header: &PushTcFqCodelXstats) -> Self {
         self = self.push_kind(c"fq_codel");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44829,7 +46412,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
+    pub fn nested_xstats_fq_pie(mut self, fixed_header: &PushTcFqPieXstats) -> Self {
         self = self.push_kind(c"fq_pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44837,7 +46420,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
+    pub fn nested_xstats_hhf(mut self, fixed_header: &PushTcHhfXstats) -> Self {
         self = self.push_kind(c"hhf");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44845,7 +46428,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
+    pub fn nested_xstats_pie(mut self, fixed_header: &PushTcPieXstats) -> Self {
         self = self.push_kind(c"pie");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44853,7 +46436,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
+    pub fn nested_xstats_red(mut self, fixed_header: &PushTcRedXstats) -> Self {
         self = self.push_kind(c"red");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44861,7 +46444,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
+    pub fn nested_xstats_sfb(mut self, fixed_header: &PushTcSfbXstats) -> Self {
         self = self.push_kind(c"sfb");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -44869,7 +46452,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "Selector attribute is inserted automatically."]
     #[doc = "At most one sub-message attribute is expected per attribute set."]
-    pub fn sub_nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
+    pub fn nested_xstats_sfq(mut self, fixed_header: &PushTcSfqXstats) -> Self {
         self = self.push_kind(c"sfq");
         push_nested_header(self.as_rec_mut(), 4u16);
         self.as_rec_mut().extend(fixed_header.as_slice());
@@ -45298,6 +46881,9 @@ impl<'r> RequestOpGetchainDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetchainDoRequest<&mut Vec<u8>> {
         PushOpGetchainDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetchainDoRequest<RequestBuf<'r>> {
+        PushOpGetchainDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetchainDoRequest<'_> {
     type ReplyType<'buf> = (PushTcmsg, Iterable<'buf, OpGetchainDoReply<'buf>>);
@@ -45327,26 +46913,171 @@ impl NetlinkRequest for RequestOpGetchainDoRequest<'_> {
     }
 }
 #[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
+pub struct ChainedFinal<'a> {
+    inner: Chained<'a>,
 }
+#[derive(Debug)]
+pub struct Chained<'a> {
+    buf: RequestBuf<'a>,
+    first_seq: u32,
+    lookups: Vec<(&'static str, LookupFn)>,
+    last_header_offset: usize,
+    last_kind: Option<RequestInfo>,
+}
+impl<'a> ChainedFinal<'a> {
+    pub fn into_chained(self) -> Chained<'a> {
+        self.inner
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.inner.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.inner.buf_mut()
+    }
+    fn get_index(&self, seq: u32) -> Option<u32> {
+        let min = self.inner.first_seq;
+        let max = min.wrapping_add(self.inner.lookups.len() as u32);
+        return if min <= max {
+            (min..max).contains(&seq).then(|| seq - min)
+        } else if min <= seq {
+            Some(seq - min)
+        } else if seq < max {
+            Some(u32::MAX - min + seq)
+        } else {
+            None
+        };
+    }
+}
+impl crate::traits::NetlinkChained for ChainedFinal<'_> {
+    fn protonum(&self) -> u16 {
+        PROTONUM
+    }
+    fn payload(&self) -> &[u8] {
+        self.buf()
+    }
+    fn chain_len(&self) -> usize {
+        self.inner.lookups.len()
+    }
+    fn get_index(&self, seq: u32) -> Option<usize> {
+        self.get_index(seq).map(|n| n as usize)
+    }
+    fn name(&self, index: usize) -> &'static str {
+        self.inner.lookups[index].0
+    }
+    fn lookup(&self, index: usize) -> LookupFn {
+        self.inner.lookups[index].1
+    }
+}
+impl Chained<'static> {
+    pub fn new(first_seq: u32) -> Self {
+        Self::new_from_buf(Vec::new(), first_seq)
+    }
+    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Own(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'a> Chained<'a> {
+    pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Ref(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn finalize(mut self) -> ChainedFinal<'a> {
+        self.update_header();
+        ChainedFinal { inner: self }
+    }
+    pub fn request(&mut self) -> Request<'_> {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut()
+            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        let mut request = Request::new_extend(self.buf.buf_mut());
+        self.last_kind = None;
+        request.writeback = Some(&mut self.last_kind);
+        request
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
+    }
+    fn update_header(&mut self) {
+        let Some(RequestInfo {
+            protocol,
+            flags,
+            name,
+            lookup,
+        }) = self.last_kind
+        else {
+            if !self.buf().is_empty() {
+                assert_eq!(
+                    self.last_header_offset + PushNlmsghdr::len(),
+                    self.buf().len()
+                );
+                self.buf.buf_mut().truncate(self.last_header_offset);
+            }
+            return;
+        };
+        let header_offset = self.last_header_offset;
+        let request_type = match protocol {
+            Protocol::Raw { request_type, .. } => request_type,
+            Protocol::Generic(_) => unreachable!(),
+        };
+        let index = self.lookups.len();
+        let seq = self.first_seq.wrapping_add(index as u32);
+        self.lookups.push((name, lookup));
+        let buf = self.buf_mut();
+        align(buf);
+        let mut header = PushNlmsghdr::new();
+        header.set_len((buf.len() - header_offset) as u32);
+        header.set_type(request_type);
+        header.set_flags(flags | consts::NLM_F_REQUEST as u16 | consts::NLM_F_ACK as u16);
+        header.set_seq(seq);
+        buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+    }
+}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -45359,22 +47090,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -45406,60 +47146,144 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_newqdisc_do_request(self, header: &PushTcmsg) -> RequestOpNewqdiscDoRequest<'buf> {
-        RequestOpNewqdiscDoRequest::new(self, header)
+        let mut res = RequestOpNewqdiscDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newqdisc-do-request",
+            RequestOpNewqdiscDoRequest::lookup,
+        );
+        res
     }
     pub fn op_delqdisc_do_request(self, header: &PushTcmsg) -> RequestOpDelqdiscDoRequest<'buf> {
-        RequestOpDelqdiscDoRequest::new(self, header)
+        let mut res = RequestOpDelqdiscDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-delqdisc-do-request",
+            RequestOpDelqdiscDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getqdisc_dump_request(
         self,
         header: &PushTcmsg,
     ) -> RequestOpGetqdiscDumpRequest<'buf> {
-        RequestOpGetqdiscDumpRequest::new(self, header)
+        let mut res = RequestOpGetqdiscDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getqdisc-dump-request",
+            RequestOpGetqdiscDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getqdisc_do_request(self, header: &PushTcmsg) -> RequestOpGetqdiscDoRequest<'buf> {
-        RequestOpGetqdiscDoRequest::new(self, header)
+        let mut res = RequestOpGetqdiscDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getqdisc-do-request",
+            RequestOpGetqdiscDoRequest::lookup,
+        );
+        res
     }
     pub fn op_newtclass_do_request(self, header: &PushTcmsg) -> RequestOpNewtclassDoRequest<'buf> {
-        RequestOpNewtclassDoRequest::new(self, header)
+        let mut res = RequestOpNewtclassDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newtclass-do-request",
+            RequestOpNewtclassDoRequest::lookup,
+        );
+        res
     }
     pub fn op_deltclass_do_request(self, header: &PushTcmsg) -> RequestOpDeltclassDoRequest<'buf> {
-        RequestOpDeltclassDoRequest::new(self, header)
+        let mut res = RequestOpDeltclassDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-deltclass-do-request",
+            RequestOpDeltclassDoRequest::lookup,
+        );
+        res
     }
     pub fn op_gettclass_do_request(self, header: &PushTcmsg) -> RequestOpGettclassDoRequest<'buf> {
-        RequestOpGettclassDoRequest::new(self, header)
+        let mut res = RequestOpGettclassDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-gettclass-do-request",
+            RequestOpGettclassDoRequest::lookup,
+        );
+        res
     }
     pub fn op_newtfilter_do_request(
         self,
         header: &PushTcmsg,
     ) -> RequestOpNewtfilterDoRequest<'buf> {
-        RequestOpNewtfilterDoRequest::new(self, header)
+        let mut res = RequestOpNewtfilterDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newtfilter-do-request",
+            RequestOpNewtfilterDoRequest::lookup,
+        );
+        res
     }
     pub fn op_deltfilter_do_request(
         self,
         header: &PushTcmsg,
     ) -> RequestOpDeltfilterDoRequest<'buf> {
-        RequestOpDeltfilterDoRequest::new(self, header)
+        let mut res = RequestOpDeltfilterDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-deltfilter-do-request",
+            RequestOpDeltfilterDoRequest::lookup,
+        );
+        res
     }
     pub fn op_gettfilter_dump_request(
         self,
         header: &PushTcmsg,
     ) -> RequestOpGettfilterDumpRequest<'buf> {
-        RequestOpGettfilterDumpRequest::new(self, header)
+        let mut res = RequestOpGettfilterDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-gettfilter-dump-request",
+            RequestOpGettfilterDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_gettfilter_do_request(
         self,
         header: &PushTcmsg,
     ) -> RequestOpGettfilterDoRequest<'buf> {
-        RequestOpGettfilterDoRequest::new(self, header)
+        let mut res = RequestOpGettfilterDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-gettfilter-do-request",
+            RequestOpGettfilterDoRequest::lookup,
+        );
+        res
     }
     pub fn op_newchain_do_request(self, header: &PushTcmsg) -> RequestOpNewchainDoRequest<'buf> {
-        RequestOpNewchainDoRequest::new(self, header)
+        let mut res = RequestOpNewchainDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-newchain-do-request",
+            RequestOpNewchainDoRequest::lookup,
+        );
+        res
     }
     pub fn op_delchain_do_request(self, header: &PushTcmsg) -> RequestOpDelchainDoRequest<'buf> {
-        RequestOpDelchainDoRequest::new(self, header)
+        let mut res = RequestOpDelchainDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-delchain-do-request",
+            RequestOpDelchainDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getchain_do_request(self, header: &PushTcmsg) -> RequestOpGetchainDoRequest<'buf> {
-        RequestOpGetchainDoRequest::new(self, header)
+        let mut res = RequestOpGetchainDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getchain-do-request",
+            RequestOpGetchainDoRequest::lookup,
+        );
+        res
     }
 }

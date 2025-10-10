@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -1327,8 +1327,8 @@ impl Iterable<'_, OpPolicyAttrs> {
     }
 }
 pub struct PushCtrlAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCtrlAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1518,8 +1518,8 @@ impl<Prev: Rec> Drop for PushCtrlAttrs<Prev> {
     }
 }
 pub struct PushMcastGroupAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushMcastGroupAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1571,8 +1571,8 @@ impl<Prev: Rec> Drop for PushMcastGroupAttrs<Prev> {
     }
 }
 pub struct PushOpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1615,8 +1615,8 @@ impl<Prev: Rec> Drop for PushOpAttrs<Prev> {
     }
 }
 pub struct PushPolicyAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushPolicyAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1709,8 +1709,8 @@ impl<Prev: Rec> Drop for PushPolicyAttrs<Prev> {
     }
 }
 pub struct PushOpPolicyAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpPolicyAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1753,8 +1753,8 @@ impl<Prev: Rec> Drop for PushOpPolicyAttrs<Prev> {
 }
 #[doc = "Get / dump genetlink families"]
 pub struct PushOpGetfamilyDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetfamilyDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1878,8 +1878,8 @@ impl Iterable<'_, OpGetfamilyDumpRequest> {
 }
 #[doc = "Get / dump genetlink families"]
 pub struct PushOpGetfamilyDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetfamilyDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2269,6 +2269,9 @@ impl<'r> RequestOpGetfamilyDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetfamilyDumpRequest<&mut Vec<u8>> {
         PushOpGetfamilyDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetfamilyDumpRequest<RequestBuf<'r>> {
+        PushOpGetfamilyDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetfamilyDumpRequest<'_> {
     type ReplyType<'buf> = Iterable<'buf, OpGetfamilyDumpReply<'buf>>;
@@ -2297,8 +2300,8 @@ impl NetlinkRequest for RequestOpGetfamilyDumpRequest<'_> {
 }
 #[doc = "Get / dump genetlink families"]
 pub struct PushOpGetfamilyDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetfamilyDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2478,8 +2481,8 @@ impl<'a> Iterable<'a, OpGetfamilyDoRequest<'a>> {
 }
 #[doc = "Get / dump genetlink families"]
 pub struct PushOpGetfamilyDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetfamilyDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2867,6 +2870,9 @@ impl<'r> RequestOpGetfamilyDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetfamilyDoRequest<&mut Vec<u8>> {
         PushOpGetfamilyDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetfamilyDoRequest<RequestBuf<'r>> {
+        PushOpGetfamilyDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetfamilyDoRequest<'_> {
     type ReplyType<'buf> = Iterable<'buf, OpGetfamilyDoReply<'buf>>;
@@ -2895,8 +2901,8 @@ impl NetlinkRequest for RequestOpGetfamilyDoRequest<'_> {
 }
 #[doc = "Get / dump genetlink policies"]
 pub struct PushOpGetpolicyDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetpolicyDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -3132,8 +3138,8 @@ impl<'a> Iterable<'a, OpGetpolicyDumpRequest<'a>> {
 }
 #[doc = "Get / dump genetlink policies"]
 pub struct PushOpGetpolicyDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetpolicyDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -3376,6 +3382,9 @@ impl<'r> RequestOpGetpolicyDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetpolicyDumpRequest<&mut Vec<u8>> {
         PushOpGetpolicyDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetpolicyDumpRequest<RequestBuf<'r>> {
+        PushOpGetpolicyDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetpolicyDumpRequest<'_> {
     type ReplyType<'buf> = Iterable<'buf, OpGetpolicyDumpReply<'buf>>;
@@ -3402,27 +3411,31 @@ impl NetlinkRequest for RequestOpGetpolicyDumpRequest<'_> {
         OpGetpolicyDumpRequest::new(buf).lookup_attr(offset, missing_type)
     }
 }
-#[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
-}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -3435,22 +3448,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -3482,12 +3504,30 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_getfamily_dump_request(self) -> RequestOpGetfamilyDumpRequest<'buf> {
-        RequestOpGetfamilyDumpRequest::new(self)
+        let mut res = RequestOpGetfamilyDumpRequest::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getfamily-dump-request",
+            RequestOpGetfamilyDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_getfamily_do_request(self) -> RequestOpGetfamilyDoRequest<'buf> {
-        RequestOpGetfamilyDoRequest::new(self)
+        let mut res = RequestOpGetfamilyDoRequest::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getfamily-do-request",
+            RequestOpGetfamilyDoRequest::lookup,
+        );
+        res
     }
     pub fn op_getpolicy_dump_request(self) -> RequestOpGetpolicyDumpRequest<'buf> {
-        RequestOpGetpolicyDumpRequest::new(self)
+        let mut res = RequestOpGetpolicyDumpRequest::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-getpolicy-dump-request",
+            RequestOpGetpolicyDumpRequest::lookup,
+        );
+        res
     }
 }

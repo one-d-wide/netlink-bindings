@@ -9,7 +9,7 @@
 #![allow(unreachable_patterns)]
 #[cfg(test)]
 mod tests;
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -991,8 +991,8 @@ impl Iterable<'_, Wgallowedip> {
     }
 }
 pub struct PushWgdevice<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushWgdevice<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1125,8 +1125,8 @@ impl<Prev: Rec> Drop for PushWgdevice<Prev> {
     }
 }
 pub struct PushWgpeer<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushWgpeer<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1265,8 +1265,8 @@ impl<Prev: Rec> Drop for PushWgpeer<Prev> {
     }
 }
 pub struct PushWgallowedip<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushWgallowedip<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1327,7 +1327,7 @@ impl<Prev: Rec> Drop for PushWgallowedip<Prev> {
 #[doc = "Original name: \"--kernel-timespec\""]
 #[derive(Clone)]
 pub struct PushKernelTimespec {
-    buf: [u8; 16usize],
+    pub(crate) buf: [u8; 16usize],
 }
 impl PushKernelTimespec {
     #[doc = "Create zero-initialized struct"]
@@ -1381,8 +1381,8 @@ impl std::fmt::Debug for PushKernelTimespec {
 }
 #[doc = "Retrieve WireGuard device.\n\nThe command should be called with one but not both of:\n* WGDEVICE_A_IFINDEX\n* WGDEVICE_A_IFNAME\n\nThe kernel will then return several messages (NLM_F_MULTI).\nIt is possible that all of the allowed IPs of a single peer will not\nfit within a single netlink message. In that case, the same peer will\nbe written in the following message, except it will only contain\nWGPEER_A_PUBLIC_KEY and WGPEER_A_ALLOWEDIPS. This may occur several\ntimes in a row for the same peer. It is then up to the receiver to\ncoalesce adjacent peers. Likewise, it is possible that all peers will\nnot fit within a single message. So, subsequent peers will be sent\nin following messages, except those will only contain\nWGDEVICE_A_IFNAME and WGDEVICE_A_PEERS. It is then up to the receiver\nto coalesce these messages to form the complete list of peers.\n\nSince this is an NLA_F_DUMP command, the final message will always be\nNLMSG_DONE, even if an error occurs. However, this NLMSG_DONE message\ncontains an integer error code. It is either zero or a negative error\ncode corresponding to the errno.\n"]
 pub struct PushOpGetDeviceDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetDeviceDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -1786,8 +1786,8 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
 }
 #[doc = "Retrieve WireGuard device.\n\nThe command should be called with one but not both of:\n* WGDEVICE_A_IFINDEX\n* WGDEVICE_A_IFNAME\n\nThe kernel will then return several messages (NLM_F_MULTI).\nIt is possible that all of the allowed IPs of a single peer will not\nfit within a single netlink message. In that case, the same peer will\nbe written in the following message, except it will only contain\nWGPEER_A_PUBLIC_KEY and WGPEER_A_ALLOWEDIPS. This may occur several\ntimes in a row for the same peer. It is then up to the receiver to\ncoalesce adjacent peers. Likewise, it is possible that all peers will\nnot fit within a single message. So, subsequent peers will be sent\nin following messages, except those will only contain\nWGDEVICE_A_IFNAME and WGDEVICE_A_PEERS. It is then up to the receiver\nto coalesce these messages to form the complete list of peers.\n\nSince this is an NLA_F_DUMP command, the final message will always be\nNLMSG_DONE, even if an error occurs. However, this NLMSG_DONE message\ncontains an integer error code. It is either zero or a negative error\ncode corresponding to the errno.\n"]
 pub struct PushOpGetDeviceDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetDeviceDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2203,6 +2203,9 @@ impl<'r> RequestOpGetDeviceDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetDeviceDumpRequest<&mut Vec<u8>> {
         PushOpGetDeviceDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetDeviceDumpRequest<RequestBuf<'r>> {
+        PushOpGetDeviceDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetDeviceDumpRequest<'_> {
     type ReplyType<'buf> = Iterable<'buf, OpGetDeviceDumpReply<'buf>>;
@@ -2228,8 +2231,8 @@ impl NetlinkRequest for RequestOpGetDeviceDumpRequest<'_> {
 }
 #[doc = "Set WireGuard device.\n\nThis command should be called with a wgdevice set, containing one but\nnot both of WGDEVICE_A_IFINDEX and WGDEVICE_A_IFNAME.\n\nIt is possible that the amount of configuration data exceeds that of\nthe maximum message length accepted by the kernel. In that case,\nseveral messages should be sent one after another, with each\nsuccessive one filling in information not contained in the prior.\nNote that if WGDEVICE_F_REPLACE_PEERS is specified in the first\nmessage, it probably should not be specified in fragments that come\nafter, so that the list of peers is only cleared the first time but\nappended after.\nLikewise for peers, if WGPEER_F_REPLACE_ALLOWEDIPS is specified in\nthe first message of a peer, it likely should not be specified in\nsubsequent fragments.\n\nIf an error occurs, NLMSG_ERROR will reply containing an errno.\n"]
 pub struct PushOpSetDeviceDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpSetDeviceDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2633,8 +2636,8 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
 }
 #[doc = "Set WireGuard device.\n\nThis command should be called with a wgdevice set, containing one but\nnot both of WGDEVICE_A_IFINDEX and WGDEVICE_A_IFNAME.\n\nIt is possible that the amount of configuration data exceeds that of\nthe maximum message length accepted by the kernel. In that case,\nseveral messages should be sent one after another, with each\nsuccessive one filling in information not contained in the prior.\nNote that if WGDEVICE_F_REPLACE_PEERS is specified in the first\nmessage, it probably should not be specified in fragments that come\nafter, so that the list of peers is only cleared the first time but\nappended after.\nLikewise for peers, if WGPEER_F_REPLACE_ALLOWEDIPS is specified in\nthe first message of a peer, it likely should not be specified in\nsubsequent fragments.\n\nIf an error occurs, NLMSG_ERROR will reply containing an errno.\n"]
 pub struct PushOpSetDeviceDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpSetDeviceDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -2768,6 +2771,9 @@ impl<'r> RequestOpSetDeviceDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpSetDeviceDoRequest<&mut Vec<u8>> {
         PushOpSetDeviceDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpSetDeviceDoRequest<RequestBuf<'r>> {
+        PushOpSetDeviceDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpSetDeviceDoRequest<'_> {
     type ReplyType<'buf> = Iterable<'buf, OpSetDeviceDoReply>;
@@ -2791,27 +2797,31 @@ impl NetlinkRequest for RequestOpSetDeviceDoRequest<'_> {
         OpSetDeviceDoRequest::new(buf).lookup_attr(offset, missing_type)
     }
 }
-#[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
-}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -2824,22 +2834,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -2871,9 +2890,21 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_get_device_dump_request(self) -> RequestOpGetDeviceDumpRequest<'buf> {
-        RequestOpGetDeviceDumpRequest::new(self)
+        let mut res = RequestOpGetDeviceDumpRequest::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-get-device-dump-request",
+            RequestOpGetDeviceDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_set_device_do_request(self) -> RequestOpSetDeviceDoRequest<'buf> {
-        RequestOpSetDeviceDoRequest::new(self)
+        let mut res = RequestOpSetDeviceDoRequest::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-set-device-do-request",
+            RequestOpSetDeviceDoRequest::lookup,
+        );
+        res
     }
 }

@@ -7,7 +7,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg};
+use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
 use crate::consts;
 use crate::utils::*;
 use crate::{NetlinkRequest, Protocol};
@@ -4019,8 +4019,8 @@ impl Iterable<'_, ConntrackStatsAttrs> {
     }
 }
 pub struct PushCounterAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushCounterAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4077,8 +4077,8 @@ impl<Prev: Rec> Drop for PushCounterAttrs<Prev> {
     }
 }
 pub struct PushTupleProtoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTupleProtoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4160,8 +4160,8 @@ impl<Prev: Rec> Drop for PushTupleProtoAttrs<Prev> {
     }
 }
 pub struct PushTupleIpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTupleIpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4217,8 +4217,8 @@ impl<Prev: Rec> Drop for PushTupleIpAttrs<Prev> {
     }
 }
 pub struct PushTupleAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushTupleAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4272,8 +4272,8 @@ impl<Prev: Rec> Drop for PushTupleAttrs<Prev> {
     }
 }
 pub struct PushProtoinfoTcpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushProtoinfoTcpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4333,8 +4333,8 @@ impl<Prev: Rec> Drop for PushProtoinfoTcpAttrs<Prev> {
     }
 }
 pub struct PushProtoinfoDccpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushProtoinfoDccpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4387,8 +4387,8 @@ impl<Prev: Rec> Drop for PushProtoinfoDccpAttrs<Prev> {
     }
 }
 pub struct PushProtoinfoSctpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushProtoinfoSctpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4436,8 +4436,8 @@ impl<Prev: Rec> Drop for PushProtoinfoSctpAttrs<Prev> {
     }
 }
 pub struct PushProtoinfoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushProtoinfoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4493,8 +4493,8 @@ impl<Prev: Rec> Drop for PushProtoinfoAttrs<Prev> {
     }
 }
 pub struct PushHelpAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushHelpAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4543,8 +4543,8 @@ impl<Prev: Rec> Drop for PushHelpAttrs<Prev> {
     }
 }
 pub struct PushNatProtoAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushNatProtoAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4586,8 +4586,8 @@ impl<Prev: Rec> Drop for PushNatProtoAttrs<Prev> {
     }
 }
 pub struct PushNatAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushNatAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4646,8 +4646,8 @@ impl<Prev: Rec> Drop for PushNatAttrs<Prev> {
     }
 }
 pub struct PushSeqadjAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushSeqadjAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4694,8 +4694,8 @@ impl<Prev: Rec> Drop for PushSeqadjAttrs<Prev> {
     }
 }
 pub struct PushSecctxAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushSecctxAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4742,8 +4742,8 @@ impl<Prev: Rec> Drop for PushSecctxAttrs<Prev> {
     }
 }
 pub struct PushSynproxyAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushSynproxyAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4790,8 +4790,8 @@ impl<Prev: Rec> Drop for PushSynproxyAttrs<Prev> {
     }
 }
 pub struct PushConntrackAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushConntrackAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -4992,8 +4992,8 @@ impl<Prev: Rec> Drop for PushConntrackAttrs<Prev> {
     }
 }
 pub struct PushConntrackStatsAttrs<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushConntrackStatsAttrs<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -5108,7 +5108,7 @@ impl<Prev: Rec> Drop for PushConntrackStatsAttrs<Prev> {
 #[doc = "Original name: \"nfgenmsg\""]
 #[derive(Clone)]
 pub struct PushNfgenmsg {
-    buf: [u8; 4usize],
+    pub(crate) buf: [u8; 4usize],
 }
 impl PushNfgenmsg {
     #[doc = "Create zero-initialized struct"]
@@ -5166,7 +5166,7 @@ impl std::fmt::Debug for PushNfgenmsg {
 #[doc = "Original name: \"nf-ct-tcp-flags-mask\""]
 #[derive(Clone)]
 pub struct PushNfCtTcpFlagsMask {
-    buf: [u8; 2usize],
+    pub(crate) buf: [u8; 2usize],
 }
 impl PushNfCtTcpFlagsMask {
     #[doc = "Create zero-initialized struct"]
@@ -5220,8 +5220,8 @@ impl std::fmt::Debug for PushNfCtTcpFlagsMask {
 }
 #[doc = "get / dump entries"]
 pub struct PushOpGetDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -5486,8 +5486,8 @@ impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
 }
 #[doc = "get / dump entries"]
 pub struct PushOpGetDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -6242,6 +6242,9 @@ impl<'r> RequestOpGetDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetDumpRequest<&mut Vec<u8>> {
         PushOpGetDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetDumpRequest<RequestBuf<'r>> {
+        PushOpGetDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetDumpRequest<'_> {
     type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetDumpReply<'buf>>);
@@ -6272,8 +6275,8 @@ impl NetlinkRequest for RequestOpGetDumpRequest<'_> {
 }
 #[doc = "get / dump entries"]
 pub struct PushOpGetDoRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetDoRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -6513,8 +6516,8 @@ impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
 }
 #[doc = "get / dump entries"]
 pub struct PushOpGetDoReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetDoReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -7267,6 +7270,9 @@ impl<'r> RequestOpGetDoRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetDoRequest<&mut Vec<u8>> {
         PushOpGetDoRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetDoRequest<RequestBuf<'r>> {
+        PushOpGetDoRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetDoRequest<'_> {
     type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetDoReply<'buf>>);
@@ -7295,8 +7301,8 @@ impl NetlinkRequest for RequestOpGetDoRequest<'_> {
 }
 #[doc = "dump pcpu conntrack stats"]
 pub struct PushOpGetStatsDumpRequest<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetStatsDumpRequest<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -7420,8 +7426,8 @@ impl Iterable<'_, OpGetStatsDumpRequest> {
 }
 #[doc = "dump pcpu conntrack stats"]
 pub struct PushOpGetStatsDumpReply<Prev: Rec> {
-    prev: Option<Prev>,
-    header_offset: Option<usize>,
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
 }
 impl<Prev: Rec> Rec for PushOpGetStatsDumpReply<Prev> {
     fn as_rec_mut(&mut self) -> &mut Vec<u8> {
@@ -7858,6 +7864,9 @@ impl<'r> RequestOpGetStatsDumpRequest<'r> {
     pub fn encode(&mut self) -> PushOpGetStatsDumpRequest<&mut Vec<u8>> {
         PushOpGetStatsDumpRequest::new_without_header(self.request.buf_mut())
     }
+    pub fn into_encoder(self) -> PushOpGetStatsDumpRequest<RequestBuf<'r>> {
+        PushOpGetStatsDumpRequest::new_without_header(self.request.buf)
+    }
 }
 impl NetlinkRequest for RequestOpGetStatsDumpRequest<'_> {
     type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetStatsDumpReply>);
@@ -7887,26 +7896,171 @@ impl NetlinkRequest for RequestOpGetStatsDumpRequest<'_> {
     }
 }
 #[derive(Debug)]
-enum RequestBuf<'buf> {
-    Ref(&'buf mut Vec<u8>),
-    Own(Vec<u8>),
+pub struct ChainedFinal<'a> {
+    inner: Chained<'a>,
 }
+#[derive(Debug)]
+pub struct Chained<'a> {
+    buf: RequestBuf<'a>,
+    first_seq: u32,
+    lookups: Vec<(&'static str, LookupFn)>,
+    last_header_offset: usize,
+    last_kind: Option<RequestInfo>,
+}
+impl<'a> ChainedFinal<'a> {
+    pub fn into_chained(self) -> Chained<'a> {
+        self.inner
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.inner.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.inner.buf_mut()
+    }
+    fn get_index(&self, seq: u32) -> Option<u32> {
+        let min = self.inner.first_seq;
+        let max = min.wrapping_add(self.inner.lookups.len() as u32);
+        return if min <= max {
+            (min..max).contains(&seq).then(|| seq - min)
+        } else if min <= seq {
+            Some(seq - min)
+        } else if seq < max {
+            Some(u32::MAX - min + seq)
+        } else {
+            None
+        };
+    }
+}
+impl crate::traits::NetlinkChained for ChainedFinal<'_> {
+    fn protonum(&self) -> u16 {
+        PROTONUM
+    }
+    fn payload(&self) -> &[u8] {
+        self.buf()
+    }
+    fn chain_len(&self) -> usize {
+        self.inner.lookups.len()
+    }
+    fn get_index(&self, seq: u32) -> Option<usize> {
+        self.get_index(seq).map(|n| n as usize)
+    }
+    fn name(&self, index: usize) -> &'static str {
+        self.inner.lookups[index].0
+    }
+    fn lookup(&self, index: usize) -> LookupFn {
+        self.inner.lookups[index].1
+    }
+}
+impl Chained<'static> {
+    pub fn new(first_seq: u32) -> Self {
+        Self::new_from_buf(Vec::new(), first_seq)
+    }
+    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Own(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn into_buf(self) -> Vec<u8> {
+        match self.buf {
+            RequestBuf::Own(buf) => buf,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<'a> Chained<'a> {
+    pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        Self {
+            buf: RequestBuf::Ref(buf),
+            first_seq,
+            lookups: Vec::new(),
+            last_header_offset: 0,
+            last_kind: None,
+        }
+    }
+    pub fn finalize(mut self) -> ChainedFinal<'a> {
+        self.update_header();
+        ChainedFinal { inner: self }
+    }
+    pub fn request(&mut self) -> Request<'_> {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut()
+            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        let mut request = Request::new_extend(self.buf.buf_mut());
+        self.last_kind = None;
+        request.writeback = Some(&mut self.last_kind);
+        request
+    }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
+    }
+    fn update_header(&mut self) {
+        let Some(RequestInfo {
+            protocol,
+            flags,
+            name,
+            lookup,
+        }) = self.last_kind
+        else {
+            if !self.buf().is_empty() {
+                assert_eq!(
+                    self.last_header_offset + PushNlmsghdr::len(),
+                    self.buf().len()
+                );
+                self.buf.buf_mut().truncate(self.last_header_offset);
+            }
+            return;
+        };
+        let header_offset = self.last_header_offset;
+        let request_type = match protocol {
+            Protocol::Raw { request_type, .. } => request_type,
+            Protocol::Generic(_) => unreachable!(),
+        };
+        let index = self.lookups.len();
+        let seq = self.first_seq.wrapping_add(index as u32);
+        self.lookups.push((name, lookup));
+        let buf = self.buf_mut();
+        align(buf);
+        let mut header = PushNlmsghdr::new();
+        header.set_len((buf.len() - header_offset) as u32);
+        header.set_type(request_type);
+        header.set_flags(flags | consts::NLM_F_REQUEST as u16 | consts::NLM_F_ACK as u16);
+        header.set_seq(seq);
+        buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+    }
+}
+use crate::traits::LookupFn;
+use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
     flags: u16,
+    writeback: Option<&'buf mut Option<RequestInfo>>,
+}
+#[allow(unused)]
+#[derive(Debug, Clone)]
+pub struct RequestInfo {
+    protocol: Protocol,
+    flags: u16,
+    name: &'static str,
+    lookup: LookupFn,
 }
 impl Request<'static> {
     pub fn new() -> Self {
-        Self {
-            flags: 0,
-            buf: RequestBuf::Own(Vec::new()),
-        }
+        Self::new_from_buf(Vec::new())
     }
-    pub fn from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(buf: Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            writeback: None,
         }
     }
     pub fn into_buf(self) -> Vec<u8> {
@@ -7919,22 +8073,31 @@ impl Request<'static> {
 impl<'buf> Request<'buf> {
     pub fn new_with_buf(buf: &'buf mut Vec<u8>) -> Self {
         buf.clear();
+        Self::new_extend(buf)
+    }
+    pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            writeback: None,
         }
     }
-    fn buf(&self) -> &Vec<u8> {
-        match &self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
+        let Some(writeback) = &mut self.writeback else {
+            return;
+        };
+        **writeback = Some(RequestInfo {
+            protocol,
+            flags: self.flags,
+            name,
+            lookup,
+        })
     }
-    fn buf_mut(&mut self) -> &mut Vec<u8> {
-        match &mut self.buf {
-            RequestBuf::Ref(buf) => buf,
-            RequestBuf::Own(buf) => buf,
-        }
+    pub fn buf(&self) -> &Vec<u8> {
+        self.buf.buf()
+    }
+    pub fn buf_mut(&mut self) -> &mut Vec<u8> {
+        self.buf.buf_mut()
     }
     #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
     pub fn set_create(mut self) -> Self {
@@ -7966,15 +8129,33 @@ impl<'buf> Request<'buf> {
         self
     }
     pub fn op_get_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetDumpRequest<'buf> {
-        RequestOpGetDumpRequest::new(self, header)
+        let mut res = RequestOpGetDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-get-dump-request",
+            RequestOpGetDumpRequest::lookup,
+        );
+        res
     }
     pub fn op_get_do_request(self, header: &PushNfgenmsg) -> RequestOpGetDoRequest<'buf> {
-        RequestOpGetDoRequest::new(self, header)
+        let mut res = RequestOpGetDoRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-get-do-request",
+            RequestOpGetDoRequest::lookup,
+        );
+        res
     }
     pub fn op_get_stats_dump_request(
         self,
         header: &PushNfgenmsg,
     ) -> RequestOpGetStatsDumpRequest<'buf> {
-        RequestOpGetStatsDumpRequest::new(self, header)
+        let mut res = RequestOpGetStatsDumpRequest::new(self, header);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-get-stats-dump-request",
+            RequestOpGetStatsDumpRequest::lookup,
+        );
+        res
     }
 }

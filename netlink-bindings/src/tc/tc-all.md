@@ -7,7 +7,7 @@
 PushOpNewqdiscDoRequest::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -17,7 +17,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -29,17 +29,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -60,7 +60,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -72,13 +72,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -90,7 +90,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -99,13 +99,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -115,12 +115,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -128,7 +128,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -141,7 +141,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -149,13 +149,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -167,7 +167,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -175,7 +175,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -191,7 +191,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -206,7 +206,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -252,17 +252,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -292,12 +292,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -309,17 +309,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -340,7 +340,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -352,13 +352,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -370,7 +370,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -379,13 +379,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -395,12 +395,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -408,7 +408,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -421,7 +421,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -429,13 +429,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -447,7 +447,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -455,7 +455,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -471,7 +471,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -486,7 +486,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -532,17 +532,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -580,8 +580,8 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -601,15 +601,15 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -621,17 +621,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -652,7 +652,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -664,13 +664,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -682,7 +682,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -691,13 +691,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -707,12 +707,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -720,7 +720,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -733,7 +733,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -741,13 +741,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -759,7 +759,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -767,7 +767,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -783,7 +783,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -798,7 +798,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -844,17 +844,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -883,23 +883,23 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -950,10 +950,10 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -995,7 +995,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -1021,7 +1021,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -1029,7 +1029,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -1041,17 +1041,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -1072,7 +1072,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -1084,13 +1084,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -1102,7 +1102,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -1111,13 +1111,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -1127,12 +1127,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -1140,7 +1140,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -1153,7 +1153,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -1161,13 +1161,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -1179,7 +1179,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -1187,7 +1187,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -1203,7 +1203,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -1218,7 +1218,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -1264,17 +1264,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -1454,7 +1454,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -1503,7 +1503,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -1516,7 +1516,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -1530,7 +1530,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -1551,7 +1551,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -1563,17 +1563,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -1594,7 +1594,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -1606,13 +1606,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -1624,7 +1624,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -1633,13 +1633,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -1649,12 +1649,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -1662,7 +1662,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -1675,7 +1675,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -1683,13 +1683,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -1701,7 +1701,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -1709,7 +1709,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -1725,7 +1725,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -1740,7 +1740,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -1786,17 +1786,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -1812,7 +1812,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -1837,8 +1837,8 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -1847,7 +1847,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -1858,14 +1858,14 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -1877,17 +1877,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -1908,7 +1908,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -1920,13 +1920,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -1938,7 +1938,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -1947,13 +1947,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -1963,12 +1963,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -1976,7 +1976,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -1989,7 +1989,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -1997,13 +1997,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -2015,7 +2015,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -2023,7 +2023,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -2039,7 +2039,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -2054,7 +2054,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -2100,17 +2100,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -2128,10 +2128,10 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -2154,10 +2154,10 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -2167,13 +2167,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -2181,7 +2181,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -2203,7 +2203,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -2215,17 +2215,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -2246,7 +2246,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -2258,13 +2258,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -2276,7 +2276,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -2285,13 +2285,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -2301,12 +2301,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -2314,7 +2314,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -2327,7 +2327,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -2335,13 +2335,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -2353,7 +2353,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -2361,7 +2361,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -2377,7 +2377,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -2392,7 +2392,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -2438,17 +2438,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -2463,9 +2463,9 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -2497,7 +2497,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -2507,7 +2507,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -2530,7 +2530,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -2542,17 +2542,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -2573,7 +2573,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -2585,13 +2585,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -2603,7 +2603,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -2612,13 +2612,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -2628,12 +2628,12 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -2641,7 +2641,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -2654,7 +2654,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -2662,13 +2662,13 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -2680,7 +2680,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -2688,7 +2688,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -2704,7 +2704,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -2719,7 +2719,7 @@ PushOpNewqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -2765,17 +2765,17 @@ PushOpNewqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -2855,7 +2855,7 @@ let iter = OpNewqdiscDoReply::new(buf);
 PushOpDelqdiscDoRequest::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -2865,7 +2865,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -2877,17 +2877,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -2908,7 +2908,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -2920,13 +2920,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -2938,7 +2938,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -2947,13 +2947,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -2963,12 +2963,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -2976,7 +2976,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -2989,7 +2989,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -2997,13 +2997,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -3015,7 +3015,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -3023,7 +3023,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -3039,7 +3039,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -3054,7 +3054,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -3100,17 +3100,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -3140,12 +3140,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -3157,17 +3157,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -3188,7 +3188,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -3200,13 +3200,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -3218,7 +3218,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -3227,13 +3227,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -3243,12 +3243,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -3256,7 +3256,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -3269,7 +3269,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -3277,13 +3277,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -3295,7 +3295,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -3303,7 +3303,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -3319,7 +3319,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -3334,7 +3334,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -3380,17 +3380,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -3428,8 +3428,8 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -3449,15 +3449,15 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -3469,17 +3469,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -3500,7 +3500,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -3512,13 +3512,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -3530,7 +3530,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -3539,13 +3539,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -3555,12 +3555,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -3568,7 +3568,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -3581,7 +3581,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -3589,13 +3589,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -3607,7 +3607,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -3615,7 +3615,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -3631,7 +3631,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -3646,7 +3646,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -3692,17 +3692,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -3731,23 +3731,23 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -3798,10 +3798,10 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -3843,7 +3843,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -3869,7 +3869,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -3877,7 +3877,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -3889,17 +3889,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -3920,7 +3920,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -3932,13 +3932,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -3950,7 +3950,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -3959,13 +3959,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -3975,12 +3975,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -3988,7 +3988,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -4001,7 +4001,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -4009,13 +4009,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -4027,7 +4027,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -4035,7 +4035,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -4051,7 +4051,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -4066,7 +4066,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -4112,17 +4112,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -4302,7 +4302,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -4351,7 +4351,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -4364,7 +4364,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -4378,7 +4378,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -4399,7 +4399,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -4411,17 +4411,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -4442,7 +4442,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -4454,13 +4454,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -4472,7 +4472,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -4481,13 +4481,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -4497,12 +4497,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -4510,7 +4510,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -4523,7 +4523,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -4531,13 +4531,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -4549,7 +4549,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -4557,7 +4557,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -4573,7 +4573,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -4588,7 +4588,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -4634,17 +4634,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -4660,7 +4660,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -4685,8 +4685,8 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -4695,7 +4695,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -4706,14 +4706,14 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -4725,17 +4725,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -4756,7 +4756,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -4768,13 +4768,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -4786,7 +4786,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -4795,13 +4795,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -4811,12 +4811,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -4824,7 +4824,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -4837,7 +4837,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -4845,13 +4845,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -4863,7 +4863,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -4871,7 +4871,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -4887,7 +4887,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -4902,7 +4902,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -4948,17 +4948,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -4976,10 +4976,10 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -5002,10 +5002,10 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -5015,13 +5015,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -5029,7 +5029,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -5051,7 +5051,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -5063,17 +5063,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -5094,7 +5094,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -5106,13 +5106,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -5124,7 +5124,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -5133,13 +5133,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -5149,12 +5149,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -5162,7 +5162,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -5175,7 +5175,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -5183,13 +5183,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -5201,7 +5201,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -5209,7 +5209,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -5225,7 +5225,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -5240,7 +5240,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -5286,17 +5286,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -5311,9 +5311,9 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -5345,7 +5345,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -5355,7 +5355,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -5378,7 +5378,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -5390,17 +5390,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -5421,7 +5421,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -5433,13 +5433,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -5451,7 +5451,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -5460,13 +5460,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -5476,12 +5476,12 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -5489,7 +5489,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -5502,7 +5502,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -5510,13 +5510,13 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -5528,7 +5528,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -5536,7 +5536,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -5552,7 +5552,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -5567,7 +5567,7 @@ PushOpDelqdiscDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -5613,17 +5613,17 @@ PushOpDelqdiscDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -5741,7 +5741,7 @@ attrs.get_egress_block(); // u32
 PushOpGetqdiscDoReply::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -5751,7 +5751,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -5763,17 +5763,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -5794,7 +5794,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -5806,13 +5806,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -5824,7 +5824,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -5833,13 +5833,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -5849,12 +5849,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -5862,7 +5862,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -5875,7 +5875,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -5883,13 +5883,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -5901,7 +5901,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -5909,7 +5909,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -5925,7 +5925,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -5940,7 +5940,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -5986,17 +5986,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -6026,12 +6026,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -6043,17 +6043,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -6074,7 +6074,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -6086,13 +6086,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -6104,7 +6104,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -6113,13 +6113,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -6129,12 +6129,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -6142,7 +6142,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -6155,7 +6155,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -6163,13 +6163,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -6181,7 +6181,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -6189,7 +6189,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -6205,7 +6205,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -6220,7 +6220,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -6266,17 +6266,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -6314,8 +6314,8 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -6335,15 +6335,15 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -6355,17 +6355,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -6386,7 +6386,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -6398,13 +6398,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -6416,7 +6416,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -6425,13 +6425,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -6441,12 +6441,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -6454,7 +6454,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -6467,7 +6467,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -6475,13 +6475,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -6493,7 +6493,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -6501,7 +6501,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -6517,7 +6517,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -6532,7 +6532,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -6578,17 +6578,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -6617,23 +6617,23 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -6684,10 +6684,10 @@ PushOpGetqdiscDoReply::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -6729,7 +6729,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -6755,7 +6755,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -6763,7 +6763,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -6775,17 +6775,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -6806,7 +6806,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -6818,13 +6818,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -6836,7 +6836,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -6845,13 +6845,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -6861,12 +6861,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -6874,7 +6874,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -6887,7 +6887,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -6895,13 +6895,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -6913,7 +6913,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -6921,7 +6921,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -6937,7 +6937,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -6952,7 +6952,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -6998,17 +6998,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -7188,7 +7188,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -7237,7 +7237,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -7250,7 +7250,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -7264,7 +7264,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -7285,7 +7285,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -7297,17 +7297,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -7328,7 +7328,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -7340,13 +7340,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -7358,7 +7358,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -7367,13 +7367,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -7383,12 +7383,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -7396,7 +7396,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -7409,7 +7409,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -7417,13 +7417,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -7435,7 +7435,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -7443,7 +7443,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -7459,7 +7459,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -7474,7 +7474,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -7520,17 +7520,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -7546,7 +7546,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -7571,8 +7571,8 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -7581,7 +7581,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -7592,14 +7592,14 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -7611,17 +7611,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -7642,7 +7642,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -7654,13 +7654,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -7672,7 +7672,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -7681,13 +7681,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -7697,12 +7697,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -7710,7 +7710,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -7723,7 +7723,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -7731,13 +7731,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -7749,7 +7749,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -7757,7 +7757,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -7773,7 +7773,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -7788,7 +7788,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -7834,17 +7834,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -7862,10 +7862,10 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -7888,10 +7888,10 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -7901,13 +7901,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -7915,7 +7915,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -7937,7 +7937,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -7949,17 +7949,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -7980,7 +7980,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -7992,13 +7992,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -8010,7 +8010,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -8019,13 +8019,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -8035,12 +8035,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -8048,7 +8048,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -8061,7 +8061,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -8069,13 +8069,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -8087,7 +8087,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -8095,7 +8095,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -8111,7 +8111,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -8126,7 +8126,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -8172,17 +8172,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -8197,9 +8197,9 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -8231,7 +8231,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -8241,7 +8241,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -8264,7 +8264,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -8276,17 +8276,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -8307,7 +8307,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -8319,13 +8319,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -8337,7 +8337,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -8346,13 +8346,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -8362,12 +8362,12 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -8375,7 +8375,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -8388,7 +8388,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -8396,13 +8396,13 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -8414,7 +8414,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -8422,7 +8422,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -8438,7 +8438,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -8453,7 +8453,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -8499,17 +8499,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -8531,7 +8531,7 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
   .end_nested()
   .push_stats(val) // PushTcStats
-  .sub_nested_xstats_cake()
+  .nested_xstats_cake()
     .push_pad(val) // &[u8]
     .push_capacity_estimate64(val) // u64
     .push_memory_limit(val) // u32
@@ -8577,24 +8577,24 @@ PushOpGetqdiscDoReply::new(&mut vec)
     .push_p_drop(val) // u32
     .push_blue_timer_us(val) // i32
   .end_nested()
-  .sub_nested_xstats_choke(fixed_header) // PushTcChokeXstats
-  .sub_nested_xstats_codel(fixed_header) // PushTcCodelXstats
-  .sub_nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
-  .sub_nested_xstats_fq(fixed_header) // PushTcFqQdStats
-  .sub_nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
-  .sub_nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
-  .sub_nested_xstats_hhf(fixed_header) // PushTcHhfXstats
-  .sub_nested_xstats_pie(fixed_header) // PushTcPieXstats
-  .sub_nested_xstats_red(fixed_header) // PushTcRedXstats
-  .sub_nested_xstats_sfb(fixed_header) // PushTcSfbXstats
-  .sub_nested_xstats_sfq(fixed_header) // PushTcSfqXstats
+  .nested_xstats_choke(fixed_header) // PushTcChokeXstats
+  .nested_xstats_codel(fixed_header) // PushTcCodelXstats
+  .nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
+  .nested_xstats_fq(fixed_header) // PushTcFqQdStats
+  .nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
+  .nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
+  .nested_xstats_hhf(fixed_header) // PushTcHhfXstats
+  .nested_xstats_pie(fixed_header) // PushTcPieXstats
+  .nested_xstats_red(fixed_header) // PushTcRedXstats
+  .nested_xstats_sfb(fixed_header) // PushTcSfbXstats
+  .nested_xstats_sfq(fixed_header) // PushTcSfqXstats
   .push_rate(val) // PushGnetEstimator
   .push_fcnt(val) // u32
   .nested_stats2()
     .push_basic(val) // PushGnetStatsBasic
     .push_rate_est(val) // PushGnetStatsRateEst
     .push_queue(val) // PushGnetStatsQueue
-    .sub_nested_app_cake()
+    .nested_app_cake()
       .push_pad(val) // &[u8]
       .push_capacity_estimate64(val) // u64
       .push_memory_limit(val) // u32
@@ -8640,17 +8640,17 @@ PushOpGetqdiscDoReply::new(&mut vec)
       .push_p_drop(val) // u32
       .push_blue_timer_us(val) // i32
     .end_nested()
-    .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-    .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-    .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-    .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-    .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-    .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-    .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-    .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-    .sub_nested_app_red(fixed_header) // PushTcRedXstats
-    .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-    .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+    .nested_app_choke(fixed_header) // PushTcChokeXstats
+    .nested_app_codel(fixed_header) // PushTcCodelXstats
+    .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+    .nested_app_fq(fixed_header) // PushTcFqQdStats
+    .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+    .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+    .nested_app_hhf(fixed_header) // PushTcHhfXstats
+    .nested_app_pie(fixed_header) // PushTcPieXstats
+    .nested_app_red(fixed_header) // PushTcRedXstats
+    .nested_app_sfb(fixed_header) // PushTcSfbXstats
+    .nested_app_sfq(fixed_header) // PushTcSfqXstats
     .push_rate_est64(val) // PushGnetStatsRateEst64
     .push_pad(val) // &[u8]
     .push_basic_hw(val) // PushGnetStatsBasic
@@ -8794,7 +8794,7 @@ attrs.get_egress_block(); // u32
 PushOpGetqdiscDumpReply::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -8804,7 +8804,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -8816,17 +8816,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -8847,7 +8847,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -8859,13 +8859,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -8877,7 +8877,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -8886,13 +8886,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -8902,12 +8902,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -8915,7 +8915,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -8928,7 +8928,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -8936,13 +8936,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -8954,7 +8954,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -8962,7 +8962,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -8978,7 +8978,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -8993,7 +8993,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -9039,17 +9039,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -9079,12 +9079,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -9096,17 +9096,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -9127,7 +9127,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -9139,13 +9139,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -9157,7 +9157,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -9166,13 +9166,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -9182,12 +9182,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -9195,7 +9195,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -9208,7 +9208,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -9216,13 +9216,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -9234,7 +9234,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -9242,7 +9242,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -9258,7 +9258,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -9273,7 +9273,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -9319,17 +9319,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -9367,8 +9367,8 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -9388,15 +9388,15 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -9408,17 +9408,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -9439,7 +9439,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -9451,13 +9451,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -9469,7 +9469,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -9478,13 +9478,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -9494,12 +9494,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -9507,7 +9507,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -9520,7 +9520,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -9528,13 +9528,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -9546,7 +9546,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -9554,7 +9554,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -9570,7 +9570,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -9585,7 +9585,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -9631,17 +9631,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -9670,23 +9670,23 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -9737,10 +9737,10 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -9782,7 +9782,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -9808,7 +9808,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -9816,7 +9816,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -9828,17 +9828,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -9859,7 +9859,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -9871,13 +9871,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -9889,7 +9889,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -9898,13 +9898,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -9914,12 +9914,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -9927,7 +9927,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -9940,7 +9940,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -9948,13 +9948,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -9966,7 +9966,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -9974,7 +9974,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -9990,7 +9990,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -10005,7 +10005,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -10051,17 +10051,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -10241,7 +10241,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -10290,7 +10290,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -10303,7 +10303,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -10317,7 +10317,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -10338,7 +10338,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -10350,17 +10350,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -10381,7 +10381,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -10393,13 +10393,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -10411,7 +10411,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -10420,13 +10420,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -10436,12 +10436,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -10449,7 +10449,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -10462,7 +10462,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -10470,13 +10470,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -10488,7 +10488,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -10496,7 +10496,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -10512,7 +10512,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -10527,7 +10527,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -10573,17 +10573,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -10599,7 +10599,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -10624,8 +10624,8 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -10634,7 +10634,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -10645,14 +10645,14 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -10664,17 +10664,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -10695,7 +10695,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -10707,13 +10707,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -10725,7 +10725,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -10734,13 +10734,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -10750,12 +10750,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -10763,7 +10763,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -10776,7 +10776,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -10784,13 +10784,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -10802,7 +10802,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -10810,7 +10810,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -10826,7 +10826,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -10841,7 +10841,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -10887,17 +10887,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -10915,10 +10915,10 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -10941,10 +10941,10 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -10954,13 +10954,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -10968,7 +10968,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -10990,7 +10990,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -11002,17 +11002,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -11033,7 +11033,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -11045,13 +11045,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -11063,7 +11063,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -11072,13 +11072,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -11088,12 +11088,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -11101,7 +11101,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -11114,7 +11114,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -11122,13 +11122,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -11140,7 +11140,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -11148,7 +11148,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -11164,7 +11164,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -11179,7 +11179,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -11225,17 +11225,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -11250,9 +11250,9 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -11284,7 +11284,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -11294,7 +11294,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -11317,7 +11317,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -11329,17 +11329,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -11360,7 +11360,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -11372,13 +11372,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -11390,7 +11390,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -11399,13 +11399,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -11415,12 +11415,12 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -11428,7 +11428,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -11441,7 +11441,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -11449,13 +11449,13 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -11467,7 +11467,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -11475,7 +11475,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -11491,7 +11491,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -11506,7 +11506,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -11552,17 +11552,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -11584,7 +11584,7 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_pad(val) // &[u8]
   .end_nested()
   .push_stats(val) // PushTcStats
-  .sub_nested_xstats_cake()
+  .nested_xstats_cake()
     .push_pad(val) // &[u8]
     .push_capacity_estimate64(val) // u64
     .push_memory_limit(val) // u32
@@ -11630,24 +11630,24 @@ PushOpGetqdiscDumpReply::new(&mut vec)
     .push_p_drop(val) // u32
     .push_blue_timer_us(val) // i32
   .end_nested()
-  .sub_nested_xstats_choke(fixed_header) // PushTcChokeXstats
-  .sub_nested_xstats_codel(fixed_header) // PushTcCodelXstats
-  .sub_nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
-  .sub_nested_xstats_fq(fixed_header) // PushTcFqQdStats
-  .sub_nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
-  .sub_nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
-  .sub_nested_xstats_hhf(fixed_header) // PushTcHhfXstats
-  .sub_nested_xstats_pie(fixed_header) // PushTcPieXstats
-  .sub_nested_xstats_red(fixed_header) // PushTcRedXstats
-  .sub_nested_xstats_sfb(fixed_header) // PushTcSfbXstats
-  .sub_nested_xstats_sfq(fixed_header) // PushTcSfqXstats
+  .nested_xstats_choke(fixed_header) // PushTcChokeXstats
+  .nested_xstats_codel(fixed_header) // PushTcCodelXstats
+  .nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
+  .nested_xstats_fq(fixed_header) // PushTcFqQdStats
+  .nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
+  .nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
+  .nested_xstats_hhf(fixed_header) // PushTcHhfXstats
+  .nested_xstats_pie(fixed_header) // PushTcPieXstats
+  .nested_xstats_red(fixed_header) // PushTcRedXstats
+  .nested_xstats_sfb(fixed_header) // PushTcSfbXstats
+  .nested_xstats_sfq(fixed_header) // PushTcSfqXstats
   .push_rate(val) // PushGnetEstimator
   .push_fcnt(val) // u32
   .nested_stats2()
     .push_basic(val) // PushGnetStatsBasic
     .push_rate_est(val) // PushGnetStatsRateEst
     .push_queue(val) // PushGnetStatsQueue
-    .sub_nested_app_cake()
+    .nested_app_cake()
       .push_pad(val) // &[u8]
       .push_capacity_estimate64(val) // u64
       .push_memory_limit(val) // u32
@@ -11693,17 +11693,17 @@ PushOpGetqdiscDumpReply::new(&mut vec)
       .push_p_drop(val) // u32
       .push_blue_timer_us(val) // i32
     .end_nested()
-    .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-    .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-    .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-    .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-    .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-    .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-    .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-    .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-    .sub_nested_app_red(fixed_header) // PushTcRedXstats
-    .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-    .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+    .nested_app_choke(fixed_header) // PushTcChokeXstats
+    .nested_app_codel(fixed_header) // PushTcCodelXstats
+    .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+    .nested_app_fq(fixed_header) // PushTcFqQdStats
+    .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+    .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+    .nested_app_hhf(fixed_header) // PushTcHhfXstats
+    .nested_app_pie(fixed_header) // PushTcPieXstats
+    .nested_app_red(fixed_header) // PushTcRedXstats
+    .nested_app_sfb(fixed_header) // PushTcSfbXstats
+    .nested_app_sfq(fixed_header) // PushTcSfqXstats
     .push_rate_est64(val) // PushGnetStatsRateEst64
     .push_pad(val) // &[u8]
     .push_basic_hw(val) // PushGnetStatsBasic
@@ -11811,7 +11811,7 @@ for attr in iter {
 PushOpNewtclassDoRequest::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -11821,7 +11821,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -11833,17 +11833,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -11864,7 +11864,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -11876,13 +11876,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -11894,7 +11894,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -11903,13 +11903,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -11919,12 +11919,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -11932,7 +11932,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -11945,7 +11945,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -11953,13 +11953,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -11971,7 +11971,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -11979,7 +11979,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -11995,7 +11995,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -12010,7 +12010,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -12056,17 +12056,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -12096,12 +12096,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -12113,17 +12113,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -12144,7 +12144,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -12156,13 +12156,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -12174,7 +12174,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -12183,13 +12183,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -12199,12 +12199,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -12212,7 +12212,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -12225,7 +12225,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -12233,13 +12233,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -12251,7 +12251,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -12259,7 +12259,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -12275,7 +12275,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -12290,7 +12290,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -12336,17 +12336,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -12384,8 +12384,8 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -12405,15 +12405,15 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -12425,17 +12425,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -12456,7 +12456,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -12468,13 +12468,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -12486,7 +12486,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -12495,13 +12495,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -12511,12 +12511,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -12524,7 +12524,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -12537,7 +12537,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -12545,13 +12545,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -12563,7 +12563,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -12571,7 +12571,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -12587,7 +12587,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -12602,7 +12602,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -12648,17 +12648,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -12687,23 +12687,23 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -12754,10 +12754,10 @@ PushOpNewtclassDoRequest::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -12799,7 +12799,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -12825,7 +12825,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -12833,7 +12833,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -12845,17 +12845,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -12876,7 +12876,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -12888,13 +12888,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -12906,7 +12906,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -12915,13 +12915,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -12931,12 +12931,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -12944,7 +12944,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -12957,7 +12957,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -12965,13 +12965,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -12983,7 +12983,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -12991,7 +12991,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -13007,7 +13007,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -13022,7 +13022,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -13068,17 +13068,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -13258,7 +13258,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -13307,7 +13307,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -13320,7 +13320,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -13334,7 +13334,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -13355,7 +13355,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -13367,17 +13367,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -13398,7 +13398,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -13410,13 +13410,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -13428,7 +13428,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -13437,13 +13437,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -13453,12 +13453,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -13466,7 +13466,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -13479,7 +13479,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -13487,13 +13487,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -13505,7 +13505,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -13513,7 +13513,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -13529,7 +13529,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -13544,7 +13544,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -13590,17 +13590,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -13616,7 +13616,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -13641,8 +13641,8 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -13651,7 +13651,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -13662,14 +13662,14 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -13681,17 +13681,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -13712,7 +13712,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -13724,13 +13724,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -13742,7 +13742,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -13751,13 +13751,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -13767,12 +13767,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -13780,7 +13780,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -13793,7 +13793,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -13801,13 +13801,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -13819,7 +13819,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -13827,7 +13827,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -13843,7 +13843,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -13858,7 +13858,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -13904,17 +13904,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -13932,10 +13932,10 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -13958,10 +13958,10 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -13971,13 +13971,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -13985,7 +13985,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -14007,7 +14007,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -14019,17 +14019,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -14050,7 +14050,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -14062,13 +14062,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -14080,7 +14080,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -14089,13 +14089,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -14105,12 +14105,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -14118,7 +14118,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -14131,7 +14131,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -14139,13 +14139,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -14157,7 +14157,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -14165,7 +14165,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -14181,7 +14181,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -14196,7 +14196,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -14242,17 +14242,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -14267,9 +14267,9 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -14301,7 +14301,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -14311,7 +14311,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -14334,7 +14334,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -14346,17 +14346,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -14377,7 +14377,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -14389,13 +14389,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -14407,7 +14407,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -14416,13 +14416,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -14432,12 +14432,12 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -14445,7 +14445,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -14458,7 +14458,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -14466,13 +14466,13 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -14484,7 +14484,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -14492,7 +14492,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -14508,7 +14508,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -14523,7 +14523,7 @@ PushOpNewtclassDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -14569,17 +14569,17 @@ PushOpNewtclassDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -14740,7 +14740,7 @@ attrs.get_egress_block(); // u32
 PushOpGettclassDoReply::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -14750,7 +14750,7 @@ PushOpGettclassDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -14762,17 +14762,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -14793,7 +14793,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -14805,13 +14805,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -14823,7 +14823,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -14832,13 +14832,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -14848,12 +14848,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -14861,7 +14861,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -14874,7 +14874,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -14882,13 +14882,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -14900,7 +14900,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -14908,7 +14908,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -14924,7 +14924,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -14939,7 +14939,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -14985,17 +14985,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -15025,12 +15025,12 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -15042,17 +15042,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -15073,7 +15073,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -15085,13 +15085,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -15103,7 +15103,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -15112,13 +15112,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -15128,12 +15128,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -15141,7 +15141,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -15154,7 +15154,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -15162,13 +15162,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -15180,7 +15180,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -15188,7 +15188,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -15204,7 +15204,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -15219,7 +15219,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -15265,17 +15265,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -15313,8 +15313,8 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -15334,15 +15334,15 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -15354,17 +15354,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -15385,7 +15385,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -15397,13 +15397,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -15415,7 +15415,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -15424,13 +15424,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -15440,12 +15440,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -15453,7 +15453,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -15466,7 +15466,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -15474,13 +15474,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -15492,7 +15492,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -15500,7 +15500,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -15516,7 +15516,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -15531,7 +15531,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -15577,17 +15577,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -15616,23 +15616,23 @@ PushOpGettclassDoReply::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -15683,10 +15683,10 @@ PushOpGettclassDoReply::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -15728,7 +15728,7 @@ PushOpGettclassDoReply::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -15754,7 +15754,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -15762,7 +15762,7 @@ PushOpGettclassDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -15774,17 +15774,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -15805,7 +15805,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -15817,13 +15817,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -15835,7 +15835,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -15844,13 +15844,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -15860,12 +15860,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -15873,7 +15873,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -15886,7 +15886,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -15894,13 +15894,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -15912,7 +15912,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -15920,7 +15920,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -15936,7 +15936,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -15951,7 +15951,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -15997,17 +15997,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -16187,7 +16187,7 @@ PushOpGettclassDoReply::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -16236,7 +16236,7 @@ PushOpGettclassDoReply::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -16249,7 +16249,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -16263,7 +16263,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -16284,7 +16284,7 @@ PushOpGettclassDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -16296,17 +16296,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -16327,7 +16327,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -16339,13 +16339,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -16357,7 +16357,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -16366,13 +16366,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -16382,12 +16382,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -16395,7 +16395,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -16408,7 +16408,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -16416,13 +16416,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -16434,7 +16434,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -16442,7 +16442,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -16458,7 +16458,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -16473,7 +16473,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -16519,17 +16519,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -16545,7 +16545,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -16570,8 +16570,8 @@ PushOpGettclassDoReply::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -16580,7 +16580,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -16591,14 +16591,14 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -16610,17 +16610,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -16641,7 +16641,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -16653,13 +16653,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -16671,7 +16671,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -16680,13 +16680,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -16696,12 +16696,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -16709,7 +16709,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -16722,7 +16722,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -16730,13 +16730,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -16748,7 +16748,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -16756,7 +16756,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -16772,7 +16772,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -16787,7 +16787,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -16833,17 +16833,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -16861,10 +16861,10 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -16887,10 +16887,10 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -16900,13 +16900,13 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -16914,7 +16914,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -16936,7 +16936,7 @@ PushOpGettclassDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -16948,17 +16948,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -16979,7 +16979,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -16991,13 +16991,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -17009,7 +17009,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -17018,13 +17018,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -17034,12 +17034,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -17047,7 +17047,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -17060,7 +17060,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -17068,13 +17068,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -17086,7 +17086,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -17094,7 +17094,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -17110,7 +17110,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -17125,7 +17125,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -17171,17 +17171,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -17196,9 +17196,9 @@ PushOpGettclassDoReply::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -17230,7 +17230,7 @@ PushOpGettclassDoReply::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -17240,7 +17240,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -17263,7 +17263,7 @@ PushOpGettclassDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -17275,17 +17275,17 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -17306,7 +17306,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -17318,13 +17318,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -17336,7 +17336,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -17345,13 +17345,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -17361,12 +17361,12 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -17374,7 +17374,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -17387,7 +17387,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -17395,13 +17395,13 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -17413,7 +17413,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -17421,7 +17421,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -17437,7 +17437,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -17452,7 +17452,7 @@ PushOpGettclassDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -17498,17 +17498,17 @@ PushOpGettclassDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -17530,7 +17530,7 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
   .end_nested()
   .push_stats(val) // PushTcStats
-  .sub_nested_xstats_cake()
+  .nested_xstats_cake()
     .push_pad(val) // &[u8]
     .push_capacity_estimate64(val) // u64
     .push_memory_limit(val) // u32
@@ -17576,24 +17576,24 @@ PushOpGettclassDoReply::new(&mut vec)
     .push_p_drop(val) // u32
     .push_blue_timer_us(val) // i32
   .end_nested()
-  .sub_nested_xstats_choke(fixed_header) // PushTcChokeXstats
-  .sub_nested_xstats_codel(fixed_header) // PushTcCodelXstats
-  .sub_nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
-  .sub_nested_xstats_fq(fixed_header) // PushTcFqQdStats
-  .sub_nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
-  .sub_nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
-  .sub_nested_xstats_hhf(fixed_header) // PushTcHhfXstats
-  .sub_nested_xstats_pie(fixed_header) // PushTcPieXstats
-  .sub_nested_xstats_red(fixed_header) // PushTcRedXstats
-  .sub_nested_xstats_sfb(fixed_header) // PushTcSfbXstats
-  .sub_nested_xstats_sfq(fixed_header) // PushTcSfqXstats
+  .nested_xstats_choke(fixed_header) // PushTcChokeXstats
+  .nested_xstats_codel(fixed_header) // PushTcCodelXstats
+  .nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
+  .nested_xstats_fq(fixed_header) // PushTcFqQdStats
+  .nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
+  .nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
+  .nested_xstats_hhf(fixed_header) // PushTcHhfXstats
+  .nested_xstats_pie(fixed_header) // PushTcPieXstats
+  .nested_xstats_red(fixed_header) // PushTcRedXstats
+  .nested_xstats_sfb(fixed_header) // PushTcSfbXstats
+  .nested_xstats_sfq(fixed_header) // PushTcSfqXstats
   .push_rate(val) // PushGnetEstimator
   .push_fcnt(val) // u32
   .nested_stats2()
     .push_basic(val) // PushGnetStatsBasic
     .push_rate_est(val) // PushGnetStatsRateEst
     .push_queue(val) // PushGnetStatsQueue
-    .sub_nested_app_cake()
+    .nested_app_cake()
       .push_pad(val) // &[u8]
       .push_capacity_estimate64(val) // u64
       .push_memory_limit(val) // u32
@@ -17639,17 +17639,17 @@ PushOpGettclassDoReply::new(&mut vec)
       .push_p_drop(val) // u32
       .push_blue_timer_us(val) // i32
     .end_nested()
-    .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-    .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-    .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-    .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-    .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-    .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-    .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-    .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-    .sub_nested_app_red(fixed_header) // PushTcRedXstats
-    .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-    .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+    .nested_app_choke(fixed_header) // PushTcChokeXstats
+    .nested_app_codel(fixed_header) // PushTcCodelXstats
+    .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+    .nested_app_fq(fixed_header) // PushTcFqQdStats
+    .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+    .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+    .nested_app_hhf(fixed_header) // PushTcHhfXstats
+    .nested_app_pie(fixed_header) // PushTcPieXstats
+    .nested_app_red(fixed_header) // PushTcRedXstats
+    .nested_app_sfb(fixed_header) // PushTcSfbXstats
+    .nested_app_sfq(fixed_header) // PushTcSfqXstats
     .push_rate_est64(val) // PushGnetStatsRateEst64
     .push_pad(val) // &[u8]
     .push_basic_hw(val) // PushGnetStatsBasic
@@ -17753,7 +17753,7 @@ for attr in iter {
 PushOpNewtfilterDoRequest::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -17763,7 +17763,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -17775,17 +17775,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -17806,7 +17806,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -17818,13 +17818,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -17836,7 +17836,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -17845,13 +17845,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -17861,12 +17861,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -17874,7 +17874,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -17887,7 +17887,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -17895,13 +17895,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -17913,7 +17913,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -17921,7 +17921,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -17937,7 +17937,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -17952,7 +17952,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -17998,17 +17998,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -18038,12 +18038,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -18055,17 +18055,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -18086,7 +18086,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -18098,13 +18098,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -18116,7 +18116,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -18125,13 +18125,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -18141,12 +18141,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -18154,7 +18154,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -18167,7 +18167,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -18175,13 +18175,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -18193,7 +18193,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -18201,7 +18201,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -18217,7 +18217,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -18232,7 +18232,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -18278,17 +18278,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -18326,8 +18326,8 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -18347,15 +18347,15 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -18367,17 +18367,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -18398,7 +18398,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -18410,13 +18410,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -18428,7 +18428,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -18437,13 +18437,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -18453,12 +18453,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -18466,7 +18466,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -18479,7 +18479,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -18487,13 +18487,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -18505,7 +18505,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -18513,7 +18513,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -18529,7 +18529,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -18544,7 +18544,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -18590,17 +18590,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -18629,23 +18629,23 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -18696,10 +18696,10 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -18741,7 +18741,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -18767,7 +18767,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -18775,7 +18775,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -18787,17 +18787,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -18818,7 +18818,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -18830,13 +18830,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -18848,7 +18848,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -18857,13 +18857,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -18873,12 +18873,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -18886,7 +18886,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -18899,7 +18899,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -18907,13 +18907,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -18925,7 +18925,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -18933,7 +18933,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -18949,7 +18949,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -18964,7 +18964,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -19010,17 +19010,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -19200,7 +19200,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -19249,7 +19249,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -19262,7 +19262,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -19276,7 +19276,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -19297,7 +19297,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -19309,17 +19309,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -19340,7 +19340,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -19352,13 +19352,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -19370,7 +19370,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -19379,13 +19379,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -19395,12 +19395,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -19408,7 +19408,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -19421,7 +19421,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -19429,13 +19429,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -19447,7 +19447,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -19455,7 +19455,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -19471,7 +19471,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -19486,7 +19486,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -19532,17 +19532,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -19558,7 +19558,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -19583,8 +19583,8 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -19593,7 +19593,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -19604,14 +19604,14 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -19623,17 +19623,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -19654,7 +19654,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -19666,13 +19666,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -19684,7 +19684,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -19693,13 +19693,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -19709,12 +19709,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -19722,7 +19722,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -19735,7 +19735,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -19743,13 +19743,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -19761,7 +19761,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -19769,7 +19769,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -19785,7 +19785,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -19800,7 +19800,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -19846,17 +19846,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -19874,10 +19874,10 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -19900,10 +19900,10 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -19913,13 +19913,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -19927,7 +19927,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -19949,7 +19949,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -19961,17 +19961,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -19992,7 +19992,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -20004,13 +20004,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -20022,7 +20022,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -20031,13 +20031,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -20047,12 +20047,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -20060,7 +20060,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -20073,7 +20073,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -20081,13 +20081,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -20099,7 +20099,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -20107,7 +20107,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -20123,7 +20123,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -20138,7 +20138,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -20184,17 +20184,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -20209,9 +20209,9 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -20243,7 +20243,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -20253,7 +20253,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -20276,7 +20276,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -20288,17 +20288,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -20319,7 +20319,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -20331,13 +20331,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -20349,7 +20349,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -20358,13 +20358,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -20374,12 +20374,12 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -20387,7 +20387,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -20400,7 +20400,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -20408,13 +20408,13 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -20426,7 +20426,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -20434,7 +20434,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -20450,7 +20450,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -20465,7 +20465,7 @@ PushOpNewtfilterDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -20511,17 +20511,17 @@ PushOpNewtfilterDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -20693,7 +20693,7 @@ attrs.get_egress_block(); // u32
 PushOpGettfilterDoReply::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -20703,7 +20703,7 @@ PushOpGettfilterDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -20715,17 +20715,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -20746,7 +20746,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -20758,13 +20758,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -20776,7 +20776,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -20785,13 +20785,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -20801,12 +20801,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -20814,7 +20814,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -20827,7 +20827,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -20835,13 +20835,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -20853,7 +20853,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -20861,7 +20861,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -20877,7 +20877,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -20892,7 +20892,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -20938,17 +20938,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -20978,12 +20978,12 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -20995,17 +20995,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -21026,7 +21026,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -21038,13 +21038,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -21056,7 +21056,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -21065,13 +21065,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -21081,12 +21081,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -21094,7 +21094,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -21107,7 +21107,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -21115,13 +21115,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -21133,7 +21133,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -21141,7 +21141,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -21157,7 +21157,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -21172,7 +21172,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -21218,17 +21218,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -21266,8 +21266,8 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -21287,15 +21287,15 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -21307,17 +21307,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -21338,7 +21338,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -21350,13 +21350,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -21368,7 +21368,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -21377,13 +21377,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -21393,12 +21393,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -21406,7 +21406,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -21419,7 +21419,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -21427,13 +21427,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -21445,7 +21445,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -21453,7 +21453,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -21469,7 +21469,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -21484,7 +21484,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -21530,17 +21530,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -21569,23 +21569,23 @@ PushOpGettfilterDoReply::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -21636,10 +21636,10 @@ PushOpGettfilterDoReply::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -21681,7 +21681,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -21707,7 +21707,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -21715,7 +21715,7 @@ PushOpGettfilterDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -21727,17 +21727,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -21758,7 +21758,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -21770,13 +21770,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -21788,7 +21788,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -21797,13 +21797,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -21813,12 +21813,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -21826,7 +21826,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -21839,7 +21839,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -21847,13 +21847,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -21865,7 +21865,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -21873,7 +21873,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -21889,7 +21889,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -21904,7 +21904,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -21950,17 +21950,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -22140,7 +22140,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -22189,7 +22189,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -22202,7 +22202,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -22216,7 +22216,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -22237,7 +22237,7 @@ PushOpGettfilterDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -22249,17 +22249,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -22280,7 +22280,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -22292,13 +22292,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -22310,7 +22310,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -22319,13 +22319,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -22335,12 +22335,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -22348,7 +22348,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -22361,7 +22361,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -22369,13 +22369,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -22387,7 +22387,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -22395,7 +22395,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -22411,7 +22411,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -22426,7 +22426,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -22472,17 +22472,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -22498,7 +22498,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -22523,8 +22523,8 @@ PushOpGettfilterDoReply::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -22533,7 +22533,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -22544,14 +22544,14 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -22563,17 +22563,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -22594,7 +22594,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -22606,13 +22606,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -22624,7 +22624,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -22633,13 +22633,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -22649,12 +22649,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -22662,7 +22662,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -22675,7 +22675,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -22683,13 +22683,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -22701,7 +22701,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -22709,7 +22709,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -22725,7 +22725,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -22740,7 +22740,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -22786,17 +22786,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -22814,10 +22814,10 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -22840,10 +22840,10 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -22853,13 +22853,13 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -22867,7 +22867,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -22889,7 +22889,7 @@ PushOpGettfilterDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -22901,17 +22901,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -22932,7 +22932,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -22944,13 +22944,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -22962,7 +22962,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -22971,13 +22971,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -22987,12 +22987,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -23000,7 +23000,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -23013,7 +23013,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -23021,13 +23021,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -23039,7 +23039,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -23047,7 +23047,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -23063,7 +23063,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -23078,7 +23078,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -23124,17 +23124,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -23149,9 +23149,9 @@ PushOpGettfilterDoReply::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -23183,7 +23183,7 @@ PushOpGettfilterDoReply::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -23193,7 +23193,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -23216,7 +23216,7 @@ PushOpGettfilterDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -23228,17 +23228,17 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -23259,7 +23259,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -23271,13 +23271,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -23289,7 +23289,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -23298,13 +23298,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -23314,12 +23314,12 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -23327,7 +23327,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -23340,7 +23340,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -23348,13 +23348,13 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -23366,7 +23366,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -23374,7 +23374,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -23390,7 +23390,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -23405,7 +23405,7 @@ PushOpGettfilterDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -23451,17 +23451,17 @@ PushOpGettfilterDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -23483,7 +23483,7 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
   .end_nested()
   .push_stats(val) // PushTcStats
-  .sub_nested_xstats_cake()
+  .nested_xstats_cake()
     .push_pad(val) // &[u8]
     .push_capacity_estimate64(val) // u64
     .push_memory_limit(val) // u32
@@ -23529,24 +23529,24 @@ PushOpGettfilterDoReply::new(&mut vec)
     .push_p_drop(val) // u32
     .push_blue_timer_us(val) // i32
   .end_nested()
-  .sub_nested_xstats_choke(fixed_header) // PushTcChokeXstats
-  .sub_nested_xstats_codel(fixed_header) // PushTcCodelXstats
-  .sub_nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
-  .sub_nested_xstats_fq(fixed_header) // PushTcFqQdStats
-  .sub_nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
-  .sub_nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
-  .sub_nested_xstats_hhf(fixed_header) // PushTcHhfXstats
-  .sub_nested_xstats_pie(fixed_header) // PushTcPieXstats
-  .sub_nested_xstats_red(fixed_header) // PushTcRedXstats
-  .sub_nested_xstats_sfb(fixed_header) // PushTcSfbXstats
-  .sub_nested_xstats_sfq(fixed_header) // PushTcSfqXstats
+  .nested_xstats_choke(fixed_header) // PushTcChokeXstats
+  .nested_xstats_codel(fixed_header) // PushTcCodelXstats
+  .nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
+  .nested_xstats_fq(fixed_header) // PushTcFqQdStats
+  .nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
+  .nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
+  .nested_xstats_hhf(fixed_header) // PushTcHhfXstats
+  .nested_xstats_pie(fixed_header) // PushTcPieXstats
+  .nested_xstats_red(fixed_header) // PushTcRedXstats
+  .nested_xstats_sfb(fixed_header) // PushTcSfbXstats
+  .nested_xstats_sfq(fixed_header) // PushTcSfqXstats
   .push_rate(val) // PushGnetEstimator
   .push_fcnt(val) // u32
   .nested_stats2()
     .push_basic(val) // PushGnetStatsBasic
     .push_rate_est(val) // PushGnetStatsRateEst
     .push_queue(val) // PushGnetStatsQueue
-    .sub_nested_app_cake()
+    .nested_app_cake()
       .push_pad(val) // &[u8]
       .push_capacity_estimate64(val) // u64
       .push_memory_limit(val) // u32
@@ -23592,17 +23592,17 @@ PushOpGettfilterDoReply::new(&mut vec)
       .push_p_drop(val) // u32
       .push_blue_timer_us(val) // i32
     .end_nested()
-    .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-    .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-    .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-    .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-    .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-    .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-    .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-    .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-    .sub_nested_app_red(fixed_header) // PushTcRedXstats
-    .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-    .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+    .nested_app_choke(fixed_header) // PushTcChokeXstats
+    .nested_app_codel(fixed_header) // PushTcCodelXstats
+    .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+    .nested_app_fq(fixed_header) // PushTcFqQdStats
+    .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+    .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+    .nested_app_hhf(fixed_header) // PushTcHhfXstats
+    .nested_app_pie(fixed_header) // PushTcPieXstats
+    .nested_app_red(fixed_header) // PushTcRedXstats
+    .nested_app_sfb(fixed_header) // PushTcSfbXstats
+    .nested_app_sfq(fixed_header) // PushTcSfqXstats
     .push_rate_est64(val) // PushGnetStatsRateEst64
     .push_pad(val) // &[u8]
     .push_basic_hw(val) // PushGnetStatsBasic
@@ -23748,7 +23748,7 @@ attrs.get_egress_block(); // u32
 PushOpGettfilterDumpReply::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -23758,7 +23758,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -23770,17 +23770,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -23801,7 +23801,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -23813,13 +23813,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -23831,7 +23831,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -23840,13 +23840,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -23856,12 +23856,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -23869,7 +23869,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -23882,7 +23882,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -23890,13 +23890,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -23908,7 +23908,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -23916,7 +23916,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -23932,7 +23932,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -23947,7 +23947,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -23993,17 +23993,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -24033,12 +24033,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -24050,17 +24050,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -24081,7 +24081,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -24093,13 +24093,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -24111,7 +24111,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -24120,13 +24120,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -24136,12 +24136,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -24149,7 +24149,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -24162,7 +24162,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -24170,13 +24170,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -24188,7 +24188,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -24196,7 +24196,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -24212,7 +24212,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -24227,7 +24227,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -24273,17 +24273,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -24321,8 +24321,8 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -24342,15 +24342,15 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -24362,17 +24362,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -24393,7 +24393,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -24405,13 +24405,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -24423,7 +24423,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -24432,13 +24432,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -24448,12 +24448,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -24461,7 +24461,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -24474,7 +24474,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -24482,13 +24482,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -24500,7 +24500,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -24508,7 +24508,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -24524,7 +24524,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -24539,7 +24539,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -24585,17 +24585,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -24624,23 +24624,23 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -24691,10 +24691,10 @@ PushOpGettfilterDumpReply::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -24736,7 +24736,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -24762,7 +24762,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -24770,7 +24770,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -24782,17 +24782,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -24813,7 +24813,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -24825,13 +24825,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -24843,7 +24843,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -24852,13 +24852,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -24868,12 +24868,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -24881,7 +24881,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -24894,7 +24894,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -24902,13 +24902,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -24920,7 +24920,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -24928,7 +24928,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -24944,7 +24944,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -24959,7 +24959,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -25005,17 +25005,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -25195,7 +25195,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -25244,7 +25244,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -25257,7 +25257,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -25271,7 +25271,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -25292,7 +25292,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -25304,17 +25304,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -25335,7 +25335,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -25347,13 +25347,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -25365,7 +25365,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -25374,13 +25374,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -25390,12 +25390,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -25403,7 +25403,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -25416,7 +25416,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -25424,13 +25424,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -25442,7 +25442,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -25450,7 +25450,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -25466,7 +25466,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -25481,7 +25481,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -25527,17 +25527,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -25553,7 +25553,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -25578,8 +25578,8 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -25588,7 +25588,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -25599,14 +25599,14 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -25618,17 +25618,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -25649,7 +25649,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -25661,13 +25661,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -25679,7 +25679,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -25688,13 +25688,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -25704,12 +25704,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -25717,7 +25717,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -25730,7 +25730,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -25738,13 +25738,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -25756,7 +25756,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -25764,7 +25764,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -25780,7 +25780,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -25795,7 +25795,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -25841,17 +25841,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -25869,10 +25869,10 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -25895,10 +25895,10 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -25908,13 +25908,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -25922,7 +25922,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -25944,7 +25944,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -25956,17 +25956,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -25987,7 +25987,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -25999,13 +25999,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -26017,7 +26017,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -26026,13 +26026,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -26042,12 +26042,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -26055,7 +26055,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -26068,7 +26068,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -26076,13 +26076,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -26094,7 +26094,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -26102,7 +26102,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -26118,7 +26118,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -26133,7 +26133,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -26179,17 +26179,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -26204,9 +26204,9 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -26238,7 +26238,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -26248,7 +26248,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -26271,7 +26271,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -26283,17 +26283,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -26314,7 +26314,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -26326,13 +26326,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -26344,7 +26344,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -26353,13 +26353,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -26369,12 +26369,12 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -26382,7 +26382,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -26395,7 +26395,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -26403,13 +26403,13 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -26421,7 +26421,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -26429,7 +26429,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -26445,7 +26445,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -26460,7 +26460,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -26506,17 +26506,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -26538,7 +26538,7 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_pad(val) // &[u8]
   .end_nested()
   .push_stats(val) // PushTcStats
-  .sub_nested_xstats_cake()
+  .nested_xstats_cake()
     .push_pad(val) // &[u8]
     .push_capacity_estimate64(val) // u64
     .push_memory_limit(val) // u32
@@ -26584,24 +26584,24 @@ PushOpGettfilterDumpReply::new(&mut vec)
     .push_p_drop(val) // u32
     .push_blue_timer_us(val) // i32
   .end_nested()
-  .sub_nested_xstats_choke(fixed_header) // PushTcChokeXstats
-  .sub_nested_xstats_codel(fixed_header) // PushTcCodelXstats
-  .sub_nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
-  .sub_nested_xstats_fq(fixed_header) // PushTcFqQdStats
-  .sub_nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
-  .sub_nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
-  .sub_nested_xstats_hhf(fixed_header) // PushTcHhfXstats
-  .sub_nested_xstats_pie(fixed_header) // PushTcPieXstats
-  .sub_nested_xstats_red(fixed_header) // PushTcRedXstats
-  .sub_nested_xstats_sfb(fixed_header) // PushTcSfbXstats
-  .sub_nested_xstats_sfq(fixed_header) // PushTcSfqXstats
+  .nested_xstats_choke(fixed_header) // PushTcChokeXstats
+  .nested_xstats_codel(fixed_header) // PushTcCodelXstats
+  .nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
+  .nested_xstats_fq(fixed_header) // PushTcFqQdStats
+  .nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
+  .nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
+  .nested_xstats_hhf(fixed_header) // PushTcHhfXstats
+  .nested_xstats_pie(fixed_header) // PushTcPieXstats
+  .nested_xstats_red(fixed_header) // PushTcRedXstats
+  .nested_xstats_sfb(fixed_header) // PushTcSfbXstats
+  .nested_xstats_sfq(fixed_header) // PushTcSfqXstats
   .push_rate(val) // PushGnetEstimator
   .push_fcnt(val) // u32
   .nested_stats2()
     .push_basic(val) // PushGnetStatsBasic
     .push_rate_est(val) // PushGnetStatsRateEst
     .push_queue(val) // PushGnetStatsQueue
-    .sub_nested_app_cake()
+    .nested_app_cake()
       .push_pad(val) // &[u8]
       .push_capacity_estimate64(val) // u64
       .push_memory_limit(val) // u32
@@ -26647,17 +26647,17 @@ PushOpGettfilterDumpReply::new(&mut vec)
       .push_p_drop(val) // u32
       .push_blue_timer_us(val) // i32
     .end_nested()
-    .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-    .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-    .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-    .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-    .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-    .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-    .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-    .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-    .sub_nested_app_red(fixed_header) // PushTcRedXstats
-    .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-    .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+    .nested_app_choke(fixed_header) // PushTcChokeXstats
+    .nested_app_codel(fixed_header) // PushTcCodelXstats
+    .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+    .nested_app_fq(fixed_header) // PushTcFqQdStats
+    .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+    .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+    .nested_app_hhf(fixed_header) // PushTcHhfXstats
+    .nested_app_pie(fixed_header) // PushTcPieXstats
+    .nested_app_red(fixed_header) // PushTcRedXstats
+    .nested_app_sfb(fixed_header) // PushTcSfbXstats
+    .nested_app_sfq(fixed_header) // PushTcSfqXstats
     .push_rate_est64(val) // PushGnetStatsRateEst64
     .push_pad(val) // &[u8]
     .push_basic_hw(val) // PushGnetStatsBasic
@@ -26766,7 +26766,7 @@ for attr in iter {
 PushOpNewchainDoRequest::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -26776,7 +26776,7 @@ PushOpNewchainDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -26788,17 +26788,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -26819,7 +26819,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -26831,13 +26831,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -26849,7 +26849,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -26858,13 +26858,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -26874,12 +26874,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -26887,7 +26887,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -26900,7 +26900,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -26908,13 +26908,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -26926,7 +26926,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -26934,7 +26934,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -26950,7 +26950,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -26965,7 +26965,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -27011,17 +27011,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -27051,12 +27051,12 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -27068,17 +27068,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -27099,7 +27099,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -27111,13 +27111,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -27129,7 +27129,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -27138,13 +27138,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -27154,12 +27154,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -27167,7 +27167,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -27180,7 +27180,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -27188,13 +27188,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -27206,7 +27206,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -27214,7 +27214,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -27230,7 +27230,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -27245,7 +27245,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -27291,17 +27291,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -27339,8 +27339,8 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -27360,15 +27360,15 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -27380,17 +27380,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -27411,7 +27411,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -27423,13 +27423,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -27441,7 +27441,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -27450,13 +27450,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -27466,12 +27466,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -27479,7 +27479,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -27492,7 +27492,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -27500,13 +27500,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -27518,7 +27518,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -27526,7 +27526,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -27542,7 +27542,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -27557,7 +27557,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -27603,17 +27603,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -27642,23 +27642,23 @@ PushOpNewchainDoRequest::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -27709,10 +27709,10 @@ PushOpNewchainDoRequest::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -27754,7 +27754,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -27780,7 +27780,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -27788,7 +27788,7 @@ PushOpNewchainDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -27800,17 +27800,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -27831,7 +27831,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -27843,13 +27843,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -27861,7 +27861,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -27870,13 +27870,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -27886,12 +27886,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -27899,7 +27899,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -27912,7 +27912,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -27920,13 +27920,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -27938,7 +27938,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -27946,7 +27946,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -27962,7 +27962,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -27977,7 +27977,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -28023,17 +28023,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -28213,7 +28213,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -28262,7 +28262,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -28275,7 +28275,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -28289,7 +28289,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -28310,7 +28310,7 @@ PushOpNewchainDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -28322,17 +28322,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -28353,7 +28353,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -28365,13 +28365,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -28383,7 +28383,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -28392,13 +28392,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -28408,12 +28408,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -28421,7 +28421,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -28434,7 +28434,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -28442,13 +28442,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -28460,7 +28460,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -28468,7 +28468,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -28484,7 +28484,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -28499,7 +28499,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -28545,17 +28545,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -28571,7 +28571,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -28596,8 +28596,8 @@ PushOpNewchainDoRequest::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -28606,7 +28606,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -28617,14 +28617,14 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -28636,17 +28636,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -28667,7 +28667,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -28679,13 +28679,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -28697,7 +28697,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -28706,13 +28706,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -28722,12 +28722,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -28735,7 +28735,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -28748,7 +28748,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -28756,13 +28756,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -28774,7 +28774,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -28782,7 +28782,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -28798,7 +28798,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -28813,7 +28813,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -28859,17 +28859,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -28887,10 +28887,10 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -28913,10 +28913,10 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -28926,13 +28926,13 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -28940,7 +28940,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -28962,7 +28962,7 @@ PushOpNewchainDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -28974,17 +28974,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -29005,7 +29005,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -29017,13 +29017,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -29035,7 +29035,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -29044,13 +29044,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -29060,12 +29060,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -29073,7 +29073,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -29086,7 +29086,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -29094,13 +29094,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -29112,7 +29112,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -29120,7 +29120,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -29136,7 +29136,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -29151,7 +29151,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -29197,17 +29197,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -29222,9 +29222,9 @@ PushOpNewchainDoRequest::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -29256,7 +29256,7 @@ PushOpNewchainDoRequest::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -29266,7 +29266,7 @@ PushOpNewchainDoRequest::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -29289,7 +29289,7 @@ PushOpNewchainDoRequest::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -29301,17 +29301,17 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -29332,7 +29332,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -29344,13 +29344,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -29362,7 +29362,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -29371,13 +29371,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -29387,12 +29387,12 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -29400,7 +29400,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -29413,7 +29413,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -29421,13 +29421,13 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -29439,7 +29439,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -29447,7 +29447,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -29463,7 +29463,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -29478,7 +29478,7 @@ PushOpNewchainDoRequest::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -29524,17 +29524,17 @@ PushOpNewchainDoRequest::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -29701,7 +29701,7 @@ attrs.get_egress_block(); // u32
 PushOpGetchainDoReply::new(&mut vec)
   .push_kind(val) // &CStr
   .push_kind_bytes(val) // &[u8]
-  .sub_nested_options_basic()
+  .nested_options_basic()
     .push_classid(val) // u32
     .nested_ematches()
       .push_tree_hdr(val) // PushTcfEmatchTreeHdr
@@ -29711,7 +29711,7 @@ PushOpGetchainDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -29723,17 +29723,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -29754,7 +29754,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -29766,13 +29766,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -29784,7 +29784,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -29793,13 +29793,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -29809,12 +29809,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -29822,7 +29822,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -29835,7 +29835,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -29843,13 +29843,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -29861,7 +29861,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -29869,7 +29869,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -29885,7 +29885,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -29900,7 +29900,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -29946,17 +29946,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -29986,12 +29986,12 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcBasicPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_bpf()
+  .nested_options_bpf()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -30003,17 +30003,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -30034,7 +30034,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -30046,13 +30046,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -30064,7 +30064,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -30073,13 +30073,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -30089,12 +30089,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -30102,7 +30102,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -30115,7 +30115,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -30123,13 +30123,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -30141,7 +30141,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -30149,7 +30149,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -30165,7 +30165,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -30180,7 +30180,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -30226,17 +30226,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -30274,8 +30274,8 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_tag(val) // &[u8]
     .push_id(val) // u32
   .end_nested()
-  .sub_nested_options_bfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_cake()
+  .nested_options_bfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_cake()
     .push_pad(val) // &[u8]
     .push_base_rate64(val) // u64
     .push_diffserv_mode(val) // u32
@@ -30295,15 +30295,15 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_split_gso(val) // u32
     .push_fwmark(val) // u32
   .end_nested()
-  .sub_nested_options_cbs()
+  .nested_options_cbs()
     .push_parms(val) // PushTcCbsQopt
   .end_nested()
-  .sub_nested_options_cgroup()
+  .nested_options_cgroup()
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -30315,17 +30315,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -30346,7 +30346,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -30358,13 +30358,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -30376,7 +30376,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -30385,13 +30385,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -30401,12 +30401,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -30414,7 +30414,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -30427,7 +30427,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -30435,13 +30435,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -30453,7 +30453,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -30461,7 +30461,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -30477,7 +30477,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -30492,7 +30492,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -30538,17 +30538,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -30577,23 +30577,23 @@ PushOpGetchainDoReply::new(&mut vec)
     .end_nested()
     .push_ematches(val) // &[u8]
   .end_nested()
-  .sub_nested_options_choke()
+  .nested_options_choke()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
   .end_nested()
-  .sub_nested_options_clsact()
-  .sub_nested_options_codel()
+  .nested_options_clsact()
+  .nested_options_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
     .push_ecn(val) // u32
     .push_ce_threshold(val) // u32
   .end_nested()
-  .sub_nested_options_drr()
+  .nested_options_drr()
     .push_quantum(val) // u32
   .end_nested()
-  .sub_nested_options_dualpi2()
+  .nested_options_dualpi2()
 
     // Limit of total number of packets in queue
     .push_limit(val) // u32
@@ -30644,10 +30644,10 @@ PushOpGetchainDoReply::new(&mut vec)
     // Associated type: "Dualpi2SplitGso" (enum)
     .push_split_gso(val) // u8
   .end_nested()
-  .sub_nested_options_etf()
+  .nested_options_etf()
     .push_parms(val) // PushTcEtfQopt
   .end_nested()
-  .sub_nested_options_ets()
+  .nested_options_ets()
     .push_nbands(val) // u8
     .push_nstrict(val) // u8
     .nested_quanta()
@@ -30689,7 +30689,7 @@ PushOpGetchainDoReply::new(&mut vec)
     // Attribute may repeat multiple times (treat it as array)
     .push_priomap_band(val) // u8
   .end_nested()
-  .sub_nested_options_flow()
+  .nested_options_flow()
     .push_keys(val) // u32
     .push_mode(val) // u32
     .push_baseclass(val) // u32
@@ -30715,7 +30715,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_ematches(val) // &[u8]
     .push_perturb(val) // u32
   .end_nested()
-  .sub_nested_options_flower()
+  .nested_options_flower()
     .push_classid(val) // u32
     .push_indev(val) // &CStr
     .push_indev_bytes(val) // &[u8]
@@ -30723,7 +30723,7 @@ PushOpGetchainDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -30735,17 +30735,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -30766,7 +30766,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -30778,13 +30778,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -30796,7 +30796,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -30805,13 +30805,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -30821,12 +30821,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -30834,7 +30834,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -30847,7 +30847,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -30855,13 +30855,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -30873,7 +30873,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -30881,7 +30881,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -30897,7 +30897,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -30912,7 +30912,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -30958,17 +30958,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -31148,7 +31148,7 @@ PushOpGetchainDoReply::new(&mut vec)
     // Associated type: "FlowerKeyCtrlFlags" (1 bit per enumeration)
     .push_key_enc_flags_mask(val) // u32
   .end_nested()
-  .sub_nested_options_fq()
+  .nested_options_fq()
 
     // Limit of total number of packets in queue
     .push_plimit(val) // u32
@@ -31197,7 +31197,7 @@ PushOpGetchainDoReply::new(&mut vec)
     // Weights for each band
     .push_weights(val) // &[u8]
   .end_nested()
-  .sub_nested_options_fq_codel()
+  .nested_options_fq_codel()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_interval(val) // u32
@@ -31210,7 +31210,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_ce_threshold_selector(val) // u8
     .push_ce_threshold_mask(val) // u8
   .end_nested()
-  .sub_nested_options_fq_pie()
+  .nested_options_fq_pie()
     .push_limit(val) // u32
     .push_flows(val) // u32
     .push_target(val) // u32
@@ -31224,7 +31224,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_fw()
+  .nested_options_fw()
     .push_classid(val) // u32
     .nested_police()
       .push_tbf(val) // PushTcPolice
@@ -31245,7 +31245,7 @@ PushOpGetchainDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -31257,17 +31257,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -31288,7 +31288,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -31300,13 +31300,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -31318,7 +31318,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -31327,13 +31327,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -31343,12 +31343,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -31356,7 +31356,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -31369,7 +31369,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -31377,13 +31377,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -31395,7 +31395,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -31403,7 +31403,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -31419,7 +31419,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -31434,7 +31434,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -31480,17 +31480,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -31506,7 +31506,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .end_array()
     .push_mask(val) // u32
   .end_nested()
-  .sub_nested_options_gred()
+  .nested_options_gred()
     .push_parms(val) // &[u8]
     .push_stab(val) // &[u8]
     .push_dps(val) // PushTcGredSopt
@@ -31531,8 +31531,8 @@ PushOpGetchainDoReply::new(&mut vec)
       .end_nested()
     .end_nested()
   .end_nested()
-  .sub_nested_options_hfsc(fixed_header) // PushTcHfscQopt
-  .sub_nested_options_hhf()
+  .nested_options_hfsc(fixed_header) // PushTcHfscQopt
+  .nested_options_hhf()
     .push_backlog_limit(val) // u32
     .push_quantum(val) // u32
     .push_hh_flows_limit(val) // u32
@@ -31541,7 +31541,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_evict_timeout(val) // u32
     .push_non_hh_weight(val) // u32
   .end_nested()
-  .sub_nested_options_htb()
+  .nested_options_htb()
     .push_parms(val) // PushTcHtbOpt
     .push_init(val) // PushTcHtbGlob
     .push_ctab(val) // &[u8]
@@ -31552,14 +31552,14 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
     .push_offload(val) // ()
   .end_nested()
-  .sub_nested_options_ingress()
-  .sub_nested_options_matchall()
+  .nested_options_ingress()
+  .nested_options_matchall()
     .push_classid(val) // u32
     .array_act()
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -31571,17 +31571,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -31602,7 +31602,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -31614,13 +31614,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -31632,7 +31632,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -31641,13 +31641,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -31657,12 +31657,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -31670,7 +31670,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -31683,7 +31683,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -31691,13 +31691,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -31709,7 +31709,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -31717,7 +31717,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -31733,7 +31733,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -31748,7 +31748,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -31794,17 +31794,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -31822,10 +31822,10 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_pcnt(val) // PushTcMatchallPcnt
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_mq()
-  .sub_nested_options_mqprio(fixed_header) // PushTcMqprioQopt
-  .sub_nested_options_multiq(fixed_header) // PushTcMultiqQopt
-  .sub_nested_options_netem(fixed_header) // PushTcNetemQopt
+  .nested_options_mq()
+  .nested_options_mqprio(fixed_header) // PushTcMqprioQopt
+  .nested_options_multiq(fixed_header) // PushTcMultiqQopt
+  .nested_options_netem(fixed_header) // PushTcNetemQopt
     .push_corr(val) // PushTcNetemCorr
     .push_delay_dist(val) // &[u8]
     .push_reorder(val) // PushTcNetemReorder
@@ -31848,10 +31848,10 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_slot_dist(val) // &[u8]
     .push_prng_seed(val) // u64
   .end_nested()
-  .sub_nested_options_pfifo(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
-  .sub_nested_options_pie()
+  .nested_options_pfifo(fixed_header) // PushTcFifoQopt
+  .nested_options_pfifo_fast(fixed_header) // PushTcPrioQopt
+  .nested_options_pfifo_head_drop(fixed_header) // PushTcFifoQopt
+  .nested_options_pie()
     .push_target(val) // u32
     .push_limit(val) // u32
     .push_tupdate(val) // u32
@@ -31861,13 +31861,13 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_bytemode(val) // u32
     .push_dq_rate_estimator(val) // u32
   .end_nested()
-  .sub_nested_options_plug(fixed_header) // PushTcPlugQopt
-  .sub_nested_options_prio(fixed_header) // PushTcPrioQopt
-  .sub_nested_options_qfq()
+  .nested_options_plug(fixed_header) // PushTcPlugQopt
+  .nested_options_prio(fixed_header) // PushTcPrioQopt
+  .nested_options_qfq()
     .push_weight(val) // u32
     .push_lmax(val) // u32
   .end_nested()
-  .sub_nested_options_red()
+  .nested_options_red()
     .push_parms(val) // PushTcRedQopt
     .push_stab(val) // &[u8]
     .push_max_p(val) // u32
@@ -31875,7 +31875,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_early_drop_block(val) // u32
     .push_mark_block(val) // u32
   .end_nested()
-  .sub_nested_options_route()
+  .nested_options_route()
     .push_classid(val) // u32
     .push_to(val) // u32
     .push_from(val) // u32
@@ -31897,7 +31897,7 @@ PushOpGetchainDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -31909,17 +31909,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -31940,7 +31940,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -31952,13 +31952,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -31970,7 +31970,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -31979,13 +31979,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -31995,12 +31995,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -32008,7 +32008,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -32021,7 +32021,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -32029,13 +32029,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -32047,7 +32047,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -32055,7 +32055,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -32071,7 +32071,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -32086,7 +32086,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -32132,17 +32132,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -32157,9 +32157,9 @@ PushOpGetchainDoReply::new(&mut vec)
       .end_nested()
     .end_array()
   .end_nested()
-  .sub_nested_options_sfb(fixed_header) // PushTcSfbQopt
-  .sub_nested_options_sfq(fixed_header) // PushTcSfqQoptV1
-  .sub_nested_options_taprio()
+  .nested_options_sfb(fixed_header) // PushTcSfbQopt
+  .nested_options_sfq(fixed_header) // PushTcSfqQoptV1
+  .nested_options_taprio()
     .push_priomap(val) // PushTcMqprioQopt
     .nested_sched_entry_list()
 
@@ -32191,7 +32191,7 @@ PushOpGetchainDoReply::new(&mut vec)
       .push_fp(val) // u32
     .end_nested()
   .end_nested()
-  .sub_nested_options_tbf()
+  .nested_options_tbf()
     .push_parms(val) // PushTcTbfQopt
     .push_rtab(val) // &[u8]
     .push_ptab(val) // &[u8]
@@ -32201,7 +32201,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_pburst(val) // u32
     .push_pad(val) // &[u8]
   .end_nested()
-  .sub_nested_options_u32()
+  .nested_options_u32()
     .push_classid(val) // u32
     .push_hash(val) // u32
     .push_link(val) // u32
@@ -32224,7 +32224,7 @@ PushOpGetchainDoReply::new(&mut vec)
       .entry_nested()
         .push_kind(val) // &CStr
         .push_kind_bytes(val) // &[u8]
-        .sub_nested_options_bpf()
+        .nested_options_bpf()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_ops_len(val) // u16
@@ -32236,17 +32236,17 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_tag(val) // &[u8]
           .push_id(val) // &[u8]
         .end_nested()
-        .sub_nested_options_connmark()
+        .nested_options_connmark()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_csum()
+        .nested_options_csum()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_ct()
+        .nested_options_ct()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_action(val) // u16
@@ -32267,7 +32267,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_helper_family(val) // u8
           .push_helper_proto(val) // u8
         .end_nested()
-        .sub_nested_options_ctinfo()
+        .nested_options_ctinfo()
           .push_pad(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_act(val) // &[u8]
@@ -32279,13 +32279,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_stats_dscp_error(val) // u64
           .push_stats_cpmark_set(val) // u64
         .end_nested()
-        .sub_nested_options_gact()
+        .nested_options_gact()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_prob(val) // PushTcGactP
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_gate()
+        .nested_options_gate()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
@@ -32297,7 +32297,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u32
           .push_clockid(val) // i32
         .end_nested()
-        .sub_nested_options_ife()
+        .nested_options_ife()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_dmac(val) // &[u8]
@@ -32306,13 +32306,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_metalst(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mirred()
+        .nested_options_mirred()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_pad(val) // &[u8]
           .push_blockid(val) // &[u8]
         .end_nested()
-        .sub_nested_options_mpls()
+        .nested_options_mpls()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcMpls
           .push_pad(val) // &[u8]
@@ -32322,12 +32322,12 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_ttl(val) // u8
           .push_bos(val) // u8
         .end_nested()
-        .sub_nested_options_nat()
+        .nested_options_nat()
           .push_parms(val) // &[u8]
           .push_tm(val) // PushTcfT
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_pedit()
+        .nested_options_pedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcPeditSel
           .push_pad(val) // &[u8]
@@ -32335,7 +32335,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_keys_ex(val) // &[u8]
           .push_key_ex(val) // &[u8]
         .end_nested()
-        .sub_nested_options_police()
+        .nested_options_police()
           .push_tbf(val) // PushTcPolice
           .push_rate(val) // &[u8]
           .push_peakrate(val) // &[u8]
@@ -32348,7 +32348,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_pktrate64(val) // u64
           .push_pktburst64(val) // u64
         .end_nested()
-        .sub_nested_options_sample()
+        .nested_options_sample()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcGact
           .push_rate(val) // u32
@@ -32356,13 +32356,13 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_psample_group(val) // u32
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_simple()
+        .nested_options_simple()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_data(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_skbedit()
+        .nested_options_skbedit()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_priority(val) // u32
@@ -32374,7 +32374,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_flags(val) // u64
           .push_queue_mapping_max(val) // u16
         .end_nested()
-        .sub_nested_options_skbmod()
+        .nested_options_skbmod()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_dmac(val) // &[u8]
@@ -32382,7 +32382,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_etype(val) // &[u8]
           .push_pad(val) // &[u8]
         .end_nested()
-        .sub_nested_options_tunnel_key()
+        .nested_options_tunnel_key()
           .push_tm(val) // PushTcfT
           .push_parms(val) // &[u8]
           .push_enc_ipv4_src(val) // u32
@@ -32398,7 +32398,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_enc_ttl(val) // u8
           .push_no_frag(val) // ()
         .end_nested()
-        .sub_nested_options_vlan()
+        .nested_options_vlan()
           .push_tm(val) // PushTcfT
           .push_parms(val) // PushTcVlan
           .push_push_vlan_id(val) // u16
@@ -32413,7 +32413,7 @@ PushOpGetchainDoReply::new(&mut vec)
           .push_basic(val) // PushGnetStatsBasic
           .push_rate_est(val) // PushGnetStatsRateEst
           .push_queue(val) // PushGnetStatsQueue
-          .sub_nested_app_cake()
+          .nested_app_cake()
             .push_pad(val) // &[u8]
             .push_capacity_estimate64(val) // u64
             .push_memory_limit(val) // u32
@@ -32459,17 +32459,17 @@ PushOpGetchainDoReply::new(&mut vec)
             .push_p_drop(val) // u32
             .push_blue_timer_us(val) // i32
           .end_nested()
-          .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-          .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-          .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-          .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-          .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-          .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-          .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-          .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-          .sub_nested_app_red(fixed_header) // PushTcRedXstats
-          .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-          .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+          .nested_app_choke(fixed_header) // PushTcChokeXstats
+          .nested_app_codel(fixed_header) // PushTcCodelXstats
+          .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+          .nested_app_fq(fixed_header) // PushTcFqQdStats
+          .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+          .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+          .nested_app_hhf(fixed_header) // PushTcHhfXstats
+          .nested_app_pie(fixed_header) // PushTcPieXstats
+          .nested_app_red(fixed_header) // PushTcRedXstats
+          .nested_app_sfb(fixed_header) // PushTcSfbXstats
+          .nested_app_sfq(fixed_header) // PushTcSfqXstats
           .push_rate_est64(val) // PushGnetStatsRateEst64
           .push_pad(val) // &[u8]
           .push_basic_hw(val) // PushGnetStatsBasic
@@ -32491,7 +32491,7 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_pad(val) // &[u8]
   .end_nested()
   .push_stats(val) // PushTcStats
-  .sub_nested_xstats_cake()
+  .nested_xstats_cake()
     .push_pad(val) // &[u8]
     .push_capacity_estimate64(val) // u64
     .push_memory_limit(val) // u32
@@ -32537,24 +32537,24 @@ PushOpGetchainDoReply::new(&mut vec)
     .push_p_drop(val) // u32
     .push_blue_timer_us(val) // i32
   .end_nested()
-  .sub_nested_xstats_choke(fixed_header) // PushTcChokeXstats
-  .sub_nested_xstats_codel(fixed_header) // PushTcCodelXstats
-  .sub_nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
-  .sub_nested_xstats_fq(fixed_header) // PushTcFqQdStats
-  .sub_nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
-  .sub_nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
-  .sub_nested_xstats_hhf(fixed_header) // PushTcHhfXstats
-  .sub_nested_xstats_pie(fixed_header) // PushTcPieXstats
-  .sub_nested_xstats_red(fixed_header) // PushTcRedXstats
-  .sub_nested_xstats_sfb(fixed_header) // PushTcSfbXstats
-  .sub_nested_xstats_sfq(fixed_header) // PushTcSfqXstats
+  .nested_xstats_choke(fixed_header) // PushTcChokeXstats
+  .nested_xstats_codel(fixed_header) // PushTcCodelXstats
+  .nested_xstats_dualpi2(fixed_header) // PushTcDualpi2Xstats
+  .nested_xstats_fq(fixed_header) // PushTcFqQdStats
+  .nested_xstats_fq_codel(fixed_header) // PushTcFqCodelXstats
+  .nested_xstats_fq_pie(fixed_header) // PushTcFqPieXstats
+  .nested_xstats_hhf(fixed_header) // PushTcHhfXstats
+  .nested_xstats_pie(fixed_header) // PushTcPieXstats
+  .nested_xstats_red(fixed_header) // PushTcRedXstats
+  .nested_xstats_sfb(fixed_header) // PushTcSfbXstats
+  .nested_xstats_sfq(fixed_header) // PushTcSfqXstats
   .push_rate(val) // PushGnetEstimator
   .push_fcnt(val) // u32
   .nested_stats2()
     .push_basic(val) // PushGnetStatsBasic
     .push_rate_est(val) // PushGnetStatsRateEst
     .push_queue(val) // PushGnetStatsQueue
-    .sub_nested_app_cake()
+    .nested_app_cake()
       .push_pad(val) // &[u8]
       .push_capacity_estimate64(val) // u64
       .push_memory_limit(val) // u32
@@ -32600,17 +32600,17 @@ PushOpGetchainDoReply::new(&mut vec)
       .push_p_drop(val) // u32
       .push_blue_timer_us(val) // i32
     .end_nested()
-    .sub_nested_app_choke(fixed_header) // PushTcChokeXstats
-    .sub_nested_app_codel(fixed_header) // PushTcCodelXstats
-    .sub_nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
-    .sub_nested_app_fq(fixed_header) // PushTcFqQdStats
-    .sub_nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
-    .sub_nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
-    .sub_nested_app_hhf(fixed_header) // PushTcHhfXstats
-    .sub_nested_app_pie(fixed_header) // PushTcPieXstats
-    .sub_nested_app_red(fixed_header) // PushTcRedXstats
-    .sub_nested_app_sfb(fixed_header) // PushTcSfbXstats
-    .sub_nested_app_sfq(fixed_header) // PushTcSfqXstats
+    .nested_app_choke(fixed_header) // PushTcChokeXstats
+    .nested_app_codel(fixed_header) // PushTcCodelXstats
+    .nested_app_dualpi2(fixed_header) // PushTcDualpi2Xstats
+    .nested_app_fq(fixed_header) // PushTcFqQdStats
+    .nested_app_fq_codel(fixed_header) // PushTcFqCodelXstats
+    .nested_app_fq_pie(fixed_header) // PushTcFqPieXstats
+    .nested_app_hhf(fixed_header) // PushTcHhfXstats
+    .nested_app_pie(fixed_header) // PushTcPieXstats
+    .nested_app_red(fixed_header) // PushTcRedXstats
+    .nested_app_sfb(fixed_header) // PushTcSfbXstats
+    .nested_app_sfq(fixed_header) // PushTcSfqXstats
     .push_rate_est64(val) // PushGnetStatsRateEst64
     .push_pad(val) // &[u8]
     .push_basic_hw(val) // PushGnetStatsBasic
