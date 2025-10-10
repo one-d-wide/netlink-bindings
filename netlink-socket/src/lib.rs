@@ -1,3 +1,5 @@
+#![doc = include_str!("../../README.md")]
+
 use std::{
     collections::{hash_map::Entry, HashMap},
     io::{self, ErrorKind, IoSlice},

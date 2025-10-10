@@ -23,6 +23,10 @@ _sensible_ Netlink families.
 
 - Streamlined type-safe interface.
 - All the properties described in yaml specifications are available in Rust.
+- Decoded Netlink messages can be Debug-printed, with enum values and flags
+annotated.
+- There is [a tool](#working-off-of-existing-tools) to simplify working off of
+existing tools by decoding Netlink messages of other programs.
 - Unified interface for both generic and classic flavors of netlink. Family
 resolution is automatic.
 - Many quirks of netlink-legacy and netlink-raw protocols are supported,
@@ -50,7 +54,7 @@ example, "get-device" and "set-device". Each operation may also be of "do" or
 
 For example, to get info about a device you would use a "dump" kind of
 "get-device" request. That's usually what it means, although different
-subsystems may imply different things. The typical request looks like this:
+subsystems may imply different things. A typical request looks like this:
 
 ```rust
 use netlink_bindings::wireguard;
@@ -92,7 +96,7 @@ and decoding as you type.
 ## More complicated requests
 
 Let's say you have a network interface and want to assign an ip address to it.
-This is the domain of "rt-link" family. It was one of the first ones created,
+This is the domain of "rt-addr" family. It was one of the first ones created,
 inheriting some now-discouraged quirks, like a fixed-header - a struct that
 always present and may also carry some relevant data in some cases or may be
 just ignored (zeroed-out) for other requests.
@@ -108,7 +112,7 @@ use netlink_bindings::wireguard;
 
 let ifindex: u32 = 1234; // Acquired via "get-addr" request
 let addr: IpAddr = "10.0.0.1".parse().unwrap();
-let prefix: u8 = 32; // stands for "/32" from "10.0.0.1/32"
+let prefix: u8 = 32; // stands for "/32" in "10.0.0.1/32"
 
 // Create fixed-header for the request
 let mut header = PushIfaddrmsg::new();
@@ -123,11 +127,8 @@ let mut request = rt_addr::Request::new()
 request.encode()
     .push_local(addr);
 
-let mut iter = sock.request(&request).unwrap();
-while let Some(res) = iter.recv() {
-    // Successful request shouldn't yield anything
-    unreachable!("{res:#?}");
-}
+sock.request(&request).unwrap()
+    .recv_ack().unwrap();
 ```
 
 See full code in the [example](./netlink-socket/examples/wireguard-setup.rs).
@@ -135,8 +136,7 @@ See full code in the [example](./netlink-socket/examples/wireguard-setup.rs).
 ## Async sockets
 
 Async functionality is available using the same interface, you just need to
-enable it, and to add `.await` keyword, in all places where async IO is
-expected.
+enable it, and add `.await` keyword, in all places where async IO is expected.
 
 ```toml
 [dependencies]
