@@ -7,7 +7,9 @@ use std::{
 
 use netlink_bindings::{
     builtin::{self, PushBuiltinNfgenmsg, PushNlmsghdr},
-    consts, utils, Protocol,
+    consts, nlctrl,
+    traits::Protocol,
+    utils,
 };
 use netlink_socket::NetlinkSocket;
 
@@ -48,8 +50,8 @@ fn main() {
 }
 
 fn read(args: &CliArgs, reader: impl Read) {
-    let read_syscalls = ["read", "recv", "recvfrom", "recvmsg", "recvmmsg"];
-    let write_syscalls = ["write", "send", "sendto", "sendmsg", "sendmmsg"];
+    let read_syscalls = ["read", "readv", "recv", "recvfrom", "recvmsg", "recvmmsg"];
+    let write_syscalls = ["write", "writev", "send", "sendto", "sendmsg", "sendmmsg"];
 
     let genl = genl_families();
 
@@ -234,6 +236,7 @@ fn read(args: &CliArgs, reader: impl Read) {
 fn parse_fd_netlink_proto(line: &str) -> Option<(u16, String)> {
     // 3<NETLINK:[GENERIC:...]>
 
+    // TODO: in some cases strace may not specify family
     let (_, rem) = line.split_once("<")?;
     let (proto, rem) = rem.split_once(":[")?;
     let (family, _) = rem.split_once(":")?;
@@ -252,7 +255,7 @@ fn split_syscall(line: &str) -> Option<(&str, &str, &str)> {
     }
 
     let (syscall, rem) = line.split_once("(").unwrap();
-    let (args, res) = rem.rsplit_once(") = ").unwrap();
+    let (args, res) = rem.rsplit_once(" = ").unwrap();
 
     Some((syscall, args, res))
 }
@@ -273,7 +276,7 @@ fn parse_dump_line(line: &str, buf: &mut Vec<u8>) {
 
 fn genl_families() -> HashMap<u16, &'static str> {
     let mut acc = HashMap::new();
-    let request = netlink_bindings::nlctrl::Request::new().op_getfamily_dump_request();
+    let request = nlctrl::Request::new().op_getfamily_dump_request();
     let mut sock = NetlinkSocket::new();
     let mut iter = sock.request(&request).unwrap();
     while let Some(res) = iter.recv() {

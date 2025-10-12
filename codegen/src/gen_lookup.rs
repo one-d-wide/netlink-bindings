@@ -3,8 +3,9 @@ use quote::{format_ident, quote};
 
 use crate::{
     gen_defs::GenImplStruct,
+    gen_iterable::iterable_name,
     gen_ops::OpHeader,
-    gen_utils::{kebab_to_type, lifetime_needed_attrs, sanitize_ident},
+    gen_utils::{kebab_to_type, sanitize_ident},
     gen_writable::writable_type,
     parse_spec::{AttrSet, AttrType, IndexedArrayType, Spec},
     Context,
@@ -72,13 +73,6 @@ pub fn gen_lookup(
         });
     }
 
-    let (impl_lifetime, iterable_lifetime, lifetime) = if lifetime_needed_attrs(set) {
-        let l = quote!('a);
-        (quote!(<#l>), l.clone(), quote!(<#l>))
-    } else {
-        (quote!(), quote!('_), quote!())
-    };
-
     let correct_for_header_len = if let Some(fixed_header) = fixed_header {
         let name = writable_type(&fixed_header.name);
         quote!(+ #name::len())
@@ -120,12 +114,13 @@ pub fn gen_lookup(
         quote!((stack, None))
     };
 
+    let iter = iterable_name(&set.name);
     tokens.extend(quote! {
-        impl #impl_lifetime Iterable<#iterable_lifetime, #type_name #lifetime> {
+        impl #iter<'_> {
             // TODO: report parsing errors
             pub fn lookup_attr(&self, offset: usize, missing_type: Option<u16>) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
                 let mut stack = Vec::new();
-                let cur = self.calc_offset(self.buf.as_ptr() as usize);
+                let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
                 if cur == offset #correct_for_header_len {
                     stack.push((#name_str, offset));
                     return (stack, missing_type.and_then(|t| #type_name::attr_from_type(t)));

@@ -1,9 +1,9 @@
 use std::{fmt, io, sync::Arc};
 
 use netlink_bindings::{
-    builtin::{NlmsgerrAttrs, PushNlmsghdr},
+    builtin::{IterableNlmsgerrAttrs, NlmsgerrAttrs, PushNlmsghdr},
     traits::LookupFn,
-    utils::{ErrorContext, Iterable},
+    utils::ErrorContext,
 };
 
 use crate::RECV_BUF_SIZE;
@@ -51,7 +51,7 @@ impl ReplyError {
         &self.code
     }
 
-    pub fn ext_ack(&self) -> Option<Iterable<'_, NlmsgerrAttrs<'_>>> {
+    pub fn ext_ack(&self) -> Option<IterableNlmsgerrAttrs<'_>> {
         let Some(reply_buf) = &self.reply_buf else {
             return None;
         };

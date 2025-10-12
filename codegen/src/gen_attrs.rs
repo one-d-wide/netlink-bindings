@@ -7,12 +7,10 @@ use syn::Ident;
 use crate::{
     gen_debug_impl::gen_introspect_attrs,
     gen_defs::GenImplStruct,
-    gen_iterable::gen_iterable_attrs,
+    gen_iterable::{array_iterable_name, gen_iterable_attrs, iterable_name},
     gen_ops::OpHeader,
     gen_sub_message::sub_message_name,
-    gen_utils::{
-        doc_attr, kebab_to_rust, kebab_to_type, lifetime_needed_attrs_name, sanitize_ident,
-    },
+    gen_utils::{doc_attr, kebab_to_rust, kebab_to_type, sanitize_ident},
     parse_spec::{AttrProp, AttrSet, AttrType, IndexedArrayType, Spec},
     Context,
 };
@@ -67,17 +65,16 @@ pub fn gen_attrset(
         quote!()
     };
 
-    let doc = format!("Original name: {:?}", set.name);
     tokens.extend(quote! {
-        #[doc = #doc]
         #[derive(Clone)]
         pub enum #type_name #lifetime_mark {
             #variants
         }
     });
 
+    let iter = iterable_name(&set.name);
     tokens.extend(quote! {
-        impl<'a> Iterable<'a, #type_name #lifetime_mark> {
+        impl<'a> #iter<'a> {
             #shorthands
         }
     });
@@ -91,7 +88,7 @@ pub fn gen_attr(
     _tokens: &mut TokenStream,
     variants: &mut TokenStream,
     shorthands: &mut TokenStream,
-    spec: &Spec,
+    _spec: &Spec,
     m: &mut GenImplStruct,
     attr: &AttrProp,
 ) {
@@ -103,7 +100,7 @@ pub fn gen_attr(
 
     let variant_name = sanitize_ident(&kebab_to_type(&attr.name));
 
-    let (rust_type, lifetime_needed) = gen_attr_type(spec, attr);
+    let (rust_type, lifetime_needed) = gen_attr_type(attr);
 
     m.lifetime_needed |= lifetime_needed;
 
@@ -147,23 +144,23 @@ pub fn gen_attr(
                         return Ok(val);
                     }
                 }
-                Err(self.error_missing(#attrs_str, #attr_str))
+                Err(ErrorContext::new_missing(
+                    #attrs_str,
+                    #attr_str,
+                    self.orig_loc,
+                    self.buf.as_ptr() as usize,
+                ))
             }
         }),
         AttrType::IndexedArray { sub_type } => {
             let item_type = match sub_type {
                 IndexedArrayType::Plain { attr } => {
-                    let (rust_type, _) = gen_attr_type(spec, attr);
+                    let (rust_type, _) = gen_attr_type(attr);
                     rust_type
                 }
                 IndexedArrayType::Nest { nested_attributes } => {
-                    let mut lifetime = quote!();
-                    if lifetime_needed_attrs_name(spec, nested_attributes) {
-                        lifetime = quote! {<'a>};
-                    }
-
-                    let nested_type = format_ident!("{}", kebab_to_type(nested_attributes));
-                    quote!(Iterable<'a, #nested_type #lifetime>)
+                    let iter = iterable_name(nested_attributes);
+                    quote!(#iter<'a>)
                 }
                 other => unreachable!("{other:?}"),
             };
@@ -174,7 +171,12 @@ pub fn gen_attr(
                             return Ok(ArrayIterable::new(val));
                         }
                     }
-                    Err(self.error_missing(#attrs_str, #attr_str))
+                    Err(ErrorContext::new_missing(
+                        #attrs_str,
+                        #attr_str,
+                        self.orig_loc,
+                        self.buf.as_ptr() as usize,
+                    ))
                 }
             })
         }
@@ -187,13 +189,47 @@ pub fn gen_attr(
                         return Ok(val);
                     }
                 }
-                Err(self.error_missing(#attrs_str, #attr_str))
+                Err(ErrorContext::new_missing(
+                    #attrs_str,
+                    #attr_str,
+                    self.orig_loc,
+                    self.buf.as_ptr() as usize,
+                ))
             }
         }),
     }
 }
 
-pub fn gen_attr_type(spec: &Spec, attr: &AttrProp) -> (TokenStream, bool) {
+pub fn gen_attr_type_name(attr: &AttrProp) -> String {
+    match &attr.r#type {
+        AttrType::Unused => unreachable!(),
+        AttrType::Flag => "()",
+        AttrType::U8 => "u8",
+        AttrType::U16 => "u16",
+        AttrType::U32 if attr.is_ipv4() => "Ipv4Addr",
+        AttrType::U32 => "u32",
+        AttrType::U64 => "u64",
+        AttrType::S8 => "i8",
+        AttrType::S16 => "i16",
+        AttrType::S32 => "i32",
+        AttrType::S64 => "i64",
+        AttrType::Binary { .. } if attr.is_ipv6() => "Ipv6Addr",
+        AttrType::Binary { .. } if attr.is_ip() => "IpAddr",
+        AttrType::Binary { .. } if attr.is_sockaddr() => "SocketAddr",
+        AttrType::Binary {
+            r#struct: Some(struct_type),
+            ..
+        } => return format!("Push{}", kebab_to_type(struct_type)),
+        AttrType::String => "CStr",
+        AttrType::Pad { .. } | AttrType::Binary { .. } => "Binary",
+        AttrType::Nest { nested_attributes } => nested_attributes,
+        AttrType::SubMessage { sub_message, .. } => sub_message,
+        r#type => unreachable!("{:?} at {:?}", r#type, attr),
+    }
+    .to_string()
+}
+
+pub fn gen_attr_type(attr: &AttrProp) -> (TokenStream, bool) {
     let mut lifetime_needed = false;
     let rust_type = match &attr.r#type {
         AttrType::Unused => unreachable!(),
@@ -225,35 +261,23 @@ pub fn gen_attr_type(spec: &Spec, attr: &AttrProp) -> (TokenStream, bool) {
         AttrType::IndexedArray { sub_type } => {
             lifetime_needed = true;
 
-            let item_type = match sub_type {
+            let arr = match sub_type {
                 IndexedArrayType::Plain { attr } => {
-                    let (rust_type, _) = gen_attr_type(spec, attr);
-                    rust_type
+                    let rust_type = gen_attr_type_name(attr);
+                    array_iterable_name(&rust_type)
                 }
                 IndexedArrayType::Nest { nested_attributes } => {
-                    let mut lifetime = quote!();
-                    if lifetime_needed_attrs_name(spec, nested_attributes) {
-                        lifetime = quote!(<'a>);
-                    }
-
-                    let nested_type = format_ident!("{}", kebab_to_type(nested_attributes));
-                    quote!(Iterable<'a, #nested_type #lifetime>)
+                    array_iterable_name(nested_attributes)
                 }
                 other => unreachable!("{other:?}"),
             };
-
-            quote!(Iterable<'a, #item_type>)
+            quote!(#arr<'a>)
         }
         AttrType::Nest { nested_attributes } => {
             lifetime_needed = true;
 
-            let mut lifetime = quote!();
-            if lifetime_needed_attrs_name(spec, nested_attributes) {
-                lifetime = quote!(<'a>);
-            }
-
-            let nested_type = format_ident!("{}", kebab_to_type(nested_attributes));
-            quote!(Iterable<'a, #nested_type #lifetime>)
+            let iter = iterable_name(nested_attributes);
+            quote!(#iter<'a>)
         }
         AttrType::SubMessage { sub_message, .. } => {
             lifetime_needed = true;

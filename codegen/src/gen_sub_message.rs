@@ -3,7 +3,8 @@ use quote::{format_ident, quote, ToTokens};
 use syn::Ident;
 
 use crate::{
-    gen_utils::{kebab_to_rust, kebab_to_type, lifetime_needed_attrs},
+    gen_iterable::iterable_name,
+    gen_utils::{kebab_to_rust, kebab_to_type},
     gen_writable::writable_type,
     parse_spec::{AttrProp, AttrSet, Spec, SubMessage, SubMessageFormat},
     Context, WARNING,
@@ -99,9 +100,7 @@ pub fn gen_sub(
         );
     }
 
-    let doc = format!("Original name: {:?}", sub.name);
     tokens.extend(quote! {
-        #[doc = #doc]
         #[derive(Debug, Clone)]
         pub enum #type_name<'a> {
             #variants
@@ -146,15 +145,8 @@ pub fn gen_sub_attr(
 
     let mut attrs_type = None;
     if let Some(attrs_name) = &sub_attr.attribute_set {
-        let attrs_ident = format_ident!("{}", kebab_to_type(attrs_name));
-
-        let attrs = spec.find_attr(attrs_name);
-        let attrs_lifetime = if lifetime_needed_attrs(attrs) {
-            quote!(<'a>)
-        } else {
-            quote!()
-        };
-        attrs_type = Some(quote!(Iterable<'a, #attrs_ident #attrs_lifetime>));
+        let iter = iterable_name(attrs_name);
+        attrs_type = Some((iter.clone(), quote!(#iter<'a>)));
     }
 
     let mut header_type = None;
@@ -182,17 +174,17 @@ pub fn gen_sub_attr(
             });
             variants.extend(quote!(#select_ident(#h),));
         }
-        (None, Some(a)) => {
+        (None, Some((iter, a))) => {
             select.extend(quote! {
-                #value => Some(#type_name::#select_ident(Iterable::with_loc(#buf_name, #loc_name))),
+                #value => Some(#type_name::#select_ident(#iter::with_loc(#buf_name, #loc_name))),
             });
             variants.extend(quote!(#select_ident(#a),));
         }
-        (Some(h), Some(a)) => {
+        (Some(h), Some((iter, a))) => {
             select.extend(quote! {
                 #value => Some(#type_name::#select_ident(
                     #h::new_from_slice(&#buf_name[..#h::len()])?,
-                    Iterable::with_loc(&#buf_name[#h::len()..], #loc_name),
+                    #iter::with_loc(&#buf_name[#h::len()..], #loc_name),
                 )),
             });
             variants.extend(quote!(#select_ident(#h, #a),));

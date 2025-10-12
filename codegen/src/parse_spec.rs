@@ -57,7 +57,7 @@ pub enum DefType {
         /// Array of names of the entries for enum and flags.
         entries: Vec<EnumEntry>,
     },
-    /// https://docs.kernel.org/6.16/userspace-api/netlink/genetlink-legacy.html#structures
+    /// <https://docs.kernel.org/6.16/userspace-api/netlink/genetlink-legacy.html#structures>
     Struct {
         #[allow(unused)]
         header: Option<String>,

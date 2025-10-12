@@ -229,7 +229,6 @@ pub fn gen_writable_attrset(
                                 self.as_rec_mut().extend(fixed_header.as_slice());
 
                                 // Pushing attributes after the sub message is a common pitfall
-                                let Self { prev, header_offset } = self;
                                 let dummy = PushDummy {
                                     prev: self.prev.take(),
                                     header_offset: self.header_offset.take(),
@@ -624,9 +623,7 @@ pub fn gen_writable_struct(
     let fmt_name = format_ident!("fmt");
 
     let len = align_up(m.off, m.alignment);
-    let doc = format!("Original name: {:?}", name);
     tokens.extend(quote! {
-        #[doc = #doc]
         #[derive(Clone)]
         pub struct #type_name {
             pub(crate) buf: [u8; #len],

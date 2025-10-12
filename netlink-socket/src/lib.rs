@@ -23,7 +23,12 @@ use smol::{
     net::TcpStream as Socket,
 };
 
-use netlink_bindings::{builtin::PushNlmsghdr, nlctrl, utils, NetlinkRequest, Protocol};
+use netlink_bindings::{
+    builtin::PushNlmsghdr,
+    nlctrl,
+    traits::{NetlinkRequest, Protocol},
+    utils,
+};
 
 mod chained;
 mod error;
@@ -31,7 +36,7 @@ mod error;
 pub use chained::NetlinkReplyChained;
 pub use error::ReplyError;
 
-// Netlink documentation recommends max(8192, page_size)
+/// Netlink documentation recommends max(8192, page_size)
 pub const RECV_BUF_SIZE: usize = 8192;
 
 pub struct NetlinkSocket {
@@ -104,6 +109,8 @@ impl NetlinkSocket {
         Ok(sock)
     }
 
+    /// Reserve a sequential chunk of `seq` values, so chained messages don't
+    /// get confused. A random `seq` number might be used just as well.
     pub fn reserve_seq(&mut self, len: u32) -> u32 {
         let seq = self.seq;
         self.seq = self.seq.wrapping_add(len);
@@ -130,7 +137,7 @@ impl NetlinkSocket {
     }
 
     #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
-    pub async fn resolve(&mut self, family_name: &'static [u8]) -> io::Result<u16> {
+    async fn resolve(&mut self, family_name: &'static [u8]) -> io::Result<u16> {
         if let Some(id) = self.cache.get(family_name) {
             return Ok(*id);
         }

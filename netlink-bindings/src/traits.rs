@@ -1,11 +1,13 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Protocol {
-    /// Netlink-raw protocol.
-    /// Protonum is the `protocol` value supplied to socket(2).
-    /// Request type is the value of `type` field in the message header.
-    Raw { protonum: u16, request_type: u16 },
-    /// Generic netlink protocol.
-    /// Name of a generic netlink family.
+    /// Netlink-raw protocol
+    Raw {
+        /// Value supplied to socket(2)
+        protonum: u16,
+        /// Value of `type` field in the message header
+        request_type: u16,
+    },
+    /// Generic netlink protocol
     Generic(&'static [u8]),
 }
 
@@ -36,18 +38,18 @@ pub trait NetlinkRequest {
     }
 }
 
-/// Signature of [`NetlinkRequest::lookup`]
+/// Function signature of [`NetlinkRequest::lookup`]
 pub type LookupFn =
     fn(&[u8], usize, Option<u16>) -> (Vec<(&'static str, usize)>, Option<&'static str>);
 
-/// Chained requests encoded into the single buffer (experimental)
+/// A chain of requests encoded into the single buffer (experimental)
 pub trait NetlinkChained {
     fn protonum(&self) -> u16;
 
-    /// Encoded payload of the message (including message headers)
+    /// Encoded payload of the messages (including message headers)
     fn payload(&self) -> &[u8];
 
-    /// Number of chained messaged
+    /// Number of messages in the chain
     fn chain_len(&self) -> usize;
 
     fn get_index(&self, seq: u32) -> Option<usize>;

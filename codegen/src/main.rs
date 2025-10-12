@@ -169,9 +169,11 @@ fn main() {
         });
     }
     tokens.extend(quote! {
-        use crate::{Protocol, NetlinkRequest};
-        use crate::utils::*;
-        use crate::consts;
+        use crate::{
+            consts,
+            traits::{NetlinkRequest, Protocol},
+            utils::*,
+        };
     });
     if spec.name != "builtin" {
         tokens.extend(quote! {

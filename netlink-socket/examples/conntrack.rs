@@ -5,7 +5,7 @@
 
 use std::net::IpAddr;
 
-use netlink_bindings::{conntrack, utils};
+use netlink_bindings::conntrack;
 
 #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn format_proto(attrs: utils::Iterable<'_, conntrack::TupleProtoAttrs>) {
+fn format_proto(attrs: conntrack::IterableTupleProtoAttrs<'_>) {
     let proto = match attrs.get_proto_num().unwrap() as i32 {
         libc::IPPROTO_TCP => "tcp",
         libc::IPPROTO_UDP => "udp",
@@ -48,39 +48,23 @@ fn format_proto(attrs: utils::Iterable<'_, conntrack::TupleProtoAttrs>) {
     print!("{proto}");
 }
 
-fn format_status(attrs: utils::Iterable<'_, conntrack::OpGetDumpReply>) {
-    use conntrack::NfCtStatus as S;
-    let mut flags = Vec::new();
+fn format_status(attrs: conntrack::IterableOpGetDumpReply<'_>) {
     let status = attrs.get_status().unwrap();
+    print!(" [");
+    let mut is_first = true;
     for i in 0..32 {
-        let flag = match status & (1 << i) {
-            f if f == S::Expected as u32 => "Expected",
-            f if f == S::SeenReply as u32 => "SeenReply",
-            f if f == S::Assured as u32 => "Assured",
-            f if f == S::Confirmed as u32 => "Confirmed",
-            f if f == S::SrcNat as u32 => "SrcNat",
-            f if f == S::DstNat as u32 => "DstNat",
-            f if f == S::SeqAdj as u32 => "SeqAdj",
-            f if f == S::SrcNatDone as u32 => "SrcNatDone",
-            f if f == S::DstNatDone as u32 => "DstNatDone",
-            f if f == S::Dying as u32 => "Dying",
-            f if f == S::FixedTimeout as u32 => "FixedTimeout",
-            f if f == S::Template as u32 => "Template",
-            f if f == S::NatClash as u32 => "NatClash",
-            f if f == S::Helper as u32 => "Helper",
-            f if f == S::Offload as u32 => "Offload",
-            f if f == S::HwOffload as u32 => "HwOffload",
-            _ => "",
-        };
-        if !flag.is_empty() {
-            flags.push(flag);
+        if let Some(flag) = conntrack::NfCtStatus::from_value((status & (1 << i)) as u64) {
+            if !is_first {
+                print!(",");
+            }
+            print!("{flag:?}");
+            is_first = false;
         }
     }
-
-    print!(" [{}]", flags.join(","));
+    print!("]");
 }
 
-fn format_port(attrs: utils::Iterable<'_, conntrack::TupleProtoAttrs>) {
+fn format_port(attrs: conntrack::IterableTupleProtoAttrs<'_>) {
     if let Ok(src) = attrs.get_proto_src_port() {
         print!(" sport={src}");
     }
@@ -89,7 +73,7 @@ fn format_port(attrs: utils::Iterable<'_, conntrack::TupleProtoAttrs>) {
     }
 }
 
-fn format_ip(attrs: utils::Iterable<'_, conntrack::TupleIpAttrs>) {
+fn format_ip(attrs: conntrack::IterableTupleIpAttrs<'_>) {
     let src: IpAddr = attrs
         .get_ip_v4_src()
         .map(Into::into)

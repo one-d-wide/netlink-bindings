@@ -156,7 +156,7 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
         #![allow(unreachable_code)]
         #![allow(unreachable_patterns)]
         use std::fmt::Debug;
-        use netlink_bindings::Protocol;
+        use netlink_bindings::traits::Protocol;
 
         #[derive(Clone)]
         pub struct ReverseLookup<'a> {

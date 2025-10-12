@@ -7,8 +7,6 @@ pub mod consts;
 pub mod traits;
 pub mod utils;
 
-pub use traits::{NetlinkRequest, Protocol};
-
 // ```fish
 // cat proto \
 //     | while read i

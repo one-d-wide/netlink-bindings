@@ -2,8 +2,9 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::{
+    gen_iterable::iterable_name,
     gen_ops::OpHeader,
-    gen_utils::{kebab_to_rust, kebab_to_type, lifetime_needed_attrs},
+    gen_utils::{kebab_to_rust, kebab_to_type},
     gen_writable::writable_type,
     parse_spec::{AttrSet, Spec},
     Context,
@@ -122,36 +123,36 @@ pub fn gen_request(
                 self.buf.buf_mut()
             }
 
-            #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+            #[doc = "Set `NLM_F_CREATE` flag"]
             pub fn set_create(mut self) -> Self {
                 self.flags |= consts::NLM_F_CREATE as u16;
                 self
             }
 
-            #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+            #[doc = "Set `NLM_F_EXCL` flag"]
             pub fn set_excl(mut self) -> Self {
                 self.flags |= consts::NLM_F_EXCL as u16;
                 self
             }
 
-            #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+            #[doc = "Set `NLM_F_REPLACE` flag"]
             pub fn set_replace(mut self) -> Self {
                 self.flags |= consts::NLM_F_REPLACE as u16;
                 self
             }
 
-            #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+            #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
             pub fn set_change(self) -> Self {
                 self.set_create().set_replace()
             }
 
-            #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+            #[doc = "Set `NLM_F_APPEND` flag"]
             pub fn set_append(mut self) -> Self {
                 self.flags |= consts::NLM_F_APPEND as u16;
                 self
             }
 
-            #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+            #[doc = "Set `NLM_F_DUMP` flag"]
             fn set_dump(mut self) -> Self {
                 self.flags |= consts::NLM_F_DUMP as u16;
                 self
@@ -170,7 +171,7 @@ pub fn gen_request_wrapper(
     is_dump: bool,
     request_value: u16,
     _request_set: &AttrSet,
-    reply_set: &AttrSet,
+    _reply_set: &AttrSet,
     request_name: &str,
     reply_name: &str,
     request_header: Option<&OpHeader>,
@@ -194,23 +195,18 @@ pub fn gen_request_wrapper(
         (quote!(new), quote!())
     };
 
-    let decoder_lifetime = if lifetime_needed_attrs(reply_set) {
-        quote!(<'buf>)
-    } else {
-        quote!()
-    };
-
     let request = if is_dump {
         quote!(request.set_dump())
     } else {
         quote!(request)
     };
 
+    let decoder_iter = iterable_name(reply_name);
     let (reply_type, map_decoder, new) = if let Some(fixed_header) = reply_header {
         let header = writable_type(&fixed_header.name);
         if fixed_header.construct_header.is_some() {
             (
-                quote!(Iterable<'buf, #decoder #decoder_lifetime>),
+                quote!(#decoder_iter<'buf>),
                 quote!(),
                 quote! {
                     pub fn new(mut request: Request<'r>) -> Self {
@@ -221,7 +217,7 @@ pub fn gen_request_wrapper(
             )
         } else {
             (
-                quote!((#header, Iterable<'buf, #decoder #decoder_lifetime>)),
+                quote!((#header, #decoder_iter<'buf>)),
                 quote!(.1),
                 quote! {
                     pub fn new(mut request: Request<'r>, header: &#header) -> Self {
@@ -233,7 +229,7 @@ pub fn gen_request_wrapper(
         }
     } else {
         (
-            quote!(Iterable<'buf, #decoder #decoder_lifetime>),
+            quote!(#decoder_iter<'buf>),
             quote!(),
             quote! {
                 pub fn new(mut request: Request<'r>) -> Self {

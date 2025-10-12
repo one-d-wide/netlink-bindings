@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
+use syn::Ident;
 
 use crate::{
-    gen_attrs::gen_attr_type,
+    gen_attrs::{gen_attr_type, gen_attr_type_name},
     gen_defs::GenImplStruct,
     gen_ops::OpHeader,
     gen_sub_message::{self},
@@ -11,6 +12,14 @@ use crate::{
     parse_spec::{AttrProp, AttrSet, AttrType, ByteOrder, IndexedArrayType, Spec},
     Context,
 };
+
+pub fn iterable_name(name: &str) -> Ident {
+    format_ident!("Iterable{}", kebab_to_type(name))
+}
+
+pub fn array_iterable_name(name: &str) -> Ident {
+    format_ident!("IterableArray{}", kebab_to_type(name))
+}
 
 pub fn gen_iterable_attrs(
     tokens: &mut TokenStream,
@@ -98,30 +107,31 @@ pub fn gen_iterable_attrs(
         (quote!(), quote!('_), quote!())
     };
 
+    let iter = iterable_name(&set.name);
     let new_impl = if let Some(fixed_header) = fixed_header {
         let header = writable_type(&fixed_header.name);
         // TODO: verify fixed header length and contents
         if fixed_header.construct_header.is_some() {
             quote! {
-                pub fn new(buf: &#iterable_lifetime [u8]) -> Iterable<#iterable_lifetime, #type_name #lifetime> {
+                pub fn new(buf: &#iterable_lifetime [u8]) -> #iter <#iterable_lifetime> {
                     let mut header = #header::new();
                     header.as_mut_slice().clone_from_slice(&buf[..#header::len()]);
-                    Iterable::with_loc(&buf[#header::len()..], buf.as_ptr() as usize)
+                    #iter::with_loc(&buf[#header::len()..], buf.as_ptr() as usize)
                 }
             }
         } else {
             quote! {
-                pub fn new(buf: &#iterable_lifetime [u8]) -> (#header, Iterable<#iterable_lifetime, #type_name #lifetime>) {
+                pub fn new(buf: &#iterable_lifetime [u8]) -> (#header, #iter <#iterable_lifetime>) {
                     let mut header = #header::new();
                     header.as_mut_slice().clone_from_slice(&buf[..#header::len()]);
-                    (header, Iterable::with_loc(&buf[#header::len()..], buf.as_ptr() as usize))
+                    (header, #iter::with_loc(&buf[#header::len()..], buf.as_ptr() as usize))
                 }
             }
         }
     } else {
         quote! {
-            pub fn new(buf: &#iterable_lifetime [u8]) -> Iterable<#iterable_lifetime, #type_name #lifetime> {
-                Iterable::new(buf)
+            pub fn new(buf: &#iterable_lifetime [u8]) -> #iter <#iterable_lifetime> {
+                #iter::with_loc(buf, buf.as_ptr() as usize)
             }
         }
     };
@@ -160,8 +170,29 @@ pub fn gen_iterable_attrs(
 
     let name_str = format!("{type_name}");
     let item = quote!(#type_name #lifetime);
+    let iter = iterable_name(&name_str);
     tokens.extend(quote! {
-        impl #impl_lifetime Iterator for Iterable<#iterable_lifetime, #item> {
+        #[derive(Clone, Copy, Default)]
+        pub struct #iter<'a> {
+            buf: &'a [u8],
+            // Current position of the iterable in the [`buf`]
+            pos: usize,
+            // Pointer to the beginning of the first slice in the chain.
+            // Only used in calculating byte offset for error context.
+            orig_loc: usize,
+        }
+
+        impl<'a> #iter<'a> {
+            fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+                Self { buf, pos: 0, orig_loc }
+            }
+
+            pub fn get_buf(&self) -> &'a [u8] {
+                self.buf
+            }
+        }
+
+        impl<'a> Iterator for #iter<'a> {
             type Item = Result<#item, ErrorContext>;
 
             fn next(&mut self) -> Option<Self::Item> {
@@ -187,10 +218,11 @@ pub fn gen_iterable_attrs(
                     return Some(Ok(res));
                 }
 
-                Some(Err(self.error_context(
+                Some(Err(ErrorContext::new(
                     #name_str,
                     r#type.and_then(|t| #type_name::attr_from_type(t)),
-                    self.buf.as_ptr().wrapping_add(pos),
+                    self.orig_loc,
+                    self.buf.as_ptr().wrapping_add(pos) as usize,
                 )))
             }
         }
@@ -244,11 +276,24 @@ pub fn gen_iterable_parse(attr: &AttrProp) -> TokenStream {
         AttrType::Pad { .. } | AttrType::Binary { .. } => {
             return quote! { Some(#buf_name) };
         }
-        AttrType::IndexedArray { .. } => {
-            return quote! { Some(Iterable::with_loc(#buf_name, self.orig_loc)) };
+        AttrType::IndexedArray { sub_type, .. } => {
+            let arr = match sub_type {
+                IndexedArrayType::Plain { attr } => {
+                    let name_str = gen_attr_type_name(attr);
+                    array_iterable_name(&name_str)
+                }
+                IndexedArrayType::Nest { nested_attributes } => {
+                    array_iterable_name(nested_attributes)
+                }
+                sub_type => unreachable!("{sub_type:?}"),
+            };
+            return quote! { Some(#arr::with_loc(#buf_name, self.orig_loc)) };
         }
-        AttrType::Nest { .. } => {
-            return quote! { Some(Iterable::with_loc(#buf_name, self.orig_loc)) };
+        AttrType::Nest {
+            nested_attributes, ..
+        } => {
+            let iter = iterable_name(nested_attributes);
+            return quote! { Some(#iter::with_loc(#buf_name, self.orig_loc)) };
         }
         r#type => unreachable!("{:?}", r#type),
     };
@@ -264,54 +309,84 @@ pub fn gen_iterable_array(
     spec: &Spec,
     sub_type: &IndexedArrayType,
 ) {
-    let (item, parse, name_str) = match sub_type {
+    let arr;
+    let item;
+    let attrs_name;
+    let parse;
+    let name_str;
+
+    match sub_type {
         IndexedArrayType::Plain { attr } => {
-            let (item, _) = gen_attr_type(spec, attr);
-            let parse = gen_iterable_parse(attr);
-            let parse = quote!({
-                let Some(res) = #parse else { break };
+            (item, _) = gen_attr_type(attr);
+            attrs_name = None;
+            let parse_attr = gen_iterable_parse(attr);
+            parse = quote!({
+                let Some(res) = #parse_attr else { break };
                 return Some(Ok(res));
             });
-            let name_str = item.to_string();
-            (item, parse, name_str)
+            name_str = gen_attr_type_name(attr);
+            arr = array_iterable_name(&name_str);
         }
         IndexedArrayType::Nest { nested_attributes } => {
-            let set = spec.find_attr(nested_attributes);
-            let lifetime = if lifetime_needed_attrs(set) {
-                quote!(<'a>)
-            } else {
-                quote!()
-            };
+            arr = array_iterable_name(nested_attributes);
 
-            let type_name = format_ident!("{}", kebab_to_type(nested_attributes));
-            let item = quote!(Iterable<'a, #type_name #lifetime>);
-            let parse = quote!(Iterable::with_loc(next, self.orig_loc));
-            let parse = quote!({
-                return Some(Ok(#parse));
+            name_str = kebab_to_type(nested_attributes);
+            attrs_name = Some(format_ident!("{}", name_str));
+
+            let iter = iterable_name(nested_attributes);
+            let parse_attr = quote!(#iter::with_loc(next, self.orig_loc));
+            parse = quote!({
+                return Some(Ok(#parse_attr));
             });
 
-            if !ctx.generated_array_iterable.contains(&item.to_string()) {
-                tokens.extend(quote! {
-                    impl<'a> #type_name #lifetime {
-                        pub fn new_array(buf: &'a [u8]) -> Iterable<'a, #item> {
-                            Iterable::new(buf)
-                        }
-                    }
-                });
-            }
-
-            (item, parse, type_name.to_string())
+            item = quote!(#iter<'a>);
         }
         sub_type => unreachable!("{sub_type:?}"),
-    };
+    }
 
-    if ctx.generated_array_iterable.contains(&item.to_string()) {
+    if ctx.generated_array_iterable.contains(&name_str) {
         return;
     }
-    ctx.generated_array_iterable.insert(item.to_string());
+    ctx.generated_array_iterable.insert(name_str.clone());
+
+    if let IndexedArrayType::Nest { nested_attributes } = sub_type {
+        let set = spec.find_attr(nested_attributes);
+        let lifetime = if lifetime_needed_attrs(set) {
+            quote!(<'a>)
+        } else {
+            quote!()
+        };
+        tokens.extend(quote! {
+            impl #lifetime #attrs_name #lifetime {
+                pub fn new_array(buf: &[u8]) -> #arr<'_> {
+                    #arr::with_loc(buf, buf.as_ptr() as usize)
+                }
+            }
+        });
+    }
 
     tokens.extend(quote! {
-        impl<'a> Iterator for Iterable<'a, #item> {
+        #[derive(Clone, Copy, Default)]
+        pub struct #arr<'a> {
+            buf: &'a [u8],
+            // Current position of the iterable in the [`buf`]
+            pos: usize,
+            // Pointer to the beginning of the first slice in the chain.
+            // Only used in calculating byte offset for error context.
+            orig_loc: usize,
+        }
+
+        impl<'a> #arr<'a> {
+            fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+                Self { buf, pos: 0, orig_loc }
+            }
+
+            pub fn get_buf(&self) -> &'a [u8] {
+                self.buf
+            }
+        }
+
+        impl<'a> Iterator for #arr<'a> {
             type Item = Result<#item, ErrorContext>;
 
             fn next(&mut self) -> Option<Self::Item> {
@@ -324,10 +399,11 @@ pub fn gen_iterable_array(
                     #parse
                 }
 
-                Some(Err(self.error_context(
+                Some(Err(ErrorContext::new(
                     #name_str,
                     None,
-                    self.buf.as_ptr().wrapping_add(self.pos)
+                    self.orig_loc,
+                    self.buf.as_ptr().wrapping_add(self.pos) as usize,
                 )))
             }
         }

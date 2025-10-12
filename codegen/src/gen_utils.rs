@@ -1,7 +1,7 @@
 use quote::format_ident;
 use syn::Ident;
 
-use crate::parse_spec::{AttrProp, AttrSet, AttrType, Spec};
+use crate::parse_spec::{AttrProp, AttrSet, AttrType};
 
 pub fn sanitize_ident(name: &str) -> Ident {
     let keywords = ["self"];
@@ -113,9 +113,4 @@ pub fn lifetime_needed_attrs(attrs: &AttrSet) -> bool {
         }
     }
     false
-}
-
-pub fn lifetime_needed_attrs_name(spec: &Spec, name: &str) -> bool {
-    let attrs = spec.find_attr(name);
-    lifetime_needed_attrs(attrs)
 }

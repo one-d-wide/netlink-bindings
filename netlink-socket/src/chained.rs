@@ -9,7 +9,7 @@ use netlink_bindings::traits::NetlinkChained;
 use crate::{NetlinkReplyInner, NetlinkSocket, ReplyError, Socket, RECV_BUF_SIZE};
 
 impl NetlinkSocket {
-    /// Chained requests (experimental)
+    /// Execute a chained request (experimental)
     ///
     /// Some subsystems have special requirements for related requests,
     /// expecting certain types of messages to be sent within a single write

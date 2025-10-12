@@ -49,7 +49,7 @@ fn gen_def(tokens: &mut TokenStream, def: &Definition) {
                 let i = Literal::u64_unsuffixed(i);
                 quote!(1 << #i)
             },
-            "(flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)",
+            "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)",
         ),
         DefType::Enum {
             value_start,
@@ -61,7 +61,7 @@ fn gen_def(tokens: &mut TokenStream, def: &Definition) {
             entries,
             0,
             |i| Literal::u64_unsuffixed(i).to_token_stream(),
-            "(enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)",
+            "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)",
         ),
         // Structs are generated in gen_writable
         DefType::Struct { .. } => {}
@@ -113,9 +113,8 @@ fn gen_def_enum(
     }
 
     let type_name = format_ident!("{}", kebab_to_type(name));
-    let doc = format!("Original name: {name:?} {comment}");
     tokens.extend(quote! {
-        #[doc = #doc]
+        #[doc = #comment]
         #[derive(Debug, Clone, Copy)]
         pub enum #type_name {
             #variants

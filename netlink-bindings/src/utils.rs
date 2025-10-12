@@ -1,4 +1,4 @@
-use std::{fmt, marker::PhantomData};
+use std::fmt;
 
 pub use crate::primitives::*;
 pub use std::{ffi::CStr, fmt::Debug, iter::Iterator};
@@ -38,6 +38,7 @@ pub fn dump_assert_eq(left: &[u8], right: &[u8]) {
 }
 
 pub struct FormatHex<'a>(pub &'a [u8]);
+
 impl Debug for FormatHex<'_> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "\"")?;
@@ -50,6 +51,7 @@ impl Debug for FormatHex<'_> {
 }
 
 pub struct FormatEnum<T: Debug>(pub u64, pub fn(u64) -> Option<T>);
+
 impl<T: Debug> Debug for FormatEnum<T> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "{} ", self.0)?;
@@ -65,6 +67,7 @@ impl<T: Debug> Debug for FormatEnum<T> {
 }
 
 pub struct FormatFlags<T: Debug>(pub u64, pub fn(u64) -> Option<T>);
+
 impl<T: Debug> Debug for FormatFlags<T> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "{} ", self.0)?;
@@ -104,64 +107,10 @@ impl<T: Debug> Debug for FormatFlags<T> {
 }
 
 pub struct DisplayAsDebug<T>(T);
+
 impl<T: fmt::Display> fmt::Debug for DisplayAsDebug<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ErrorReason {
-    /// Only used in `.get_<attr>()` methods
-    AttrMissing,
-    /// Value of the attribute can't be parsed
-    ParsingError,
-    /// Found attribute of type not mentioned in the specification
-    UnknownAttr,
-}
-
-#[derive(Clone, PartialEq, Eq)]
-pub struct ErrorContext {
-    pub attrs: &'static str,
-    pub attr: Option<&'static str>,
-    pub offset: usize,
-    pub reason: ErrorReason,
-}
-
-impl std::error::Error for ErrorContext {}
-
-impl fmt::Debug for ErrorContext {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("ErrorContext")
-            .field("message", &DisplayAsDebug(&self))
-            .field("reason", &self.reason)
-            .field("attrs", &self.attrs)
-            .field("attr", &self.attr)
-            .field("offset", &self.offset)
-            .finish()
-    }
-}
-
-impl fmt::Display for ErrorContext {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let attrs = self.attrs;
-        if matches!(self.reason, ErrorReason::AttrMissing) {
-            let attr = self.attr.unwrap();
-            write!(f, "Missing attribute {attr:?} in {attrs:?}")?;
-            return Ok(());
-        } else {
-            write!(f, "Error parsing ")?;
-            if let Some(attr) = self.attr {
-                write!(f, "attribute {attr:?} of {attrs:?}")?;
-            } else {
-                write!(f, "header of {attrs:?}")?;
-                if matches!(self.reason, ErrorReason::UnknownAttr) {
-                    write!(f, " (unknown attribute)")?;
-                }
-            }
-        }
-        write!(f, " at offset {}", self.offset)?;
-        Ok(())
     }
 }
 
@@ -279,83 +228,79 @@ impl Rec for &mut Vec<u8> {
     }
 }
 
-#[derive(Clone)]
-pub struct Iterable<'a, AttrSet> {
-    pub(crate) buf: &'a [u8],
-    /// Current position of the iterable in the [`buf`]
-    pub(crate) pos: usize,
-    /// Pointer to the beginning of the first slice in the chain.
-    /// Only used in calculating byte offset for error context.
-    pub(crate) orig_loc: usize,
-    pub(crate) phantom: PhantomData<AttrSet>,
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ErrorReason {
+    /// Only used in `.get_<attr>()` methods
+    AttrMissing,
+    /// Value of the attribute can't be parsed
+    ParsingError,
+    /// Found attribute of type not mentioned in the specification
+    UnknownAttr,
 }
 
-impl<AttrSet: Clone> Copy for Iterable<'_, AttrSet> {}
+#[derive(Clone, PartialEq, Eq)]
+pub struct ErrorContext {
+    pub attrs: &'static str,
+    pub attr: Option<&'static str>,
+    pub offset: usize,
+    pub reason: ErrorReason,
+}
 
-impl<AttrSet> Default for Iterable<'_, AttrSet> {
-    fn default() -> Self {
-        Self {
-            buf: &[],
-            pos: 0,
-            orig_loc: 0,
-            phantom: PhantomData,
-        }
+impl std::error::Error for ErrorContext {}
+
+impl From<ErrorContext> for std::io::Error {
+    fn from(value: ErrorContext) -> Self {
+        Self::other(value)
     }
 }
 
-impl<'a, AttrSet> Iterable<'a, AttrSet> {
-    pub(crate) fn new(buf: &'a [u8]) -> Self {
-        Iterable::with_loc(buf, buf.as_ptr() as usize)
+impl fmt::Debug for ErrorContext {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ErrorContext")
+            .field("message", &DisplayAsDebug(&self))
+            .field("reason", &self.reason)
+            .field("attrs", &self.attrs)
+            .field("attr", &self.attr)
+            .field("offset", &self.offset)
+            .finish()
     }
+}
 
-    pub(crate) fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Iterable {
-            buf,
-            pos: 0,
-            orig_loc,
-            phantom: PhantomData,
-        }
-    }
-
-    pub(crate) fn calc_offset(&self, loc: usize) -> usize {
-        let orig = self.orig_loc;
-
-        if orig <= loc && loc - orig <= u16::MAX as usize {
-            loc - orig
+impl fmt::Display for ErrorContext {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let attrs = self.attrs;
+        if matches!(self.reason, ErrorReason::AttrMissing) {
+            let attr = self.attr.unwrap();
+            write!(f, "Missing attribute {attr:?} in {attrs:?}")?;
+            return Ok(());
         } else {
-            0
+            write!(f, "Error parsing ")?;
+            if let Some(attr) = self.attr {
+                write!(f, "attribute {attr:?} of {attrs:?}")?;
+            } else {
+                write!(f, "header of {attrs:?}")?;
+                if matches!(self.reason, ErrorReason::UnknownAttr) {
+                    write!(f, " (unknown attribute)")?;
+                }
+            }
         }
+        write!(f, " at offset {}", self.offset)?;
+        Ok(())
     }
+}
 
+impl ErrorContext {
     #[cold]
-    pub(crate) fn error_missing(&self, attrs: &'static str, attr: &'static str) -> ErrorContext {
-        let ctx = ErrorContext {
-            attrs,
-            attr: Some(attr),
-            offset: self.calc_offset(self.buf.as_ptr() as usize),
-            reason: ErrorReason::AttrMissing,
-        };
-
-        if cfg!(test) {
-            panic!("{ctx}")
-        } else {
-            ctx
-        }
-    }
-
-    #[cold]
-    pub(crate) fn error_context(
-        &mut self,
+    pub(crate) fn new(
         attrs: &'static str,
         attr: Option<&'static str>,
-        loc: *const u8,
+        orig_loc: usize,
+        loc: usize,
     ) -> ErrorContext {
-        self.buf = &[];
-
         let ctx = ErrorContext {
             attrs,
             attr,
-            offset: self.calc_offset(loc as usize),
+            offset: Self::calc_offset(orig_loc, loc),
             reason: if attr.is_some() {
                 ErrorReason::ParsingError
             } else {
@@ -370,8 +315,33 @@ impl<'a, AttrSet> Iterable<'a, AttrSet> {
         }
     }
 
-    pub fn get_buf(&self) -> &'a [u8] {
-        self.buf
+    #[cold]
+    pub(crate) fn new_missing(
+        attrs: &'static str,
+        attr: &'static str,
+        orig_loc: usize,
+        loc: usize,
+    ) -> ErrorContext {
+        let ctx = ErrorContext {
+            attrs,
+            attr: Some(attr),
+            offset: Self::calc_offset(orig_loc, loc),
+            reason: ErrorReason::AttrMissing,
+        };
+
+        if cfg!(test) {
+            panic!("{ctx}")
+        } else {
+            ctx
+        }
+    }
+
+    pub(crate) fn calc_offset(orig_loc: usize, loc: usize) -> usize {
+        if orig_loc <= loc && loc - orig_loc <= u16::MAX as usize {
+            loc - orig_loc
+        } else {
+            0
+        }
     }
 }
 

@@ -2,8 +2,9 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::{
-    gen_attrs::gen_attr_type,
+    gen_attrs::gen_attr_type_name,
     gen_defs::GenImplStruct,
+    gen_iterable::{array_iterable_name, iterable_name},
     gen_utils::{kebab_to_type, lifetime_needed_attrs, sanitize_ident},
     parse_spec::{AttrSet, AttrType, DefType, IndexedArrayType, Spec},
     Context,
@@ -12,41 +13,34 @@ use crate::{
 pub fn gen_introspect_array(
     tokens: &mut TokenStream,
     ctx: &mut Context,
-    spec: &Spec,
+    _spec: &Spec,
     sub_type: &IndexedArrayType,
 ) {
     let fmt_name = format_ident!("fmt");
 
-    let (item, map) = match sub_type {
+    let arr;
+    let map;
+
+    match sub_type {
         IndexedArrayType::Plain { attr } => {
-            let (rust_type, _) = gen_attr_type(spec, attr);
-            (rust_type, quote!())
+            let name_str = gen_attr_type_name(attr);
+            arr = array_iterable_name(&name_str);
+            map = quote!();
         }
         IndexedArrayType::Nest { nested_attributes } => {
-            let type_name = format_ident!("{}", kebab_to_type(nested_attributes));
-
-            let set = spec.find_attr(nested_attributes);
-            let lifetime = if lifetime_needed_attrs(set) {
-                quote!(<'a>)
-            } else {
-                quote!()
-            };
-
-            (
-                quote!(Iterable<'a, #type_name #lifetime>),
-                quote!(.map(FlattenErrorContext)),
-            )
+            arr = array_iterable_name(nested_attributes);
+            map = quote!(.map(FlattenErrorContext));
         }
-        other => unreachable!("{other:?}"),
-    };
+        sub_type => unreachable!("{sub_type:?}"),
+    }
 
-    if ctx.generated_array_introspect.contains(&item.to_string()) {
+    if ctx.generated_array_introspect.contains(&arr.to_string()) {
         return;
     }
-    ctx.generated_array_introspect.insert(item.to_string());
+    ctx.generated_array_introspect.insert(arr.to_string());
 
     tokens.extend(quote! {
-        impl<'a> std::fmt::Debug for Iterable<'a, #item> {
+        impl std::fmt::Debug for #arr<'_> {
             fn fmt(&self, #fmt_name: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 #fmt_name.debug_list().entries(self.clone()#map).finish()
             }
@@ -82,7 +76,7 @@ pub fn gen_introspect_attrs(
                 let enum_def = spec.find_def(r#enum);
                 let enum_type = format_ident!("{}", kebab_to_type(r#enum));
 
-                let as_flags=next.enum_as_flags.is_some_and(|val| val == true);
+                let as_flags=next.enum_as_flags.is_some_and(|val| val);
                 let def_flags = matches!(enum_def.def, DefType::Flags { .. });
                 let (formatter, from_val) = if def_flags {
                     (quote!(FormatFlags), quote!(#enum_type::from_value))
@@ -111,16 +105,16 @@ pub fn gen_introspect_attrs(
         }
     }
 
-    let (impl_lifetime, iterable_lifetime, lifetime) = if lifetime_needed_attrs(set) {
-        let l = quote!('a);
-        (quote!(<#l>), l.clone(), quote!(<#l>))
+    let impl_lifetime = if lifetime_needed_attrs(set) {
+        quote!(<'a>)
     } else {
-        (quote!(), quote!('_), quote!())
+        quote!()
     };
 
+    let iter = iterable_name(&set.name);
     let name_str = kebab_to_type(&set.name);
     tokens.extend(quote! {
-        impl #impl_lifetime std::fmt::Debug for Iterable<#iterable_lifetime, #type_name #lifetime> {
+        impl #impl_lifetime std::fmt::Debug for #iter<'_> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 let mut #fmt_name = f.debug_struct(#name_str);
                 for attr in self.clone() {
