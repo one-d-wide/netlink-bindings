@@ -59,9 +59,10 @@ subsystems may imply different things. A typical request looks like this:
 ```rust
 use netlink_bindings::wireguard;
 use netlink_socket::NetlinkSocket;
-let ifname = "wg0";
 
 let mut sock = NetlinkSocket::new();
+
+let ifname = "wg0";
 
 // All available requests are conveniently accessible using `family::Request`
 let mut request = wireguard::Request::new()
@@ -106,19 +107,22 @@ The relevant operation is "newaddr" with "do" kind. You may also notice
 fixed-header, theses flags may invoke some additional behavior in certain
 operations, or do nothing in others.
 
-```rust
+```rust,should_panic
 use std::net::IpAddr;
-use netlink_bindings::wireguard;
+use netlink_bindings::rt_addr;
+use netlink_socket::NetlinkSocket;
+
+let mut sock = NetlinkSocket::new();
 
 let ifindex: u32 = 1234; // Acquired via "get-addr" request
 let addr: IpAddr = "10.0.0.1".parse().unwrap();
 let prefix: u8 = 32; // stands for "/32" in "10.0.0.1/32"
 
 // Create fixed-header for the request
-let mut header = PushIfaddrmsg::new();
+let mut header = rt_addr::PushIfaddrmsg::new();
 header.set_ifa_index(ifindex);
 header.set_ifa_family(libc::AF_INET as u8); // aka ipv4
-header.set_ifa_prefixlen(addr_prefix);
+header.set_ifa_prefixlen(prefix);
 
 let mut request = rt_addr::Request::new()
     .set_change() // Don't fail if address already assigned
@@ -145,7 +149,12 @@ netlink-socket = { version = "0.2", features = [ "tokio" ] } # or "smol"
 
 An earlier example, but using async, would look like:
 
-```rust
+```rust,compile_fail
+use netlink_bindings::wireguard;
+use netlink_socket::NetlinkSocket;
+
+let mut sock = NetlinkSocket::new();
+
 let mut request = wireguard::Request::new()
     .op_get_device_dump_request();
 
@@ -179,7 +188,7 @@ prefixed with `Push`. For example, directly encoding a "do" request of
 "set-device" operation looks like the following:
 
 ```rust
-use netlink_bindings::{PushOpSetDeviceDoRequest, WgdeviceFlags};
+use netlink_bindings::wireguard::{PushOpSetDeviceDoRequest, WgdeviceFlags};
 
 let mut vec = Vec::new();
 
@@ -190,11 +199,11 @@ PushOpSetDeviceDoRequest::new(&mut vec)
     .push_flags(WgdeviceFlags::ReplacePeers as u32) // Remove existing peers
     .array_peers()
         .entry_nested()
-        .push_public_key(&[...]) // &[u8]
+        .push_public_key(&[/* ... */]) // &[u8]
         .push_endpoint("127.0.0.1:12345".parse().unwrap()) // SocketAddr
         .array_allowedips()
             .entry_nested()
-            .push_family(libc::AF_INET) // aka ipv4
+            .push_family(libc::AF_INET as u16) // aka ipv4
             .push_ipaddr("0.0.0.0".parse().unwrap()) // IpAddr
             .push_cidr_mask(0) // stands for "/0" in "0.0.0.0/0"
             .end_nested()
@@ -216,15 +225,19 @@ decoder itself is just a slice, therefore it can be cheaply cloned, copying
 it's frame. The low-level interface is based on iterators, with nice-to-use
 wrapper on top.
 
-```rust
+```rust,should_panic
+use netlink_bindings::wireguard::OpGetDeviceDumpReply;
+
+let buf = vec![/* ... */];
+
 // Dump get-device (reply)
 let attrs = OpGetDeviceDumpReply::new(&buf);
 
 println!("Ifname: {:?}", attrs.get_ifname().unwrap()); // &CStr
-for peer in attrs.get_peers() {
+for peer in attrs.get_peers().unwrap() {
     println!("Endpoint: {}", peer.get_endpoint().unwrap()); // SockAddr
 
-    for addr in peer.get_allowedips() {
+    for addr in peer.get_allowedips().unwrap() {
         let ip = addr.get_ipaddr().unwrap(); // IpAddr
         let mask = addr.get_cidr_mask().unwrap(); // u8
         println!("Allowed ip: {ip}/{mask}");
@@ -245,14 +258,18 @@ in case of a nested attribute set. But as you can see, using it directly
 quickly turns very ugly.
 
 ```rust
-for attr in OpGetDeviceDumpReply::new(next) {
+use netlink_bindings::wireguard::{OpGetDeviceDumpReply, Wgpeer};
+
+let buf = vec![/* ... */];
+
+for attr in OpGetDeviceDumpReply::new(&buf) {
     match attr.unwrap() {
         OpGetDeviceDumpReply::Ifname(n) => println!("Ifname: {n:?}"),
         OpGetDeviceDumpReply::Peers(iter) => {
             for entry in iter {
                 for attr in entry.unwrap() {
                     match attr.unwrap() {
-                        Wgpeer::Endpoint(e) => println!("Endpoint: {e:?}")
+                        Wgpeer::Endpoint(e) => println!("Endpoint: {e:?}"),
                         _ => {}
                     }
                 }
@@ -359,7 +376,6 @@ Dumping all "netlink-bindings/src/wireguard/wireguard-all.md"
 - Testing (for each sensible netlink family and for parsing primitives).
 - Simplify codegen logic.
 - Clean up unintentional panics in encoding/decoding.
-- Run-test documentation.
 - Optimize generated code size, e.g. leave out code encoding kernel replies by
 default.
 - Improve user interface (better error reporting, tooling, etc).

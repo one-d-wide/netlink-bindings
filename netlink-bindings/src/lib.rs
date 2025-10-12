@@ -1,4 +1,6 @@
-#![doc = include_str!("../../README.md")]
+// Readme is run-tested as part of netlink-socket crate
+#![allow(clippy::doc_lazy_continuation)]
+#![cfg_attr(not(doctest), doc = include_str!("../../README.md"))]
 
 mod primitives;
 
