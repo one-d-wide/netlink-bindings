@@ -11,7 +11,7 @@ use netlink_bindings::{
     traits::Protocol,
     utils,
 };
-use netlink_socket::NetlinkSocket;
+use netlink_socket2::NetlinkSocket;
 
 mod generated;
 

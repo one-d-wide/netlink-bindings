@@ -1,11 +1,15 @@
 [package]
 name = "netlink-bindings"
-version = "0.2.1"
+description = "Type-safe Rust bindings for Netlink generated from YAML specifications"
+version = "0.2.2"
 authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
 categories = [ "network-programming", "os", "api-bindings" ]
 repository = "https://github.com/one-d-wide/netlink-bindings"
 license = "MIT OR Apache-2.0"
 edition = "2021"
+
+[package.metadata.docs.rs]
+all-features = true
 
 [[example]]
 name = "wireguard"

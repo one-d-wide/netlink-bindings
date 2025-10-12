@@ -13,7 +13,7 @@ use netlink_bindings::conntrack;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request = conntrack::Request::new().op_get_dump_request(&conntrack::PushNfgenmsg::new());
 
-    let mut sock = netlink_socket::NetlinkSocket::new();
+    let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let mut iter = sock.request(&request).await?;
     while let Some(res) = iter.recv().await {

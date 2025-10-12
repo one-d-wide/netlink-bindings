@@ -39,11 +39,7 @@ arrays, sub messages.
 ```toml
 [dependencies]
 netlink-bindings = { version = "0.2", features = [ "wireguard" ] }
-netlink-socket = { version = "0.2", features = [] }
-
-[patch.crates-io]
-netlink-bindings = { git = "https://github.com/one-d-wide/netlink-bindings.git" }
-netlink-socket = { git = "https://github.com/one-d-wide/netlink-bindings.git" }
+netlink-socket2 = { version = "0.2", features = [ ] }
 ```
 
 ## Making requests
@@ -58,7 +54,7 @@ subsystems may imply different things. A typical request looks like this:
 
 ```rust
 use netlink_bindings::wireguard;
-use netlink_socket::NetlinkSocket;
+use netlink_socket2::NetlinkSocket;
 
 let mut sock = NetlinkSocket::new();
 
@@ -110,7 +106,7 @@ operations, or do nothing in others.
 ```rust,should_panic
 use std::net::IpAddr;
 use netlink_bindings::rt_addr;
-use netlink_socket::NetlinkSocket;
+use netlink_socket2::NetlinkSocket;
 
 let mut sock = NetlinkSocket::new();
 
@@ -144,14 +140,14 @@ enable it, and add `.await` keyword, in all places where async IO is expected.
 
 ```toml
 [dependencies]
-netlink-socket = { version = "0.2", features = [ "tokio" ] } # or "smol"
+netlink-socket2 = { ... , features = [ "tokio" ] } # or "smol"
 ```
 
 An earlier example, but using async, would look like:
 
 ```rust,compile_fail
 use netlink_bindings::wireguard;
-use netlink_socket::NetlinkSocket;
+use netlink_socket2::NetlinkSocket;
 
 let mut sock = NetlinkSocket::new();
 

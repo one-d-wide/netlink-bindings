@@ -23,7 +23,7 @@ async fn main() {
         .nested_linkinfo()
         .push_kind(c"bridge");
 
-    let mut sock = netlink_socket::NetlinkSocket::new();
+    let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let mut iter = sock.request(&request).await.unwrap();
     while let Some(res) = iter.recv().await {

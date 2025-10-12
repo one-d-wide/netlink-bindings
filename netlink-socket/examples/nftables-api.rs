@@ -12,13 +12,13 @@ use netlink_bindings::{
     },
     utils,
 };
-use netlink_socket::{NetlinkSocket, ReplyError};
+use netlink_socket2::{NetlinkSocket, ReplyError};
 
 #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
 async fn main() {
-    let mut sock = netlink_socket::NetlinkSocket::new();
+    let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let chain = "example-api-chain";
 

@@ -6,13 +6,13 @@
 use std::{ffi::CStr, net::Ipv4Addr};
 
 use netlink_bindings::nftables::{self, CmpOps, PayloadBase, PushNfgenmsg, Registers, VerdictCode};
-use netlink_socket::NetlinkSocket;
+use netlink_socket2::NetlinkSocket;
 
 #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
 async fn main() {
-    let mut sock = netlink_socket::NetlinkSocket::new();
+    let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let table = c"filter";
     let chain = c"example-chain";

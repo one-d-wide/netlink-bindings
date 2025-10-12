@@ -17,7 +17,7 @@ use netlink_bindings::{
     rt_link::{self, PushIfinfomsg},
     wireguard,
 };
-use netlink_socket::NetlinkSocket;
+use netlink_socket2::NetlinkSocket;
 
 #[cfg_attr(not(feature = "async"), maybe_async::maybe_async)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
