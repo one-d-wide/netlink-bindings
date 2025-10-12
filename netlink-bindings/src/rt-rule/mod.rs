@@ -8,12 +8,14 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"rt-rule";
 pub const PROTONUM: u16 = 0u16;
-#[doc = "Original name: \"fr-act\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum FrAct {
     Unspec = 0,
@@ -42,7 +44,6 @@ impl FrAct {
         })
     }
 }
-#[doc = "Original name: \"fib-rule-attrs\""]
 #[derive(Clone)]
 pub enum FibRuleAttrs<'a> {
     Dst(u32),
@@ -76,7 +77,7 @@ pub enum FibRuleAttrs<'a> {
     DportMask(u16),
     DscpMask(u8),
 }
-impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
+impl<'a> IterableFibRuleAttrs<'a> {
     pub fn get_dst(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -85,7 +86,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Dst"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -95,7 +101,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Src"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -105,7 +116,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Iifname"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Iifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -115,7 +131,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Goto"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Goto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_unused2(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -125,7 +146,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Unused2"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Unused2",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -135,7 +161,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_unused3(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -145,7 +176,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Unused3"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Unused3",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_unused4(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -155,7 +191,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Unused4"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Unused4",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_unused5(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -165,7 +206,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Unused5"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Unused5",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -175,7 +221,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -185,7 +236,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Flow"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -195,7 +251,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "TunId"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "TunId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -205,7 +266,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "SuppressIfgroup"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "SuppressIfgroup",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -215,7 +281,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "SuppressPrefixlen"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "SuppressPrefixlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -225,7 +296,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -235,7 +311,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Fwmask"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Fwmask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -245,7 +326,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Oifname"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Oifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -255,7 +341,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -265,7 +356,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "L3mdev"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "L3mdev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
@@ -275,7 +371,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "UidRange"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "UidRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -285,7 +386,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Protocol"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Protocol",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -295,7 +401,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -305,7 +416,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "SportRange"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "SportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -315,7 +431,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "DportRange"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "DportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -325,7 +446,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Dscp"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Dscp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -335,7 +461,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -345,7 +476,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "FlowlabelMask"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "FlowlabelMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -355,7 +491,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "SportMask"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "SportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -365,7 +506,12 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "DportMask"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "DportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -375,12 +521,17 @@ impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FibRuleAttrs", "DscpMask"))
+        Err(ErrorContext::new_missing(
+            "FibRuleAttrs",
+            "DscpMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> FibRuleAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, FibRuleAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableFibRuleAttrs<'a> {
+        IterableFibRuleAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -419,7 +570,25 @@ impl<'a> FibRuleAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, FibRuleAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableFibRuleAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableFibRuleAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableFibRuleAttrs<'a> {
     type Item = Result<FibRuleAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -590,14 +759,15 @@ impl<'a> Iterator for Iterable<'a, FibRuleAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "FibRuleAttrs",
             r#type.and_then(|t| FibRuleAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, FibRuleAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableFibRuleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FibRuleAttrs");
         for attr in self.clone() {
@@ -646,14 +816,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, FibRuleAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, FibRuleAttrs<'a>> {
+impl IterableFibRuleAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("FibRuleAttrs", offset));
             return (
@@ -1062,17 +1232,20 @@ impl<Prev: Rec> Drop for PushFibRuleAttrs<Prev> {
         }
     }
 }
-#[doc = "Original name: \"rtgenmsg\""]
 #[derive(Clone)]
 pub struct PushRtgenmsg {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtgenmsg {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushRtgenmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1106,17 +1279,22 @@ impl std::fmt::Debug for PushRtgenmsg {
             .finish()
     }
 }
-#[doc = "Original name: \"fib-rule-hdr\""]
 #[derive(Clone)]
 pub struct PushFibRuleHdr {
     pub(crate) buf: [u8; 12usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushFibRuleHdr {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 12usize],
+        }
+    }
+}
 impl PushFibRuleHdr {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1194,17 +1372,20 @@ impl std::fmt::Debug for PushFibRuleHdr {
             .finish()
     }
 }
-#[doc = "Original name: \"fib-rule-port-range\""]
 #[derive(Clone)]
 pub struct PushFibRulePortRange {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushFibRulePortRange {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushFibRulePortRange {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1245,17 +1426,20 @@ impl std::fmt::Debug for PushFibRulePortRange {
             .finish()
     }
 }
-#[doc = "Original name: \"fib-rule-uid-range\""]
 #[derive(Clone)]
 pub struct PushFibRuleUidRange {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushFibRuleUidRange {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushFibRuleUidRange {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1473,7 +1657,6 @@ impl<Prev: Rec> Drop for PushOpNewruleDoRequest<Prev> {
     }
 }
 #[doc = "Add new FIB rule"]
-#[doc = "Original name: \"op-newrule-do-request\""]
 #[derive(Clone)]
 pub enum OpNewruleDoRequest<'a> {
     Iifname(&'a CStr),
@@ -1500,7 +1683,7 @@ pub enum OpNewruleDoRequest<'a> {
     DportMask(u16),
     DscpMask(u8),
 }
-impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
+impl<'a> IterableOpNewruleDoRequest<'a> {
     pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1509,7 +1692,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Iifname"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Iifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1519,7 +1707,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Goto"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Goto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1529,7 +1722,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1539,7 +1737,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1549,7 +1752,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -1559,7 +1767,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "TunId"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "TunId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1569,7 +1782,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "SuppressIfgroup"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "SuppressIfgroup",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1579,7 +1797,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "SuppressPrefixlen"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "SuppressPrefixlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1589,7 +1812,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1599,7 +1827,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Fwmask"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Fwmask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1609,7 +1842,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Oifname"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Oifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1619,7 +1857,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "L3mdev"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "L3mdev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
@@ -1629,7 +1872,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "UidRange"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "UidRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1639,7 +1887,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Protocol"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Protocol",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1649,7 +1902,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -1659,7 +1917,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "SportRange"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "SportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -1669,7 +1932,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "DportRange"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "DportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1679,7 +1947,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Dscp"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Dscp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1689,7 +1962,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1699,7 +1977,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "FlowlabelMask"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "FlowlabelMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -1709,7 +1992,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "SportMask"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "SportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -1719,7 +2007,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "DportMask"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "DportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1729,25 +2022,45 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "DscpMask"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "DscpMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, Iterable<'a, OpNewruleDoRequest<'a>>) {
-        let mut header = PushFibRuleHdr::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpNewruleDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
+            PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewruleDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FibRuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewruleDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewruleDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewruleDoRequest<'a> {
     type Item = Result<OpNewruleDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1883,14 +2196,15 @@ impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewruleDoRequest",
             r#type.and_then(|t| OpNewruleDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewruleDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewruleDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewruleDoRequest");
         for attr in self.clone() {
@@ -1932,14 +2246,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewruleDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
+impl IterableOpNewruleDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushFibRuleHdr::len() {
             stack.push(("OpNewruleDoRequest", offset));
             return (
@@ -2145,26 +2459,40 @@ impl<Prev: Rec> Drop for PushOpNewruleDoReply<Prev> {
     }
 }
 #[doc = "Add new FIB rule"]
-#[doc = "Original name: \"op-newrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewruleDoReply {}
-impl<'a> Iterable<'a, OpNewruleDoReply> {}
+impl<'a> IterableOpNewruleDoReply<'a> {}
 impl OpNewruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, Iterable<'_, OpNewruleDoReply>) {
-        let mut header = PushFibRuleHdr::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, IterableOpNewruleDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
+            PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewruleDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FibRuleAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewruleDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewruleDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewruleDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewruleDoReply<'a> {
     type Item = Result<OpNewruleDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2185,14 +2513,15 @@ impl Iterator for Iterable<'_, OpNewruleDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewruleDoReply",
             r#type.and_then(|t| OpNewruleDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewruleDoReply> {
+impl std::fmt::Debug for IterableOpNewruleDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewruleDoReply");
         for attr in self.clone() {
@@ -2210,14 +2539,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewruleDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewruleDoReply> {
+impl IterableOpNewruleDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushFibRuleHdr::len() {
             stack.push(("OpNewruleDoReply", offset));
             return (
@@ -2245,7 +2574,7 @@ impl<'r> RequestOpNewruleDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewruleDoRequest<'_> {
-    type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpNewruleDoReply>);
+    type ReplyType<'buf> = (PushFibRuleHdr, IterableOpNewruleDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -2448,7 +2777,6 @@ impl<Prev: Rec> Drop for PushOpDelruleDoRequest<Prev> {
     }
 }
 #[doc = "Remove an existing FIB rule"]
-#[doc = "Original name: \"op-delrule-do-request\""]
 #[derive(Clone)]
 pub enum OpDelruleDoRequest<'a> {
     Iifname(&'a CStr),
@@ -2475,7 +2803,7 @@ pub enum OpDelruleDoRequest<'a> {
     DportMask(u16),
     DscpMask(u8),
 }
-impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
+impl<'a> IterableOpDelruleDoRequest<'a> {
     pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2484,7 +2812,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Iifname"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Iifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2494,7 +2827,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Goto"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Goto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2504,7 +2842,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2514,7 +2857,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2524,7 +2872,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -2534,7 +2887,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "TunId"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "TunId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2544,7 +2902,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "SuppressIfgroup"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "SuppressIfgroup",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2554,7 +2917,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "SuppressPrefixlen"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "SuppressPrefixlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2564,7 +2932,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2574,7 +2947,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Fwmask"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Fwmask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -2584,7 +2962,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Oifname"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Oifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2594,7 +2977,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "L3mdev"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "L3mdev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
@@ -2604,7 +2992,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "UidRange"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "UidRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2614,7 +3007,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Protocol"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Protocol",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2624,7 +3022,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -2634,7 +3037,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "SportRange"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "SportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -2644,7 +3052,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "DportRange"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "DportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2654,7 +3067,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Dscp"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Dscp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2664,7 +3082,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2674,7 +3097,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "FlowlabelMask"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "FlowlabelMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -2684,7 +3112,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "SportMask"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "SportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -2694,7 +3127,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "DportMask"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "DportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2704,25 +3142,45 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "DscpMask"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "DscpMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, Iterable<'a, OpDelruleDoRequest<'a>>) {
-        let mut header = PushFibRuleHdr::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpDelruleDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
+            PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelruleDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FibRuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelruleDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelruleDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelruleDoRequest<'a> {
     type Item = Result<OpDelruleDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2858,14 +3316,15 @@ impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelruleDoRequest",
             r#type.and_then(|t| OpDelruleDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelruleDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelruleDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelruleDoRequest");
         for attr in self.clone() {
@@ -2907,14 +3366,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelruleDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
+impl IterableOpDelruleDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushFibRuleHdr::len() {
             stack.push(("OpDelruleDoRequest", offset));
             return (
@@ -3120,26 +3579,40 @@ impl<Prev: Rec> Drop for PushOpDelruleDoReply<Prev> {
     }
 }
 #[doc = "Remove an existing FIB rule"]
-#[doc = "Original name: \"op-delrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelruleDoReply {}
-impl<'a> Iterable<'a, OpDelruleDoReply> {}
+impl<'a> IterableOpDelruleDoReply<'a> {}
 impl OpDelruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, Iterable<'_, OpDelruleDoReply>) {
-        let mut header = PushFibRuleHdr::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, IterableOpDelruleDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
+            PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelruleDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FibRuleAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelruleDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelruleDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelruleDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelruleDoReply<'a> {
     type Item = Result<OpDelruleDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3160,14 +3633,15 @@ impl Iterator for Iterable<'_, OpDelruleDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelruleDoReply",
             r#type.and_then(|t| OpDelruleDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelruleDoReply> {
+impl std::fmt::Debug for IterableOpDelruleDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelruleDoReply");
         for attr in self.clone() {
@@ -3185,14 +3659,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelruleDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelruleDoReply> {
+impl IterableOpDelruleDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushFibRuleHdr::len() {
             stack.push(("OpDelruleDoReply", offset));
             return (
@@ -3220,7 +3694,7 @@ impl<'r> RequestOpDelruleDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelruleDoRequest<'_> {
-    type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpDelruleDoReply>);
+    type ReplyType<'buf> = (PushFibRuleHdr, IterableOpDelruleDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -3288,26 +3762,40 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpRequest<Prev> {
     }
 }
 #[doc = "Dump all FIB rules"]
-#[doc = "Original name: \"op-getrule-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetruleDumpRequest {}
-impl<'a> Iterable<'a, OpGetruleDumpRequest> {}
+impl<'a> IterableOpGetruleDumpRequest<'a> {}
 impl OpGetruleDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, Iterable<'_, OpGetruleDumpRequest>) {
-        let mut header = PushFibRuleHdr::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, IterableOpGetruleDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
+            PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FibRuleAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetruleDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleDumpRequest<'a> {
     type Item = Result<OpGetruleDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3328,14 +3816,15 @@ impl Iterator for Iterable<'_, OpGetruleDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleDumpRequest",
             r#type.and_then(|t| OpGetruleDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetruleDumpRequest> {
+impl std::fmt::Debug for IterableOpGetruleDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleDumpRequest");
         for attr in self.clone() {
@@ -3353,14 +3842,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetruleDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetruleDumpRequest> {
+impl IterableOpGetruleDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushFibRuleHdr::len() {
             stack.push(("OpGetruleDumpRequest", offset));
             return (
@@ -3548,7 +4037,6 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpReply<Prev> {
     }
 }
 #[doc = "Dump all FIB rules"]
-#[doc = "Original name: \"op-getrule-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetruleDumpReply<'a> {
     Iifname(&'a CStr),
@@ -3575,7 +4063,7 @@ pub enum OpGetruleDumpReply<'a> {
     DportMask(u16),
     DscpMask(u8),
 }
-impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
+impl<'a> IterableOpGetruleDumpReply<'a> {
     pub fn get_iifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3584,7 +4072,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Iifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Iifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_goto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3594,7 +4087,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Goto"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Goto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3604,7 +4102,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3614,7 +4117,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3624,7 +4132,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tun_id(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3634,7 +4147,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "TunId"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "TunId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_ifgroup(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3644,7 +4162,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "SuppressIfgroup"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "SuppressIfgroup",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_suppress_prefixlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3654,7 +4177,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "SuppressPrefixlen"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "SuppressPrefixlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3664,7 +4192,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3674,7 +4207,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Fwmask"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Fwmask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -3684,7 +4222,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Oifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Oifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_l3mdev(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3694,7 +4237,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "L3mdev"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "L3mdev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid_range(&self) -> Result<PushFibRuleUidRange, ErrorContext> {
         let mut iter = self.clone();
@@ -3704,7 +4252,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "UidRange"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "UidRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protocol(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3714,7 +4267,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Protocol"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Protocol",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3724,7 +4282,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -3734,7 +4297,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "SportRange"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "SportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_range(&self) -> Result<PushFibRulePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -3744,7 +4312,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "DportRange"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "DportRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3754,7 +4327,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Dscp"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Dscp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3764,7 +4342,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3774,7 +4357,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "FlowlabelMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "FlowlabelMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3784,7 +4372,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "SportMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "SportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3794,7 +4387,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "DportMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "DportMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dscp_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3804,25 +4402,45 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "DscpMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "DscpMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, Iterable<'a, OpGetruleDumpReply<'a>>) {
-        let mut header = PushFibRuleHdr::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushFibRuleHdr::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpGetruleDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushFibRuleHdr::len()..], buf.as_ptr() as usize),
+            PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FibRuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleDumpReply<'a> {
     type Item = Result<OpGetruleDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3958,14 +4576,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleDumpReply",
             r#type.and_then(|t| OpGetruleDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleDumpReply");
         for attr in self.clone() {
@@ -4007,14 +4626,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
+impl IterableOpGetruleDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushFibRuleHdr::len() {
             stack.push(("OpGetruleDumpReply", offset));
             return (
@@ -4197,7 +4816,7 @@ impl<'r> RequestOpGetruleDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetruleDumpRequest<'_> {
-    type ReplyType<'buf> = (PushFibRuleHdr, Iterable<'buf, OpGetruleDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushFibRuleHdr, IterableOpGetruleDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -4427,31 +5046,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self

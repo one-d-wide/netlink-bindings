@@ -8,12 +8,14 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"rt-route";
 pub const PROTONUM: u16 = 0u16;
-#[doc = "Original name: \"rtm-type\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum RtmType {
     Unspec = 0,
@@ -48,7 +50,6 @@ impl RtmType {
         })
     }
 }
-#[doc = "Original name: \"route-attrs\""]
 #[derive(Clone)]
 pub enum RouteAttrs<'a> {
     Dst(&'a [u8]),
@@ -58,7 +59,7 @@ pub enum RouteAttrs<'a> {
     Gateway(&'a [u8]),
     Priority(u32),
     Prefsrc(&'a [u8]),
-    Metrics(Iterable<'a, Metrics<'a>>),
+    Metrics(IterableMetrics<'a>),
     Multipath(&'a [u8]),
     Protoinfo(&'a [u8]),
     Flow(u32),
@@ -83,7 +84,7 @@ pub enum RouteAttrs<'a> {
     NhId(u32),
     Flowlabel(u32),
 }
-impl<'a> Iterable<'a, RouteAttrs<'a>> {
+impl<'a> IterableRouteAttrs<'a> {
     pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -92,7 +93,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Dst"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -102,7 +108,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Src"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -112,7 +123,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Iif"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Iif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -122,7 +138,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Oif"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Oif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -132,7 +153,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Gateway"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Gateway",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -142,7 +168,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -152,9 +183,14 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Prefsrc"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Prefsrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
+    pub fn get_metrics(&self) -> Result<IterableMetrics<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -162,7 +198,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Metrics"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Metrics",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -172,7 +213,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Multipath"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Multipath",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protoinfo(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -182,7 +228,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Protoinfo"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Protoinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -192,7 +243,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Flow"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -202,7 +258,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_session(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -212,7 +273,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Session"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Session",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mp_algo(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -222,7 +288,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "MpAlgo"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "MpAlgo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -232,7 +303,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -242,7 +318,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Mark"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -252,7 +333,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "MfcStats"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "MfcStats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -262,7 +348,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Via"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Via",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -272,7 +363,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Newdst"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Newdst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -282,7 +378,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Pref"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Pref",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -292,7 +393,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -302,7 +408,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Encap"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Encap",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -312,7 +423,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Expires"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Expires",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -322,7 +438,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -332,7 +453,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Uid"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Uid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -342,7 +468,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "TtlPropagate"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "TtlPropagate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -352,7 +483,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -362,7 +498,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Sport"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Sport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -372,7 +513,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Dport"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Dport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -382,7 +528,12 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "NhId"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "NhId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -392,12 +543,17 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RouteAttrs", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "RouteAttrs",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> RouteAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, RouteAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableRouteAttrs<'a> {
+        IterableRouteAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -437,7 +593,25 @@ impl<'a> RouteAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, RouteAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableRouteAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableRouteAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableRouteAttrs<'a> {
     type Item = Result<RouteAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -484,7 +658,7 @@ impl<'a> Iterator for Iterable<'a, RouteAttrs<'a>> {
                     val
                 }),
                 8u16 => RouteAttrs::Metrics({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableMetrics::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -613,14 +787,15 @@ impl<'a> Iterator for Iterable<'a, RouteAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "RouteAttrs",
             r#type.and_then(|t| RouteAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, RouteAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableRouteAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RouteAttrs");
         for attr in self.clone() {
@@ -670,14 +845,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, RouteAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, RouteAttrs<'a>> {
+impl IterableRouteAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RouteAttrs", offset));
             return (
@@ -890,7 +1065,6 @@ impl<'a> Iterable<'a, RouteAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"metrics\""]
 #[derive(Clone)]
 pub enum Metrics<'a> {
     Lock(u32),
@@ -911,7 +1085,7 @@ pub enum Metrics<'a> {
     CcAlgo(&'a CStr),
     FastopenNoCookie(u32),
 }
-impl<'a> Iterable<'a, Metrics<'a>> {
+impl<'a> IterableMetrics<'a> {
     pub fn get_lock(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -920,7 +1094,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Lock"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Lock",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -930,7 +1109,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Mtu"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Mtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_window(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -940,7 +1124,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Window"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Window",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rtt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -950,7 +1139,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Rtt"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Rtt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rttvar(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -960,7 +1154,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Rttvar"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Rttvar",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ssthresh(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -970,7 +1169,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Ssthresh"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Ssthresh",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cwnd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -980,7 +1184,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Cwnd"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Cwnd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_advmss(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -990,7 +1199,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Advmss"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Advmss",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reordering(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1000,7 +1214,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Reordering"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Reordering",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_hoplimit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1010,7 +1229,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Hoplimit"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Hoplimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_initcwnd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1020,7 +1244,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Initcwnd"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Initcwnd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_features(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1030,7 +1259,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Features"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Features",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rto_min(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1040,7 +1274,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "RtoMin"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "RtoMin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_initrwnd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1050,7 +1289,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Initrwnd"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Initrwnd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_quickack(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1060,7 +1304,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "Quickack"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "Quickack",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cc_algo(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1070,7 +1319,12 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "CcAlgo"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "CcAlgo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fastopen_no_cookie(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1080,12 +1334,17 @@ impl<'a> Iterable<'a, Metrics<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Metrics", "FastopenNoCookie"))
+        Err(ErrorContext::new_missing(
+            "Metrics",
+            "FastopenNoCookie",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> Metrics<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, Metrics<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableMetrics<'a> {
+        IterableMetrics::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1112,7 +1371,25 @@ impl<'a> Metrics<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, Metrics<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableMetrics<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableMetrics<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableMetrics<'a> {
     type Item = Result<Metrics<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1218,14 +1495,15 @@ impl<'a> Iterator for Iterable<'a, Metrics<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Metrics",
             r#type.and_then(|t| Metrics::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Metrics<'a>> {
+impl<'a> std::fmt::Debug for IterableMetrics<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Metrics");
         for attr in self.clone() {
@@ -1261,14 +1539,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, Metrics<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, Metrics<'a>> {
+impl IterableMetrics<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("Metrics", offset));
             return (stack, missing_type.and_then(|t| Metrics::attr_from_type(t)));
@@ -1711,17 +1989,22 @@ impl<Prev: Rec> Drop for PushMetrics<Prev> {
         }
     }
 }
-#[doc = "Original name: \"rtmsg\""]
 #[derive(Clone)]
 pub struct PushRtmsg {
     pub(crate) buf: [u8; 12usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtmsg {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 12usize],
+        }
+    }
+}
 impl PushRtmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1813,17 +2096,22 @@ impl std::fmt::Debug for PushRtmsg {
             .finish()
     }
 }
-#[doc = "Original name: \"rta-cacheinfo\""]
 #[derive(Clone)]
 pub struct PushRtaCacheinfo {
     pub(crate) buf: [u8; 20usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtaCacheinfo {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 20usize],
+        }
+    }
+}
 impl PushRtaCacheinfo {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1927,26 +2215,40 @@ impl<Prev: Rec> Drop for PushOpGetrouteDumpRequest<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"op-getroute-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetrouteDumpRequest {}
-impl<'a> Iterable<'a, OpGetrouteDumpRequest> {}
+impl<'a> IterableOpGetrouteDumpRequest<'a> {}
 impl OpGetrouteDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, Iterable<'_, OpGetrouteDumpRequest>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, IterableOpGetrouteDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetrouteDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetrouteDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetrouteDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetrouteDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetrouteDumpRequest<'a> {
     type Item = Result<OpGetrouteDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1967,14 +2269,15 @@ impl Iterator for Iterable<'_, OpGetrouteDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetrouteDumpRequest",
             r#type.and_then(|t| OpGetrouteDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetrouteDumpRequest> {
+impl std::fmt::Debug for IterableOpGetrouteDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetrouteDumpRequest");
         for attr in self.clone() {
@@ -1992,14 +2295,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetrouteDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetrouteDumpRequest> {
+impl IterableOpGetrouteDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpGetrouteDumpRequest", offset));
             return (
@@ -2194,7 +2497,6 @@ impl<Prev: Rec> Drop for PushOpGetrouteDumpReply<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"op-getroute-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetrouteDumpReply<'a> {
     Dst(&'a [u8]),
@@ -2204,7 +2506,7 @@ pub enum OpGetrouteDumpReply<'a> {
     Gateway(&'a [u8]),
     Priority(u32),
     Prefsrc(&'a [u8]),
-    Metrics(Iterable<'a, Metrics<'a>>),
+    Metrics(IterableMetrics<'a>),
     Multipath(&'a [u8]),
     Flow(u32),
     Cacheinfo(PushRtaCacheinfo),
@@ -2226,7 +2528,7 @@ pub enum OpGetrouteDumpReply<'a> {
     NhId(u32),
     Flowlabel(u32),
 }
-impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
+impl<'a> IterableOpGetrouteDumpReply<'a> {
     pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2235,7 +2537,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Dst"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2245,7 +2552,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Src"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2255,7 +2567,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Iif"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Iif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2265,7 +2582,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Oif"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Oif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2275,7 +2597,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Gateway"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Gateway",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2285,7 +2612,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2295,9 +2627,14 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Prefsrc"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Prefsrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
+    pub fn get_metrics(&self) -> Result<IterableMetrics<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2305,7 +2642,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Metrics"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Metrics",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2315,7 +2657,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Multipath"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Multipath",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2325,7 +2672,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -2335,7 +2687,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2345,7 +2702,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2355,7 +2717,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2365,7 +2732,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "MfcStats"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "MfcStats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2375,7 +2747,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Via"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Via",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2385,7 +2762,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Newdst"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Newdst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2395,7 +2777,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Pref"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Pref",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -2405,7 +2792,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2415,7 +2807,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Encap"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Encap",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2425,7 +2822,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Expires"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Expires",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2435,7 +2837,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2445,7 +2852,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Uid"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Uid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2455,7 +2867,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "TtlPropagate"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "TtlPropagate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -2465,7 +2882,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -2475,7 +2897,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Sport"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Sport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -2485,7 +2912,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Dport"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Dport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2495,7 +2927,12 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "NhId"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "NhId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2505,25 +2942,45 @@ impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDumpReply", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDumpReply",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetrouteDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, Iterable<'a, OpGetrouteDumpReply<'a>>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetrouteDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetrouteDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetrouteDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetrouteDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetrouteDumpReply<'a> {
     type Item = Result<OpGetrouteDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2570,7 +3027,7 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDumpReply<'a>> {
                     val
                 }),
                 8u16 => OpGetrouteDumpReply::Metrics({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableMetrics::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2684,14 +3141,15 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetrouteDumpReply",
             r#type.and_then(|t| OpGetrouteDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetrouteDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetrouteDumpReply");
         for attr in self.clone() {
@@ -2738,14 +3196,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetrouteDumpReply<'a>> {
+impl IterableOpGetrouteDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpGetrouteDumpReply", offset));
             return (
@@ -2959,7 +3417,7 @@ impl<'r> RequestOpGetrouteDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetrouteDumpRequest<'_> {
-    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpGetrouteDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushRtmsg, IterableOpGetrouteDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -3077,7 +3535,6 @@ impl<Prev: Rec> Drop for PushOpGetrouteDoRequest<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"op-getroute-do-request\""]
 #[derive(Clone)]
 pub enum OpGetrouteDoRequest<'a> {
     Dst(&'a [u8]),
@@ -3091,7 +3548,7 @@ pub enum OpGetrouteDoRequest<'a> {
     Dport(u16),
     Flowlabel(u32),
 }
-impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
+impl<'a> IterableOpGetrouteDoRequest<'a> {
     pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3100,7 +3557,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Dst"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3110,7 +3572,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Src"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3120,7 +3587,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Iif"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Iif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3130,7 +3602,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Oif"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Oif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3140,7 +3617,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3150,7 +3632,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Uid"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Uid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3160,7 +3647,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3170,7 +3662,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Sport"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Sport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3180,7 +3677,12 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Dport"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Dport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3190,25 +3692,45 @@ impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoRequest", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoRequest",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetrouteDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, Iterable<'a, OpGetrouteDoRequest<'a>>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetrouteDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetrouteDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetrouteDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetrouteDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetrouteDoRequest<'a> {
     type Item = Result<OpGetrouteDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3279,14 +3801,15 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetrouteDoRequest",
             r#type.and_then(|t| OpGetrouteDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetrouteDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetrouteDoRequest");
         for attr in self.clone() {
@@ -3315,14 +3838,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetrouteDoRequest<'a>> {
+impl IterableOpGetrouteDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpGetrouteDoRequest", offset));
             return (
@@ -3592,7 +4115,6 @@ impl<Prev: Rec> Drop for PushOpGetrouteDoReply<Prev> {
     }
 }
 #[doc = "Dump route information."]
-#[doc = "Original name: \"op-getroute-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetrouteDoReply<'a> {
     Dst(&'a [u8]),
@@ -3602,7 +4124,7 @@ pub enum OpGetrouteDoReply<'a> {
     Gateway(&'a [u8]),
     Priority(u32),
     Prefsrc(&'a [u8]),
-    Metrics(Iterable<'a, Metrics<'a>>),
+    Metrics(IterableMetrics<'a>),
     Multipath(&'a [u8]),
     Flow(u32),
     Cacheinfo(PushRtaCacheinfo),
@@ -3624,7 +4146,7 @@ pub enum OpGetrouteDoReply<'a> {
     NhId(u32),
     Flowlabel(u32),
 }
-impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
+impl<'a> IterableOpGetrouteDoReply<'a> {
     pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3633,7 +4155,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Dst"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3643,7 +4170,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Src"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3653,7 +4185,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Iif"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Iif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3663,7 +4200,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Oif"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Oif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3673,7 +4215,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Gateway"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Gateway",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3683,7 +4230,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3693,9 +4245,14 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Prefsrc"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Prefsrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
+    pub fn get_metrics(&self) -> Result<IterableMetrics<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3703,7 +4260,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Metrics"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Metrics",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3713,7 +4275,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Multipath"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Multipath",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3723,7 +4290,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -3733,7 +4305,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3743,7 +4320,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3753,7 +4335,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3763,7 +4350,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "MfcStats"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "MfcStats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3773,7 +4365,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Via"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Via",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3783,7 +4380,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Newdst"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Newdst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3793,7 +4395,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Pref"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Pref",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3803,7 +4410,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3813,7 +4425,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Encap"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Encap",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3823,7 +4440,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Expires"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Expires",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3833,7 +4455,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3843,7 +4470,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Uid"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Uid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3853,7 +4485,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "TtlPropagate"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "TtlPropagate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -3863,7 +4500,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3873,7 +4515,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Sport"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Sport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -3883,7 +4530,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Dport"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Dport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3893,7 +4545,12 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "NhId"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "NhId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3903,25 +4560,45 @@ impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetrouteDoReply", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpGetrouteDoReply",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetrouteDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, Iterable<'a, OpGetrouteDoReply<'a>>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetrouteDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetrouteDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetrouteDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetrouteDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetrouteDoReply<'a> {
     type Item = Result<OpGetrouteDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3968,7 +4645,7 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDoReply<'a>> {
                     val
                 }),
                 8u16 => OpGetrouteDoReply::Metrics({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableMetrics::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4082,14 +4759,15 @@ impl<'a> Iterator for Iterable<'a, OpGetrouteDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetrouteDoReply",
             r#type.and_then(|t| OpGetrouteDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetrouteDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetrouteDoReply");
         for attr in self.clone() {
@@ -4136,14 +4814,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetrouteDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetrouteDoReply<'a>> {
+impl IterableOpGetrouteDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpGetrouteDoReply", offset));
             return (
@@ -4355,7 +5033,7 @@ impl<'r> RequestOpGetrouteDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetrouteDoRequest<'_> {
-    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpGetrouteDoReply<'buf>>);
+    type ReplyType<'buf> = (PushRtmsg, IterableOpGetrouteDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -4565,7 +5243,6 @@ impl<Prev: Rec> Drop for PushOpNewrouteDoRequest<Prev> {
     }
 }
 #[doc = "Create a new route"]
-#[doc = "Original name: \"op-newroute-do-request\""]
 #[derive(Clone)]
 pub enum OpNewrouteDoRequest<'a> {
     Dst(&'a [u8]),
@@ -4575,7 +5252,7 @@ pub enum OpNewrouteDoRequest<'a> {
     Gateway(&'a [u8]),
     Priority(u32),
     Prefsrc(&'a [u8]),
-    Metrics(Iterable<'a, Metrics<'a>>),
+    Metrics(IterableMetrics<'a>),
     Multipath(&'a [u8]),
     Flow(u32),
     Cacheinfo(PushRtaCacheinfo),
@@ -4597,7 +5274,7 @@ pub enum OpNewrouteDoRequest<'a> {
     NhId(u32),
     Flowlabel(u32),
 }
-impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
+impl<'a> IterableOpNewrouteDoRequest<'a> {
     pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -4606,7 +5283,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Dst"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4616,7 +5298,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Src"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4626,7 +5313,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Iif"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Iif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4636,7 +5328,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Oif"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Oif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4646,7 +5343,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Gateway"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Gateway",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4656,7 +5358,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4666,9 +5373,14 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Prefsrc"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Prefsrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
+    pub fn get_metrics(&self) -> Result<IterableMetrics<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4676,7 +5388,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Metrics"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Metrics",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4686,7 +5403,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Multipath"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Multipath",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4696,7 +5418,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -4706,7 +5433,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4716,7 +5448,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4726,7 +5463,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4736,7 +5478,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "MfcStats"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "MfcStats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4746,7 +5493,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Via"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Via",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4756,7 +5508,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Newdst"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Newdst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4766,7 +5523,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Pref"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Pref",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4776,7 +5538,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4786,7 +5553,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Encap"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Encap",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4796,7 +5568,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Expires"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Expires",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4806,7 +5583,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4816,7 +5598,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Uid"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Uid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4826,7 +5613,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "TtlPropagate"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "TtlPropagate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4836,7 +5628,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4846,7 +5643,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Sport"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Sport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4856,7 +5658,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Dport"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Dport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4866,7 +5673,12 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "NhId"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "NhId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4876,25 +5688,45 @@ impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewrouteDoRequest", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpNewrouteDoRequest",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewrouteDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, Iterable<'a, OpNewrouteDoRequest<'a>>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpNewrouteDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewrouteDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewrouteDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewrouteDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewrouteDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewrouteDoRequest<'a> {
     type Item = Result<OpNewrouteDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4941,7 +5773,7 @@ impl<'a> Iterator for Iterable<'a, OpNewrouteDoRequest<'a>> {
                     val
                 }),
                 8u16 => OpNewrouteDoRequest::Metrics({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableMetrics::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5055,14 +5887,15 @@ impl<'a> Iterator for Iterable<'a, OpNewrouteDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewrouteDoRequest",
             r#type.and_then(|t| OpNewrouteDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewrouteDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewrouteDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewrouteDoRequest");
         for attr in self.clone() {
@@ -5109,14 +5942,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewrouteDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewrouteDoRequest<'a>> {
+impl IterableOpNewrouteDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpNewrouteDoRequest", offset));
             return (
@@ -5353,26 +6186,40 @@ impl<Prev: Rec> Drop for PushOpNewrouteDoReply<Prev> {
     }
 }
 #[doc = "Create a new route"]
-#[doc = "Original name: \"op-newroute-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewrouteDoReply {}
-impl<'a> Iterable<'a, OpNewrouteDoReply> {}
+impl<'a> IterableOpNewrouteDoReply<'a> {}
 impl OpNewrouteDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, Iterable<'_, OpNewrouteDoReply>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, IterableOpNewrouteDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewrouteDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewrouteDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewrouteDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewrouteDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewrouteDoReply<'a> {
     type Item = Result<OpNewrouteDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5393,14 +6240,15 @@ impl Iterator for Iterable<'_, OpNewrouteDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewrouteDoReply",
             r#type.and_then(|t| OpNewrouteDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewrouteDoReply> {
+impl std::fmt::Debug for IterableOpNewrouteDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewrouteDoReply");
         for attr in self.clone() {
@@ -5418,14 +6266,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewrouteDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewrouteDoReply> {
+impl IterableOpNewrouteDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpNewrouteDoReply", offset));
             return (
@@ -5453,7 +6301,7 @@ impl<'r> RequestOpNewrouteDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewrouteDoRequest<'_> {
-    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpNewrouteDoReply>);
+    type ReplyType<'buf> = (PushRtmsg, IterableOpNewrouteDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -5663,7 +6511,6 @@ impl<Prev: Rec> Drop for PushOpDelrouteDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing route"]
-#[doc = "Original name: \"op-delroute-do-request\""]
 #[derive(Clone)]
 pub enum OpDelrouteDoRequest<'a> {
     Dst(&'a [u8]),
@@ -5673,7 +6520,7 @@ pub enum OpDelrouteDoRequest<'a> {
     Gateway(&'a [u8]),
     Priority(u32),
     Prefsrc(&'a [u8]),
-    Metrics(Iterable<'a, Metrics<'a>>),
+    Metrics(IterableMetrics<'a>),
     Multipath(&'a [u8]),
     Flow(u32),
     Cacheinfo(PushRtaCacheinfo),
@@ -5695,7 +6542,7 @@ pub enum OpDelrouteDoRequest<'a> {
     NhId(u32),
     Flowlabel(u32),
 }
-impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
+impl<'a> IterableOpDelrouteDoRequest<'a> {
     pub fn get_dst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -5704,7 +6551,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Dst"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_src(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5714,7 +6566,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Src"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5724,7 +6581,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Iif"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Iif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oif(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5734,7 +6596,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Oif"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Oif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gateway(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5744,7 +6611,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Gateway"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Gateway",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5754,7 +6626,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prefsrc(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5764,9 +6641,14 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Prefsrc"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Prefsrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_metrics(&self) -> Result<Iterable<'a, Metrics<'a>>, ErrorContext> {
+    pub fn get_metrics(&self) -> Result<IterableMetrics<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5774,7 +6656,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Metrics"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Metrics",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multipath(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5784,7 +6671,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Multipath"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Multipath",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flow(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5794,7 +6686,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Flow"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Flow",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushRtaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -5804,7 +6701,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5814,7 +6716,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5824,7 +6731,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mfc_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5834,7 +6746,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "MfcStats"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "MfcStats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5844,7 +6761,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Via"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Via",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5854,7 +6776,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Newdst"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Newdst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pref(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5864,7 +6791,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Pref"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Pref",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5874,7 +6806,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5884,7 +6821,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Encap"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Encap",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_expires(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5894,7 +6836,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Expires"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Expires",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5904,7 +6851,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_uid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5914,7 +6866,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Uid"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Uid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl_propagate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5924,7 +6881,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "TtlPropagate"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "TtlPropagate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ip_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5934,7 +6896,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "IpProto"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "IpProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5944,7 +6911,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Sport"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Sport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5954,7 +6926,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Dport"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Dport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nh_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5964,7 +6941,12 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "NhId"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "NhId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowlabel(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5974,25 +6956,45 @@ impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelrouteDoRequest", "Flowlabel"))
+        Err(ErrorContext::new_missing(
+            "OpDelrouteDoRequest",
+            "Flowlabel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelrouteDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, Iterable<'a, OpDelrouteDoRequest<'a>>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpDelrouteDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelrouteDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelrouteDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelrouteDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelrouteDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelrouteDoRequest<'a> {
     type Item = Result<OpDelrouteDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6039,7 +7041,7 @@ impl<'a> Iterator for Iterable<'a, OpDelrouteDoRequest<'a>> {
                     val
                 }),
                 8u16 => OpDelrouteDoRequest::Metrics({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableMetrics::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6153,14 +7155,15 @@ impl<'a> Iterator for Iterable<'a, OpDelrouteDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelrouteDoRequest",
             r#type.and_then(|t| OpDelrouteDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelrouteDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelrouteDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelrouteDoRequest");
         for attr in self.clone() {
@@ -6207,14 +7210,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelrouteDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelrouteDoRequest<'a>> {
+impl IterableOpDelrouteDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpDelrouteDoRequest", offset));
             return (
@@ -6451,26 +7454,40 @@ impl<Prev: Rec> Drop for PushOpDelrouteDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing route"]
-#[doc = "Original name: \"op-delroute-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelrouteDoReply {}
-impl<'a> Iterable<'a, OpDelrouteDoReply> {}
+impl<'a> IterableOpDelrouteDoReply<'a> {}
 impl OpDelrouteDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, Iterable<'_, OpDelrouteDoReply>) {
-        let mut header = PushRtmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushRtmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, IterableOpDelrouteDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushRtmsg::len()..], buf.as_ptr() as usize),
+            PushRtmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelrouteDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RouteAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelrouteDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelrouteDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelrouteDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelrouteDoReply<'a> {
     type Item = Result<OpDelrouteDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6491,14 +7508,15 @@ impl Iterator for Iterable<'_, OpDelrouteDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelrouteDoReply",
             r#type.and_then(|t| OpDelrouteDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelrouteDoReply> {
+impl std::fmt::Debug for IterableOpDelrouteDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelrouteDoReply");
         for attr in self.clone() {
@@ -6516,14 +7534,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelrouteDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelrouteDoReply> {
+impl IterableOpDelrouteDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushRtmsg::len() {
             stack.push(("OpDelrouteDoReply", offset));
             return (
@@ -6551,7 +7569,7 @@ impl<'r> RequestOpDelrouteDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelrouteDoRequest<'_> {
-    type ReplyType<'buf> = (PushRtmsg, Iterable<'buf, OpDelrouteDoReply>);
+    type ReplyType<'buf> = (PushRtmsg, IterableOpDelrouteDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -6781,31 +7799,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self

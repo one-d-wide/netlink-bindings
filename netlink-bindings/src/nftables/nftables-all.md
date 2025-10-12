@@ -4233,6 +4233,343 @@ PushOpDelruleDoRequest::new(&mut vec)
 
   // uniquely identifies a rule in a transaction
   .push_id(val) // u32
+
+  // list of expressions
+  .nested_expressions()
+
+    // Attribute may repeat multiple times (treat it as array)
+    .nested_elem()
+
+      // name of the expression type
+      .push_name(val) // &CStr
+      .push_name_bytes(val) // &[u8]
+
+      // type specific data
+      .nested_data_bitwise()
+        .push_sreg(val) // u32
+        .push_dreg(val) // u32
+        .push_len(val) // u32
+        .nested_mask()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+        .nested_xor()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+
+        // Associated type: "BitwiseOps" (enum)
+        .push_op(val) // u32
+        .nested_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_cmp()
+        .push_sreg(val) // u32
+
+        // Associated type: "CmpOps" (enum)
+        .push_op(val) // u32
+        .nested_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_counter()
+
+        // Number of bytes
+        .push_bytes(val) // u64
+
+        // Number of packets
+        .push_packets(val) // u64
+        .push_pad(val) // &[u8]
+      .end_nested()
+      .nested_data_ct()
+        .push_dreg(val) // u32
+
+        // Associated type: "CtKeys" (enum)
+        .push_key(val) // u32
+
+        // Associated type: "CtDirection" (enum)
+        .push_direction(val) // u8
+        .push_sreg(val) // u32
+      .end_nested()
+      .nested_data_fib()
+        .push_dreg(val) // u32
+
+        // Associated type: "FibResult" (enum)
+        .push_result(val) // u32
+
+        // Associated type: "FibFlags" (enum)
+        .push_flags(val) // u32
+      .end_nested()
+      .nested_data_flow_offload()
+
+        // Flow offload table name
+        .push_name(val) // &CStr
+        .push_name_bytes(val) // &[u8]
+      .end_nested()
+      .nested_data_immediate()
+        .push_dreg(val) // u32
+        .nested_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_lookup()
+
+        // Name of set to use
+        .push_set(val) // &CStr
+        .push_set_bytes(val) // &[u8]
+
+        // ID of set to use
+        .push_set_id(val) // u32
+        .push_sreg(val) // u32
+        .push_dreg(val) // u32
+
+        // Associated type: "LookupFlags" (enum)
+        .push_flags(val) // u32
+      .end_nested()
+      .nested_data_meta()
+        .push_dreg(val) // u32
+
+        // Associated type: "MetaKeys" (enum)
+        .push_key(val) // u32
+        .push_sreg(val) // u32
+      .end_nested()
+      .nested_data_nat()
+        .push_type(val) // u32
+        .push_family(val) // u32
+        .push_reg_addr_min(val) // u32
+        .push_reg_addr_max(val) // u32
+        .push_reg_proto_min(val) // u32
+        .push_reg_proto_max(val) // u32
+
+        // Associated type: "NatRangeFlags" (1 bit per enumeration)
+        .push_flags(val) // u32
+      .end_nested()
+      .nested_data_objref()
+        .push_imm_type(val) // u32
+
+        // object name
+        .push_imm_name(val) // &CStr
+        .push_imm_name_bytes(val) // &[u8]
+        .push_set_sreg(val) // u32
+
+        // name of object map
+        .push_set_name(val) // &CStr
+        .push_set_name_bytes(val) // &[u8]
+
+        // id of object map
+        .push_set_id(val) // u32
+      .end_nested()
+      .nested_data_payload()
+
+        // destination register to load data into
+        // Associated type: "Registers" (enum)
+        .push_dreg(val) // u32
+
+        // payload base
+        // Associated type: "PayloadBase" (enum)
+        .push_base(val) // u32
+
+        // payload offset relative to base
+        .push_offset(val) // u32
+
+        // payload length
+        .push_len(val) // u32
+
+        // source register to load data from
+        // Associated type: "Registers" (enum)
+        .push_sreg(val) // u32
+
+        // checksum type
+        .push_csum_type(val) // u32
+
+        // checksum offset relative to base
+        .push_csum_offset(val) // u32
+
+        // checksum flags
+        .push_csum_flags(val) // u32
+      .end_nested()
+      .nested_data_quota()
+        .push_bytes(val) // u64
+
+        // Associated type: "QuotaFlags" (enum)
+        .push_flags(val) // u32
+        .push_pad(val) // &[u8]
+        .push_consumed(val) // u64
+      .end_nested()
+      .nested_data_reject()
+
+        // Associated type: "RejectTypes" (enum)
+        .push_type(val) // u32
+        .push_icmp_code(val) // u8
+      .end_nested()
+      .nested_data_target()
+        .push_name(val) // &CStr
+        .push_name_bytes(val) // &[u8]
+        .push_rev(val) // u32
+        .push_info(val) // &[u8]
+      .end_nested()
+      .nested_data_tproxy()
+        .push_family(val) // u32
+        .push_reg_addr(val) // u32
+        .push_reg_port(val) // u32
+      .end_nested()
+      .nested_data_match()
+        .push_name(val) // &CStr
+        .push_name_bytes(val) // &[u8]
+        .push_rev(val) // u32
+        .push_info(val) // &[u8]
+      .end_nested()
+      .nested_data_range()
+
+        // source register of data to compare
+        // Associated type: "Registers" (enum)
+        .push_sreg(val) // u32
+
+        // cmp operation
+        // Associated type: "RangeOps" (enum)
+        .push_op(val) // u32
+
+        // data range from
+        .nested_from_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+
+        // data range to
+        .nested_to_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_numgen()
+
+        // destination register
+        // Associated type: "Registers" (enum)
+        .push_dreg(val) // u32
+
+        // maximum counter value
+        .push_modulus(val) // u32
+
+        // operation type
+        // Associated type: "NumgenTypes" (enum)
+        .push_type(val) // u32
+
+        // offset to be added to the counter
+        .push_offset(val) // u32
+      .end_nested()
+      .nested_data_log()
+
+        // netlink group to send messages to
+        .push_group(val) // u16
+
+        // prefix to prepend to log messages
+        .push_prefix(val) // &CStr
+        .push_prefix_bytes(val) // &[u8]
+
+        // length of payload to include in netlink message
+        .push_snaplen(val) // u32
+
+        // queue threshold
+        .push_qthreshold(val) // u16
+
+        // log level
+        // Associated type: "LogLevel" (enum)
+        .push_level(val) // u32
+
+        // logging flags
+        // Associated type: "LogFlags" (enum)
+        .push_flags(val) // u32
+      .end_nested()
+    .end_nested()
+  .end_nested()
   ;
 ```
 
@@ -4275,6 +4612,28 @@ for attr in iter {
 
     // uniquely identifies a rule in a transaction
     Id(val) => {}, // u32
+
+    // list of expressions
+    Expressions(iter) => {
+      for attr in iter {
+        match attr {
+
+          // Attribute may repeat multiple times (treat it as array)
+          Elem(iter) => {
+            for attr in iter {
+              match attr {
+
+                // name of the expression type
+                Name(val) => {}, // &CStr
+
+                // type specific data
+                Data(val) => {}, // submessage
+              }
+            }
+          },
+        }
+      }
+    },
   }
 }
 ```
@@ -4306,6 +4665,343 @@ PushOpDestroyruleDoRequest::new(&mut vec)
 
   // uniquely identifies a rule in a transaction
   .push_id(val) // u32
+
+  // list of expressions
+  .nested_expressions()
+
+    // Attribute may repeat multiple times (treat it as array)
+    .nested_elem()
+
+      // name of the expression type
+      .push_name(val) // &CStr
+      .push_name_bytes(val) // &[u8]
+
+      // type specific data
+      .nested_data_bitwise()
+        .push_sreg(val) // u32
+        .push_dreg(val) // u32
+        .push_len(val) // u32
+        .nested_mask()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+        .nested_xor()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+
+        // Associated type: "BitwiseOps" (enum)
+        .push_op(val) // u32
+        .nested_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_cmp()
+        .push_sreg(val) // u32
+
+        // Associated type: "CmpOps" (enum)
+        .push_op(val) // u32
+        .nested_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_counter()
+
+        // Number of bytes
+        .push_bytes(val) // u64
+
+        // Number of packets
+        .push_packets(val) // u64
+        .push_pad(val) // &[u8]
+      .end_nested()
+      .nested_data_ct()
+        .push_dreg(val) // u32
+
+        // Associated type: "CtKeys" (enum)
+        .push_key(val) // u32
+
+        // Associated type: "CtDirection" (enum)
+        .push_direction(val) // u8
+        .push_sreg(val) // u32
+      .end_nested()
+      .nested_data_fib()
+        .push_dreg(val) // u32
+
+        // Associated type: "FibResult" (enum)
+        .push_result(val) // u32
+
+        // Associated type: "FibFlags" (enum)
+        .push_flags(val) // u32
+      .end_nested()
+      .nested_data_flow_offload()
+
+        // Flow offload table name
+        .push_name(val) // &CStr
+        .push_name_bytes(val) // &[u8]
+      .end_nested()
+      .nested_data_immediate()
+        .push_dreg(val) // u32
+        .nested_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_lookup()
+
+        // Name of set to use
+        .push_set(val) // &CStr
+        .push_set_bytes(val) // &[u8]
+
+        // ID of set to use
+        .push_set_id(val) // u32
+        .push_sreg(val) // u32
+        .push_dreg(val) // u32
+
+        // Associated type: "LookupFlags" (enum)
+        .push_flags(val) // u32
+      .end_nested()
+      .nested_data_meta()
+        .push_dreg(val) // u32
+
+        // Associated type: "MetaKeys" (enum)
+        .push_key(val) // u32
+        .push_sreg(val) // u32
+      .end_nested()
+      .nested_data_nat()
+        .push_type(val) // u32
+        .push_family(val) // u32
+        .push_reg_addr_min(val) // u32
+        .push_reg_addr_max(val) // u32
+        .push_reg_proto_min(val) // u32
+        .push_reg_proto_max(val) // u32
+
+        // Associated type: "NatRangeFlags" (1 bit per enumeration)
+        .push_flags(val) // u32
+      .end_nested()
+      .nested_data_objref()
+        .push_imm_type(val) // u32
+
+        // object name
+        .push_imm_name(val) // &CStr
+        .push_imm_name_bytes(val) // &[u8]
+        .push_set_sreg(val) // u32
+
+        // name of object map
+        .push_set_name(val) // &CStr
+        .push_set_name_bytes(val) // &[u8]
+
+        // id of object map
+        .push_set_id(val) // u32
+      .end_nested()
+      .nested_data_payload()
+
+        // destination register to load data into
+        // Associated type: "Registers" (enum)
+        .push_dreg(val) // u32
+
+        // payload base
+        // Associated type: "PayloadBase" (enum)
+        .push_base(val) // u32
+
+        // payload offset relative to base
+        .push_offset(val) // u32
+
+        // payload length
+        .push_len(val) // u32
+
+        // source register to load data from
+        // Associated type: "Registers" (enum)
+        .push_sreg(val) // u32
+
+        // checksum type
+        .push_csum_type(val) // u32
+
+        // checksum offset relative to base
+        .push_csum_offset(val) // u32
+
+        // checksum flags
+        .push_csum_flags(val) // u32
+      .end_nested()
+      .nested_data_quota()
+        .push_bytes(val) // u64
+
+        // Associated type: "QuotaFlags" (enum)
+        .push_flags(val) // u32
+        .push_pad(val) // &[u8]
+        .push_consumed(val) // u64
+      .end_nested()
+      .nested_data_reject()
+
+        // Associated type: "RejectTypes" (enum)
+        .push_type(val) // u32
+        .push_icmp_code(val) // u8
+      .end_nested()
+      .nested_data_target()
+        .push_name(val) // &CStr
+        .push_name_bytes(val) // &[u8]
+        .push_rev(val) // u32
+        .push_info(val) // &[u8]
+      .end_nested()
+      .nested_data_tproxy()
+        .push_family(val) // u32
+        .push_reg_addr(val) // u32
+        .push_reg_port(val) // u32
+      .end_nested()
+      .nested_data_match()
+        .push_name(val) // &CStr
+        .push_name_bytes(val) // &[u8]
+        .push_rev(val) // u32
+        .push_info(val) // &[u8]
+      .end_nested()
+      .nested_data_range()
+
+        // source register of data to compare
+        // Associated type: "Registers" (enum)
+        .push_sreg(val) // u32
+
+        // cmp operation
+        // Associated type: "RangeOps" (enum)
+        .push_op(val) // u32
+
+        // data range from
+        .nested_from_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+
+        // data range to
+        .nested_to_data()
+          .push_value(val) // &[u8]
+          .nested_verdict()
+
+            // nf_tables verdict
+            // Associated type: "VerdictCode" (enum)
+            .push_code(val) // u32
+
+            // jump target chain name
+            .push_chain(val) // &CStr
+            .push_chain_bytes(val) // &[u8]
+
+            // jump target chain ID
+            .push_chain_id(val) // u32
+          .end_nested()
+        .end_nested()
+      .end_nested()
+      .nested_data_numgen()
+
+        // destination register
+        // Associated type: "Registers" (enum)
+        .push_dreg(val) // u32
+
+        // maximum counter value
+        .push_modulus(val) // u32
+
+        // operation type
+        // Associated type: "NumgenTypes" (enum)
+        .push_type(val) // u32
+
+        // offset to be added to the counter
+        .push_offset(val) // u32
+      .end_nested()
+      .nested_data_log()
+
+        // netlink group to send messages to
+        .push_group(val) // u16
+
+        // prefix to prepend to log messages
+        .push_prefix(val) // &CStr
+        .push_prefix_bytes(val) // &[u8]
+
+        // length of payload to include in netlink message
+        .push_snaplen(val) // u32
+
+        // queue threshold
+        .push_qthreshold(val) // u16
+
+        // log level
+        // Associated type: "LogLevel" (enum)
+        .push_level(val) // u32
+
+        // logging flags
+        // Associated type: "LogFlags" (enum)
+        .push_flags(val) // u32
+      .end_nested()
+    .end_nested()
+  .end_nested()
   ;
 ```
 
@@ -4348,6 +5044,28 @@ for attr in iter {
 
     // uniquely identifies a rule in a transaction
     Id(val) => {}, // u32
+
+    // list of expressions
+    Expressions(iter) => {
+      for attr in iter {
+        match attr {
+
+          // Attribute may repeat multiple times (treat it as array)
+          Elem(iter) => {
+            for attr in iter {
+              match attr {
+
+                // name of the expression type
+                Name(val) => {}, // &CStr
+
+                // type specific data
+                Data(val) => {}, // submessage
+              }
+            }
+          },
+        }
+      }
+    },
   }
 }
 ```

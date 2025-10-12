@@ -8,12 +8,14 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"rt-addr";
 pub const PROTONUM: u16 = 0u16;
-#[doc = "Original name: \"ifa-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum IfaFlags {
     Secondary = 1 << 0,
@@ -48,7 +50,6 @@ impl IfaFlags {
         })
     }
 }
-#[doc = "Original name: \"addr-attrs\""]
 #[derive(Clone)]
 pub enum AddrAttrs<'a> {
     Address(std::net::IpAddr),
@@ -64,7 +65,7 @@ pub enum AddrAttrs<'a> {
     TargetNetnsid(&'a [u8]),
     Proto(u8),
 }
-impl<'a> Iterable<'a, AddrAttrs<'a>> {
+impl<'a> IterableAddrAttrs<'a> {
     pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -73,7 +74,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Address"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
@@ -83,7 +89,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_label(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -93,7 +104,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Label"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Label",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
@@ -103,7 +119,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_anycast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -113,7 +134,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Anycast"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Anycast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -123,7 +149,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -133,7 +164,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Multicast"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Multicast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -144,7 +180,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rt_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -154,7 +195,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "RtPriority"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "RtPriority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -164,7 +210,12 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -174,12 +225,17 @@ impl<'a> Iterable<'a, AddrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AddrAttrs", "Proto"))
+        Err(ErrorContext::new_missing(
+            "AddrAttrs",
+            "Proto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> AddrAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, AddrAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableAddrAttrs<'a> {
+        IterableAddrAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -199,7 +255,25 @@ impl<'a> AddrAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, AddrAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableAddrAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableAddrAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableAddrAttrs<'a> {
     type Item = Result<AddrAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -275,14 +349,15 @@ impl<'a> Iterator for Iterable<'a, AddrAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "AddrAttrs",
             r#type.and_then(|t| AddrAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, AddrAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableAddrAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AddrAttrs");
         for attr in self.clone() {
@@ -314,14 +389,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, AddrAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, AddrAttrs<'a>> {
+impl IterableAddrAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("AddrAttrs", offset));
             return (
@@ -527,17 +602,20 @@ impl<Prev: Rec> Drop for PushAddrAttrs<Prev> {
         }
     }
 }
-#[doc = "Original name: \"ifaddrmsg\""]
 #[derive(Clone)]
 pub struct PushIfaddrmsg {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIfaddrmsg {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIfaddrmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -601,17 +679,22 @@ impl std::fmt::Debug for PushIfaddrmsg {
             .finish()
     }
 }
-#[doc = "Original name: \"ifa-cacheinfo\""]
 #[derive(Clone)]
 pub struct PushIfaCacheinfo {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIfaCacheinfo {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushIfaCacheinfo {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -754,7 +837,6 @@ impl<Prev: Rec> Drop for PushOpNewaddrDoRequest<Prev> {
     }
 }
 #[doc = "Add new address"]
-#[doc = "Original name: \"op-newaddr-do-request\""]
 #[derive(Clone)]
 pub enum OpNewaddrDoRequest<'a> {
     Address(std::net::IpAddr),
@@ -764,7 +846,7 @@ pub enum OpNewaddrDoRequest<'a> {
     #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
+impl<'a> IterableOpNewaddrDoRequest<'a> {
     pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -773,7 +855,12 @@ impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewaddrDoRequest", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpNewaddrDoRequest",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
@@ -783,7 +870,12 @@ impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewaddrDoRequest", "Local"))
+        Err(ErrorContext::new_missing(
+            "OpNewaddrDoRequest",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_label(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -793,7 +885,12 @@ impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewaddrDoRequest", "Label"))
+        Err(ErrorContext::new_missing(
+            "OpNewaddrDoRequest",
+            "Label",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -803,7 +900,12 @@ impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewaddrDoRequest", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpNewaddrDoRequest",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -814,25 +916,45 @@ impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewaddrDoRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpNewaddrDoRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewaddrDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, Iterable<'a, OpNewaddrDoRequest<'a>>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpNewaddrDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewaddrDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewaddrDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewaddrDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewaddrDoRequest<'a> {
     type Item = Result<OpNewaddrDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -878,14 +1000,15 @@ impl<'a> Iterator for Iterable<'a, OpNewaddrDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewaddrDoRequest",
             r#type.and_then(|t| OpNewaddrDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewaddrDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewaddrDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewaddrDoRequest");
         for attr in self.clone() {
@@ -911,14 +1034,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewaddrDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewaddrDoRequest<'a>> {
+impl IterableOpNewaddrDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpNewaddrDoRequest", offset));
             return (
@@ -1016,26 +1139,40 @@ impl<Prev: Rec> Drop for PushOpNewaddrDoReply<Prev> {
     }
 }
 #[doc = "Add new address"]
-#[doc = "Original name: \"op-newaddr-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewaddrDoReply {}
-impl<'a> Iterable<'a, OpNewaddrDoReply> {}
+impl<'a> IterableOpNewaddrDoReply<'a> {}
 impl OpNewaddrDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpNewaddrDoReply>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpNewaddrDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewaddrDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewaddrDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewaddrDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewaddrDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewaddrDoReply<'a> {
     type Item = Result<OpNewaddrDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1056,14 +1193,15 @@ impl Iterator for Iterable<'_, OpNewaddrDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewaddrDoReply",
             r#type.and_then(|t| OpNewaddrDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewaddrDoReply> {
+impl std::fmt::Debug for IterableOpNewaddrDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewaddrDoReply");
         for attr in self.clone() {
@@ -1081,14 +1219,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewaddrDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewaddrDoReply> {
+impl IterableOpNewaddrDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpNewaddrDoReply", offset));
             return (
@@ -1116,7 +1254,7 @@ impl<'r> RequestOpNewaddrDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewaddrDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpNewaddrDoReply>);
+    type ReplyType<'buf> = (PushIfaddrmsg, IterableOpNewaddrDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -1204,13 +1342,12 @@ impl<Prev: Rec> Drop for PushOpDeladdrDoRequest<Prev> {
     }
 }
 #[doc = "Remove address"]
-#[doc = "Original name: \"op-deladdr-do-request\""]
 #[derive(Clone)]
 pub enum OpDeladdrDoRequest {
     Address(std::net::IpAddr),
     Local(std::net::IpAddr),
 }
-impl<'a> Iterable<'a, OpDeladdrDoRequest> {
+impl<'a> IterableOpDeladdrDoRequest<'a> {
     pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1219,7 +1356,12 @@ impl<'a> Iterable<'a, OpDeladdrDoRequest> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDeladdrDoRequest", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpDeladdrDoRequest",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
@@ -1229,25 +1371,45 @@ impl<'a> Iterable<'a, OpDeladdrDoRequest> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDeladdrDoRequest", "Local"))
+        Err(ErrorContext::new_missing(
+            "OpDeladdrDoRequest",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl OpDeladdrDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpDeladdrDoRequest>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpDeladdrDoRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDeladdrDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDeladdrDoRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDeladdrDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDeladdrDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDeladdrDoRequest<'a> {
     type Item = Result<OpDeladdrDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1278,14 +1440,15 @@ impl Iterator for Iterable<'_, OpDeladdrDoRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDeladdrDoRequest",
             r#type.and_then(|t| OpDeladdrDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDeladdrDoRequest> {
+impl std::fmt::Debug for IterableOpDeladdrDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDeladdrDoRequest");
         for attr in self.clone() {
@@ -1306,14 +1469,14 @@ impl std::fmt::Debug for Iterable<'_, OpDeladdrDoRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDeladdrDoRequest> {
+impl IterableOpDeladdrDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpDeladdrDoRequest", offset));
             return (
@@ -1393,26 +1556,40 @@ impl<Prev: Rec> Drop for PushOpDeladdrDoReply<Prev> {
     }
 }
 #[doc = "Remove address"]
-#[doc = "Original name: \"op-deladdr-do-reply\""]
 #[derive(Clone)]
 pub enum OpDeladdrDoReply {}
-impl<'a> Iterable<'a, OpDeladdrDoReply> {}
+impl<'a> IterableOpDeladdrDoReply<'a> {}
 impl OpDeladdrDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpDeladdrDoReply>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpDeladdrDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDeladdrDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDeladdrDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDeladdrDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDeladdrDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDeladdrDoReply<'a> {
     type Item = Result<OpDeladdrDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1433,14 +1610,15 @@ impl Iterator for Iterable<'_, OpDeladdrDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDeladdrDoReply",
             r#type.and_then(|t| OpDeladdrDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDeladdrDoReply> {
+impl std::fmt::Debug for IterableOpDeladdrDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDeladdrDoReply");
         for attr in self.clone() {
@@ -1458,14 +1636,14 @@ impl std::fmt::Debug for Iterable<'_, OpDeladdrDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDeladdrDoReply> {
+impl IterableOpDeladdrDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpDeladdrDoReply", offset));
             return (
@@ -1493,7 +1671,7 @@ impl<'r> RequestOpDeladdrDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDeladdrDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpDeladdrDoReply>);
+    type ReplyType<'buf> = (PushIfaddrmsg, IterableOpDeladdrDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -1561,26 +1739,40 @@ impl<Prev: Rec> Drop for PushOpGetaddrDumpRequest<Prev> {
     }
 }
 #[doc = "Dump address information."]
-#[doc = "Original name: \"op-getaddr-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetaddrDumpRequest {}
-impl<'a> Iterable<'a, OpGetaddrDumpRequest> {}
+impl<'a> IterableOpGetaddrDumpRequest<'a> {}
 impl OpGetaddrDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpGetaddrDumpRequest>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpGetaddrDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetaddrDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetaddrDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetaddrDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetaddrDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetaddrDumpRequest<'a> {
     type Item = Result<OpGetaddrDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1601,14 +1793,15 @@ impl Iterator for Iterable<'_, OpGetaddrDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetaddrDumpRequest",
             r#type.and_then(|t| OpGetaddrDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetaddrDumpRequest> {
+impl std::fmt::Debug for IterableOpGetaddrDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetaddrDumpRequest");
         for attr in self.clone() {
@@ -1626,14 +1819,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetaddrDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetaddrDumpRequest> {
+impl IterableOpGetaddrDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpGetaddrDumpRequest", offset));
             return (
@@ -1732,7 +1925,6 @@ impl<Prev: Rec> Drop for PushOpGetaddrDumpReply<Prev> {
     }
 }
 #[doc = "Dump address information."]
-#[doc = "Original name: \"op-getaddr-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetaddrDumpReply<'a> {
     Address(std::net::IpAddr),
@@ -1742,7 +1934,7 @@ pub enum OpGetaddrDumpReply<'a> {
     #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
+impl<'a> IterableOpGetaddrDumpReply<'a> {
     pub fn get_address(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1751,7 +1943,12 @@ impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetaddrDumpReply", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpGetaddrDumpReply",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
@@ -1761,7 +1958,12 @@ impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetaddrDumpReply", "Local"))
+        Err(ErrorContext::new_missing(
+            "OpGetaddrDumpReply",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_label(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1771,7 +1973,12 @@ impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetaddrDumpReply", "Label"))
+        Err(ErrorContext::new_missing(
+            "OpGetaddrDumpReply",
+            "Label",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -1781,7 +1988,12 @@ impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetaddrDumpReply", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetaddrDumpReply",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"IfaFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -1792,25 +2004,45 @@ impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetaddrDumpReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetaddrDumpReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetaddrDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, Iterable<'a, OpGetaddrDumpReply<'a>>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetaddrDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetaddrDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetaddrDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetaddrDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetaddrDumpReply<'a> {
     type Item = Result<OpGetaddrDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1856,14 +2088,15 @@ impl<'a> Iterator for Iterable<'a, OpGetaddrDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetaddrDumpReply",
             r#type.and_then(|t| OpGetaddrDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetaddrDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetaddrDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetaddrDumpReply");
         for attr in self.clone() {
@@ -1889,14 +2122,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetaddrDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetaddrDumpReply<'a>> {
+impl IterableOpGetaddrDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpGetaddrDumpReply", offset));
             return (
@@ -1971,7 +2204,7 @@ impl<'r> RequestOpGetaddrDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetaddrDumpRequest<'_> {
-    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetaddrDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushIfaddrmsg, IterableOpGetaddrDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -2039,26 +2272,40 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"op-getmulticast-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDumpRequest {}
-impl<'a> Iterable<'a, OpGetmulticastDumpRequest> {}
+impl<'a> IterableOpGetmulticastDumpRequest<'a> {}
 impl OpGetmulticastDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpGetmulticastDumpRequest>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetmulticastDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetmulticastDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetmulticastDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetmulticastDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetmulticastDumpRequest<'a> {
     type Item = Result<OpGetmulticastDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2079,14 +2326,15 @@ impl Iterator for Iterable<'_, OpGetmulticastDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetmulticastDumpRequest",
             r#type.and_then(|t| OpGetmulticastDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetmulticastDumpRequest> {
+impl std::fmt::Debug for IterableOpGetmulticastDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetmulticastDumpRequest");
         for attr in self.clone() {
@@ -2104,14 +2352,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetmulticastDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetmulticastDumpRequest> {
+impl IterableOpGetmulticastDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpGetmulticastDumpRequest", offset));
             return (
@@ -2174,13 +2422,12 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"op-getmulticast-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDumpReply<'a> {
     Cacheinfo(PushIfaCacheinfo),
     Multicast(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetmulticastDumpReply<'a>> {
+impl<'a> IterableOpGetmulticastDumpReply<'a> {
     pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2189,7 +2436,12 @@ impl<'a> Iterable<'a, OpGetmulticastDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetmulticastDumpReply", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetmulticastDumpReply",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2199,25 +2451,45 @@ impl<'a> Iterable<'a, OpGetmulticastDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetmulticastDumpReply", "Multicast"))
+        Err(ErrorContext::new_missing(
+            "OpGetmulticastDumpReply",
+            "Multicast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetmulticastDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, Iterable<'a, OpGetmulticastDumpReply<'a>>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetmulticastDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetmulticastDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetmulticastDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetmulticastDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetmulticastDumpReply<'a> {
     type Item = Result<OpGetmulticastDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2248,14 +2520,15 @@ impl<'a> Iterator for Iterable<'a, OpGetmulticastDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetmulticastDumpReply",
             r#type.and_then(|t| OpGetmulticastDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetmulticastDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetmulticastDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetmulticastDumpReply");
         for attr in self.clone() {
@@ -2276,14 +2549,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetmulticastDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetmulticastDumpReply<'a>> {
+impl IterableOpGetmulticastDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpGetmulticastDumpReply", offset));
             return (
@@ -2340,7 +2613,7 @@ impl<'r> RequestOpGetmulticastDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetmulticastDumpRequest<'_> {
-    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetmulticastDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushIfaddrmsg, IterableOpGetmulticastDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -2408,26 +2681,40 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"op-getmulticast-do-request\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDoRequest {}
-impl<'a> Iterable<'a, OpGetmulticastDoRequest> {}
+impl<'a> IterableOpGetmulticastDoRequest<'a> {}
 impl OpGetmulticastDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, Iterable<'_, OpGetmulticastDoRequest>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDoRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetmulticastDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetmulticastDoRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetmulticastDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetmulticastDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetmulticastDoRequest<'a> {
     type Item = Result<OpGetmulticastDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2448,14 +2735,15 @@ impl Iterator for Iterable<'_, OpGetmulticastDoRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetmulticastDoRequest",
             r#type.and_then(|t| OpGetmulticastDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetmulticastDoRequest> {
+impl std::fmt::Debug for IterableOpGetmulticastDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetmulticastDoRequest");
         for attr in self.clone() {
@@ -2473,14 +2761,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetmulticastDoRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetmulticastDoRequest> {
+impl IterableOpGetmulticastDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpGetmulticastDoRequest", offset));
             return (
@@ -2543,13 +2831,12 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDoReply<Prev> {
     }
 }
 #[doc = "Get / dump IPv4/IPv6 multicast addresses."]
-#[doc = "Original name: \"op-getmulticast-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetmulticastDoReply<'a> {
     Cacheinfo(PushIfaCacheinfo),
     Multicast(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetmulticastDoReply<'a>> {
+impl<'a> IterableOpGetmulticastDoReply<'a> {
     pub fn get_cacheinfo(&self) -> Result<PushIfaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2558,7 +2845,12 @@ impl<'a> Iterable<'a, OpGetmulticastDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetmulticastDoReply", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetmulticastDoReply",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2568,25 +2860,45 @@ impl<'a> Iterable<'a, OpGetmulticastDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetmulticastDoReply", "Multicast"))
+        Err(ErrorContext::new_missing(
+            "OpGetmulticastDoReply",
+            "Multicast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetmulticastDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, Iterable<'a, OpGetmulticastDoReply<'a>>) {
-        let mut header = PushIfaddrmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfaddrmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfaddrmsg::len()..], buf.as_ptr() as usize),
+            PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetmulticastDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         AddrAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetmulticastDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetmulticastDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetmulticastDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetmulticastDoReply<'a> {
     type Item = Result<OpGetmulticastDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2617,14 +2929,15 @@ impl<'a> Iterator for Iterable<'a, OpGetmulticastDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetmulticastDoReply",
             r#type.and_then(|t| OpGetmulticastDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetmulticastDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetmulticastDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetmulticastDoReply");
         for attr in self.clone() {
@@ -2645,14 +2958,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetmulticastDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetmulticastDoReply<'a>> {
+impl IterableOpGetmulticastDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfaddrmsg::len() {
             stack.push(("OpGetmulticastDoReply", offset));
             return (
@@ -2707,7 +3020,7 @@ impl<'r> RequestOpGetmulticastDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetmulticastDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfaddrmsg, Iterable<'buf, OpGetmulticastDoReply<'buf>>);
+    type ReplyType<'buf> = (PushIfaddrmsg, IterableOpGetmulticastDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -2937,31 +3250,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self

@@ -9,26 +9,45 @@
 #![allow(unreachable_patterns)]
 #[cfg(test)]
 mod tests;
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"builtin";
 #[doc = "Generic family header"]
 #[doc = "Wrapper for bitfield32 type"]
 #[doc = "Header of a Netlink message"]
-#[doc = "Original name: \"dummy\""]
 #[derive(Clone)]
 pub enum Dummy {}
-impl<'a> Iterable<'a, Dummy> {}
+impl<'a> IterableDummy<'a> {}
 impl Dummy {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, Dummy> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableDummy<'_> {
+        IterableDummy::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         None
     }
 }
-impl Iterator for Iterable<'_, Dummy> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableDummy<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableDummy<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableDummy<'a> {
     type Item = Result<Dummy, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -49,14 +68,15 @@ impl Iterator for Iterable<'_, Dummy> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Dummy",
             r#type.and_then(|t| Dummy::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, Dummy> {
+impl std::fmt::Debug for IterableDummy<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Dummy");
         for attr in self.clone() {
@@ -74,14 +94,14 @@ impl std::fmt::Debug for Iterable<'_, Dummy> {
         fmt.finish()
     }
 }
-impl Iterable<'_, Dummy> {
+impl IterableDummy<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("Dummy", offset));
             return (stack, missing_type.and_then(|t| Dummy::attr_from_type(t)));
@@ -89,7 +109,6 @@ impl Iterable<'_, Dummy> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"nlmsgerr-attrs\""]
 #[derive(Clone)]
 pub enum NlmsgerrAttrs<'a> {
     #[doc = "error message string (string)"]
@@ -99,13 +118,13 @@ pub enum NlmsgerrAttrs<'a> {
     #[doc = "arbitrary subsystem specific cookie to be used - in the success case - to identify a created object or operation or similar (binary)"]
     Cookie(&'a [u8]),
     #[doc = "policy for a rejected attribute"]
-    Policy(Iterable<'a, PolicyTypeAttrs<'a>>),
+    Policy(IterablePolicyTypeAttrs<'a>),
     #[doc = "type of a missing required attribute, NLMSGERR_ATTR_MISS_NEST will not be present if the attribute was missing at the message level"]
     MissingType(u16),
     #[doc = "offset of the nest where attribute was missing"]
     MissingNest(u32),
 }
-impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
+impl<'a> IterableNlmsgerrAttrs<'a> {
     #[doc = "error message string (string)"]
     pub fn get_msg(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -115,7 +134,12 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NlmsgerrAttrs", "Msg"))
+        Err(ErrorContext::new_missing(
+            "NlmsgerrAttrs",
+            "Msg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "offset of the invalid attribute in the original message, counting from the beginning of the header (u32)"]
     pub fn get_offset(&self) -> Result<u32, ErrorContext> {
@@ -126,7 +150,12 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NlmsgerrAttrs", "Offset"))
+        Err(ErrorContext::new_missing(
+            "NlmsgerrAttrs",
+            "Offset",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "arbitrary subsystem specific cookie to be used - in the success case - to identify a created object or operation or similar (binary)"]
     pub fn get_cookie(&self) -> Result<&'a [u8], ErrorContext> {
@@ -137,10 +166,15 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NlmsgerrAttrs", "Cookie"))
+        Err(ErrorContext::new_missing(
+            "NlmsgerrAttrs",
+            "Cookie",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "policy for a rejected attribute"]
-    pub fn get_policy(&self) -> Result<Iterable<'a, PolicyTypeAttrs<'a>>, ErrorContext> {
+    pub fn get_policy(&self) -> Result<IterablePolicyTypeAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -148,7 +182,12 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NlmsgerrAttrs", "Policy"))
+        Err(ErrorContext::new_missing(
+            "NlmsgerrAttrs",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "type of a missing required attribute, NLMSGERR_ATTR_MISS_NEST will not be present if the attribute was missing at the message level"]
     pub fn get_missing_type(&self) -> Result<u16, ErrorContext> {
@@ -159,7 +198,12 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NlmsgerrAttrs", "MissingType"))
+        Err(ErrorContext::new_missing(
+            "NlmsgerrAttrs",
+            "MissingType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "offset of the nest where attribute was missing"]
     pub fn get_missing_nest(&self) -> Result<u32, ErrorContext> {
@@ -170,12 +214,17 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NlmsgerrAttrs", "MissingNest"))
+        Err(ErrorContext::new_missing(
+            "NlmsgerrAttrs",
+            "MissingNest",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> NlmsgerrAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, NlmsgerrAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableNlmsgerrAttrs<'a> {
+        IterableNlmsgerrAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -191,7 +240,25 @@ impl<'a> NlmsgerrAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, NlmsgerrAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableNlmsgerrAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableNlmsgerrAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableNlmsgerrAttrs<'a> {
     type Item = Result<NlmsgerrAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -218,7 +285,7 @@ impl<'a> Iterator for Iterable<'a, NlmsgerrAttrs<'a>> {
                     val
                 }),
                 4u16 => NlmsgerrAttrs::Policy({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePolicyTypeAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -242,14 +309,15 @@ impl<'a> Iterator for Iterable<'a, NlmsgerrAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "NlmsgerrAttrs",
             r#type.and_then(|t| NlmsgerrAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, NlmsgerrAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableNlmsgerrAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NlmsgerrAttrs");
         for attr in self.clone() {
@@ -274,14 +342,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, NlmsgerrAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
+impl IterableNlmsgerrAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NlmsgerrAttrs", offset));
             return (
@@ -344,7 +412,6 @@ impl<'a> Iterable<'a, NlmsgerrAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"policy-type-attrs\""]
 #[derive(Clone)]
 pub enum PolicyTypeAttrs<'a> {
     #[doc = "type of the attribute, enum netlink_attribute_type (U32)"]
@@ -372,7 +439,7 @@ pub enum PolicyTypeAttrs<'a> {
     #[doc = "mask of valid bits for unsigned integers (U64)"]
     Mask(u64),
 }
-impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
+impl<'a> IterablePolicyTypeAttrs<'a> {
     #[doc = "type of the attribute, enum netlink_attribute_type (U32)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -382,7 +449,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "minimum value for signed integers (S64)"]
     pub fn get_min_value_signed(&self) -> Result<i64, ErrorContext> {
@@ -393,7 +465,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "MinValueSigned"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "MinValueSigned",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "maximum value for signed integers (S64)"]
     pub fn get_max_value_signed(&self) -> Result<i64, ErrorContext> {
@@ -404,7 +481,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "MaxValueSigned"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "MaxValueSigned",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "minimum value for unsigned integers (U64)"]
     pub fn get_min_value_u(&self) -> Result<u64, ErrorContext> {
@@ -415,7 +497,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "MinValueU"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "MinValueU",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "maximum value for unsigned integers (U64)"]
     pub fn get_max_value_u(&self) -> Result<u64, ErrorContext> {
@@ -426,7 +513,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "MaxValueU"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "MaxValueU",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "minimum length for binary attributes, no minimum if not given (U32)"]
     pub fn get_min_length(&self) -> Result<u32, ErrorContext> {
@@ -437,7 +529,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "MinLength"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "MinLength",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "maximum length for binary attributes, no maximum if not given (U32)"]
     pub fn get_max_length(&self) -> Result<u32, ErrorContext> {
@@ -448,7 +545,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "MaxLength"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "MaxLength",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "sub policy for nested and nested array types (U32)"]
     pub fn get_policy_idx(&self) -> Result<u32, ErrorContext> {
@@ -459,7 +561,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "PolicyIdx"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "PolicyIdx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "maximum sub policy attribute for nested and nested array types, this can in theory be < the size of the policy pointed to by the index, if limited inside the nesting (U32)"]
     pub fn get_policy_maxtype(&self) -> Result<u32, ErrorContext> {
@@ -470,7 +577,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "PolicyMaxtype"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "PolicyMaxtype",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "valid mask for the bitfield32 type (U32)"]
     pub fn get_bitfield32_mask(&self) -> Result<u32, ErrorContext> {
@@ -481,7 +593,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "Bitfield32Mask"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "Bitfield32Mask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "pad attribute for 64-bit alignment"]
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
@@ -492,7 +609,12 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mask of valid bits for unsigned integers (U64)"]
     pub fn get_mask(&self) -> Result<u64, ErrorContext> {
@@ -503,12 +625,17 @@ impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PolicyTypeAttrs", "Mask"))
+        Err(ErrorContext::new_missing(
+            "PolicyTypeAttrs",
+            "Mask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> PolicyTypeAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, PolicyTypeAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterablePolicyTypeAttrs<'a> {
+        IterablePolicyTypeAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -530,7 +657,25 @@ impl<'a> PolicyTypeAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, PolicyTypeAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterablePolicyTypeAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterablePolicyTypeAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterablePolicyTypeAttrs<'a> {
     type Item = Result<PolicyTypeAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -611,14 +756,15 @@ impl<'a> Iterator for Iterable<'a, PolicyTypeAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "PolicyTypeAttrs",
             r#type.and_then(|t| PolicyTypeAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, PolicyTypeAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterablePolicyTypeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PolicyTypeAttrs");
         for attr in self.clone() {
@@ -649,14 +795,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, PolicyTypeAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, PolicyTypeAttrs<'a>> {
+impl IterablePolicyTypeAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("PolicyTypeAttrs", offset));
             return (
@@ -974,17 +1120,20 @@ impl<Prev: Rec> Drop for PushPolicyTypeAttrs<Prev> {
         }
     }
 }
-#[doc = "Original name: \"builtin-nfgenmsg\""]
 #[derive(Clone)]
 pub struct PushBuiltinNfgenmsg {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushBuiltinNfgenmsg {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushBuiltinNfgenmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1032,17 +1181,20 @@ impl std::fmt::Debug for PushBuiltinNfgenmsg {
             .finish()
     }
 }
-#[doc = "Original name: \"builtin-bitfield32\""]
 #[derive(Clone)]
 pub struct PushBuiltinBitfield32 {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushBuiltinBitfield32 {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushBuiltinBitfield32 {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1083,17 +1235,22 @@ impl std::fmt::Debug for PushBuiltinBitfield32 {
             .finish()
     }
 }
-#[doc = "Original name: \"nlmsghdr\""]
 #[derive(Clone)]
 pub struct PushNlmsghdr {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushNlmsghdr {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushNlmsghdr {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {

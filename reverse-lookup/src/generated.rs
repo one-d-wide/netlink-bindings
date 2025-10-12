@@ -6,7 +6,7 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
-use netlink_bindings::Protocol;
+use netlink_bindings::traits::Protocol;
 use std::fmt::Debug;
 #[derive(Clone)]
 pub struct ReverseLookup<'a> {

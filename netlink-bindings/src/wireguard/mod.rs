@@ -10,12 +10,14 @@
 #[cfg(test)]
 mod tests;
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"wireguard";
 pub const KEY_LEN: u64 = 32u64;
-#[doc = "Original name: \"wgdevice-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum WgdeviceFlags {
     ReplacePeers = 1 << 0,
@@ -28,7 +30,7 @@ impl WgdeviceFlags {
         })
     }
 }
-#[doc = "Original name: \"wgpeer-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum WgpeerFlags {
     RemoveMe = 1 << 0,
@@ -45,7 +47,7 @@ impl WgpeerFlags {
         })
     }
 }
-#[doc = "Original name: \"wgallowedip-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum WgallowedipFlags {
     RemoveMe = 1 << 0,
@@ -58,7 +60,6 @@ impl WgallowedipFlags {
         })
     }
 }
-#[doc = "Original name: \"wgdevice\""]
 #[derive(Clone)]
 pub enum Wgdevice<'a> {
     Ifindex(u32),
@@ -72,9 +73,9 @@ pub enum Wgdevice<'a> {
     ListenPort(u16),
     #[doc = "Set as 0 to disable."]
     Fwmark(u32),
-    Peers(Iterable<'a, Iterable<'a, Wgpeer<'a>>>),
+    Peers(IterableArrayWgpeer<'a>),
 }
-impl<'a> Iterable<'a, Wgdevice<'a>> {
+impl<'a> IterableWgdevice<'a> {
     pub fn get_ifindex(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -83,7 +84,12 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "Ifindex"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "Ifindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -93,7 +99,12 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set to all zeros to remove."]
     pub fn get_private_key(&self) -> Result<&'a [u8], ErrorContext> {
@@ -104,7 +115,12 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "PrivateKey"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "PrivateKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_public_key(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -114,7 +130,12 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "PublicKey"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "PublicKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "0 or WGDEVICE_F_REPLACE_PEERS if all current peers\nshould be removed prior to adding the list below.\n\nAssociated type: \"WgdeviceFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -125,7 +146,12 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "Flags"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to choose randomly."]
     pub fn get_listen_port(&self) -> Result<u16, ErrorContext> {
@@ -136,7 +162,12 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "ListenPort"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "ListenPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to disable."]
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
@@ -147,48 +178,74 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgdevice", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_peers(
         &self,
-    ) -> Result<
-        ArrayIterable<Iterable<'a, Iterable<'a, Wgpeer<'a>>>, Iterable<'a, Wgpeer<'a>>>,
-        ErrorContext,
-    > {
+    ) -> Result<ArrayIterable<IterableArrayWgpeer<'a>, IterableWgpeer<'a>>, ErrorContext> {
         for attr in self.clone() {
             if let Wgdevice::Peers(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("Wgdevice", "Peers"))
+        Err(ErrorContext::new_missing(
+            "Wgdevice",
+            "Peers",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> Wgpeer<'a> {
-    pub fn new_array(buf: &'a [u8]) -> Iterable<'a, Iterable<'a, Wgpeer<'a>>> {
-        Iterable::new(buf)
+    pub fn new_array(buf: &[u8]) -> IterableArrayWgpeer<'_> {
+        IterableArrayWgpeer::with_loc(buf, buf.as_ptr() as usize)
     }
 }
-impl<'a> Iterator for Iterable<'a, Iterable<'a, Wgpeer<'a>>> {
-    type Item = Result<Iterable<'a, Wgpeer<'a>>, ErrorContext>;
+#[derive(Clone, Copy, Default)]
+pub struct IterableArrayWgpeer<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableArrayWgpeer<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableArrayWgpeer<'a> {
+    type Item = Result<IterableWgpeer<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
         }
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             {
-                return Some(Ok(Iterable::with_loc(next, self.orig_loc)));
+                return Some(Ok(IterableWgpeer::with_loc(next, self.orig_loc)));
             }
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Wgpeer",
             None,
-            self.buf.as_ptr().wrapping_add(self.pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(self.pos) as usize,
         )))
     }
 }
 impl<'a> Wgdevice<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, Wgdevice<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableWgdevice<'a> {
+        IterableWgdevice::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -206,7 +263,25 @@ impl<'a> Wgdevice<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, Wgdevice<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableWgdevice<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableWgdevice<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableWgdevice<'a> {
     type Item = Result<Wgdevice<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -253,7 +328,7 @@ impl<'a> Iterator for Iterable<'a, Wgdevice<'a>> {
                     val
                 }),
                 8u16 => Wgdevice::Peers({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayWgpeer::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -267,21 +342,22 @@ impl<'a> Iterator for Iterable<'a, Wgdevice<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Wgdevice",
             r#type.and_then(|t| Wgdevice::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Iterable<'a, Wgpeer<'a>>> {
+impl std::fmt::Debug for IterableArrayWgpeer<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list()
             .entries(self.clone().map(FlattenErrorContext))
             .finish()
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Wgdevice<'a>> {
+impl<'a> std::fmt::Debug for IterableWgdevice<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Wgdevice");
         for attr in self.clone() {
@@ -310,14 +386,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, Wgdevice<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, Wgdevice<'a>> {
+impl IterableWgdevice<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("Wgdevice", offset));
             return (
@@ -399,7 +475,6 @@ impl<'a> Iterable<'a, Wgdevice<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"wgpeer\""]
 #[derive(Clone)]
 pub enum Wgpeer<'a> {
     PublicKey(&'a [u8]),
@@ -414,11 +489,11 @@ pub enum Wgpeer<'a> {
     LastHandshakeTime(PushKernelTimespec),
     RxBytes(u64),
     TxBytes(u64),
-    Allowedips(Iterable<'a, Iterable<'a, Wgallowedip>>),
+    Allowedips(IterableArrayWgallowedip<'a>),
     #[doc = "should not be set or used at all by most users of this API,\nas the most recent protocol will be used when this is unset.\nOtherwise, must be set to 1.\n"]
     ProtocolVersion(u32),
 }
-impl<'a> Iterable<'a, Wgpeer<'a>> {
+impl<'a> IterableWgpeer<'a> {
     pub fn get_public_key(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -427,7 +502,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "PublicKey"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "PublicKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as all zeros to remove."]
     pub fn get_preshared_key(&self) -> Result<&'a [u8], ErrorContext> {
@@ -438,7 +518,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "PresharedKey"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "PresharedKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "0 and/or WGPEER_F_REMOVE_ME if the specified peer should not\nexist at the end of the operation, rather than added/updated\nand/or WGPEER_F_REPLACE_ALLOWEDIPS if all current allowed IPs\nof this peer should be removed prior to adding the list below\nand/or WGPEER_F_UPDATE_ONLY if the peer should only be set if\nit already exists.\n\nAssociated type: \"WgpeerFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -449,7 +534,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "Flags"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "struct sockaddr_in or struct sockaddr_in6"]
     pub fn get_endpoint(&self) -> Result<std::net::SocketAddr, ErrorContext> {
@@ -460,7 +550,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "Endpoint"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "Endpoint",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to disable."]
     pub fn get_persistent_keepalive_interval(&self) -> Result<u16, ErrorContext> {
@@ -471,7 +566,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "PersistentKeepaliveInterval"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "PersistentKeepaliveInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_last_handshake_time(&self) -> Result<PushKernelTimespec, ErrorContext> {
         let mut iter = self.clone();
@@ -481,7 +581,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "LastHandshakeTime"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "LastHandshakeTime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rx_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -491,7 +596,12 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "RxBytes"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "RxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tx_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -501,20 +611,28 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "TxBytes"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "TxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_allowedips(
         &self,
-    ) -> Result<
-        ArrayIterable<Iterable<'a, Iterable<'a, Wgallowedip>>, Iterable<'a, Wgallowedip>>,
-        ErrorContext,
-    > {
+    ) -> Result<ArrayIterable<IterableArrayWgallowedip<'a>, IterableWgallowedip<'a>>, ErrorContext>
+    {
         for attr in self.clone() {
             if let Wgpeer::Allowedips(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("Wgpeer", "Allowedips"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "Allowedips",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "should not be set or used at all by most users of this API,\nas the most recent protocol will be used when this is unset.\nOtherwise, must be set to 1.\n"]
     pub fn get_protocol_version(&self) -> Result<u32, ErrorContext> {
@@ -525,35 +643,59 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgpeer", "ProtocolVersion"))
+        Err(ErrorContext::new_missing(
+            "Wgpeer",
+            "ProtocolVersion",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
-impl<'a> Wgallowedip {
-    pub fn new_array(buf: &'a [u8]) -> Iterable<'a, Iterable<'a, Wgallowedip>> {
-        Iterable::new(buf)
+impl Wgallowedip {
+    pub fn new_array(buf: &[u8]) -> IterableArrayWgallowedip<'_> {
+        IterableArrayWgallowedip::with_loc(buf, buf.as_ptr() as usize)
     }
 }
-impl<'a> Iterator for Iterable<'a, Iterable<'a, Wgallowedip>> {
-    type Item = Result<Iterable<'a, Wgallowedip>, ErrorContext>;
+#[derive(Clone, Copy, Default)]
+pub struct IterableArrayWgallowedip<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableArrayWgallowedip<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableArrayWgallowedip<'a> {
+    type Item = Result<IterableWgallowedip<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
         }
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             {
-                return Some(Ok(Iterable::with_loc(next, self.orig_loc)));
+                return Some(Ok(IterableWgallowedip::with_loc(next, self.orig_loc)));
             }
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Wgallowedip",
             None,
-            self.buf.as_ptr().wrapping_add(self.pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(self.pos) as usize,
         )))
     }
 }
 impl<'a> Wgpeer<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, Wgpeer<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableWgpeer<'a> {
+        IterableWgpeer::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -573,7 +715,25 @@ impl<'a> Wgpeer<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, Wgpeer<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableWgpeer<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableWgpeer<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableWgpeer<'a> {
     type Item = Result<Wgpeer<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -625,7 +785,7 @@ impl<'a> Iterator for Iterable<'a, Wgpeer<'a>> {
                     val
                 }),
                 9u16 => Wgpeer::Allowedips({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayWgallowedip::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -644,21 +804,22 @@ impl<'a> Iterator for Iterable<'a, Wgpeer<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Wgpeer",
             r#type.and_then(|t| Wgpeer::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Iterable<'a, Wgallowedip>> {
+impl std::fmt::Debug for IterableArrayWgallowedip<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list()
             .entries(self.clone().map(FlattenErrorContext))
             .finish()
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Wgpeer<'a>> {
+impl<'a> std::fmt::Debug for IterableWgpeer<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Wgpeer");
         for attr in self.clone() {
@@ -691,14 +852,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, Wgpeer<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, Wgpeer<'a>> {
+impl IterableWgpeer<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("Wgpeer", offset));
             return (stack, missing_type.and_then(|t| Wgpeer::attr_from_type(t)));
@@ -789,7 +950,6 @@ impl<'a> Iterable<'a, Wgpeer<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"wgallowedip\""]
 #[derive(Clone)]
 pub enum Wgallowedip {
     Family(u16),
@@ -799,7 +959,7 @@ pub enum Wgallowedip {
     #[doc = "WGALLOWEDIP_F_REMOVE_ME if the specified IP should be removed;\notherwise, this IP will be added if it is not already present.\n\nAssociated type: \"WgallowedipFlags\" (enum)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, Wgallowedip> {
+impl<'a> IterableWgallowedip<'a> {
     pub fn get_family(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -808,7 +968,12 @@ impl<'a> Iterable<'a, Wgallowedip> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgallowedip", "Family"))
+        Err(ErrorContext::new_missing(
+            "Wgallowedip",
+            "Family",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "struct in_addr or struct in6_add"]
     pub fn get_ipaddr(&self) -> Result<std::net::IpAddr, ErrorContext> {
@@ -819,7 +984,12 @@ impl<'a> Iterable<'a, Wgallowedip> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgallowedip", "Ipaddr"))
+        Err(ErrorContext::new_missing(
+            "Wgallowedip",
+            "Ipaddr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cidr_mask(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -829,7 +999,12 @@ impl<'a> Iterable<'a, Wgallowedip> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgallowedip", "CidrMask"))
+        Err(ErrorContext::new_missing(
+            "Wgallowedip",
+            "CidrMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "WGALLOWEDIP_F_REMOVE_ME if the specified IP should be removed;\notherwise, this IP will be added if it is not already present.\n\nAssociated type: \"WgallowedipFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -840,12 +1015,17 @@ impl<'a> Iterable<'a, Wgallowedip> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Wgallowedip", "Flags"))
+        Err(ErrorContext::new_missing(
+            "Wgallowedip",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl Wgallowedip {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, Wgallowedip> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableWgallowedip<'_> {
+        IterableWgallowedip::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -859,7 +1039,25 @@ impl Wgallowedip {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, Wgallowedip> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableWgallowedip<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableWgallowedip<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableWgallowedip<'a> {
     type Item = Result<Wgallowedip, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -900,14 +1098,15 @@ impl Iterator for Iterable<'_, Wgallowedip> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Wgallowedip",
             r#type.and_then(|t| Wgallowedip::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, Wgallowedip> {
+impl std::fmt::Debug for IterableWgallowedip<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Wgallowedip");
         for attr in self.clone() {
@@ -933,14 +1132,14 @@ impl std::fmt::Debug for Iterable<'_, Wgallowedip> {
         fmt.finish()
     }
 }
-impl Iterable<'_, Wgallowedip> {
+impl IterableWgallowedip<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("Wgallowedip", offset));
             return (
@@ -1324,17 +1523,22 @@ impl<Prev: Rec> Drop for PushWgallowedip<Prev> {
         }
     }
 }
-#[doc = "Original name: \"--kernel-timespec\""]
 #[derive(Clone)]
 pub struct PushKernelTimespec {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushKernelTimespec {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushKernelTimespec {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -1481,7 +1685,6 @@ impl<Prev: Rec> Drop for PushOpGetDeviceDumpRequest<Prev> {
     }
 }
 #[doc = "Retrieve WireGuard device.\n\nThe command should be called with one but not both of:\n* WGDEVICE_A_IFINDEX\n* WGDEVICE_A_IFNAME\n\nThe kernel will then return several messages (NLM_F_MULTI).\nIt is possible that all of the allowed IPs of a single peer will not\nfit within a single netlink message. In that case, the same peer will\nbe written in the following message, except it will only contain\nWGPEER_A_PUBLIC_KEY and WGPEER_A_ALLOWEDIPS. This may occur several\ntimes in a row for the same peer. It is then up to the receiver to\ncoalesce adjacent peers. Likewise, it is possible that all peers will\nnot fit within a single message. So, subsequent peers will be sent\nin following messages, except those will only contain\nWGDEVICE_A_IFNAME and WGDEVICE_A_PEERS. It is then up to the receiver\nto coalesce these messages to form the complete list of peers.\n\nSince this is an NLA_F_DUMP command, the final message will always be\nNLMSG_DONE, even if an error occurs. However, this NLMSG_DONE message\ncontains an integer error code. It is either zero or a negative error\ncode corresponding to the errno.\n"]
-#[doc = "Original name: \"op-get-device-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetDeviceDumpRequest<'a> {
     Ifindex(u32),
@@ -1495,9 +1698,9 @@ pub enum OpGetDeviceDumpRequest<'a> {
     ListenPort(u16),
     #[doc = "Set as 0 to disable."]
     Fwmark(u32),
-    Peers(Iterable<'a, Iterable<'a, Wgpeer<'a>>>),
+    Peers(IterableArrayWgpeer<'a>),
 }
-impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
+impl<'a> IterableOpGetDeviceDumpRequest<'a> {
     pub fn get_ifindex(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1506,7 +1709,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "Ifindex"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "Ifindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1516,7 +1724,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set to all zeros to remove."]
     pub fn get_private_key(&self) -> Result<&'a [u8], ErrorContext> {
@@ -1527,7 +1740,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "PrivateKey"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "PrivateKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_public_key(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1537,7 +1755,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "PublicKey"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "PublicKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "0 or WGDEVICE_F_REPLACE_PEERS if all current peers\nshould be removed prior to adding the list below.\n\nAssociated type: \"WgdeviceFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -1548,7 +1771,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to choose randomly."]
     pub fn get_listen_port(&self) -> Result<u16, ErrorContext> {
@@ -1559,7 +1787,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "ListenPort"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "ListenPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to disable."]
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
@@ -1570,35 +1803,57 @@ impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_peers(
         &self,
-    ) -> Result<
-        ArrayIterable<Iterable<'a, Iterable<'a, Wgpeer<'a>>>, Iterable<'a, Wgpeer<'a>>>,
-        ErrorContext,
-    > {
+    ) -> Result<ArrayIterable<IterableArrayWgpeer<'a>, IterableWgpeer<'a>>, ErrorContext> {
         for attr in self.clone() {
             if let OpGetDeviceDumpRequest::Peers(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpRequest", "Peers"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpRequest",
+            "Peers",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetDeviceDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
-        let mut header = PushBuiltinNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushBuiltinNfgenmsg::len()]);
-        Iterable::with_loc(&buf[PushBuiltinNfgenmsg::len()..], buf.as_ptr() as usize)
+    pub fn new(buf: &'a [u8]) -> IterableOpGetDeviceDumpRequest<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
+        IterableOpGetDeviceDumpRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         Wgdevice::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetDeviceDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetDeviceDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetDeviceDumpRequest<'a> {
     type Item = Result<OpGetDeviceDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1645,7 +1900,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
                     val
                 }),
                 8u16 => OpGetDeviceDumpRequest::Peers({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayWgpeer::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1659,14 +1914,15 @@ impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetDeviceDumpRequest",
             r#type.and_then(|t| OpGetDeviceDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetDeviceDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetDeviceDumpRequest");
         for attr in self.clone() {
@@ -1695,14 +1951,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDeviceDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetDeviceDumpRequest<'a>> {
+impl IterableOpGetDeviceDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushBuiltinNfgenmsg::len() {
             stack.push(("OpGetDeviceDumpRequest", offset));
             return (
@@ -1886,7 +2142,6 @@ impl<Prev: Rec> Drop for PushOpGetDeviceDumpReply<Prev> {
     }
 }
 #[doc = "Retrieve WireGuard device.\n\nThe command should be called with one but not both of:\n* WGDEVICE_A_IFINDEX\n* WGDEVICE_A_IFNAME\n\nThe kernel will then return several messages (NLM_F_MULTI).\nIt is possible that all of the allowed IPs of a single peer will not\nfit within a single netlink message. In that case, the same peer will\nbe written in the following message, except it will only contain\nWGPEER_A_PUBLIC_KEY and WGPEER_A_ALLOWEDIPS. This may occur several\ntimes in a row for the same peer. It is then up to the receiver to\ncoalesce adjacent peers. Likewise, it is possible that all peers will\nnot fit within a single message. So, subsequent peers will be sent\nin following messages, except those will only contain\nWGDEVICE_A_IFNAME and WGDEVICE_A_PEERS. It is then up to the receiver\nto coalesce these messages to form the complete list of peers.\n\nSince this is an NLA_F_DUMP command, the final message will always be\nNLMSG_DONE, even if an error occurs. However, this NLMSG_DONE message\ncontains an integer error code. It is either zero or a negative error\ncode corresponding to the errno.\n"]
-#[doc = "Original name: \"op-get-device-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetDeviceDumpReply<'a> {
     Ifindex(u32),
@@ -1900,9 +2155,9 @@ pub enum OpGetDeviceDumpReply<'a> {
     ListenPort(u16),
     #[doc = "Set as 0 to disable."]
     Fwmark(u32),
-    Peers(Iterable<'a, Iterable<'a, Wgpeer<'a>>>),
+    Peers(IterableArrayWgpeer<'a>),
 }
-impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
+impl<'a> IterableOpGetDeviceDumpReply<'a> {
     pub fn get_ifindex(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1911,7 +2166,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "Ifindex"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "Ifindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1921,7 +2181,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set to all zeros to remove."]
     pub fn get_private_key(&self) -> Result<&'a [u8], ErrorContext> {
@@ -1932,7 +2197,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "PrivateKey"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "PrivateKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_public_key(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1942,7 +2212,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "PublicKey"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "PublicKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "0 or WGDEVICE_F_REPLACE_PEERS if all current peers\nshould be removed prior to adding the list below.\n\nAssociated type: \"WgdeviceFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -1953,7 +2228,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to choose randomly."]
     pub fn get_listen_port(&self) -> Result<u16, ErrorContext> {
@@ -1964,7 +2244,12 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "ListenPort"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "ListenPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to disable."]
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
@@ -1975,35 +2260,57 @@ impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_peers(
         &self,
-    ) -> Result<
-        ArrayIterable<Iterable<'a, Iterable<'a, Wgpeer<'a>>>, Iterable<'a, Wgpeer<'a>>>,
-        ErrorContext,
-    > {
+    ) -> Result<ArrayIterable<IterableArrayWgpeer<'a>, IterableWgpeer<'a>>, ErrorContext> {
         for attr in self.clone() {
             if let OpGetDeviceDumpReply::Peers(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("OpGetDeviceDumpReply", "Peers"))
+        Err(ErrorContext::new_missing(
+            "OpGetDeviceDumpReply",
+            "Peers",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetDeviceDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, OpGetDeviceDumpReply<'a>> {
-        let mut header = PushBuiltinNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushBuiltinNfgenmsg::len()]);
-        Iterable::with_loc(&buf[PushBuiltinNfgenmsg::len()..], buf.as_ptr() as usize)
+    pub fn new(buf: &'a [u8]) -> IterableOpGetDeviceDumpReply<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
+        IterableOpGetDeviceDumpReply::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         Wgdevice::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetDeviceDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetDeviceDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetDeviceDumpReply<'a> {
     type Item = Result<OpGetDeviceDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2050,7 +2357,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpReply<'a>> {
                     val
                 }),
                 8u16 => OpGetDeviceDumpReply::Peers({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayWgpeer::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2064,14 +2371,15 @@ impl<'a> Iterator for Iterable<'a, OpGetDeviceDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetDeviceDumpReply",
             r#type.and_then(|t| OpGetDeviceDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetDeviceDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetDeviceDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetDeviceDumpReply");
         for attr in self.clone() {
@@ -2100,14 +2408,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDeviceDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetDeviceDumpReply<'a>> {
+impl IterableOpGetDeviceDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushBuiltinNfgenmsg::len() {
             stack.push(("OpGetDeviceDumpReply", offset));
             return (
@@ -2208,7 +2516,7 @@ impl<'r> RequestOpGetDeviceDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetDeviceDumpRequest<'_> {
-    type ReplyType<'buf> = Iterable<'buf, OpGetDeviceDumpReply<'buf>>;
+    type ReplyType<'buf> = IterableOpGetDeviceDumpReply<'buf>;
     fn protocol(&self) -> Protocol {
         Protocol::Generic("wireguard".as_bytes())
     }
@@ -2331,7 +2639,6 @@ impl<Prev: Rec> Drop for PushOpSetDeviceDoRequest<Prev> {
     }
 }
 #[doc = "Set WireGuard device.\n\nThis command should be called with a wgdevice set, containing one but\nnot both of WGDEVICE_A_IFINDEX and WGDEVICE_A_IFNAME.\n\nIt is possible that the amount of configuration data exceeds that of\nthe maximum message length accepted by the kernel. In that case,\nseveral messages should be sent one after another, with each\nsuccessive one filling in information not contained in the prior.\nNote that if WGDEVICE_F_REPLACE_PEERS is specified in the first\nmessage, it probably should not be specified in fragments that come\nafter, so that the list of peers is only cleared the first time but\nappended after.\nLikewise for peers, if WGPEER_F_REPLACE_ALLOWEDIPS is specified in\nthe first message of a peer, it likely should not be specified in\nsubsequent fragments.\n\nIf an error occurs, NLMSG_ERROR will reply containing an errno.\n"]
-#[doc = "Original name: \"op-set-device-do-request\""]
 #[derive(Clone)]
 pub enum OpSetDeviceDoRequest<'a> {
     Ifindex(u32),
@@ -2345,9 +2652,9 @@ pub enum OpSetDeviceDoRequest<'a> {
     ListenPort(u16),
     #[doc = "Set as 0 to disable."]
     Fwmark(u32),
-    Peers(Iterable<'a, Iterable<'a, Wgpeer<'a>>>),
+    Peers(IterableArrayWgpeer<'a>),
 }
-impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
+impl<'a> IterableOpSetDeviceDoRequest<'a> {
     pub fn get_ifindex(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2356,7 +2663,12 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "Ifindex"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "Ifindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -2366,7 +2678,12 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set to all zeros to remove."]
     pub fn get_private_key(&self) -> Result<&'a [u8], ErrorContext> {
@@ -2377,7 +2694,12 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "PrivateKey"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "PrivateKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_public_key(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2387,7 +2709,12 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "PublicKey"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "PublicKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "0 or WGDEVICE_F_REPLACE_PEERS if all current peers\nshould be removed prior to adding the list below.\n\nAssociated type: \"WgdeviceFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -2398,7 +2725,12 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to choose randomly."]
     pub fn get_listen_port(&self) -> Result<u16, ErrorContext> {
@@ -2409,7 +2741,12 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "ListenPort"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "ListenPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Set as 0 to disable."]
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
@@ -2420,35 +2757,57 @@ impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_peers(
         &self,
-    ) -> Result<
-        ArrayIterable<Iterable<'a, Iterable<'a, Wgpeer<'a>>>, Iterable<'a, Wgpeer<'a>>>,
-        ErrorContext,
-    > {
+    ) -> Result<ArrayIterable<IterableArrayWgpeer<'a>, IterableWgpeer<'a>>, ErrorContext> {
         for attr in self.clone() {
             if let OpSetDeviceDoRequest::Peers(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("OpSetDeviceDoRequest", "Peers"))
+        Err(ErrorContext::new_missing(
+            "OpSetDeviceDoRequest",
+            "Peers",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpSetDeviceDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, OpSetDeviceDoRequest<'a>> {
-        let mut header = PushBuiltinNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushBuiltinNfgenmsg::len()]);
-        Iterable::with_loc(&buf[PushBuiltinNfgenmsg::len()..], buf.as_ptr() as usize)
+    pub fn new(buf: &'a [u8]) -> IterableOpSetDeviceDoRequest<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
+        IterableOpSetDeviceDoRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         Wgdevice::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpSetDeviceDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpSetDeviceDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpSetDeviceDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpSetDeviceDoRequest<'a> {
     type Item = Result<OpSetDeviceDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2495,7 +2854,7 @@ impl<'a> Iterator for Iterable<'a, OpSetDeviceDoRequest<'a>> {
                     val
                 }),
                 8u16 => OpSetDeviceDoRequest::Peers({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayWgpeer::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2509,14 +2868,15 @@ impl<'a> Iterator for Iterable<'a, OpSetDeviceDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpSetDeviceDoRequest",
             r#type.and_then(|t| OpSetDeviceDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpSetDeviceDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpSetDeviceDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpSetDeviceDoRequest");
         for attr in self.clone() {
@@ -2545,14 +2905,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpSetDeviceDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpSetDeviceDoRequest<'a>> {
+impl IterableOpSetDeviceDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushBuiltinNfgenmsg::len() {
             stack.push(("OpSetDeviceDoRequest", offset));
             return (
@@ -2679,23 +3039,37 @@ impl<Prev: Rec> Drop for PushOpSetDeviceDoReply<Prev> {
     }
 }
 #[doc = "Set WireGuard device.\n\nThis command should be called with a wgdevice set, containing one but\nnot both of WGDEVICE_A_IFINDEX and WGDEVICE_A_IFNAME.\n\nIt is possible that the amount of configuration data exceeds that of\nthe maximum message length accepted by the kernel. In that case,\nseveral messages should be sent one after another, with each\nsuccessive one filling in information not contained in the prior.\nNote that if WGDEVICE_F_REPLACE_PEERS is specified in the first\nmessage, it probably should not be specified in fragments that come\nafter, so that the list of peers is only cleared the first time but\nappended after.\nLikewise for peers, if WGPEER_F_REPLACE_ALLOWEDIPS is specified in\nthe first message of a peer, it likely should not be specified in\nsubsequent fragments.\n\nIf an error occurs, NLMSG_ERROR will reply containing an errno.\n"]
-#[doc = "Original name: \"op-set-device-do-reply\""]
 #[derive(Clone)]
 pub enum OpSetDeviceDoReply {}
-impl<'a> Iterable<'a, OpSetDeviceDoReply> {}
+impl<'a> IterableOpSetDeviceDoReply<'a> {}
 impl OpSetDeviceDoReply {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, OpSetDeviceDoReply> {
-        let mut header = PushBuiltinNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushBuiltinNfgenmsg::len()]);
-        Iterable::with_loc(&buf[PushBuiltinNfgenmsg::len()..], buf.as_ptr() as usize)
+    pub fn new(buf: &'_ [u8]) -> IterableOpSetDeviceDoReply<'_> {
+        let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
+        IterableOpSetDeviceDoReply::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         Wgdevice::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpSetDeviceDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpSetDeviceDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpSetDeviceDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpSetDeviceDoReply<'a> {
     type Item = Result<OpSetDeviceDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2716,14 +3090,15 @@ impl Iterator for Iterable<'_, OpSetDeviceDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpSetDeviceDoReply",
             r#type.and_then(|t| OpSetDeviceDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpSetDeviceDoReply> {
+impl std::fmt::Debug for IterableOpSetDeviceDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpSetDeviceDoReply");
         for attr in self.clone() {
@@ -2741,14 +3116,14 @@ impl std::fmt::Debug for Iterable<'_, OpSetDeviceDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpSetDeviceDoReply> {
+impl IterableOpSetDeviceDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushBuiltinNfgenmsg::len() {
             stack.push(("OpSetDeviceDoReply", offset));
             return (
@@ -2776,7 +3151,7 @@ impl<'r> RequestOpSetDeviceDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpSetDeviceDoRequest<'_> {
-    type ReplyType<'buf> = Iterable<'buf, OpSetDeviceDoReply>;
+    type ReplyType<'buf> = IterableOpSetDeviceDoReply<'buf>;
     fn protocol(&self) -> Protocol {
         Protocol::Generic("wireguard".as_bytes())
     }
@@ -2860,31 +3235,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self

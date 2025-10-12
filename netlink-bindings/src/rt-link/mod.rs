@@ -8,12 +8,14 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"rt-link";
 pub const PROTONUM: u16 = 0u16;
-#[doc = "Original name: \"ifinfo-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum IfinfoFlags {
     Up = 1 << 0,
@@ -62,7 +64,7 @@ impl IfinfoFlags {
         })
     }
 }
-#[doc = "Original name: \"vlan-protocols\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum VlanProtocols {
     _8021q = 33024,
@@ -77,7 +79,7 @@ impl VlanProtocols {
         })
     }
 }
-#[doc = "Original name: \"ipv4-devconf\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum Ipv4Devconf {
     Forwarding = 0,
@@ -154,7 +156,7 @@ impl Ipv4Devconf {
         })
     }
 }
-#[doc = "Original name: \"ipv6-devconf\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum Ipv6Devconf {
     Forwarding = 0,
@@ -281,7 +283,7 @@ impl Ipv6Devconf {
         })
     }
 }
-#[doc = "Original name: \"ifla-icmp6-stats\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum IflaIcmp6Stats {
     Num = 0,
@@ -306,7 +308,7 @@ impl IflaIcmp6Stats {
         })
     }
 }
-#[doc = "Original name: \"ifla-inet6-stats\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum IflaInet6Stats {
     Num = 0,
@@ -391,7 +393,7 @@ impl IflaInet6Stats {
         })
     }
 }
-#[doc = "Original name: \"vlan-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum VlanFlags {
     ReorderHdr = 1 << 0,
@@ -412,7 +414,7 @@ impl VlanFlags {
         })
     }
 }
-#[doc = "Original name: \"ifla-vf-link-state-enum\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum IflaVfLinkStateEnum {
     Auto = 0,
@@ -429,7 +431,7 @@ impl IflaVfLinkStateEnum {
         })
     }
 }
-#[doc = "Original name: \"rtext-filter\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum RtextFilter {
     Vf = 1 << 0,
@@ -456,7 +458,7 @@ impl RtextFilter {
         })
     }
 }
-#[doc = "Original name: \"netkit-policy\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NetkitPolicy {
     Forward = 0,
@@ -471,7 +473,7 @@ impl NetkitPolicy {
         })
     }
 }
-#[doc = "Original name: \"netkit-mode\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NetkitMode {
     L2 = 0,
@@ -486,7 +488,7 @@ impl NetkitMode {
         })
     }
 }
-#[doc = "Original name: \"netkit-scrub\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NetkitScrub {
     None = 0,
@@ -501,7 +503,7 @@ impl NetkitScrub {
         })
     }
 }
-#[doc = "Original name: \"ovpn-mode\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum OvpnMode {
     P2p = 0,
@@ -516,7 +518,6 @@ impl OvpnMode {
         })
     }
 }
-#[doc = "Original name: \"link-attrs\""]
 #[derive(Clone)]
 pub enum LinkAttrs<'a> {
     Address(&'a [u8]),
@@ -536,15 +537,15 @@ pub enum LinkAttrs<'a> {
     Weight(u32),
     Operstate(u8),
     Linkmode(u8),
-    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    Linkinfo(IterableLinkinfoAttrs<'a>),
     NetNsPid(u32),
     Ifalias(&'a CStr),
     NumVf(u32),
-    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    VfinfoList(IterableVfinfoListAttrs<'a>),
     Stats64(PushRtnlLinkStats64),
-    VfPorts(Iterable<'a, VfPortsAttrs>),
-    PortSelf(Iterable<'a, PortSelfAttrs>),
-    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    VfPorts(IterableVfPortsAttrs<'a>),
+    PortSelf(IterablePortSelfAttrs<'a>),
+    AfSpec(IterableAfSpecAttrs<'a>),
     Group(u32),
     NetNsFd(u32),
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
@@ -562,7 +563,7 @@ pub enum LinkAttrs<'a> {
     GsoMaxSegs(u32),
     GsoMaxSize(u32),
     Pad(&'a [u8]),
-    Xdp(Iterable<'a, XdpAttrs>),
+    Xdp(IterableXdpAttrs<'a>),
     Event(u32),
     NewNetnsid(i32),
     TargetNetnsid(i32),
@@ -571,7 +572,7 @@ pub enum LinkAttrs<'a> {
     NewIfindex(i32),
     MinMtu(u32),
     MaxMtu(u32),
-    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PropList(IterablePropListLinkAttrs<'a>),
     AltIfname(&'a CStr),
     PermAddress(&'a [u8]),
     ProtoDownReason(&'a CStr),
@@ -584,12 +585,12 @@ pub enum LinkAttrs<'a> {
     DevlinkPort(&'a [u8]),
     GsoIpv4MaxSize(u32),
     GroIpv4MaxSize(u32),
-    DpllPin(Iterable<'a, LinkDpllPinAttrs>),
+    DpllPin(IterableLinkDpllPinAttrs<'a>),
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     MaxPacingOffloadHorizon(u32),
     NetnsImmutable(u8),
 }
-impl<'a> Iterable<'a, LinkAttrs<'a>> {
+impl<'a> IterableLinkAttrs<'a> {
     pub fn get_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -598,7 +599,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Address"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -608,7 +614,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -618,7 +629,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -628,7 +644,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Mtu"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Mtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -638,7 +659,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_qdisc(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -648,7 +674,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Qdisc"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Qdisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats(&self) -> Result<PushRtnlLinkStats, ErrorContext> {
         let mut iter = self.clone();
@@ -658,7 +689,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Stats"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cost(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -668,7 +704,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Cost"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Cost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -678,7 +719,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_master(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -688,7 +734,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Master"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Master",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_wireless(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -698,7 +749,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Wireless"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Wireless",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protinfo(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -708,7 +764,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Protinfo"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Protinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_txqlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -718,7 +779,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Txqlen"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Txqlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_map(&self) -> Result<PushRtnlLinkIfmap, ErrorContext> {
         let mut iter = self.clone();
@@ -728,7 +794,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Map"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Map",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_weight(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -738,7 +809,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Weight"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Weight",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_operstate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -748,7 +824,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Operstate"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Operstate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_linkmode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -758,9 +839,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Linkmode"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Linkmode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_linkinfo(&self) -> Result<Iterable<'a, LinkinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_linkinfo(&self) -> Result<IterableLinkinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -768,7 +854,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Linkinfo"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Linkinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -778,7 +869,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NetNsPid"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NetNsPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifalias(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -788,7 +884,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Ifalias"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Ifalias",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_vf(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -798,9 +899,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NumVf"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NumVf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vfinfo_list(&self) -> Result<Iterable<'a, VfinfoListAttrs<'a>>, ErrorContext> {
+    pub fn get_vfinfo_list(&self) -> Result<IterableVfinfoListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -808,7 +914,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "VfinfoList"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "VfinfoList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
@@ -818,9 +929,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Stats64"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Stats64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vf_ports(&self) -> Result<Iterable<'a, VfPortsAttrs>, ErrorContext> {
+    pub fn get_vf_ports(&self) -> Result<IterableVfPortsAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -828,9 +944,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "VfPorts"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "VfPorts",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_port_self(&self) -> Result<Iterable<'a, PortSelfAttrs>, ErrorContext> {
+    pub fn get_port_self(&self) -> Result<IterablePortSelfAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -838,9 +959,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "PortSelf"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PortSelf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_af_spec(&self) -> Result<Iterable<'a, AfSpecAttrs<'a>>, ErrorContext> {
+    pub fn get_af_spec(&self) -> Result<IterableAfSpecAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -848,7 +974,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -858,7 +989,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Group"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -868,7 +1004,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NetNsFd"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NetNsFd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     pub fn get_ext_mask(&self) -> Result<u32, ErrorContext> {
@@ -879,7 +1020,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "ExtMask"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "ExtMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_promiscuity(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -889,7 +1035,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Promiscuity"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Promiscuity",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_tx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -899,7 +1050,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NumTxQueues"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NumTxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_rx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -909,7 +1065,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NumRxQueues"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NumRxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -919,7 +1080,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Carrier"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Carrier",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -929,7 +1095,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "PhysPortId"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PhysPortId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_changes(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -939,7 +1110,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "CarrierChanges"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "CarrierChanges",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_switch_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -949,7 +1125,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "PhysSwitchId"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PhysSwitchId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -959,7 +1140,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "LinkNetnsid"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "LinkNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -969,7 +1155,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "PhysPortName"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PhysPortName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -979,7 +1170,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "ProtoDown"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "ProtoDown",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -989,7 +1185,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "GsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "GsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -999,7 +1200,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "GsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "GsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1009,9 +1215,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_xdp(&self) -> Result<Iterable<'a, XdpAttrs>, ErrorContext> {
+    pub fn get_xdp(&self) -> Result<IterableXdpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1019,7 +1230,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Xdp"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Xdp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_event(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1029,7 +1245,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Event"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Event",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -1039,7 +1260,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NewNetnsid"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NewNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -1049,7 +1275,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_up_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1059,7 +1290,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "CarrierUpCount"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "CarrierUpCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_down_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1069,7 +1305,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "CarrierDownCount"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "CarrierDownCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_ifindex(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -1079,7 +1320,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NewIfindex"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NewIfindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_min_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1089,7 +1335,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "MinMtu"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "MinMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_max_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1099,9 +1350,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "MaxMtu"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "MaxMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_prop_list(&self) -> Result<Iterable<'a, PropListLinkAttrs<'a>>, ErrorContext> {
+    pub fn get_prop_list(&self) -> Result<IterablePropListLinkAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1109,7 +1365,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "PropList"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PropList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_alt_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1119,7 +1380,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "AltIfname"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "AltIfname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_perm_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1129,7 +1395,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "PermAddress"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PermAddress",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down_reason(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1139,7 +1410,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "ProtoDownReason"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "ProtoDownReason",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1149,7 +1425,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "ParentDevName"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "ParentDevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1159,7 +1440,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "ParentDevBusName"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "ParentDevBusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1169,7 +1455,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "GroMaxSize"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "GroMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1179,7 +1470,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "TsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "TsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1189,7 +1485,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "TsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "TsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_allmulti(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1199,7 +1500,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "Allmulti"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "Allmulti",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_devlink_port(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1209,7 +1515,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "DevlinkPort"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "DevlinkPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1219,7 +1530,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "GsoIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "GsoIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1229,9 +1545,14 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "GroIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "GroIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_dpll_pin(&self) -> Result<Iterable<'a, LinkDpllPinAttrs>, ErrorContext> {
+    pub fn get_dpll_pin(&self) -> Result<IterableLinkDpllPinAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1239,7 +1560,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "DpllPin"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "DpllPin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     pub fn get_max_pacing_offload_horizon(&self) -> Result<u32, ErrorContext> {
@@ -1250,7 +1576,12 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "MaxPacingOffloadHorizon"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "MaxPacingOffloadHorizon",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_netns_immutable(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1260,12 +1591,17 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkAttrs", "NetnsImmutable"))
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "NetnsImmutable",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkAttrs<'a> {
+        IterableLinkAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1341,7 +1677,25 @@ impl<'a> LinkAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkAttrs<'a> {
     type Item = Result<LinkAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1438,7 +1792,7 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 18u16 => LinkAttrs::Linkinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1458,7 +1812,7 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 22u16 => LinkAttrs::VfinfoList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfinfoListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1468,17 +1822,17 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 24u16 => LinkAttrs::VfPorts({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfPortsAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 25u16 => LinkAttrs::PortSelf({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePortSelfAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 26u16 => LinkAttrs::AfSpec({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableAfSpecAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1563,7 +1917,7 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 43u16 => LinkAttrs::Xdp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableXdpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1608,7 +1962,7 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 52u16 => LinkAttrs::PropList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePropListLinkAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1673,7 +2027,7 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
                     val
                 }),
                 65u16 => LinkAttrs::DpllPin({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkDpllPinAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1697,14 +2051,15 @@ impl<'a> Iterator for Iterable<'a, LinkAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkAttrs",
             r#type.and_then(|t| LinkAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkAttrs");
         for attr in self.clone() {
@@ -1794,14 +2149,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkAttrs<'a>> {
+impl IterableLinkAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkAttrs", offset));
             return (
@@ -2230,12 +2585,11 @@ impl<'a> Iterable<'a, LinkAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"prop-list-link-attrs\""]
 #[derive(Clone)]
 pub enum PropListLinkAttrs<'a> {
     AltIfname(&'a CStr),
 }
-impl<'a> Iterable<'a, PropListLinkAttrs<'a>> {
+impl<'a> IterablePropListLinkAttrs<'a> {
     pub fn get_alt_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2244,12 +2598,17 @@ impl<'a> Iterable<'a, PropListLinkAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("PropListLinkAttrs", "AltIfname"))
+        Err(ErrorContext::new_missing(
+            "PropListLinkAttrs",
+            "AltIfname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> PropListLinkAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, PropListLinkAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterablePropListLinkAttrs<'a> {
+        IterablePropListLinkAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2259,7 +2618,25 @@ impl<'a> PropListLinkAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, PropListLinkAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterablePropListLinkAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterablePropListLinkAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterablePropListLinkAttrs<'a> {
     type Item = Result<PropListLinkAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2285,14 +2662,15 @@ impl<'a> Iterator for Iterable<'a, PropListLinkAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "PropListLinkAttrs",
             r#type.and_then(|t| PropListLinkAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, PropListLinkAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterablePropListLinkAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PropListLinkAttrs");
         for attr in self.clone() {
@@ -2312,14 +2690,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, PropListLinkAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, PropListLinkAttrs<'a>> {
+impl IterablePropListLinkAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("PropListLinkAttrs", offset));
             return (
@@ -2351,15 +2729,14 @@ impl<'a> Iterable<'a, PropListLinkAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"af-spec-attrs\""]
 #[derive(Clone)]
 pub enum AfSpecAttrs<'a> {
-    Inet(Iterable<'a, IflaAttrs<'a>>),
-    Inet6(Iterable<'a, Ifla6Attrs<'a>>),
-    Mctp(Iterable<'a, MctpAttrs>),
+    Inet(IterableIflaAttrs<'a>),
+    Inet6(IterableIfla6Attrs<'a>),
+    Mctp(IterableMctpAttrs<'a>),
 }
-impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
-    pub fn get_inet(&self) -> Result<Iterable<'a, IflaAttrs<'a>>, ErrorContext> {
+impl<'a> IterableAfSpecAttrs<'a> {
+    pub fn get_inet(&self) -> Result<IterableIflaAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2367,9 +2744,14 @@ impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AfSpecAttrs", "Inet"))
+        Err(ErrorContext::new_missing(
+            "AfSpecAttrs",
+            "Inet",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_inet6(&self) -> Result<Iterable<'a, Ifla6Attrs<'a>>, ErrorContext> {
+    pub fn get_inet6(&self) -> Result<IterableIfla6Attrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2377,9 +2759,14 @@ impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AfSpecAttrs", "Inet6"))
+        Err(ErrorContext::new_missing(
+            "AfSpecAttrs",
+            "Inet6",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_mctp(&self) -> Result<Iterable<'a, MctpAttrs>, ErrorContext> {
+    pub fn get_mctp(&self) -> Result<IterableMctpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2387,12 +2774,17 @@ impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("AfSpecAttrs", "Mctp"))
+        Err(ErrorContext::new_missing(
+            "AfSpecAttrs",
+            "Mctp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> AfSpecAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, AfSpecAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableAfSpecAttrs<'a> {
+        IterableAfSpecAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2404,7 +2796,25 @@ impl<'a> AfSpecAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, AfSpecAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableAfSpecAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableAfSpecAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableAfSpecAttrs<'a> {
     type Item = Result<AfSpecAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2416,17 +2826,17 @@ impl<'a> Iterator for Iterable<'a, AfSpecAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 2u16 => AfSpecAttrs::Inet({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableIflaAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 10u16 => AfSpecAttrs::Inet6({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableIfla6Attrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 45u16 => AfSpecAttrs::Mctp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableMctpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2440,14 +2850,15 @@ impl<'a> Iterator for Iterable<'a, AfSpecAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "AfSpecAttrs",
             r#type.and_then(|t| AfSpecAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, AfSpecAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableAfSpecAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AfSpecAttrs");
         for attr in self.clone() {
@@ -2469,14 +2880,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, AfSpecAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
+impl IterableAfSpecAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("AfSpecAttrs", offset));
             return (
@@ -2521,17 +2932,16 @@ impl<'a> Iterable<'a, AfSpecAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"vfinfo-list-attrs\""]
 #[derive(Clone)]
 pub enum VfinfoListAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    Info(Iterable<'a, VfinfoAttrs<'a>>),
+    Info(IterableVfinfoAttrs<'a>),
 }
-impl<'a> Iterable<'a, VfinfoListAttrs<'a>> {
+impl<'a> IterableVfinfoListAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_info(
         &self,
-    ) -> MultiAttrIterable<Self, VfinfoListAttrs<'a>, Iterable<'a, VfinfoAttrs<'a>>> {
+    ) -> MultiAttrIterable<Self, VfinfoListAttrs<'a>, IterableVfinfoAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let VfinfoListAttrs::Info(val) = variant {
                 Some(val)
@@ -2542,8 +2952,8 @@ impl<'a> Iterable<'a, VfinfoListAttrs<'a>> {
     }
 }
 impl<'a> VfinfoListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, VfinfoListAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableVfinfoListAttrs<'a> {
+        IterableVfinfoListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2553,7 +2963,25 @@ impl<'a> VfinfoListAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, VfinfoListAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableVfinfoListAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableVfinfoListAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableVfinfoListAttrs<'a> {
     type Item = Result<VfinfoListAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2565,7 +2993,7 @@ impl<'a> Iterator for Iterable<'a, VfinfoListAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => VfinfoListAttrs::Info({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2579,14 +3007,15 @@ impl<'a> Iterator for Iterable<'a, VfinfoListAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "VfinfoListAttrs",
             r#type.and_then(|t| VfinfoListAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, VfinfoListAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableVfinfoListAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfinfoListAttrs");
         for attr in self.clone() {
@@ -2606,14 +3035,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, VfinfoListAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, VfinfoListAttrs<'a>> {
+impl IterableVfinfoListAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VfinfoListAttrs", offset));
             return (
@@ -2646,7 +3075,6 @@ impl<'a> Iterable<'a, VfinfoListAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"vfinfo-attrs\""]
 #[derive(Clone)]
 pub enum VfinfoAttrs<'a> {
     Mac(PushIflaVfMac),
@@ -2656,14 +3084,14 @@ pub enum VfinfoAttrs<'a> {
     LinkState(PushIflaVfLinkState),
     Rate(PushIflaVfRate),
     RssQueryEn(PushIflaVfRssQueryEn),
-    Stats(Iterable<'a, VfStatsAttrs<'a>>),
+    Stats(IterableVfStatsAttrs<'a>),
     Trust(PushIflaVfTrust),
     IbNodeGuid(PushIflaVfGuid),
     IbPortGuid(PushIflaVfGuid),
-    VlanList(Iterable<'a, VfVlanAttrs>),
+    VlanList(IterableVfVlanAttrs<'a>),
     Broadcast(&'a [u8]),
 }
-impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
+impl<'a> IterableVfinfoAttrs<'a> {
     pub fn get_mac(&self) -> Result<PushIflaVfMac, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2672,7 +3100,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Mac"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Mac",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan(&self) -> Result<PushIflaVfVlan, ErrorContext> {
         let mut iter = self.clone();
@@ -2682,7 +3115,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Vlan"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Vlan",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tx_rate(&self) -> Result<PushIflaVfTxRate, ErrorContext> {
         let mut iter = self.clone();
@@ -2692,7 +3130,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "TxRate"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "TxRate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_spoofchk(&self) -> Result<PushIflaVfSpoofchk, ErrorContext> {
         let mut iter = self.clone();
@@ -2702,7 +3145,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Spoofchk"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Spoofchk",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_state(&self) -> Result<PushIflaVfLinkState, ErrorContext> {
         let mut iter = self.clone();
@@ -2712,7 +3160,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "LinkState"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "LinkState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rate(&self) -> Result<PushIflaVfRate, ErrorContext> {
         let mut iter = self.clone();
@@ -2722,7 +3175,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Rate"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Rate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rss_query_en(&self) -> Result<PushIflaVfRssQueryEn, ErrorContext> {
         let mut iter = self.clone();
@@ -2732,9 +3190,14 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "RssQueryEn"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "RssQueryEn",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_stats(&self) -> Result<Iterable<'a, VfStatsAttrs<'a>>, ErrorContext> {
+    pub fn get_stats(&self) -> Result<IterableVfStatsAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2742,7 +3205,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Stats"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_trust(&self) -> Result<PushIflaVfTrust, ErrorContext> {
         let mut iter = self.clone();
@@ -2752,7 +3220,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Trust"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Trust",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ib_node_guid(&self) -> Result<PushIflaVfGuid, ErrorContext> {
         let mut iter = self.clone();
@@ -2762,7 +3235,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "IbNodeGuid"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "IbNodeGuid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ib_port_guid(&self) -> Result<PushIflaVfGuid, ErrorContext> {
         let mut iter = self.clone();
@@ -2772,9 +3250,14 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "IbPortGuid"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "IbPortGuid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vlan_list(&self) -> Result<Iterable<'a, VfVlanAttrs>, ErrorContext> {
+    pub fn get_vlan_list(&self) -> Result<IterableVfVlanAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2782,7 +3265,12 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "VlanList"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "VlanList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2792,12 +3280,17 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfinfoAttrs", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "VfinfoAttrs",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> VfinfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, VfinfoAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableVfinfoAttrs<'a> {
+        IterableVfinfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2819,7 +3312,25 @@ impl<'a> VfinfoAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableVfinfoAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableVfinfoAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableVfinfoAttrs<'a> {
     type Item = Result<VfinfoAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2866,7 +3377,7 @@ impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
                     val
                 }),
                 8u16 => VfinfoAttrs::Stats({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfStatsAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2886,7 +3397,7 @@ impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
                     val
                 }),
                 12u16 => VfinfoAttrs::VlanList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfVlanAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2905,14 +3416,15 @@ impl<'a> Iterator for Iterable<'a, VfinfoAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "VfinfoAttrs",
             r#type.and_then(|t| VfinfoAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, VfinfoAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableVfinfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfinfoAttrs");
         for attr in self.clone() {
@@ -2944,14 +3456,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, VfinfoAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
+impl IterableVfinfoAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VfinfoAttrs", offset));
             return (
@@ -3056,7 +3568,6 @@ impl<'a> Iterable<'a, VfinfoAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"vf-stats-attrs\""]
 #[derive(Clone)]
 pub enum VfStatsAttrs<'a> {
     RxPackets(u64),
@@ -3069,7 +3580,7 @@ pub enum VfStatsAttrs<'a> {
     RxDropped(u64),
     TxDropped(u64),
 }
-impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
+impl<'a> IterableVfStatsAttrs<'a> {
     pub fn get_rx_packets(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3078,7 +3589,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "RxPackets"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "RxPackets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tx_packets(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3088,7 +3604,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "TxPackets"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "TxPackets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rx_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3098,7 +3619,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "RxBytes"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "RxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tx_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3108,7 +3634,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "TxBytes"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "TxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3118,7 +3649,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multicast(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3128,7 +3664,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "Multicast"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "Multicast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3138,7 +3679,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rx_dropped(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3148,7 +3694,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "RxDropped"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "RxDropped",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tx_dropped(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3158,12 +3709,17 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VfStatsAttrs", "TxDropped"))
+        Err(ErrorContext::new_missing(
+            "VfStatsAttrs",
+            "TxDropped",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> VfStatsAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, VfStatsAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableVfStatsAttrs<'a> {
+        IterableVfStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3181,7 +3737,25 @@ impl<'a> VfStatsAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, VfStatsAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableVfStatsAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableVfStatsAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableVfStatsAttrs<'a> {
     type Item = Result<VfStatsAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3247,14 +3821,15 @@ impl<'a> Iterator for Iterable<'a, VfStatsAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "VfStatsAttrs",
             r#type.and_then(|t| VfStatsAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, VfStatsAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableVfStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfStatsAttrs");
         for attr in self.clone() {
@@ -3282,14 +3857,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, VfStatsAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
+impl IterableVfStatsAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VfStatsAttrs", offset));
             return (
@@ -3369,13 +3944,12 @@ impl<'a> Iterable<'a, VfStatsAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"vf-vlan-attrs\""]
 #[derive(Clone)]
 pub enum VfVlanAttrs {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     Info(PushIflaVfVlanInfo),
 }
-impl<'a> Iterable<'a, VfVlanAttrs> {
+impl<'a> IterableVfVlanAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_info(&self) -> MultiAttrIterable<Self, VfVlanAttrs, PushIflaVfVlanInfo> {
         MultiAttrIterable::new(self.clone(), |variant| {
@@ -3388,8 +3962,8 @@ impl<'a> Iterable<'a, VfVlanAttrs> {
     }
 }
 impl VfVlanAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, VfVlanAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableVfVlanAttrs<'_> {
+        IterableVfVlanAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3399,7 +3973,25 @@ impl VfVlanAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, VfVlanAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableVfVlanAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableVfVlanAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableVfVlanAttrs<'a> {
     type Item = Result<VfVlanAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3425,14 +4017,15 @@ impl Iterator for Iterable<'_, VfVlanAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "VfVlanAttrs",
             r#type.and_then(|t| VfVlanAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, VfVlanAttrs> {
+impl std::fmt::Debug for IterableVfVlanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfVlanAttrs");
         for attr in self.clone() {
@@ -3452,14 +4045,14 @@ impl std::fmt::Debug for Iterable<'_, VfVlanAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, VfVlanAttrs> {
+impl IterableVfVlanAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VfVlanAttrs", offset));
             return (
@@ -3491,19 +4084,36 @@ impl Iterable<'_, VfVlanAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"vf-ports-attrs\""]
 #[derive(Clone)]
 pub enum VfPortsAttrs {}
-impl<'a> Iterable<'a, VfPortsAttrs> {}
+impl<'a> IterableVfPortsAttrs<'a> {}
 impl VfPortsAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, VfPortsAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableVfPortsAttrs<'_> {
+        IterableVfPortsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         None
     }
 }
-impl Iterator for Iterable<'_, VfPortsAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableVfPortsAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableVfPortsAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableVfPortsAttrs<'a> {
     type Item = Result<VfPortsAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3524,14 +4134,15 @@ impl Iterator for Iterable<'_, VfPortsAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "VfPortsAttrs",
             r#type.and_then(|t| VfPortsAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, VfPortsAttrs> {
+impl std::fmt::Debug for IterableVfPortsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfPortsAttrs");
         for attr in self.clone() {
@@ -3549,14 +4160,14 @@ impl std::fmt::Debug for Iterable<'_, VfPortsAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, VfPortsAttrs> {
+impl IterableVfPortsAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VfPortsAttrs", offset));
             return (
@@ -3567,19 +4178,36 @@ impl Iterable<'_, VfPortsAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"port-self-attrs\""]
 #[derive(Clone)]
 pub enum PortSelfAttrs {}
-impl<'a> Iterable<'a, PortSelfAttrs> {}
+impl<'a> IterablePortSelfAttrs<'a> {}
 impl PortSelfAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, PortSelfAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterablePortSelfAttrs<'_> {
+        IterablePortSelfAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         None
     }
 }
-impl Iterator for Iterable<'_, PortSelfAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterablePortSelfAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterablePortSelfAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterablePortSelfAttrs<'a> {
     type Item = Result<PortSelfAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3600,14 +4228,15 @@ impl Iterator for Iterable<'_, PortSelfAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "PortSelfAttrs",
             r#type.and_then(|t| PortSelfAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, PortSelfAttrs> {
+impl std::fmt::Debug for IterablePortSelfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PortSelfAttrs");
         for attr in self.clone() {
@@ -3625,14 +4254,14 @@ impl std::fmt::Debug for Iterable<'_, PortSelfAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, PortSelfAttrs> {
+impl IterablePortSelfAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("PortSelfAttrs", offset));
             return (
@@ -3643,7 +4272,6 @@ impl Iterable<'_, PortSelfAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoAttrs<'a> {
     Kind(&'a CStr),
@@ -3652,7 +4280,7 @@ pub enum LinkinfoAttrs<'a> {
     SlaveKind(&'a CStr),
     SlaveData(LinkinfoMemberDataMsg<'a>),
 }
-impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
+impl<'a> IterableLinkinfoAttrs<'a> {
     pub fn get_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3661,7 +4289,12 @@ impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoAttrs", "Kind"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoAttrs",
+            "Kind",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_data(&self) -> Result<LinkinfoDataMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
@@ -3671,7 +4304,12 @@ impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_xstats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3681,7 +4319,12 @@ impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoAttrs", "Xstats"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoAttrs",
+            "Xstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_slave_kind(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -3691,7 +4334,12 @@ impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoAttrs", "SlaveKind"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoAttrs",
+            "SlaveKind",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_slave_data(&self) -> Result<LinkinfoMemberDataMsg<'a>, ErrorContext> {
         let mut iter = self.clone();
@@ -3701,72 +4349,113 @@ impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoAttrs", "SlaveData"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoAttrs",
+            "SlaveData",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
-#[doc = "Original name: \"linkinfo-data-msg\""]
 #[derive(Debug, Clone)]
 pub enum LinkinfoDataMsg<'a> {
-    Bond(Iterable<'a, LinkinfoBondAttrs<'a>>),
-    Bridge(Iterable<'a, LinkinfoBridgeAttrs<'a>>),
-    Erspan(Iterable<'a, LinkinfoGreAttrs<'a>>),
-    Gre(Iterable<'a, LinkinfoGreAttrs<'a>>),
-    Gretap(Iterable<'a, LinkinfoGreAttrs<'a>>),
-    Ip6gre(Iterable<'a, LinkinfoGre6Attrs<'a>>),
-    Geneve(Iterable<'a, LinkinfoGeneveAttrs<'a>>),
-    Ipip(Iterable<'a, LinkinfoIptunAttrs<'a>>),
-    Ip6tnl(Iterable<'a, LinkinfoIp6tnlAttrs<'a>>),
-    Sit(Iterable<'a, LinkinfoIptunAttrs<'a>>),
-    Tun(Iterable<'a, LinkinfoTunAttrs>),
-    Vlan(Iterable<'a, LinkinfoVlanAttrs<'a>>),
-    Vrf(Iterable<'a, LinkinfoVrfAttrs>),
-    Vti(Iterable<'a, LinkinfoVtiAttrs<'a>>),
-    Vti6(Iterable<'a, LinkinfoVti6Attrs<'a>>),
-    Netkit(Iterable<'a, LinkinfoNetkitAttrs<'a>>),
-    Ovpn(Iterable<'a, LinkinfoOvpnAttrs>),
+    Bond(IterableLinkinfoBondAttrs<'a>),
+    Bridge(IterableLinkinfoBridgeAttrs<'a>),
+    Erspan(IterableLinkinfoGreAttrs<'a>),
+    Gre(IterableLinkinfoGreAttrs<'a>),
+    Gretap(IterableLinkinfoGreAttrs<'a>),
+    Ip6gre(IterableLinkinfoGre6Attrs<'a>),
+    Geneve(IterableLinkinfoGeneveAttrs<'a>),
+    Ipip(IterableLinkinfoIptunAttrs<'a>),
+    Ip6tnl(IterableLinkinfoIp6tnlAttrs<'a>),
+    Sit(IterableLinkinfoIptunAttrs<'a>),
+    Tun(IterableLinkinfoTunAttrs<'a>),
+    Vlan(IterableLinkinfoVlanAttrs<'a>),
+    Vrf(IterableLinkinfoVrfAttrs<'a>),
+    Vti(IterableLinkinfoVtiAttrs<'a>),
+    Vti6(IterableLinkinfoVti6Attrs<'a>),
+    Netkit(IterableLinkinfoNetkitAttrs<'a>),
+    Ovpn(IterableLinkinfoOvpnAttrs<'a>),
 }
 impl<'a> LinkinfoDataMsg<'a> {
     fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
-            b"bond" => Some(LinkinfoDataMsg::Bond(Iterable::with_loc(buf, loc))),
-            b"bridge" => Some(LinkinfoDataMsg::Bridge(Iterable::with_loc(buf, loc))),
-            b"erspan" => Some(LinkinfoDataMsg::Erspan(Iterable::with_loc(buf, loc))),
-            b"gre" => Some(LinkinfoDataMsg::Gre(Iterable::with_loc(buf, loc))),
-            b"gretap" => Some(LinkinfoDataMsg::Gretap(Iterable::with_loc(buf, loc))),
-            b"ip6gre" => Some(LinkinfoDataMsg::Ip6gre(Iterable::with_loc(buf, loc))),
-            b"geneve" => Some(LinkinfoDataMsg::Geneve(Iterable::with_loc(buf, loc))),
-            b"ipip" => Some(LinkinfoDataMsg::Ipip(Iterable::with_loc(buf, loc))),
-            b"ip6tnl" => Some(LinkinfoDataMsg::Ip6tnl(Iterable::with_loc(buf, loc))),
-            b"sit" => Some(LinkinfoDataMsg::Sit(Iterable::with_loc(buf, loc))),
-            b"tun" => Some(LinkinfoDataMsg::Tun(Iterable::with_loc(buf, loc))),
-            b"vlan" => Some(LinkinfoDataMsg::Vlan(Iterable::with_loc(buf, loc))),
-            b"vrf" => Some(LinkinfoDataMsg::Vrf(Iterable::with_loc(buf, loc))),
-            b"vti" => Some(LinkinfoDataMsg::Vti(Iterable::with_loc(buf, loc))),
-            b"vti6" => Some(LinkinfoDataMsg::Vti6(Iterable::with_loc(buf, loc))),
-            b"netkit" => Some(LinkinfoDataMsg::Netkit(Iterable::with_loc(buf, loc))),
-            b"ovpn" => Some(LinkinfoDataMsg::Ovpn(Iterable::with_loc(buf, loc))),
+            b"bond" => Some(LinkinfoDataMsg::Bond(IterableLinkinfoBondAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"bridge" => Some(LinkinfoDataMsg::Bridge(
+                IterableLinkinfoBridgeAttrs::with_loc(buf, loc),
+            )),
+            b"erspan" => Some(LinkinfoDataMsg::Erspan(IterableLinkinfoGreAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"gre" => Some(LinkinfoDataMsg::Gre(IterableLinkinfoGreAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"gretap" => Some(LinkinfoDataMsg::Gretap(IterableLinkinfoGreAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"ip6gre" => Some(LinkinfoDataMsg::Ip6gre(
+                IterableLinkinfoGre6Attrs::with_loc(buf, loc),
+            )),
+            b"geneve" => Some(LinkinfoDataMsg::Geneve(
+                IterableLinkinfoGeneveAttrs::with_loc(buf, loc),
+            )),
+            b"ipip" => Some(LinkinfoDataMsg::Ipip(IterableLinkinfoIptunAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"ip6tnl" => Some(LinkinfoDataMsg::Ip6tnl(
+                IterableLinkinfoIp6tnlAttrs::with_loc(buf, loc),
+            )),
+            b"sit" => Some(LinkinfoDataMsg::Sit(IterableLinkinfoIptunAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"tun" => Some(LinkinfoDataMsg::Tun(IterableLinkinfoTunAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"vlan" => Some(LinkinfoDataMsg::Vlan(IterableLinkinfoVlanAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"vrf" => Some(LinkinfoDataMsg::Vrf(IterableLinkinfoVrfAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"vti" => Some(LinkinfoDataMsg::Vti(IterableLinkinfoVtiAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"vti6" => Some(LinkinfoDataMsg::Vti6(IterableLinkinfoVti6Attrs::with_loc(
+                buf, loc,
+            ))),
+            b"netkit" => Some(LinkinfoDataMsg::Netkit(
+                IterableLinkinfoNetkitAttrs::with_loc(buf, loc),
+            )),
+            b"ovpn" => Some(LinkinfoDataMsg::Ovpn(IterableLinkinfoOvpnAttrs::with_loc(
+                buf, loc,
+            ))),
             _ => None,
         }
     }
 }
-#[doc = "Original name: \"linkinfo-member-data-msg\""]
 #[derive(Debug, Clone)]
 pub enum LinkinfoMemberDataMsg<'a> {
-    Bridge(Iterable<'a, LinkinfoBrportAttrs<'a>>),
-    Bond(Iterable<'a, BondSlaveAttrs<'a>>),
+    Bridge(IterableLinkinfoBrportAttrs<'a>),
+    Bond(IterableBondSlaveAttrs<'a>),
 }
 impl<'a> LinkinfoMemberDataMsg<'a> {
     fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
-            b"bridge" => Some(LinkinfoMemberDataMsg::Bridge(Iterable::with_loc(buf, loc))),
-            b"bond" => Some(LinkinfoMemberDataMsg::Bond(Iterable::with_loc(buf, loc))),
+            b"bridge" => Some(LinkinfoMemberDataMsg::Bridge(
+                IterableLinkinfoBrportAttrs::with_loc(buf, loc),
+            )),
+            b"bond" => Some(LinkinfoMemberDataMsg::Bond(
+                IterableBondSlaveAttrs::with_loc(buf, loc),
+            )),
             _ => None,
         }
     }
 }
 impl<'a> LinkinfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoAttrs<'a> {
+        IterableLinkinfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3780,7 +4469,25 @@ impl<'a> LinkinfoAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoAttrs<'a> {
     type Item = Result<LinkinfoAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3834,14 +4541,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoAttrs",
             r#type.and_then(|t| LinkinfoAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoAttrs");
         for attr in self.clone() {
@@ -3865,14 +4573,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
+impl IterableLinkinfoAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoAttrs", offset));
             return (
@@ -3928,7 +4636,6 @@ impl<'a> Iterable<'a, LinkinfoAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-bond-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoBondAttrs<'a> {
     Mode(u8),
@@ -3938,7 +4645,7 @@ pub enum LinkinfoBondAttrs<'a> {
     Downdelay(u32),
     UseCarrier(u8),
     ArpInterval(u32),
-    ArpIpTarget(Iterable<'a, std::net::Ipv4Addr>),
+    ArpIpTarget(IterableArrayIpv4Addr<'a>),
     ArpValidate(u32),
     ArpAllTargets(u32),
     Primary(u32),
@@ -3953,7 +4660,7 @@ pub enum LinkinfoBondAttrs<'a> {
     PacketsPerSlave(u32),
     AdLacpRate(u8),
     AdSelect(u8),
-    AdInfo(Iterable<'a, BondAdInfoAttrs<'a>>),
+    AdInfo(IterableBondAdInfoAttrs<'a>),
     AdActorSysPrio(u16),
     AdUserPortKey(u16),
     AdActorSystem(&'a [u8]),
@@ -3961,10 +4668,10 @@ pub enum LinkinfoBondAttrs<'a> {
     PeerNotifDelay(u32),
     AdLacpActive(u8),
     MissedMax(u8),
-    NsIp6Target(Iterable<'a, &'a [u8]>),
+    NsIp6Target(IterableArrayBinary<'a>),
     CoupledControl(u8),
 }
-impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
+impl<'a> IterableLinkinfoBondAttrs<'a> {
     pub fn get_mode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3973,7 +4680,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "Mode"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "Mode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_active_slave(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3983,7 +4695,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "ActiveSlave"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "ActiveSlave",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_miimon(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3993,7 +4710,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "Miimon"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "Miimon",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_updelay(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4003,7 +4725,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "Updelay"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "Updelay",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_downdelay(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4013,7 +4740,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "Downdelay"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "Downdelay",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use_carrier(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4023,7 +4755,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "UseCarrier"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "UseCarrier",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_arp_interval(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4033,18 +4770,27 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "ArpInterval"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "ArpInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_arp_ip_target(
         &self,
-    ) -> Result<ArrayIterable<Iterable<'a, std::net::Ipv4Addr>, std::net::Ipv4Addr>, ErrorContext>
-    {
+    ) -> Result<ArrayIterable<IterableArrayIpv4Addr<'a>, std::net::Ipv4Addr>, ErrorContext> {
         for attr in self.clone() {
             if let LinkinfoBondAttrs::ArpIpTarget(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "ArpIpTarget"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "ArpIpTarget",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_arp_validate(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4054,7 +4800,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "ArpValidate"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "ArpValidate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_arp_all_targets(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4064,7 +4815,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "ArpAllTargets"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "ArpAllTargets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_primary(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4074,7 +4830,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "Primary"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "Primary",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_primary_reselect(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4084,7 +4845,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "PrimaryReselect"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "PrimaryReselect",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fail_over_mac(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4094,7 +4860,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "FailOverMac"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "FailOverMac",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_xmit_hash_policy(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4104,7 +4875,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "XmitHashPolicy"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "XmitHashPolicy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_resend_igmp(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4114,7 +4890,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "ResendIgmp"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "ResendIgmp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_peer_notif(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4124,7 +4905,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "NumPeerNotif"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "NumPeerNotif",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_all_slaves_active(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4134,7 +4920,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AllSlavesActive"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AllSlavesActive",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_min_links(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4144,7 +4935,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "MinLinks"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "MinLinks",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_lp_interval(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4154,7 +4950,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "LpInterval"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "LpInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_packets_per_slave(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4164,7 +4965,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "PacketsPerSlave"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "PacketsPerSlave",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_lacp_rate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4174,7 +4980,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdLacpRate"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdLacpRate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_select(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4184,9 +4995,14 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdSelect"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdSelect",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_ad_info(&self) -> Result<Iterable<'a, BondAdInfoAttrs<'a>>, ErrorContext> {
+    pub fn get_ad_info(&self) -> Result<IterableBondAdInfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4194,7 +5010,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdInfo"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdInfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_actor_sys_prio(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4204,7 +5025,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdActorSysPrio"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdActorSysPrio",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_user_port_key(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4214,7 +5040,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdUserPortKey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdUserPortKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_actor_system(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4224,7 +5055,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdActorSystem"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdActorSystem",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tlb_dynamic_lb(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4234,7 +5070,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "TlbDynamicLb"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "TlbDynamicLb",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_peer_notif_delay(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4244,7 +5085,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "PeerNotifDelay"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "PeerNotifDelay",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_lacp_active(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4254,7 +5100,12 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "AdLacpActive"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "AdLacpActive",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_missed_max(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4264,17 +5115,27 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "MissedMax"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "MissedMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ns_ip6_target(
         &self,
-    ) -> Result<ArrayIterable<Iterable<'a, &'a [u8]>, &'a [u8]>, ErrorContext> {
+    ) -> Result<ArrayIterable<IterableArrayBinary<'a>, &'a [u8]>, ErrorContext> {
         for attr in self.clone() {
             if let LinkinfoBondAttrs::NsIp6Target(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "NsIp6Target"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "NsIp6Target",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_coupled_control(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -4284,10 +5145,33 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBondAttrs", "CoupledControl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBondAttrs",
+            "CoupledControl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
-impl<'a> Iterator for Iterable<'a, std::net::Ipv4Addr> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableArrayIpv4Addr<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableArrayIpv4Addr<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableArrayIpv4Addr<'a> {
     type Item = Result<std::net::Ipv4Addr, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4301,14 +5185,33 @@ impl<'a> Iterator for Iterable<'a, std::net::Ipv4Addr> {
                 return Some(Ok(res));
             }
         }
-        Some(Err(self.error_context(
-            "std :: net :: Ipv4Addr",
+        Some(Err(ErrorContext::new(
+            "Ipv4Addr",
             None,
-            self.buf.as_ptr().wrapping_add(self.pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(self.pos) as usize,
         )))
     }
 }
-impl<'a> Iterator for Iterable<'a, &'a [u8]> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableArrayBinary<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableArrayBinary<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableArrayBinary<'a> {
     type Item = Result<&'a [u8], ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4320,16 +5223,17 @@ impl<'a> Iterator for Iterable<'a, &'a [u8]> {
                 return Some(Ok(res));
             }
         }
-        Some(Err(self.error_context(
-            "& 'a [u8]",
+        Some(Err(ErrorContext::new(
+            "Binary",
             None,
-            self.buf.as_ptr().wrapping_add(self.pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(self.pos) as usize,
         )))
     }
 }
 impl<'a> LinkinfoBondAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoBondAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoBondAttrs<'a> {
+        IterableLinkinfoBondAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4370,7 +5274,25 @@ impl<'a> LinkinfoBondAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoBondAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoBondAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoBondAttrs<'a> {
     type Item = Result<LinkinfoBondAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4417,7 +5339,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
                     val
                 }),
                 8u16 => LinkinfoBondAttrs::ArpIpTarget({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayIpv4Addr::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4492,7 +5414,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
                     val
                 }),
                 23u16 => LinkinfoBondAttrs::AdInfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableBondAdInfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4532,7 +5454,7 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
                     val
                 }),
                 31u16 => LinkinfoBondAttrs::NsIp6Target({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayBinary::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4551,24 +5473,25 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBondAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoBondAttrs",
             r#type.and_then(|t| LinkinfoBondAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, std::net::Ipv4Addr> {
+impl std::fmt::Debug for IterableArrayIpv4Addr<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list().entries(self.clone()).finish()
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, &'a [u8]> {
+impl std::fmt::Debug for IterableArrayBinary<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list().entries(self.clone()).finish()
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBondAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoBondAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoBondAttrs");
         for attr in self.clone() {
@@ -4619,14 +5542,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBondAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
+impl IterableLinkinfoBondAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoBondAttrs", offset));
             return (
@@ -4845,7 +5768,6 @@ impl<'a> Iterable<'a, LinkinfoBondAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"bond-ad-info-attrs\""]
 #[derive(Clone)]
 pub enum BondAdInfoAttrs<'a> {
     Aggregator(u16),
@@ -4854,7 +5776,7 @@ pub enum BondAdInfoAttrs<'a> {
     PartnerKey(u16),
     PartnerMac(&'a [u8]),
 }
-impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
+impl<'a> IterableBondAdInfoAttrs<'a> {
     pub fn get_aggregator(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -4863,7 +5785,12 @@ impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondAdInfoAttrs", "Aggregator"))
+        Err(ErrorContext::new_missing(
+            "BondAdInfoAttrs",
+            "Aggregator",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_ports(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4873,7 +5800,12 @@ impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondAdInfoAttrs", "NumPorts"))
+        Err(ErrorContext::new_missing(
+            "BondAdInfoAttrs",
+            "NumPorts",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_actor_key(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4883,7 +5815,12 @@ impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondAdInfoAttrs", "ActorKey"))
+        Err(ErrorContext::new_missing(
+            "BondAdInfoAttrs",
+            "ActorKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_partner_key(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -4893,7 +5830,12 @@ impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondAdInfoAttrs", "PartnerKey"))
+        Err(ErrorContext::new_missing(
+            "BondAdInfoAttrs",
+            "PartnerKey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_partner_mac(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -4903,12 +5845,17 @@ impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondAdInfoAttrs", "PartnerMac"))
+        Err(ErrorContext::new_missing(
+            "BondAdInfoAttrs",
+            "PartnerMac",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> BondAdInfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, BondAdInfoAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableBondAdInfoAttrs<'a> {
+        IterableBondAdInfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4922,7 +5869,25 @@ impl<'a> BondAdInfoAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, BondAdInfoAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableBondAdInfoAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableBondAdInfoAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableBondAdInfoAttrs<'a> {
     type Item = Result<BondAdInfoAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4968,14 +5933,15 @@ impl<'a> Iterator for Iterable<'a, BondAdInfoAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "BondAdInfoAttrs",
             r#type.and_then(|t| BondAdInfoAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, BondAdInfoAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableBondAdInfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BondAdInfoAttrs");
         for attr in self.clone() {
@@ -4999,14 +5965,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, BondAdInfoAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
+impl IterableBondAdInfoAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("BondAdInfoAttrs", offset));
             return (
@@ -5062,7 +6028,6 @@ impl<'a> Iterable<'a, BondAdInfoAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"bond-slave-attrs\""]
 #[derive(Clone)]
 pub enum BondSlaveAttrs<'a> {
     State(u8),
@@ -5075,7 +6040,7 @@ pub enum BondSlaveAttrs<'a> {
     AdPartnerOperPortState(u16),
     Prio(u32),
 }
-impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
+impl<'a> IterableBondSlaveAttrs<'a> {
     pub fn get_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -5084,7 +6049,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "State"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "State",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mii_status(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5094,7 +6064,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "MiiStatus"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "MiiStatus",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_failure_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5104,7 +6079,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "LinkFailureCount"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "LinkFailureCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_perm_hwaddr(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5114,7 +6094,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "PermHwaddr"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "PermHwaddr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_queue_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5124,7 +6109,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "QueueId"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "QueueId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_aggregator_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5134,7 +6124,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "AdAggregatorId"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "AdAggregatorId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_actor_oper_port_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5144,7 +6139,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "AdActorOperPortState"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "AdActorOperPortState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ad_partner_oper_port_state(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5154,7 +6154,12 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "AdPartnerOperPortState"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "AdPartnerOperPortState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prio(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5164,12 +6169,17 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BondSlaveAttrs", "Prio"))
+        Err(ErrorContext::new_missing(
+            "BondSlaveAttrs",
+            "Prio",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> BondSlaveAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, BondSlaveAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableBondSlaveAttrs<'a> {
+        IterableBondSlaveAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5187,7 +6197,25 @@ impl<'a> BondSlaveAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, BondSlaveAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableBondSlaveAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableBondSlaveAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableBondSlaveAttrs<'a> {
     type Item = Result<BondSlaveAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5253,14 +6281,15 @@ impl<'a> Iterator for Iterable<'a, BondSlaveAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "BondSlaveAttrs",
             r#type.and_then(|t| BondSlaveAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, BondSlaveAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableBondSlaveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BondSlaveAttrs");
         for attr in self.clone() {
@@ -5292,14 +6321,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, BondSlaveAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
+impl IterableBondSlaveAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("BondSlaveAttrs", offset));
             return (
@@ -5379,7 +6408,6 @@ impl<'a> Iterable<'a, BondSlaveAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-bridge-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoBridgeAttrs<'a> {
     ForwardDelay(u32),
@@ -5432,7 +6460,7 @@ pub enum LinkinfoBridgeAttrs<'a> {
     FdbNLearned(u32),
     FdbMaxLearned(u32),
 }
-impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+impl<'a> IterableLinkinfoBridgeAttrs<'a> {
     pub fn get_forward_delay(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -5441,7 +6469,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "ForwardDelay"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "ForwardDelay",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_hello_time(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5451,7 +6484,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "HelloTime"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "HelloTime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_max_age(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5461,7 +6499,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "MaxAge"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "MaxAge",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ageing_time(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5471,7 +6514,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "AgeingTime"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "AgeingTime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stp_state(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5481,7 +6529,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "StpState"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "StpState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5491,7 +6544,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan_filtering(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5501,7 +6559,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "VlanFiltering"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "VlanFiltering",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan_protocol(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5511,7 +6574,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "VlanProtocol"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "VlanProtocol",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group_fwd_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5521,7 +6589,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "GroupFwdMask"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "GroupFwdMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_root_id(&self) -> Result<PushIflaBridgeId, ErrorContext> {
         let mut iter = self.clone();
@@ -5531,7 +6604,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "RootId"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "RootId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_bridge_id(&self) -> Result<PushIflaBridgeId, ErrorContext> {
         let mut iter = self.clone();
@@ -5541,7 +6619,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "BridgeId"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "BridgeId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_root_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5551,7 +6634,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "RootPort"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "RootPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_root_path_cost(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5561,7 +6649,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "RootPathCost"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "RootPathCost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_topology_change(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5571,7 +6664,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "TopologyChange"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "TopologyChange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_topology_change_detected(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5581,7 +6679,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "TopologyChangeDetected"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "TopologyChangeDetected",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_hello_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5591,7 +6694,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "HelloTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "HelloTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tcn_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5601,7 +6709,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "TcnTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "TcnTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_topology_change_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5611,7 +6724,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "TopologyChangeTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "TopologyChangeTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gc_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5621,7 +6739,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "GcTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "GcTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group_addr(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5631,7 +6754,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "GroupAddr"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "GroupAddr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fdb_flush(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5641,7 +6769,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "FdbFlush"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "FdbFlush",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_router(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5651,7 +6784,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastRouter"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastRouter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_snooping(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5661,7 +6799,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastSnooping"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastSnooping",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_query_use_ifaddr(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5671,7 +6814,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastQueryUseIfaddr"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastQueryUseIfaddr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_querier(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5681,7 +6829,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastQuerier"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastQuerier",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_hash_elasticity(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5691,7 +6844,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastHashElasticity"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastHashElasticity",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_hash_max(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5701,7 +6859,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastHashMax"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastHashMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_last_member_cnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5711,7 +6874,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastLastMemberCnt"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastLastMemberCnt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_startup_query_cnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5721,7 +6889,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastStartupQueryCnt"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastStartupQueryCnt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_last_member_intvl(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5731,7 +6904,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastLastMemberIntvl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastLastMemberIntvl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_membership_intvl(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5741,7 +6919,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastMembershipIntvl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastMembershipIntvl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_querier_intvl(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5751,7 +6934,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastQuerierIntvl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastQuerierIntvl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_query_intvl(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5761,7 +6949,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastQueryIntvl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastQueryIntvl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_query_response_intvl(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5771,7 +6964,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastQueryResponseIntvl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastQueryResponseIntvl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_startup_query_intvl(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5781,7 +6979,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastStartupQueryIntvl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastStartupQueryIntvl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nf_call_iptables(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5791,7 +6994,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "NfCallIptables"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "NfCallIptables",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nf_call_ip6tables(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5801,7 +7009,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "NfCallIp6tables"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "NfCallIp6tables",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nf_call_arptables(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5811,7 +7024,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "NfCallArptables"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "NfCallArptables",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan_default_pvid(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -5821,7 +7039,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "VlanDefaultPvid"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "VlanDefaultPvid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5831,7 +7054,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan_stats_enabled(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5841,7 +7069,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "VlanStatsEnabled"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "VlanStatsEnabled",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_stats_enabled(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5851,7 +7084,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastStatsEnabled"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastStatsEnabled",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_igmp_version(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5861,7 +7099,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastIgmpVersion"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastIgmpVersion",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_mld_version(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5871,7 +7114,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastMldVersion"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastMldVersion",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan_stats_per_port(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -5881,7 +7129,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "VlanStatsPerPort"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "VlanStatsPerPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multi_boolopt(&self) -> Result<PushBrBooloptMulti, ErrorContext> {
         let mut iter = self.clone();
@@ -5891,7 +7144,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "MultiBoolopt"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "MultiBoolopt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_querier_state(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5901,7 +7159,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "McastQuerierState"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "McastQuerierState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fdb_n_learned(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5911,7 +7174,12 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "FdbNLearned"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "FdbNLearned",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fdb_max_learned(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5921,12 +7189,17 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBridgeAttrs", "FdbMaxLearned"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBridgeAttrs",
+            "FdbMaxLearned",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoBridgeAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoBridgeAttrs<'a> {
+        IterableLinkinfoBridgeAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5984,7 +7257,25 @@ impl<'a> LinkinfoBridgeAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoBridgeAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoBridgeAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoBridgeAttrs<'a> {
     type Item = Result<LinkinfoBridgeAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6250,14 +7541,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoBridgeAttrs",
             r#type.and_then(|t| LinkinfoBridgeAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoBridgeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoBridgeAttrs");
         for attr in self.clone() {
@@ -6345,14 +7637,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBridgeAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
+impl IterableLinkinfoBridgeAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoBridgeAttrs", offset));
             return (
@@ -6672,7 +7964,6 @@ impl<'a> Iterable<'a, LinkinfoBridgeAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-brport-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoBrportAttrs<'a> {
     State(u8),
@@ -6720,7 +8011,7 @@ pub enum LinkinfoBrportAttrs<'a> {
     NeighVlanSuppress(()),
     BackupNhid(u32),
 }
-impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
+impl<'a> IterableLinkinfoBrportAttrs<'a> {
     pub fn get_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6729,7 +8020,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "State"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "State",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -6739,7 +8035,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cost(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6749,7 +8050,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Cost"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Cost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mode(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6759,7 +8065,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Mode"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Mode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_guard(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6769,7 +8080,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Guard"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Guard",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protect(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6779,7 +8095,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Protect"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Protect",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fast_leave(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6789,7 +8110,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "FastLeave"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "FastLeave",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_learning(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6799,7 +8125,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Learning"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Learning",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_unicast_flood(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6809,7 +8140,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "UnicastFlood"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "UnicastFlood",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proxyarp(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6819,7 +8155,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Proxyarp"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Proxyarp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_learning_sync(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6829,7 +8170,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "LearningSync"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "LearningSync",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proxyarp_wifi(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6839,7 +8185,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "ProxyarpWifi"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "ProxyarpWifi",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_root_id(&self) -> Result<PushIflaBridgeId, ErrorContext> {
         let mut iter = self.clone();
@@ -6849,7 +8200,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "RootId"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "RootId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_bridge_id(&self) -> Result<PushIflaBridgeId, ErrorContext> {
         let mut iter = self.clone();
@@ -6859,7 +8215,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "BridgeId"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "BridgeId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_designated_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -6869,7 +8230,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "DesignatedPort"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "DesignatedPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_designated_cost(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -6879,7 +8245,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "DesignatedCost"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "DesignatedCost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -6889,7 +8260,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_no(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -6899,7 +8275,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "No"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "No",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_topology_change_ack(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -6909,7 +8290,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "TopologyChangeAck"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "TopologyChangeAck",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_config_pending(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -6919,7 +8305,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "ConfigPending"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "ConfigPending",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_message_age_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -6929,7 +8320,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "MessageAgeTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "MessageAgeTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_forward_delay_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -6939,7 +8335,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "ForwardDelayTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "ForwardDelayTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_hold_timer(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -6949,7 +8350,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "HoldTimer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "HoldTimer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flush(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6959,7 +8365,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Flush"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Flush",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multicast_router(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -6969,7 +8380,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "MulticastRouter"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "MulticastRouter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -6979,7 +8395,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_flood(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6989,7 +8410,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "McastFlood"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "McastFlood",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_to_ucast(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -6999,7 +8425,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "McastToUcast"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "McastToUcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vlan_tunnel(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7009,7 +8440,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "VlanTunnel"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "VlanTunnel",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_bcast_flood(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7019,7 +8455,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "BcastFlood"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "BcastFlood",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group_fwd_mask(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7029,7 +8470,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "GroupFwdMask"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "GroupFwdMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_neigh_suppress(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7039,7 +8485,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "NeighSuppress"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "NeighSuppress",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_isolated(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7049,7 +8500,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Isolated"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Isolated",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_backup_port(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7059,7 +8515,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "BackupPort"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "BackupPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mrp_ring_open(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7069,7 +8530,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "MrpRingOpen"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "MrpRingOpen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mrp_in_open(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7079,7 +8545,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "MrpInOpen"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "MrpInOpen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_eht_hosts_limit(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7089,7 +8560,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "McastEhtHostsLimit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "McastEhtHostsLimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_eht_hosts_cnt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7099,7 +8575,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "McastEhtHostsCnt"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "McastEhtHostsCnt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_locked(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7109,7 +8590,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Locked"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Locked",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mab(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7119,7 +8605,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "Mab"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "Mab",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_n_groups(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7129,7 +8620,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "McastNGroups"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "McastNGroups",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast_max_groups(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7139,7 +8635,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "McastMaxGroups"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "McastMaxGroups",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_neigh_vlan_suppress(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7149,7 +8650,12 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "NeighVlanSuppress"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "NeighVlanSuppress",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_backup_nhid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7159,12 +8665,17 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoBrportAttrs", "BackupNhid"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoBrportAttrs",
+            "BackupNhid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoBrportAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoBrportAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoBrportAttrs<'a> {
+        IterableLinkinfoBrportAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7217,7 +8728,25 @@ impl<'a> LinkinfoBrportAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoBrportAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoBrportAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoBrportAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoBrportAttrs<'a> {
     type Item = Result<LinkinfoBrportAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7374,14 +8903,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoBrportAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoBrportAttrs",
             r#type.and_then(|t| LinkinfoBrportAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBrportAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoBrportAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoBrportAttrs");
         for attr in self.clone() {
@@ -7446,14 +8976,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoBrportAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
+impl IterableLinkinfoBrportAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoBrportAttrs", offset));
             return (
@@ -7743,7 +9273,6 @@ impl<'a> Iterable<'a, LinkinfoBrportAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-gre-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoGreAttrs<'a> {
     Link(u32),
@@ -7771,7 +9300,7 @@ pub enum LinkinfoGreAttrs<'a> {
     ErspanDir(u8),
     ErspanHwid(u16),
 }
-impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
+impl<'a> IterableLinkinfoGreAttrs<'a> {
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -7780,7 +9309,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iflags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7790,7 +9324,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Iflags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Iflags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oflags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7800,7 +9339,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Oflags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Oflags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ikey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7810,7 +9354,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Ikey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Ikey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_okey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7820,7 +9369,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Okey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Okey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -7830,7 +9384,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -7840,7 +9399,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -7850,7 +9414,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Ttl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Ttl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -7860,7 +9429,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Tos"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Tos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pmtudisc(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -7870,7 +9444,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Pmtudisc"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Pmtudisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_limit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -7880,7 +9459,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "EncapLimit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "EncapLimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowinfo(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7890,7 +9474,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Flowinfo"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Flowinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7900,7 +9489,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7910,7 +9504,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_flags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7920,7 +9519,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "EncapFlags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "EncapFlags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7930,7 +9534,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "EncapSport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "EncapSport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -7940,7 +9549,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "EncapDport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "EncapDport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_collect_metadata(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -7950,7 +9564,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "CollectMetadata"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "CollectMetadata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ignore_df(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -7960,7 +9579,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "IgnoreDf"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "IgnoreDf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7970,7 +9594,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_index(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7980,7 +9609,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "ErspanIndex"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "ErspanIndex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_ver(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -7990,7 +9624,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "ErspanVer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "ErspanVer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_dir(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -8000,7 +9639,12 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "ErspanDir"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "ErspanDir",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_hwid(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8010,12 +9654,17 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGreAttrs", "ErspanHwid"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGreAttrs",
+            "ErspanHwid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoGreAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoGreAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoGreAttrs<'a> {
+        IterableLinkinfoGreAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -8048,7 +9697,25 @@ impl<'a> LinkinfoGreAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoGreAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoGreAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoGreAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoGreAttrs<'a> {
     type Item = Result<LinkinfoGreAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -8185,14 +9852,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGreAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoGreAttrs",
             r#type.and_then(|t| LinkinfoGreAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGreAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoGreAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGreAttrs");
         for attr in self.clone() {
@@ -8235,14 +9903,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGreAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
+impl IterableLinkinfoGreAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoGreAttrs", offset));
             return (
@@ -8412,7 +10080,6 @@ impl<'a> Iterable<'a, LinkinfoGreAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-gre6-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoGre6Attrs<'a> {
     Link(u32),
@@ -8437,7 +10104,7 @@ pub enum LinkinfoGre6Attrs<'a> {
     ErspanDir(u8),
     ErspanHwid(u16),
 }
-impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
+impl<'a> IterableLinkinfoGre6Attrs<'a> {
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -8446,7 +10113,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_iflags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8456,7 +10128,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Iflags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Iflags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_oflags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8466,7 +10143,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Oflags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Oflags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ikey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8476,7 +10158,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Ikey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Ikey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_okey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8486,7 +10173,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Okey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Okey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -8496,7 +10188,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -8506,7 +10203,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -8516,7 +10218,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Ttl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Ttl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_limit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -8526,7 +10233,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "EncapLimit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "EncapLimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowinfo(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8536,7 +10248,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Flowinfo"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Flowinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8546,7 +10263,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8556,7 +10278,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_flags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8566,7 +10293,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "EncapFlags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "EncapFlags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8576,7 +10308,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "EncapSport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "EncapSport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8586,7 +10323,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "EncapDport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "EncapDport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_collect_metadata(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -8596,7 +10338,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "CollectMetadata"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "CollectMetadata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8606,7 +10353,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_index(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8616,7 +10368,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "ErspanIndex"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "ErspanIndex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_ver(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -8626,7 +10383,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "ErspanVer"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "ErspanVer",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_dir(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -8636,7 +10398,12 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "ErspanDir"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "ErspanDir",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_erspan_hwid(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -8646,12 +10413,17 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGre6Attrs", "ErspanHwid"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGre6Attrs",
+            "ErspanHwid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoGre6Attrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoGre6Attrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoGre6Attrs<'a> {
+        IterableLinkinfoGre6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -8681,7 +10453,25 @@ impl<'a> LinkinfoGre6Attrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoGre6Attrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoGre6Attrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoGre6Attrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
     type Item = Result<LinkinfoGre6Attrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -8803,14 +10593,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGre6Attrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoGre6Attrs",
             r#type.and_then(|t| LinkinfoGre6Attrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGre6Attrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoGre6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGre6Attrs");
         for attr in self.clone() {
@@ -8850,14 +10641,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGre6Attrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
+impl IterableLinkinfoGre6Attrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoGre6Attrs", offset));
             return (
@@ -9009,7 +10800,6 @@ impl<'a> Iterable<'a, LinkinfoGre6Attrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-vti-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoVtiAttrs<'a> {
     Link(u32),
@@ -9019,7 +10809,7 @@ pub enum LinkinfoVtiAttrs<'a> {
     Remote(&'a [u8]),
     Fwmark(u32),
 }
-impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
+impl<'a> IterableLinkinfoVtiAttrs<'a> {
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9028,7 +10818,12 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVtiAttrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVtiAttrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ikey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9038,7 +10833,12 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVtiAttrs", "Ikey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVtiAttrs",
+            "Ikey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_okey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9048,7 +10848,12 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVtiAttrs", "Okey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVtiAttrs",
+            "Okey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9058,7 +10863,12 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVtiAttrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVtiAttrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9068,7 +10878,12 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVtiAttrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVtiAttrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9078,12 +10893,17 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVtiAttrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVtiAttrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoVtiAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoVtiAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoVtiAttrs<'a> {
+        IterableLinkinfoVtiAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9098,7 +10918,25 @@ impl<'a> LinkinfoVtiAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoVtiAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoVtiAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoVtiAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoVtiAttrs<'a> {
     type Item = Result<LinkinfoVtiAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9149,14 +10987,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVtiAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoVtiAttrs",
             r#type.and_then(|t| LinkinfoVtiAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVtiAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoVtiAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVtiAttrs");
         for attr in self.clone() {
@@ -9181,14 +11020,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVtiAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
+impl IterableLinkinfoVtiAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoVtiAttrs", offset));
             return (
@@ -9250,7 +11089,6 @@ impl<'a> Iterable<'a, LinkinfoVtiAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-vti6-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoVti6Attrs<'a> {
     Link(u32),
@@ -9260,7 +11098,7 @@ pub enum LinkinfoVti6Attrs<'a> {
     Remote(&'a [u8]),
     Fwmark(u32),
 }
-impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
+impl<'a> IterableLinkinfoVti6Attrs<'a> {
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9269,7 +11107,12 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVti6Attrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVti6Attrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ikey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9279,7 +11122,12 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVti6Attrs", "Ikey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVti6Attrs",
+            "Ikey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_okey(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9289,7 +11137,12 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVti6Attrs", "Okey"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVti6Attrs",
+            "Okey",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9299,7 +11152,12 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVti6Attrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVti6Attrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9309,7 +11167,12 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVti6Attrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVti6Attrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9319,12 +11182,17 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVti6Attrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVti6Attrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoVti6Attrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoVti6Attrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoVti6Attrs<'a> {
+        IterableLinkinfoVti6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9339,7 +11207,25 @@ impl<'a> LinkinfoVti6Attrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoVti6Attrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoVti6Attrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoVti6Attrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
     type Item = Result<LinkinfoVti6Attrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9390,14 +11276,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVti6Attrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoVti6Attrs",
             r#type.and_then(|t| LinkinfoVti6Attrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVti6Attrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoVti6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVti6Attrs");
         for attr in self.clone() {
@@ -9422,14 +11309,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVti6Attrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
+impl IterableLinkinfoVti6Attrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoVti6Attrs", offset));
             return (
@@ -9491,7 +11378,6 @@ impl<'a> Iterable<'a, LinkinfoVti6Attrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-geneve-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoGeneveAttrs<'a> {
     Id(u32),
@@ -9510,7 +11396,7 @@ pub enum LinkinfoGeneveAttrs<'a> {
     InnerProtoInherit(()),
     PortRange(PushIflaGenevePortRange),
 }
-impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+impl<'a> IterableLinkinfoGeneveAttrs<'a> {
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9519,7 +11405,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9529,7 +11420,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9539,7 +11435,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Ttl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Ttl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9549,7 +11450,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Tos"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Tos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_port(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -9559,7 +11465,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Port"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Port",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_collect_metadata(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -9569,7 +11480,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "CollectMetadata"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "CollectMetadata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote6(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9579,7 +11495,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Remote6"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Remote6",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_udp_csum(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9589,7 +11510,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "UdpCsum"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "UdpCsum",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_udp_zero_csum6_tx(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9599,7 +11525,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "UdpZeroCsum6Tx"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "UdpZeroCsum6Tx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_udp_zero_csum6_rx(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9609,7 +11540,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "UdpZeroCsum6Rx"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "UdpZeroCsum6Rx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_label(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9619,7 +11555,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Label"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Label",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl_inherit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9629,7 +11570,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "TtlInherit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "TtlInherit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_df(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9639,7 +11585,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "Df"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "Df",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_inner_proto_inherit(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -9649,7 +11600,12 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "InnerProtoInherit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "InnerProtoInherit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_port_range(&self) -> Result<PushIflaGenevePortRange, ErrorContext> {
         let mut iter = self.clone();
@@ -9659,12 +11615,17 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoGeneveAttrs", "PortRange"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoGeneveAttrs",
+            "PortRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoGeneveAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoGeneveAttrs<'a> {
+        IterableLinkinfoGeneveAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9688,7 +11649,25 @@ impl<'a> LinkinfoGeneveAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoGeneveAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoGeneveAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
     type Item = Result<LinkinfoGeneveAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9776,14 +11755,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoGeneveAttrs",
             r#type.and_then(|t| LinkinfoGeneveAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoGeneveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGeneveAttrs");
         for attr in self.clone() {
@@ -9817,14 +11797,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoGeneveAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
+impl IterableLinkinfoGeneveAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoGeneveAttrs", offset));
             return (
@@ -9940,7 +11920,6 @@ impl<'a> Iterable<'a, LinkinfoGeneveAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-iptun-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoIptunAttrs<'a> {
     Link(u32),
@@ -9964,7 +11943,7 @@ pub enum LinkinfoIptunAttrs<'a> {
     CollectMetadata(()),
     Fwmark(u32),
 }
-impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
+impl<'a> IterableLinkinfoIptunAttrs<'a> {
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9973,7 +11952,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9983,7 +11967,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9993,7 +11982,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10003,7 +11997,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Ttl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Ttl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tos(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10013,7 +12012,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Tos"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Tos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_limit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10023,7 +12027,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "EncapLimit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "EncapLimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowinfo(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10033,7 +12042,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Flowinfo"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Flowinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10043,7 +12057,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10053,7 +12072,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Proto"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Proto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pmtudisc(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10063,7 +12087,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Pmtudisc"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Pmtudisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_6rd_prefix(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -10073,7 +12102,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "6rdPrefix"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "6rdPrefix",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_6rd_relay_prefix(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -10083,7 +12117,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "6rdRelayPrefix"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "6rdRelayPrefix",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_6rd_prefixlen(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10093,7 +12132,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "6rdPrefixlen"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "6rdPrefixlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_6rd_relay_prefixlen(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10103,7 +12147,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "6rdRelayPrefixlen"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "6rdRelayPrefixlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10113,7 +12162,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_flags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10123,7 +12177,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "EncapFlags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "EncapFlags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10133,7 +12192,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "EncapSport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "EncapSport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10143,7 +12207,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "EncapDport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "EncapDport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_collect_metadata(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -10153,7 +12222,12 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "CollectMetadata"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "CollectMetadata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10163,12 +12237,17 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIptunAttrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIptunAttrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoIptunAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoIptunAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoIptunAttrs<'a> {
+        IterableLinkinfoIptunAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -10197,7 +12276,25 @@ impl<'a> LinkinfoIptunAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoIptunAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoIptunAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoIptunAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
     type Item = Result<LinkinfoIptunAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -10314,14 +12411,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoIptunAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoIptunAttrs",
             r#type.and_then(|t| LinkinfoIptunAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoIptunAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoIptunAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIptunAttrs");
         for attr in self.clone() {
@@ -10362,14 +12460,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoIptunAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
+impl IterableLinkinfoIptunAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoIptunAttrs", offset));
             return (
@@ -10515,7 +12613,6 @@ impl<'a> Iterable<'a, LinkinfoIptunAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-ip6tnl-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoIp6tnlAttrs<'a> {
     Link(u32),
@@ -10533,7 +12630,7 @@ pub enum LinkinfoIp6tnlAttrs<'a> {
     CollectMetadata(()),
     Fwmark(u32),
 }
-impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -10542,7 +12639,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Link"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -10552,7 +12654,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Local"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -10562,7 +12669,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Remote"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Remote",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10572,7 +12684,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Ttl"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Ttl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_limit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10582,7 +12699,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "EncapLimit"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "EncapLimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flowinfo(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10592,7 +12714,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Flowinfo"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Flowinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10602,7 +12729,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10612,7 +12744,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Proto"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Proto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_type(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10622,7 +12759,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "EncapType"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "EncapType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_flags(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10632,7 +12774,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "EncapFlags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "EncapFlags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_sport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10642,7 +12789,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "EncapSport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "EncapSport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_encap_dport(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -10652,7 +12804,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "EncapDport"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "EncapDport",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_collect_metadata(&self) -> Result<(), ErrorContext> {
         let mut iter = self.clone();
@@ -10662,7 +12819,12 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "CollectMetadata"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "CollectMetadata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_fwmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10672,12 +12834,17 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoIp6tnlAttrs", "Fwmark"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoIp6tnlAttrs",
+            "Fwmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoIp6tnlAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoIp6tnlAttrs<'a> {
+        IterableLinkinfoIp6tnlAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -10700,7 +12867,25 @@ impl<'a> LinkinfoIp6tnlAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoIp6tnlAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
     type Item = Result<LinkinfoIp6tnlAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -10787,14 +12972,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoIp6tnlAttrs",
             r#type.and_then(|t| LinkinfoIp6tnlAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoIp6tnlAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIp6tnlAttrs");
         for attr in self.clone() {
@@ -10827,14 +13013,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
+impl IterableLinkinfoIp6tnlAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoIp6tnlAttrs", offset));
             return (
@@ -10944,7 +13130,6 @@ impl<'a> Iterable<'a, LinkinfoIp6tnlAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-tun-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoTunAttrs {
     Owner(u32),
@@ -10957,7 +13142,7 @@ pub enum LinkinfoTunAttrs {
     NumQueues(u32),
     NumDisabledQueues(u32),
 }
-impl<'a> Iterable<'a, LinkinfoTunAttrs> {
+impl<'a> IterableLinkinfoTunAttrs<'a> {
     pub fn get_owner(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -10966,7 +13151,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "Owner"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "Owner",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10976,7 +13166,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "Group"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10986,7 +13181,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pi(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -10996,7 +13196,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "Pi"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "Pi",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vnet_hdr(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -11006,7 +13211,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "VnetHdr"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "VnetHdr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_persist(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -11016,7 +13226,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "Persist"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "Persist",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_multi_queue(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -11026,7 +13241,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "MultiQueue"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "MultiQueue",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11036,7 +13256,12 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "NumQueues"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "NumQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_disabled_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11046,12 +13271,17 @@ impl<'a> Iterable<'a, LinkinfoTunAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoTunAttrs", "NumDisabledQueues"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoTunAttrs",
+            "NumDisabledQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl LinkinfoTunAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkinfoTunAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableLinkinfoTunAttrs<'_> {
+        IterableLinkinfoTunAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -11069,7 +13299,25 @@ impl LinkinfoTunAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, LinkinfoTunAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoTunAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoTunAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoTunAttrs<'a> {
     type Item = Result<LinkinfoTunAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -11135,14 +13383,15 @@ impl Iterator for Iterable<'_, LinkinfoTunAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoTunAttrs",
             r#type.and_then(|t| LinkinfoTunAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, LinkinfoTunAttrs> {
+impl std::fmt::Debug for IterableLinkinfoTunAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoTunAttrs");
         for attr in self.clone() {
@@ -11170,14 +13419,14 @@ impl std::fmt::Debug for Iterable<'_, LinkinfoTunAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, LinkinfoTunAttrs> {
+impl IterableLinkinfoTunAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoTunAttrs", offset));
             return (
@@ -11257,17 +13506,16 @@ impl Iterable<'_, LinkinfoTunAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-vlan-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoVlanAttrs<'a> {
     Id(u16),
     Flags(PushIflaVlanFlags),
-    EgressQos(Iterable<'a, IflaVlanQos>),
-    IngressQos(Iterable<'a, IflaVlanQos>),
+    EgressQos(IterableIflaVlanQos<'a>),
+    IngressQos(IterableIflaVlanQos<'a>),
     #[doc = "Associated type: \"VlanProtocols\" (enum)"]
     Protocol(u16),
 }
-impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
+impl<'a> IterableLinkinfoVlanAttrs<'a> {
     pub fn get_id(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -11276,7 +13524,12 @@ impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVlanAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVlanAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<PushIflaVlanFlags, ErrorContext> {
         let mut iter = self.clone();
@@ -11286,9 +13539,14 @@ impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVlanAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVlanAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_egress_qos(&self) -> Result<Iterable<'a, IflaVlanQos>, ErrorContext> {
+    pub fn get_egress_qos(&self) -> Result<IterableIflaVlanQos<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -11296,9 +13554,14 @@ impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVlanAttrs", "EgressQos"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVlanAttrs",
+            "EgressQos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_ingress_qos(&self) -> Result<Iterable<'a, IflaVlanQos>, ErrorContext> {
+    pub fn get_ingress_qos(&self) -> Result<IterableIflaVlanQos<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -11306,7 +13569,12 @@ impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVlanAttrs", "IngressQos"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVlanAttrs",
+            "IngressQos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"VlanProtocols\" (enum)"]
     pub fn get_protocol(&self) -> Result<u16, ErrorContext> {
@@ -11317,12 +13585,17 @@ impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVlanAttrs", "Protocol"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVlanAttrs",
+            "Protocol",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoVlanAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoVlanAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoVlanAttrs<'a> {
+        IterableLinkinfoVlanAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -11336,7 +13609,25 @@ impl<'a> LinkinfoVlanAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoVlanAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoVlanAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoVlanAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoVlanAttrs<'a> {
     type Item = Result<LinkinfoVlanAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -11358,12 +13649,12 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVlanAttrs<'a>> {
                     val
                 }),
                 3u16 => LinkinfoVlanAttrs::EgressQos({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableIflaVlanQos::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 4u16 => LinkinfoVlanAttrs::IngressQos({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableIflaVlanQos::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -11382,14 +13673,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoVlanAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoVlanAttrs",
             r#type.and_then(|t| LinkinfoVlanAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVlanAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoVlanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVlanAttrs");
         for attr in self.clone() {
@@ -11416,14 +13708,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoVlanAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
+impl IterableLinkinfoVlanAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoVlanAttrs", offset));
             return (
@@ -11480,13 +13772,12 @@ impl<'a> Iterable<'a, LinkinfoVlanAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"ifla-vlan-qos\""]
 #[derive(Clone)]
 pub enum IflaVlanQos {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     Mapping(PushIflaVlanQosMapping),
 }
-impl<'a> Iterable<'a, IflaVlanQos> {
+impl<'a> IterableIflaVlanQos<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_mapping(&self) -> MultiAttrIterable<Self, IflaVlanQos, PushIflaVlanQosMapping> {
         MultiAttrIterable::new(self.clone(), |variant| {
@@ -11499,8 +13790,8 @@ impl<'a> Iterable<'a, IflaVlanQos> {
     }
 }
 impl IflaVlanQos {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, IflaVlanQos> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableIflaVlanQos<'_> {
+        IterableIflaVlanQos::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -11510,7 +13801,25 @@ impl IflaVlanQos {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, IflaVlanQos> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableIflaVlanQos<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableIflaVlanQos<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableIflaVlanQos<'a> {
     type Item = Result<IflaVlanQos, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -11536,14 +13845,15 @@ impl Iterator for Iterable<'_, IflaVlanQos> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "IflaVlanQos",
             r#type.and_then(|t| IflaVlanQos::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, IflaVlanQos> {
+impl std::fmt::Debug for IterableIflaVlanQos<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IflaVlanQos");
         for attr in self.clone() {
@@ -11563,14 +13873,14 @@ impl std::fmt::Debug for Iterable<'_, IflaVlanQos> {
         fmt.finish()
     }
 }
-impl Iterable<'_, IflaVlanQos> {
+impl IterableIflaVlanQos<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("IflaVlanQos", offset));
             return (
@@ -11602,12 +13912,11 @@ impl Iterable<'_, IflaVlanQos> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-vrf-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoVrfAttrs {
     Table(u32),
 }
-impl<'a> Iterable<'a, LinkinfoVrfAttrs> {
+impl<'a> IterableLinkinfoVrfAttrs<'a> {
     pub fn get_table(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -11616,12 +13925,17 @@ impl<'a> Iterable<'a, LinkinfoVrfAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoVrfAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoVrfAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl LinkinfoVrfAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkinfoVrfAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableLinkinfoVrfAttrs<'_> {
+        IterableLinkinfoVrfAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -11631,7 +13945,25 @@ impl LinkinfoVrfAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, LinkinfoVrfAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoVrfAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoVrfAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoVrfAttrs<'a> {
     type Item = Result<LinkinfoVrfAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -11657,14 +13989,15 @@ impl Iterator for Iterable<'_, LinkinfoVrfAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoVrfAttrs",
             r#type.and_then(|t| LinkinfoVrfAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, LinkinfoVrfAttrs> {
+impl std::fmt::Debug for IterableLinkinfoVrfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVrfAttrs");
         for attr in self.clone() {
@@ -11684,14 +14017,14 @@ impl std::fmt::Debug for Iterable<'_, LinkinfoVrfAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, LinkinfoVrfAttrs> {
+impl IterableLinkinfoVrfAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoVrfAttrs", offset));
             return (
@@ -11723,7 +14056,6 @@ impl Iterable<'_, LinkinfoVrfAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"xdp-attrs\""]
 #[derive(Clone)]
 pub enum XdpAttrs {
     Fd(i32),
@@ -11735,7 +14067,7 @@ pub enum XdpAttrs {
     HwProgId(u32),
     ExpectedFd(i32),
 }
-impl<'a> Iterable<'a, XdpAttrs> {
+impl<'a> IterableXdpAttrs<'a> {
     pub fn get_fd(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -11744,7 +14076,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "Fd"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "Fd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_attached(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -11754,7 +14091,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "Attached"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "Attached",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11764,7 +14106,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_prog_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11774,7 +14121,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "ProgId"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "ProgId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_drv_prog_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11784,7 +14136,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "DrvProgId"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "DrvProgId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_skb_prog_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11794,7 +14151,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "SkbProgId"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "SkbProgId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_hw_prog_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -11804,7 +14166,12 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "HwProgId"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "HwProgId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_expected_fd(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -11814,12 +14181,17 @@ impl<'a> Iterable<'a, XdpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("XdpAttrs", "ExpectedFd"))
+        Err(ErrorContext::new_missing(
+            "XdpAttrs",
+            "ExpectedFd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl XdpAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, XdpAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableXdpAttrs<'_> {
+        IterableXdpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -11836,7 +14208,25 @@ impl XdpAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, XdpAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableXdpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableXdpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableXdpAttrs<'a> {
     type Item = Result<XdpAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -11897,14 +14287,15 @@ impl Iterator for Iterable<'_, XdpAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "XdpAttrs",
             r#type.and_then(|t| XdpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, XdpAttrs> {
+impl std::fmt::Debug for IterableXdpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("XdpAttrs");
         for attr in self.clone() {
@@ -11931,14 +14322,14 @@ impl std::fmt::Debug for Iterable<'_, XdpAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, XdpAttrs> {
+impl IterableXdpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("XdpAttrs", offset));
             return (
@@ -12012,13 +14403,12 @@ impl Iterable<'_, XdpAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"ifla-attrs\""]
 #[derive(Clone)]
 pub enum IflaAttrs<'a> {
     #[doc = "u32 indexed by ipv4-devconf - 1 on output, on input it's a nest"]
     Conf(&'a [u8]),
 }
-impl<'a> Iterable<'a, IflaAttrs<'a>> {
+impl<'a> IterableIflaAttrs<'a> {
     #[doc = "u32 indexed by ipv4-devconf - 1 on output, on input it's a nest"]
     pub fn get_conf(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12028,12 +14418,17 @@ impl<'a> Iterable<'a, IflaAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("IflaAttrs", "Conf"))
+        Err(ErrorContext::new_missing(
+            "IflaAttrs",
+            "Conf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> IflaAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, IflaAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableIflaAttrs<'a> {
+        IterableIflaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -12043,7 +14438,25 @@ impl<'a> IflaAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, IflaAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableIflaAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableIflaAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableIflaAttrs<'a> {
     type Item = Result<IflaAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -12069,14 +14482,15 @@ impl<'a> Iterator for Iterable<'a, IflaAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "IflaAttrs",
             r#type.and_then(|t| IflaAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, IflaAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableIflaAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IflaAttrs");
         for attr in self.clone() {
@@ -12096,14 +14510,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, IflaAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, IflaAttrs<'a>> {
+impl IterableIflaAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("IflaAttrs", offset));
             return (
@@ -12135,7 +14549,6 @@ impl<'a> Iterable<'a, IflaAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"ifla6-attrs\""]
 #[derive(Clone)]
 pub enum Ifla6Attrs<'a> {
     Flags(u32),
@@ -12149,7 +14562,7 @@ pub enum Ifla6Attrs<'a> {
     AddrGenMode(u8),
     RaMtu(u32),
 }
-impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
+impl<'a> IterableIfla6Attrs<'a> {
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -12158,7 +14571,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it's a nest"]
     pub fn get_conf(&self) -> Result<&'a [u8], ErrorContext> {
@@ -12169,7 +14587,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Conf"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Conf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12179,7 +14602,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Stats"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12189,7 +14617,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Mcast"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Mcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cacheinfo(&self) -> Result<PushIflaCacheinfo, ErrorContext> {
         let mut iter = self.clone();
@@ -12199,7 +14632,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Cacheinfo"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Cacheinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_icmp6stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12209,7 +14647,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Icmp6stats"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Icmp6stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_token(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12219,7 +14662,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "Token"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "Token",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_addr_gen_mode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -12229,7 +14677,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "AddrGenMode"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "AddrGenMode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ra_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -12239,12 +14692,17 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("Ifla6Attrs", "RaMtu"))
+        Err(ErrorContext::new_missing(
+            "Ifla6Attrs",
+            "RaMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> Ifla6Attrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, Ifla6Attrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableIfla6Attrs<'a> {
+        IterableIfla6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -12262,7 +14720,25 @@ impl<'a> Ifla6Attrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, Ifla6Attrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableIfla6Attrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableIfla6Attrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableIfla6Attrs<'a> {
     type Item = Result<Ifla6Attrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -12328,14 +14804,15 @@ impl<'a> Iterator for Iterable<'a, Ifla6Attrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "Ifla6Attrs",
             r#type.and_then(|t| Ifla6Attrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Ifla6Attrs<'a>> {
+impl<'a> std::fmt::Debug for IterableIfla6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Ifla6Attrs");
         for attr in self.clone() {
@@ -12363,14 +14840,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, Ifla6Attrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
+impl IterableIfla6Attrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("Ifla6Attrs", offset));
             return (
@@ -12450,13 +14927,12 @@ impl<'a> Iterable<'a, Ifla6Attrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"mctp-attrs\""]
 #[derive(Clone)]
 pub enum MctpAttrs {
     Net(u32),
     PhysBinding(u8),
 }
-impl<'a> Iterable<'a, MctpAttrs> {
+impl<'a> IterableMctpAttrs<'a> {
     pub fn get_net(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -12465,7 +14941,12 @@ impl<'a> Iterable<'a, MctpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("MctpAttrs", "Net"))
+        Err(ErrorContext::new_missing(
+            "MctpAttrs",
+            "Net",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_binding(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -12475,12 +14956,17 @@ impl<'a> Iterable<'a, MctpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("MctpAttrs", "PhysBinding"))
+        Err(ErrorContext::new_missing(
+            "MctpAttrs",
+            "PhysBinding",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl MctpAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, MctpAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableMctpAttrs<'_> {
+        IterableMctpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -12491,7 +14977,25 @@ impl MctpAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, MctpAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableMctpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableMctpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableMctpAttrs<'a> {
     type Item = Result<MctpAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -12522,14 +15026,15 @@ impl Iterator for Iterable<'_, MctpAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "MctpAttrs",
             r#type.and_then(|t| MctpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, MctpAttrs> {
+impl std::fmt::Debug for IterableMctpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("MctpAttrs");
         for attr in self.clone() {
@@ -12550,14 +15055,14 @@ impl std::fmt::Debug for Iterable<'_, MctpAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, MctpAttrs> {
+impl IterableMctpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("MctpAttrs", offset));
             return (
@@ -12595,16 +15100,15 @@ impl Iterable<'_, MctpAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"stats-attrs\""]
 #[derive(Clone)]
 pub enum StatsAttrs<'a> {
     Link64(PushRtnlLinkStats64),
     LinkXstats(&'a [u8]),
     LinkXstatsSlave(&'a [u8]),
-    LinkOffloadXstats(Iterable<'a, LinkOffloadXstats<'a>>),
+    LinkOffloadXstats(IterableLinkOffloadXstats<'a>),
     AfSpec(&'a [u8]),
 }
-impl<'a> Iterable<'a, StatsAttrs<'a>> {
+impl<'a> IterableStatsAttrs<'a> {
     pub fn get_link_64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -12613,7 +15117,12 @@ impl<'a> Iterable<'a, StatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("StatsAttrs", "Link64"))
+        Err(ErrorContext::new_missing(
+            "StatsAttrs",
+            "Link64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_xstats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12623,7 +15132,12 @@ impl<'a> Iterable<'a, StatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("StatsAttrs", "LinkXstats"))
+        Err(ErrorContext::new_missing(
+            "StatsAttrs",
+            "LinkXstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_xstats_slave(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12633,11 +15147,14 @@ impl<'a> Iterable<'a, StatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("StatsAttrs", "LinkXstatsSlave"))
+        Err(ErrorContext::new_missing(
+            "StatsAttrs",
+            "LinkXstatsSlave",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_link_offload_xstats(
-        &self,
-    ) -> Result<Iterable<'a, LinkOffloadXstats<'a>>, ErrorContext> {
+    pub fn get_link_offload_xstats(&self) -> Result<IterableLinkOffloadXstats<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -12645,7 +15162,12 @@ impl<'a> Iterable<'a, StatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("StatsAttrs", "LinkOffloadXstats"))
+        Err(ErrorContext::new_missing(
+            "StatsAttrs",
+            "LinkOffloadXstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_af_spec(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12655,12 +15177,17 @@ impl<'a> Iterable<'a, StatsAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("StatsAttrs", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "StatsAttrs",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> StatsAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, StatsAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableStatsAttrs<'a> {
+        IterableStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -12674,7 +15201,25 @@ impl<'a> StatsAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, StatsAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableStatsAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableStatsAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableStatsAttrs<'a> {
     type Item = Result<StatsAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -12701,7 +15246,7 @@ impl<'a> Iterator for Iterable<'a, StatsAttrs<'a>> {
                     val
                 }),
                 4u16 => StatsAttrs::LinkOffloadXstats({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkOffloadXstats::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -12720,14 +15265,15 @@ impl<'a> Iterator for Iterable<'a, StatsAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "StatsAttrs",
             r#type.and_then(|t| StatsAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, StatsAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("StatsAttrs");
         for attr in self.clone() {
@@ -12751,14 +15297,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, StatsAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, StatsAttrs<'a>> {
+impl IterableStatsAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("StatsAttrs", offset));
             return (
@@ -12815,14 +15361,13 @@ impl<'a> Iterable<'a, StatsAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"link-offload-xstats\""]
 #[derive(Clone)]
 pub enum LinkOffloadXstats<'a> {
     CpuHit(&'a [u8]),
-    HwSInfo(Iterable<'a, Iterable<'a, HwSInfoOne>>),
+    HwSInfo(IterableArrayHwSInfoOne<'a>),
     L3Stats(&'a [u8]),
 }
-impl<'a> Iterable<'a, LinkOffloadXstats<'a>> {
+impl<'a> IterableLinkOffloadXstats<'a> {
     pub fn get_cpu_hit(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -12831,20 +15376,28 @@ impl<'a> Iterable<'a, LinkOffloadXstats<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkOffloadXstats", "CpuHit"))
+        Err(ErrorContext::new_missing(
+            "LinkOffloadXstats",
+            "CpuHit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_hw_s_info(
         &self,
-    ) -> Result<
-        ArrayIterable<Iterable<'a, Iterable<'a, HwSInfoOne>>, Iterable<'a, HwSInfoOne>>,
-        ErrorContext,
-    > {
+    ) -> Result<ArrayIterable<IterableArrayHwSInfoOne<'a>, IterableHwSInfoOne<'a>>, ErrorContext>
+    {
         for attr in self.clone() {
             if let LinkOffloadXstats::HwSInfo(val) = attr? {
                 return Ok(ArrayIterable::new(val));
             }
         }
-        Err(self.error_missing("LinkOffloadXstats", "HwSInfo"))
+        Err(ErrorContext::new_missing(
+            "LinkOffloadXstats",
+            "HwSInfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_l3_stats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -12854,35 +15407,59 @@ impl<'a> Iterable<'a, LinkOffloadXstats<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkOffloadXstats", "L3Stats"))
+        Err(ErrorContext::new_missing(
+            "LinkOffloadXstats",
+            "L3Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
-impl<'a> HwSInfoOne {
-    pub fn new_array(buf: &'a [u8]) -> Iterable<'a, Iterable<'a, HwSInfoOne>> {
-        Iterable::new(buf)
+impl HwSInfoOne {
+    pub fn new_array(buf: &[u8]) -> IterableArrayHwSInfoOne<'_> {
+        IterableArrayHwSInfoOne::with_loc(buf, buf.as_ptr() as usize)
     }
 }
-impl<'a> Iterator for Iterable<'a, Iterable<'a, HwSInfoOne>> {
-    type Item = Result<Iterable<'a, HwSInfoOne>, ErrorContext>;
+#[derive(Clone, Copy, Default)]
+pub struct IterableArrayHwSInfoOne<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableArrayHwSInfoOne<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableArrayHwSInfoOne<'a> {
+    type Item = Result<IterableHwSInfoOne<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
         }
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             {
-                return Some(Ok(Iterable::with_loc(next, self.orig_loc)));
+                return Some(Ok(IterableHwSInfoOne::with_loc(next, self.orig_loc)));
             }
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "HwSInfoOne",
             None,
-            self.buf.as_ptr().wrapping_add(self.pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(self.pos) as usize,
         )))
     }
 }
 impl<'a> LinkOffloadXstats<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkOffloadXstats<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkOffloadXstats<'a> {
+        IterableLinkOffloadXstats::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -12894,7 +15471,25 @@ impl<'a> LinkOffloadXstats<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkOffloadXstats<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkOffloadXstats<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkOffloadXstats<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkOffloadXstats<'a> {
     type Item = Result<LinkOffloadXstats<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -12911,7 +15506,7 @@ impl<'a> Iterator for Iterable<'a, LinkOffloadXstats<'a>> {
                     val
                 }),
                 2u16 => LinkOffloadXstats::HwSInfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayHwSInfoOne::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -12930,21 +15525,22 @@ impl<'a> Iterator for Iterable<'a, LinkOffloadXstats<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkOffloadXstats",
             r#type.and_then(|t| LinkOffloadXstats::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, Iterable<'a, HwSInfoOne>> {
+impl std::fmt::Debug for IterableArrayHwSInfoOne<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list()
             .entries(self.clone().map(FlattenErrorContext))
             .finish()
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkOffloadXstats<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkOffloadXstats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkOffloadXstats");
         for attr in self.clone() {
@@ -12966,14 +15562,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkOffloadXstats<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkOffloadXstats<'a>> {
+impl IterableLinkOffloadXstats<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkOffloadXstats", offset));
             return (
@@ -13025,13 +15621,12 @@ impl<'a> Iterable<'a, LinkOffloadXstats<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"hw-s-info-one\""]
 #[derive(Clone)]
 pub enum HwSInfoOne {
     Request(u8),
     Used(u8),
 }
-impl<'a> Iterable<'a, HwSInfoOne> {
+impl<'a> IterableHwSInfoOne<'a> {
     pub fn get_request(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -13040,7 +15635,12 @@ impl<'a> Iterable<'a, HwSInfoOne> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("HwSInfoOne", "Request"))
+        Err(ErrorContext::new_missing(
+            "HwSInfoOne",
+            "Request",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_used(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -13050,12 +15650,17 @@ impl<'a> Iterable<'a, HwSInfoOne> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("HwSInfoOne", "Used"))
+        Err(ErrorContext::new_missing(
+            "HwSInfoOne",
+            "Used",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl HwSInfoOne {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, HwSInfoOne> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableHwSInfoOne<'_> {
+        IterableHwSInfoOne::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -13066,7 +15671,25 @@ impl HwSInfoOne {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, HwSInfoOne> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableHwSInfoOne<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableHwSInfoOne<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableHwSInfoOne<'a> {
     type Item = Result<HwSInfoOne, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -13097,14 +15720,15 @@ impl Iterator for Iterable<'_, HwSInfoOne> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "HwSInfoOne",
             r#type.and_then(|t| HwSInfoOne::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, HwSInfoOne> {
+impl std::fmt::Debug for IterableHwSInfoOne<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HwSInfoOne");
         for attr in self.clone() {
@@ -13125,14 +15749,14 @@ impl std::fmt::Debug for Iterable<'_, HwSInfoOne> {
         fmt.finish()
     }
 }
-impl Iterable<'_, HwSInfoOne> {
+impl IterableHwSInfoOne<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("HwSInfoOne", offset));
             return (
@@ -13170,12 +15794,11 @@ impl Iterable<'_, HwSInfoOne> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"link-dpll-pin-attrs\""]
 #[derive(Clone)]
 pub enum LinkDpllPinAttrs {
     Id(u32),
 }
-impl<'a> Iterable<'a, LinkDpllPinAttrs> {
+impl<'a> IterableLinkDpllPinAttrs<'a> {
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -13184,12 +15807,17 @@ impl<'a> Iterable<'a, LinkDpllPinAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkDpllPinAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "LinkDpllPinAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl LinkDpllPinAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkDpllPinAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableLinkDpllPinAttrs<'_> {
+        IterableLinkDpllPinAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -13199,7 +15827,25 @@ impl LinkDpllPinAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, LinkDpllPinAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkDpllPinAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkDpllPinAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkDpllPinAttrs<'a> {
     type Item = Result<LinkDpllPinAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -13225,14 +15871,15 @@ impl Iterator for Iterable<'_, LinkDpllPinAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkDpllPinAttrs",
             r#type.and_then(|t| LinkDpllPinAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, LinkDpllPinAttrs> {
+impl std::fmt::Debug for IterableLinkDpllPinAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkDpllPinAttrs");
         for attr in self.clone() {
@@ -13252,14 +15899,14 @@ impl std::fmt::Debug for Iterable<'_, LinkDpllPinAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, LinkDpllPinAttrs> {
+impl IterableLinkDpllPinAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkDpllPinAttrs", offset));
             return (
@@ -13291,7 +15938,6 @@ impl Iterable<'_, LinkDpllPinAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-netkit-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoNetkitAttrs<'a> {
     PeerInfo(&'a [u8]),
@@ -13309,7 +15955,7 @@ pub enum LinkinfoNetkitAttrs<'a> {
     Headroom(u16),
     Tailroom(u16),
 }
-impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+impl<'a> IterableLinkinfoNetkitAttrs<'a> {
     pub fn get_peer_info(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -13318,7 +15964,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "PeerInfo"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "PeerInfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_primary(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -13328,7 +15979,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "Primary"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "Primary",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -13339,7 +15995,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "Policy"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"NetkitPolicy\" (enum)"]
     pub fn get_peer_policy(&self) -> Result<u32, ErrorContext> {
@@ -13350,7 +16011,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "PeerPolicy"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "PeerPolicy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"NetkitMode\" (enum)"]
     pub fn get_mode(&self) -> Result<u32, ErrorContext> {
@@ -13361,7 +16027,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "Mode"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "Mode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"NetkitScrub\" (enum)"]
     pub fn get_scrub(&self) -> Result<u32, ErrorContext> {
@@ -13372,7 +16043,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "Scrub"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "Scrub",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"NetkitScrub\" (enum)"]
     pub fn get_peer_scrub(&self) -> Result<u32, ErrorContext> {
@@ -13383,7 +16059,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "PeerScrub"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "PeerScrub",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_headroom(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -13393,7 +16074,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "Headroom"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "Headroom",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tailroom(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -13403,12 +16089,17 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoNetkitAttrs", "Tailroom"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoNetkitAttrs",
+            "Tailroom",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LinkinfoNetkitAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLinkinfoNetkitAttrs<'a> {
+        IterableLinkinfoNetkitAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -13426,7 +16117,25 @@ impl<'a> LinkinfoNetkitAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoNetkitAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoNetkitAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoNetkitAttrs<'a> {
     type Item = Result<LinkinfoNetkitAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -13492,14 +16201,15 @@ impl<'a> Iterator for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoNetkitAttrs",
             r#type.and_then(|t| LinkinfoNetkitAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLinkinfoNetkitAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoNetkitAttrs");
         for attr in self.clone() {
@@ -13539,14 +16249,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LinkinfoNetkitAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
+impl IterableLinkinfoNetkitAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoNetkitAttrs", offset));
             return (
@@ -13626,13 +16336,12 @@ impl<'a> Iterable<'a, LinkinfoNetkitAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"linkinfo-ovpn-attrs\""]
 #[derive(Clone)]
 pub enum LinkinfoOvpnAttrs {
     #[doc = "Associated type: \"OvpnMode\" (enum)"]
     Mode(u8),
 }
-impl<'a> Iterable<'a, LinkinfoOvpnAttrs> {
+impl<'a> IterableLinkinfoOvpnAttrs<'a> {
     #[doc = "Associated type: \"OvpnMode\" (enum)"]
     pub fn get_mode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -13642,12 +16351,17 @@ impl<'a> Iterable<'a, LinkinfoOvpnAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LinkinfoOvpnAttrs", "Mode"))
+        Err(ErrorContext::new_missing(
+            "LinkinfoOvpnAttrs",
+            "Mode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl LinkinfoOvpnAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, LinkinfoOvpnAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableLinkinfoOvpnAttrs<'_> {
+        IterableLinkinfoOvpnAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -13657,7 +16371,25 @@ impl LinkinfoOvpnAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, LinkinfoOvpnAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoOvpnAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoOvpnAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoOvpnAttrs<'a> {
     type Item = Result<LinkinfoOvpnAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -13683,14 +16415,15 @@ impl Iterator for Iterable<'_, LinkinfoOvpnAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LinkinfoOvpnAttrs",
             r#type.and_then(|t| LinkinfoOvpnAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, LinkinfoOvpnAttrs> {
+impl std::fmt::Debug for IterableLinkinfoOvpnAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoOvpnAttrs");
         for attr in self.clone() {
@@ -13712,14 +16445,14 @@ impl std::fmt::Debug for Iterable<'_, LinkinfoOvpnAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, LinkinfoOvpnAttrs> {
+impl IterableLinkinfoOvpnAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LinkinfoOvpnAttrs", offset));
             return (
@@ -17515,17 +20248,20 @@ impl<Prev: Rec> Drop for PushLinkinfoOvpnAttrs<Prev> {
         }
     }
 }
-#[doc = "Original name: \"rtgenmsg\""]
 #[derive(Clone)]
 pub struct PushRtgenmsg {
     pub(crate) buf: [u8; 1usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtgenmsg {
+    fn default() -> Self {
+        Self { buf: [0u8; 1usize] }
+    }
+}
 impl PushRtgenmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -17559,17 +20295,22 @@ impl std::fmt::Debug for PushRtgenmsg {
             .finish()
     }
 }
-#[doc = "Original name: \"ifinfomsg\""]
 #[derive(Clone)]
 pub struct PushIfinfomsg {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIfinfomsg {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushIfinfomsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -17633,17 +20374,20 @@ impl std::fmt::Debug for PushIfinfomsg {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-bridge-id\""]
 #[derive(Clone)]
 pub struct PushIflaBridgeId {
     pub(crate) buf: [u8; 2usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaBridgeId {
+    fn default() -> Self {
+        Self { buf: [0u8; 2usize] }
+    }
+}
 impl PushIflaBridgeId {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -17684,17 +20428,22 @@ impl std::fmt::Debug for PushIflaBridgeId {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-cacheinfo\""]
 #[derive(Clone)]
 pub struct PushIflaCacheinfo {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaCacheinfo {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushIflaCacheinfo {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -17749,17 +20498,22 @@ impl std::fmt::Debug for PushIflaCacheinfo {
             .finish()
     }
 }
-#[doc = "Original name: \"rtnl-link-stats\""]
 #[derive(Clone)]
 pub struct PushRtnlLinkStats {
     pub(crate) buf: [u8; 96usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtnlLinkStats {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 96usize],
+        }
+    }
+}
 impl PushRtnlLinkStats {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -17954,17 +20708,22 @@ impl std::fmt::Debug for PushRtnlLinkStats {
             .finish()
     }
 }
-#[doc = "Original name: \"rtnl-link-stats64\""]
 #[derive(Clone)]
 pub struct PushRtnlLinkStats64 {
     pub(crate) buf: [u8; 200usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtnlLinkStats64 {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 200usize],
+        }
+    }
+}
 impl PushRtnlLinkStats64 {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18166,17 +20925,22 @@ impl std::fmt::Debug for PushRtnlLinkStats64 {
             .finish()
     }
 }
-#[doc = "Original name: \"rtnl-link-ifmap\""]
 #[derive(Clone)]
 pub struct PushRtnlLinkIfmap {
     pub(crate) buf: [u8; 32usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushRtnlLinkIfmap {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 32usize],
+        }
+    }
+}
 impl PushRtnlLinkIfmap {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18245,17 +21009,20 @@ impl std::fmt::Debug for PushRtnlLinkIfmap {
             .finish()
     }
 }
-#[doc = "Original name: \"br-boolopt-multi\""]
 #[derive(Clone)]
 pub struct PushBrBooloptMulti {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushBrBooloptMulti {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushBrBooloptMulti {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18296,17 +21063,22 @@ impl std::fmt::Debug for PushBrBooloptMulti {
             .finish()
     }
 }
-#[doc = "Original name: \"if-stats-msg\""]
 #[derive(Clone)]
 pub struct PushIfStatsMsg {
     pub(crate) buf: [u8; 12usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIfStatsMsg {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 12usize],
+        }
+    }
+}
 impl PushIfStatsMsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18354,17 +21126,20 @@ impl std::fmt::Debug for PushIfStatsMsg {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vlan-flags\""]
 #[derive(Clone)]
 pub struct PushIflaVlanFlags {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVlanFlags {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVlanFlags {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18407,17 +21182,20 @@ impl std::fmt::Debug for PushIflaVlanFlags {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vlan-qos-mapping\""]
 #[derive(Clone)]
 pub struct PushIflaVlanQosMapping {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVlanQosMapping {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVlanQosMapping {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18458,17 +21236,20 @@ impl std::fmt::Debug for PushIflaVlanQosMapping {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-geneve-port-range\""]
 #[derive(Clone)]
 pub struct PushIflaGenevePortRange {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaGenevePortRange {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushIflaGenevePortRange {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18509,17 +21290,20 @@ impl std::fmt::Debug for PushIflaGenevePortRange {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-mac\""]
 #[derive(Clone)]
 pub struct PushIflaVfMac {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfMac {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushIflaVfMac {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18560,17 +21344,22 @@ impl std::fmt::Debug for PushIflaVfMac {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-vlan\""]
 #[derive(Clone)]
 pub struct PushIflaVfVlan {
     pub(crate) buf: [u8; 12usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfVlan {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 12usize],
+        }
+    }
+}
 impl PushIflaVfVlan {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18618,17 +21407,20 @@ impl std::fmt::Debug for PushIflaVfVlan {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-tx-rate\""]
 #[derive(Clone)]
 pub struct PushIflaVfTxRate {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfTxRate {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVfTxRate {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18669,17 +21461,20 @@ impl std::fmt::Debug for PushIflaVfTxRate {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-spoofchk\""]
 #[derive(Clone)]
 pub struct PushIflaVfSpoofchk {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfSpoofchk {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVfSpoofchk {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18720,17 +21515,20 @@ impl std::fmt::Debug for PushIflaVfSpoofchk {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-link-state\""]
 #[derive(Clone)]
 pub struct PushIflaVfLinkState {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfLinkState {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVfLinkState {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18773,17 +21571,22 @@ impl std::fmt::Debug for PushIflaVfLinkState {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-rate\""]
 #[derive(Clone)]
 pub struct PushIflaVfRate {
     pub(crate) buf: [u8; 12usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfRate {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 12usize],
+        }
+    }
+}
 impl PushIflaVfRate {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18831,17 +21634,20 @@ impl std::fmt::Debug for PushIflaVfRate {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-rss-query-en\""]
 #[derive(Clone)]
 pub struct PushIflaVfRssQueryEn {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfRssQueryEn {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVfRssQueryEn {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18882,17 +21688,20 @@ impl std::fmt::Debug for PushIflaVfRssQueryEn {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-trust\""]
 #[derive(Clone)]
 pub struct PushIflaVfTrust {
     pub(crate) buf: [u8; 8usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfTrust {
+    fn default() -> Self {
+        Self { buf: [0u8; 8usize] }
+    }
+}
 impl PushIflaVfTrust {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18933,17 +21742,22 @@ impl std::fmt::Debug for PushIflaVfTrust {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-guid\""]
 #[derive(Clone)]
 pub struct PushIflaVfGuid {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfGuid {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushIflaVfGuid {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -18984,17 +21798,22 @@ impl std::fmt::Debug for PushIflaVfGuid {
             .finish()
     }
 }
-#[doc = "Original name: \"ifla-vf-vlan-info\""]
 #[derive(Clone)]
 pub struct PushIflaVfVlanInfo {
     pub(crate) buf: [u8; 16usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushIflaVfVlanInfo {
+    fn default() -> Self {
+        Self {
+            buf: [0u8; 16usize],
+        }
+    }
+}
 impl PushIflaVfVlanInfo {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -19210,7 +22029,6 @@ impl<Prev: Rec> Drop for PushOpNewlinkDoRequest<Prev> {
     }
 }
 #[doc = "Create a new link."]
-#[doc = "Original name: \"op-newlink-do-request\""]
 #[derive(Clone)]
 pub enum OpNewlinkDoRequest<'a> {
     Address(&'a [u8]),
@@ -19220,9 +22038,9 @@ pub enum OpNewlinkDoRequest<'a> {
     Txqlen(u32),
     Operstate(u8),
     Linkmode(u8),
-    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    Linkinfo(IterableLinkinfoAttrs<'a>),
     NetNsPid(u32),
-    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    AfSpec(IterableAfSpecAttrs<'a>),
     Group(u32),
     NetNsFd(u32),
     NumTxQueues(u32),
@@ -19235,7 +22053,7 @@ pub enum OpNewlinkDoRequest<'a> {
     GsoIpv4MaxSize(u32),
     GroIpv4MaxSize(u32),
 }
-impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
+impl<'a> IterableOpNewlinkDoRequest<'a> {
     pub fn get_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -19244,7 +22062,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -19254,7 +22077,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -19264,7 +22092,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19274,7 +22107,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Mtu"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Mtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_txqlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19284,7 +22122,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Txqlen"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Txqlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_operstate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -19294,7 +22137,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Operstate"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Operstate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_linkmode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -19304,9 +22152,14 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Linkmode"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Linkmode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_linkinfo(&self) -> Result<Iterable<'a, LinkinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_linkinfo(&self) -> Result<IterableLinkinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -19314,7 +22167,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Linkinfo"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Linkinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19324,9 +22182,14 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "NetNsPid"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "NetNsPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_af_spec(&self) -> Result<Iterable<'a, AfSpecAttrs<'a>>, ErrorContext> {
+    pub fn get_af_spec(&self) -> Result<IterableAfSpecAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -19334,7 +22197,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19344,7 +22212,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "Group"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19354,7 +22227,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "NetNsFd"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "NetNsFd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_tx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19364,7 +22242,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "NumTxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "NumTxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_rx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19374,7 +22257,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "NumRxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "NumRxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -19384,7 +22272,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "LinkNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "LinkNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19394,7 +22287,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "GsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "GsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19404,7 +22302,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "GsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "GsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -19414,7 +22317,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19424,7 +22332,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "GroMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "GroMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19434,7 +22347,12 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "GsoIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "GsoIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -19444,25 +22362,45 @@ impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewlinkDoRequest", "GroIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpNewlinkDoRequest",
+            "GroIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewlinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpNewlinkDoRequest<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpNewlinkDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewlinkDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewlinkDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewlinkDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewlinkDoRequest<'a> {
     type Item = Result<OpNewlinkDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -19509,7 +22447,7 @@ impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
                     val
                 }),
                 18u16 => OpNewlinkDoRequest::Linkinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19519,7 +22457,7 @@ impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
                     val
                 }),
                 26u16 => OpNewlinkDoRequest::AfSpec({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableAfSpecAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19588,14 +22526,15 @@ impl<'a> Iterator for Iterable<'a, OpNewlinkDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewlinkDoRequest",
             r#type.and_then(|t| OpNewlinkDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewlinkDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewlinkDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewlinkDoRequest");
         for attr in self.clone() {
@@ -19635,14 +22574,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewlinkDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewlinkDoRequest<'a>> {
+impl IterableOpNewlinkDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpNewlinkDoRequest", offset));
             return (
@@ -19837,26 +22776,40 @@ impl<Prev: Rec> Drop for PushOpNewlinkDoReply<Prev> {
     }
 }
 #[doc = "Create a new link."]
-#[doc = "Original name: \"op-newlink-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewlinkDoReply {}
-impl<'a> Iterable<'a, OpNewlinkDoReply> {}
+impl<'a> IterableOpNewlinkDoReply<'a> {}
 impl OpNewlinkDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, Iterable<'_, OpNewlinkDoReply>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, IterableOpNewlinkDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewlinkDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewlinkDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewlinkDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewlinkDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewlinkDoReply<'a> {
     type Item = Result<OpNewlinkDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -19877,14 +22830,15 @@ impl Iterator for Iterable<'_, OpNewlinkDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewlinkDoReply",
             r#type.and_then(|t| OpNewlinkDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewlinkDoReply> {
+impl std::fmt::Debug for IterableOpNewlinkDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewlinkDoReply");
         for attr in self.clone() {
@@ -19902,14 +22856,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewlinkDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewlinkDoReply> {
+impl IterableOpNewlinkDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpNewlinkDoReply", offset));
             return (
@@ -19937,7 +22891,7 @@ impl<'r> RequestOpNewlinkDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewlinkDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpNewlinkDoReply>);
+    type ReplyType<'buf> = (PushIfinfomsg, IterableOpNewlinkDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -20020,12 +22974,11 @@ impl<Prev: Rec> Drop for PushOpDellinkDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing link."]
-#[doc = "Original name: \"op-dellink-do-request\""]
 #[derive(Clone)]
 pub enum OpDellinkDoRequest<'a> {
     Ifname(&'a CStr),
 }
-impl<'a> Iterable<'a, OpDellinkDoRequest<'a>> {
+impl<'a> IterableOpDellinkDoRequest<'a> {
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -20034,25 +22987,45 @@ impl<'a> Iterable<'a, OpDellinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDellinkDoRequest", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpDellinkDoRequest",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDellinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpDellinkDoRequest<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpDellinkDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDellinkDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDellinkDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDellinkDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDellinkDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDellinkDoRequest<'a> {
     type Item = Result<OpDellinkDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20078,14 +23051,15 @@ impl<'a> Iterator for Iterable<'a, OpDellinkDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDellinkDoRequest",
             r#type.and_then(|t| OpDellinkDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDellinkDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDellinkDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDellinkDoRequest");
         for attr in self.clone() {
@@ -20105,14 +23079,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDellinkDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDellinkDoRequest<'a>> {
+impl IterableOpDellinkDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpDellinkDoRequest", offset));
             return (
@@ -20186,26 +23160,40 @@ impl<Prev: Rec> Drop for PushOpDellinkDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing link."]
-#[doc = "Original name: \"op-dellink-do-reply\""]
 #[derive(Clone)]
 pub enum OpDellinkDoReply {}
-impl<'a> Iterable<'a, OpDellinkDoReply> {}
+impl<'a> IterableOpDellinkDoReply<'a> {}
 impl OpDellinkDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, Iterable<'_, OpDellinkDoReply>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, IterableOpDellinkDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDellinkDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDellinkDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDellinkDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDellinkDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDellinkDoReply<'a> {
     type Item = Result<OpDellinkDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20226,14 +23214,15 @@ impl Iterator for Iterable<'_, OpDellinkDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDellinkDoReply",
             r#type.and_then(|t| OpDellinkDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDellinkDoReply> {
+impl std::fmt::Debug for IterableOpDellinkDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDellinkDoReply");
         for attr in self.clone() {
@@ -20251,14 +23240,14 @@ impl std::fmt::Debug for Iterable<'_, OpDellinkDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDellinkDoReply> {
+impl IterableOpDellinkDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpDellinkDoReply", offset));
             return (
@@ -20286,7 +23275,7 @@ impl<'r> RequestOpDellinkDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDellinkDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpDellinkDoReply>);
+    type ReplyType<'buf> = (PushIfinfomsg, IterableOpDellinkDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -20377,16 +23366,15 @@ impl<Prev: Rec> Drop for PushOpGetlinkDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump information about a link."]
-#[doc = "Original name: \"op-getlink-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetlinkDumpRequest<'a> {
     Master(u32),
-    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    Linkinfo(IterableLinkinfoAttrs<'a>),
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     ExtMask(u32),
     TargetNetnsid(i32),
 }
-impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
+impl<'a> IterableOpGetlinkDumpRequest<'a> {
     pub fn get_master(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -20395,9 +23383,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpRequest", "Master"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpRequest",
+            "Master",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_linkinfo(&self) -> Result<Iterable<'a, LinkinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_linkinfo(&self) -> Result<IterableLinkinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -20405,7 +23398,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpRequest", "Linkinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpRequest",
+            "Linkinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     pub fn get_ext_mask(&self) -> Result<u32, ErrorContext> {
@@ -20416,7 +23414,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpRequest", "ExtMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpRequest",
+            "ExtMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -20426,25 +23429,45 @@ impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpRequest", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpRequest",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetlinkDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDumpRequest<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetlinkDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetlinkDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetlinkDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetlinkDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetlinkDumpRequest<'a> {
     type Item = Result<OpGetlinkDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20461,7 +23484,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpRequest<'a>> {
                     val
                 }),
                 18u16 => OpGetlinkDumpRequest::Linkinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -20485,14 +23508,15 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetlinkDumpRequest",
             r#type.and_then(|t| OpGetlinkDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetlinkDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetlinkDumpRequest");
         for attr in self.clone() {
@@ -20517,14 +23541,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetlinkDumpRequest<'a>> {
+impl IterableOpGetlinkDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpGetlinkDumpRequest", offset));
             return (
@@ -21075,7 +24099,6 @@ impl<Prev: Rec> Drop for PushOpGetlinkDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump information about a link."]
-#[doc = "Original name: \"op-getlink-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetlinkDumpReply<'a> {
     Address(&'a [u8]),
@@ -21095,15 +24118,15 @@ pub enum OpGetlinkDumpReply<'a> {
     Weight(u32),
     Operstate(u8),
     Linkmode(u8),
-    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    Linkinfo(IterableLinkinfoAttrs<'a>),
     NetNsPid(u32),
     Ifalias(&'a CStr),
     NumVf(u32),
-    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    VfinfoList(IterableVfinfoListAttrs<'a>),
     Stats64(PushRtnlLinkStats64),
-    VfPorts(Iterable<'a, VfPortsAttrs>),
-    PortSelf(Iterable<'a, PortSelfAttrs>),
-    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    VfPorts(IterableVfPortsAttrs<'a>),
+    PortSelf(IterablePortSelfAttrs<'a>),
+    AfSpec(IterableAfSpecAttrs<'a>),
     Group(u32),
     NetNsFd(u32),
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
@@ -21121,7 +24144,7 @@ pub enum OpGetlinkDumpReply<'a> {
     GsoMaxSegs(u32),
     GsoMaxSize(u32),
     Pad(&'a [u8]),
-    Xdp(Iterable<'a, XdpAttrs>),
+    Xdp(IterableXdpAttrs<'a>),
     Event(u32),
     NewNetnsid(i32),
     TargetNetnsid(i32),
@@ -21130,7 +24153,7 @@ pub enum OpGetlinkDumpReply<'a> {
     NewIfindex(i32),
     MinMtu(u32),
     MaxMtu(u32),
-    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PropList(IterablePropListLinkAttrs<'a>),
     PermAddress(&'a [u8]),
     ProtoDownReason(&'a CStr),
     ParentDevName(&'a CStr),
@@ -21142,12 +24165,12 @@ pub enum OpGetlinkDumpReply<'a> {
     DevlinkPort(&'a [u8]),
     GsoIpv4MaxSize(u32),
     GroIpv4MaxSize(u32),
-    DpllPin(Iterable<'a, LinkDpllPinAttrs>),
+    DpllPin(IterableLinkDpllPinAttrs<'a>),
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     MaxPacingOffloadHorizon(u32),
     NetnsImmutable(u8),
 }
-impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
+impl<'a> IterableOpGetlinkDumpReply<'a> {
     pub fn get_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -21156,7 +24179,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -21166,7 +24194,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21176,7 +24209,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21186,7 +24224,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Mtu"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Mtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21196,7 +24239,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Link"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_qdisc(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21206,7 +24254,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Qdisc"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Qdisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats(&self) -> Result<PushRtnlLinkStats, ErrorContext> {
         let mut iter = self.clone();
@@ -21216,7 +24269,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Stats"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cost(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21226,7 +24284,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Cost"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Cost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21236,7 +24299,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_master(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21246,7 +24314,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Master"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Master",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_wireless(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21256,7 +24329,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Wireless"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Wireless",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protinfo(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21266,7 +24344,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Protinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Protinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_txqlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21276,7 +24359,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Txqlen"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Txqlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_map(&self) -> Result<PushRtnlLinkIfmap, ErrorContext> {
         let mut iter = self.clone();
@@ -21286,7 +24374,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Map"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Map",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_weight(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21296,7 +24389,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Weight"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Weight",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_operstate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -21306,7 +24404,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Operstate"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Operstate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_linkmode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -21316,9 +24419,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Linkmode"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Linkmode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_linkinfo(&self) -> Result<Iterable<'a, LinkinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_linkinfo(&self) -> Result<IterableLinkinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21326,7 +24434,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Linkinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Linkinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21336,7 +24449,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NetNsPid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NetNsPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifalias(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21346,7 +24464,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Ifalias"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Ifalias",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_vf(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21356,9 +24479,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NumVf"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NumVf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vfinfo_list(&self) -> Result<Iterable<'a, VfinfoListAttrs<'a>>, ErrorContext> {
+    pub fn get_vfinfo_list(&self) -> Result<IterableVfinfoListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21366,7 +24494,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "VfinfoList"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "VfinfoList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
@@ -21376,9 +24509,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Stats64"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Stats64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vf_ports(&self) -> Result<Iterable<'a, VfPortsAttrs>, ErrorContext> {
+    pub fn get_vf_ports(&self) -> Result<IterableVfPortsAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21386,9 +24524,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "VfPorts"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "VfPorts",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_port_self(&self) -> Result<Iterable<'a, PortSelfAttrs>, ErrorContext> {
+    pub fn get_port_self(&self) -> Result<IterablePortSelfAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21396,9 +24539,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "PortSelf"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "PortSelf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_af_spec(&self) -> Result<Iterable<'a, AfSpecAttrs<'a>>, ErrorContext> {
+    pub fn get_af_spec(&self) -> Result<IterableAfSpecAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21406,7 +24554,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21416,7 +24569,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Group"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21426,7 +24584,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NetNsFd"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NetNsFd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     pub fn get_ext_mask(&self) -> Result<u32, ErrorContext> {
@@ -21437,7 +24600,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "ExtMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "ExtMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_promiscuity(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21447,7 +24615,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Promiscuity"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Promiscuity",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_tx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21457,7 +24630,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NumTxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NumTxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_rx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21467,7 +24645,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NumRxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NumRxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -21477,7 +24660,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Carrier"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Carrier",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -21487,7 +24675,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "PhysPortId"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "PhysPortId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_changes(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21497,7 +24690,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "CarrierChanges"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "CarrierChanges",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_switch_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -21507,7 +24705,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "PhysSwitchId"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "PhysSwitchId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -21517,7 +24720,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "LinkNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "LinkNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21527,7 +24735,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "PhysPortName"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "PhysPortName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -21537,7 +24750,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "ProtoDown"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "ProtoDown",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21547,7 +24765,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "GsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "GsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21557,7 +24780,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "GsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "GsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -21567,9 +24795,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_xdp(&self) -> Result<Iterable<'a, XdpAttrs>, ErrorContext> {
+    pub fn get_xdp(&self) -> Result<IterableXdpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21577,7 +24810,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Xdp"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Xdp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_event(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21587,7 +24825,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Event"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Event",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -21597,7 +24840,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NewNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NewNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -21607,7 +24855,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_up_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21617,7 +24870,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "CarrierUpCount"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "CarrierUpCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_down_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21627,7 +24885,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "CarrierDownCount"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "CarrierDownCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_ifindex(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -21637,7 +24900,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NewIfindex"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NewIfindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_min_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21647,7 +24915,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "MinMtu"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "MinMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_max_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21657,9 +24930,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "MaxMtu"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "MaxMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_prop_list(&self) -> Result<Iterable<'a, PropListLinkAttrs<'a>>, ErrorContext> {
+    pub fn get_prop_list(&self) -> Result<IterablePropListLinkAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21667,7 +24945,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "PropList"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "PropList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_perm_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -21677,7 +24960,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "PermAddress"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "PermAddress",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down_reason(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21687,7 +24975,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "ProtoDownReason"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "ProtoDownReason",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21697,7 +24990,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "ParentDevName"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "ParentDevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21707,7 +25005,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "ParentDevBusName"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "ParentDevBusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21717,7 +25020,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "GroMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "GroMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21727,7 +25035,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "TsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "TsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21737,7 +25050,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "TsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "TsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_allmulti(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21747,7 +25065,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "Allmulti"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "Allmulti",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_devlink_port(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -21757,7 +25080,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "DevlinkPort"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "DevlinkPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21767,7 +25095,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "GsoIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "GsoIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -21777,9 +25110,14 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "GroIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "GroIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_dpll_pin(&self) -> Result<Iterable<'a, LinkDpllPinAttrs>, ErrorContext> {
+    pub fn get_dpll_pin(&self) -> Result<IterableLinkDpllPinAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21787,7 +25125,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "DpllPin"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "DpllPin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     pub fn get_max_pacing_offload_horizon(&self) -> Result<u32, ErrorContext> {
@@ -21798,7 +25141,12 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "MaxPacingOffloadHorizon"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "MaxPacingOffloadHorizon",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_netns_immutable(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -21808,25 +25156,45 @@ impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDumpReply", "NetnsImmutable"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDumpReply",
+            "NetnsImmutable",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetlinkDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDumpReply<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetlinkDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetlinkDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetlinkDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetlinkDumpReply<'a> {
     type Item = Result<OpGetlinkDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -21923,7 +25291,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 18u16 => OpGetlinkDumpReply::Linkinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -21943,7 +25311,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 22u16 => OpGetlinkDumpReply::VfinfoList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfinfoListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -21953,17 +25321,17 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 24u16 => OpGetlinkDumpReply::VfPorts({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfPortsAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 25u16 => OpGetlinkDumpReply::PortSelf({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePortSelfAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 26u16 => OpGetlinkDumpReply::AfSpec({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableAfSpecAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -22048,7 +25416,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 43u16 => OpGetlinkDumpReply::Xdp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableXdpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -22093,7 +25461,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 52u16 => OpGetlinkDumpReply::PropList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePropListLinkAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -22153,7 +25521,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
                     val
                 }),
                 65u16 => OpGetlinkDumpReply::DpllPin({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkDpllPinAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -22177,14 +25545,15 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetlinkDumpReply",
             r#type.and_then(|t| OpGetlinkDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetlinkDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetlinkDumpReply");
         for attr in self.clone() {
@@ -22273,14 +25642,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetlinkDumpReply<'a>> {
+impl IterableOpGetlinkDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpGetlinkDumpReply", offset));
             return (
@@ -22722,7 +26091,7 @@ impl<'r> RequestOpGetlinkDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetlinkDumpRequest<'_> {
-    type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpGetlinkDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushIfinfomsg, IterableOpGetlinkDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -22831,7 +26200,6 @@ impl<Prev: Rec> Drop for PushOpGetlinkDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump information about a link."]
-#[doc = "Original name: \"op-getlink-do-request\""]
 #[derive(Clone)]
 pub enum OpGetlinkDoRequest<'a> {
     Ifname(&'a CStr),
@@ -22840,7 +26208,7 @@ pub enum OpGetlinkDoRequest<'a> {
     TargetNetnsid(i32),
     AltIfname(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
+impl<'a> IterableOpGetlinkDoRequest<'a> {
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -22849,7 +26217,12 @@ impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoRequest", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoRequest",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     pub fn get_ext_mask(&self) -> Result<u32, ErrorContext> {
@@ -22860,7 +26233,12 @@ impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoRequest", "ExtMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoRequest",
+            "ExtMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -22870,7 +26248,12 @@ impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoRequest", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoRequest",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_alt_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -22880,25 +26263,45 @@ impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoRequest", "AltIfname"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoRequest",
+            "AltIfname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetlinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDoRequest<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetlinkDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetlinkDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetlinkDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetlinkDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetlinkDoRequest<'a> {
     type Item = Result<OpGetlinkDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -22939,14 +26342,15 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetlinkDoRequest",
             r#type.and_then(|t| OpGetlinkDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetlinkDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetlinkDoRequest");
         for attr in self.clone() {
@@ -22971,14 +26375,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetlinkDoRequest<'a>> {
+impl IterableOpGetlinkDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpGetlinkDoRequest", offset));
             return (
@@ -23528,7 +26932,6 @@ impl<Prev: Rec> Drop for PushOpGetlinkDoReply<Prev> {
     }
 }
 #[doc = "Get / dump information about a link."]
-#[doc = "Original name: \"op-getlink-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetlinkDoReply<'a> {
     Address(&'a [u8]),
@@ -23548,15 +26951,15 @@ pub enum OpGetlinkDoReply<'a> {
     Weight(u32),
     Operstate(u8),
     Linkmode(u8),
-    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    Linkinfo(IterableLinkinfoAttrs<'a>),
     NetNsPid(u32),
     Ifalias(&'a CStr),
     NumVf(u32),
-    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    VfinfoList(IterableVfinfoListAttrs<'a>),
     Stats64(PushRtnlLinkStats64),
-    VfPorts(Iterable<'a, VfPortsAttrs>),
-    PortSelf(Iterable<'a, PortSelfAttrs>),
-    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    VfPorts(IterableVfPortsAttrs<'a>),
+    PortSelf(IterablePortSelfAttrs<'a>),
+    AfSpec(IterableAfSpecAttrs<'a>),
     Group(u32),
     NetNsFd(u32),
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
@@ -23574,7 +26977,7 @@ pub enum OpGetlinkDoReply<'a> {
     GsoMaxSegs(u32),
     GsoMaxSize(u32),
     Pad(&'a [u8]),
-    Xdp(Iterable<'a, XdpAttrs>),
+    Xdp(IterableXdpAttrs<'a>),
     Event(u32),
     NewNetnsid(i32),
     TargetNetnsid(i32),
@@ -23583,7 +26986,7 @@ pub enum OpGetlinkDoReply<'a> {
     NewIfindex(i32),
     MinMtu(u32),
     MaxMtu(u32),
-    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PropList(IterablePropListLinkAttrs<'a>),
     PermAddress(&'a [u8]),
     ProtoDownReason(&'a CStr),
     ParentDevName(&'a CStr),
@@ -23595,12 +26998,12 @@ pub enum OpGetlinkDoReply<'a> {
     DevlinkPort(&'a [u8]),
     GsoIpv4MaxSize(u32),
     GroIpv4MaxSize(u32),
-    DpllPin(Iterable<'a, LinkDpllPinAttrs>),
+    DpllPin(IterableLinkDpllPinAttrs<'a>),
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     MaxPacingOffloadHorizon(u32),
     NetnsImmutable(u8),
 }
-impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
+impl<'a> IterableOpGetlinkDoReply<'a> {
     pub fn get_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -23609,7 +27012,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -23619,7 +27027,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23629,7 +27042,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23639,7 +27057,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Mtu"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Mtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23649,7 +27072,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Link"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_qdisc(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23659,7 +27087,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Qdisc"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Qdisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats(&self) -> Result<PushRtnlLinkStats, ErrorContext> {
         let mut iter = self.clone();
@@ -23669,7 +27102,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Stats"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cost(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23679,7 +27117,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Cost"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Cost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23689,7 +27132,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_master(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23699,7 +27147,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Master"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Master",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_wireless(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23709,7 +27162,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Wireless"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Wireless",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protinfo(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23719,7 +27177,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Protinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Protinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_txqlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23729,7 +27192,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Txqlen"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Txqlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_map(&self) -> Result<PushRtnlLinkIfmap, ErrorContext> {
         let mut iter = self.clone();
@@ -23739,7 +27207,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Map"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Map",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_weight(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23749,7 +27222,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Weight"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Weight",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_operstate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -23759,7 +27237,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Operstate"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Operstate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_linkmode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -23769,9 +27252,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Linkmode"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Linkmode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_linkinfo(&self) -> Result<Iterable<'a, LinkinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_linkinfo(&self) -> Result<IterableLinkinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -23779,7 +27267,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Linkinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Linkinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23789,7 +27282,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NetNsPid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NetNsPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifalias(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23799,7 +27297,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Ifalias"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Ifalias",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_vf(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23809,9 +27312,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NumVf"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NumVf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vfinfo_list(&self) -> Result<Iterable<'a, VfinfoListAttrs<'a>>, ErrorContext> {
+    pub fn get_vfinfo_list(&self) -> Result<IterableVfinfoListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -23819,7 +27327,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "VfinfoList"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "VfinfoList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
@@ -23829,9 +27342,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Stats64"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Stats64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vf_ports(&self) -> Result<Iterable<'a, VfPortsAttrs>, ErrorContext> {
+    pub fn get_vf_ports(&self) -> Result<IterableVfPortsAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -23839,9 +27357,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "VfPorts"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "VfPorts",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_port_self(&self) -> Result<Iterable<'a, PortSelfAttrs>, ErrorContext> {
+    pub fn get_port_self(&self) -> Result<IterablePortSelfAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -23849,9 +27372,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "PortSelf"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "PortSelf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_af_spec(&self) -> Result<Iterable<'a, AfSpecAttrs<'a>>, ErrorContext> {
+    pub fn get_af_spec(&self) -> Result<IterableAfSpecAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -23859,7 +27387,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23869,7 +27402,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Group"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23879,7 +27417,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NetNsFd"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NetNsFd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     pub fn get_ext_mask(&self) -> Result<u32, ErrorContext> {
@@ -23890,7 +27433,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "ExtMask"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "ExtMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_promiscuity(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23900,7 +27448,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Promiscuity"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Promiscuity",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_tx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23910,7 +27463,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NumTxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NumTxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_rx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23920,7 +27478,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NumRxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NumRxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -23930,7 +27493,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Carrier"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Carrier",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -23940,7 +27508,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "PhysPortId"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "PhysPortId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_changes(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -23950,7 +27523,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "CarrierChanges"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "CarrierChanges",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_switch_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -23960,7 +27538,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "PhysSwitchId"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "PhysSwitchId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -23970,7 +27553,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "LinkNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "LinkNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23980,7 +27568,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "PhysPortName"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "PhysPortName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -23990,7 +27583,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "ProtoDown"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "ProtoDown",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24000,7 +27598,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "GsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "GsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24010,7 +27613,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "GsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "GsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -24020,9 +27628,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_xdp(&self) -> Result<Iterable<'a, XdpAttrs>, ErrorContext> {
+    pub fn get_xdp(&self) -> Result<IterableXdpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -24030,7 +27643,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Xdp"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Xdp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_event(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24040,7 +27658,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Event"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Event",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -24050,7 +27673,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NewNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NewNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -24060,7 +27688,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_up_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24070,7 +27703,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "CarrierUpCount"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "CarrierUpCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_down_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24080,7 +27718,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "CarrierDownCount"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "CarrierDownCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_ifindex(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -24090,7 +27733,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NewIfindex"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NewIfindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_min_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24100,7 +27748,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "MinMtu"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "MinMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_max_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24110,9 +27763,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "MaxMtu"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "MaxMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_prop_list(&self) -> Result<Iterable<'a, PropListLinkAttrs<'a>>, ErrorContext> {
+    pub fn get_prop_list(&self) -> Result<IterablePropListLinkAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -24120,7 +27778,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "PropList"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "PropList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_perm_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -24130,7 +27793,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "PermAddress"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "PermAddress",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down_reason(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -24140,7 +27808,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "ProtoDownReason"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "ProtoDownReason",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -24150,7 +27823,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "ParentDevName"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "ParentDevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -24160,7 +27838,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "ParentDevBusName"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "ParentDevBusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24170,7 +27853,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "GroMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "GroMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24180,7 +27868,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "TsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "TsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24190,7 +27883,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "TsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "TsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_allmulti(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24200,7 +27898,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "Allmulti"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "Allmulti",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_devlink_port(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -24210,7 +27913,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "DevlinkPort"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "DevlinkPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24220,7 +27928,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "GsoIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "GsoIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -24230,9 +27943,14 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "GroIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "GroIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_dpll_pin(&self) -> Result<Iterable<'a, LinkDpllPinAttrs>, ErrorContext> {
+    pub fn get_dpll_pin(&self) -> Result<IterableLinkDpllPinAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -24240,7 +27958,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "DpllPin"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "DpllPin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     pub fn get_max_pacing_offload_horizon(&self) -> Result<u32, ErrorContext> {
@@ -24251,7 +27974,12 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "MaxPacingOffloadHorizon"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "MaxPacingOffloadHorizon",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_netns_immutable(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -24261,25 +27989,45 @@ impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetlinkDoReply", "NetnsImmutable"))
+        Err(ErrorContext::new_missing(
+            "OpGetlinkDoReply",
+            "NetnsImmutable",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetlinkDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpGetlinkDoReply<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetlinkDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetlinkDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetlinkDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetlinkDoReply<'a> {
     type Item = Result<OpGetlinkDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -24376,7 +28124,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 18u16 => OpGetlinkDoReply::Linkinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -24396,7 +28144,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 22u16 => OpGetlinkDoReply::VfinfoList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfinfoListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -24406,17 +28154,17 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 24u16 => OpGetlinkDoReply::VfPorts({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfPortsAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 25u16 => OpGetlinkDoReply::PortSelf({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePortSelfAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 26u16 => OpGetlinkDoReply::AfSpec({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableAfSpecAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -24501,7 +28249,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 43u16 => OpGetlinkDoReply::Xdp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableXdpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -24546,7 +28294,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 52u16 => OpGetlinkDoReply::PropList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePropListLinkAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -24606,7 +28354,7 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
                     val
                 }),
                 65u16 => OpGetlinkDoReply::DpllPin({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkDpllPinAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -24630,14 +28378,15 @@ impl<'a> Iterator for Iterable<'a, OpGetlinkDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetlinkDoReply",
             r#type.and_then(|t| OpGetlinkDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetlinkDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetlinkDoReply");
         for attr in self.clone() {
@@ -24726,14 +28475,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetlinkDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetlinkDoReply<'a>> {
+impl IterableOpGetlinkDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpGetlinkDoReply", offset));
             return (
@@ -25173,7 +28922,7 @@ impl<'r> RequestOpGetlinkDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetlinkDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpGetlinkDoReply<'buf>>);
+    type ReplyType<'buf> = (PushIfinfomsg, IterableOpGetlinkDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -25699,7 +29448,6 @@ impl<Prev: Rec> Drop for PushOpSetlinkDoRequest<Prev> {
     }
 }
 #[doc = "Set information about a link."]
-#[doc = "Original name: \"op-setlink-do-request\""]
 #[derive(Clone)]
 pub enum OpSetlinkDoRequest<'a> {
     Address(&'a [u8]),
@@ -25719,15 +29467,15 @@ pub enum OpSetlinkDoRequest<'a> {
     Weight(u32),
     Operstate(u8),
     Linkmode(u8),
-    Linkinfo(Iterable<'a, LinkinfoAttrs<'a>>),
+    Linkinfo(IterableLinkinfoAttrs<'a>),
     NetNsPid(u32),
     Ifalias(&'a CStr),
     NumVf(u32),
-    VfinfoList(Iterable<'a, VfinfoListAttrs<'a>>),
+    VfinfoList(IterableVfinfoListAttrs<'a>),
     Stats64(PushRtnlLinkStats64),
-    VfPorts(Iterable<'a, VfPortsAttrs>),
-    PortSelf(Iterable<'a, PortSelfAttrs>),
-    AfSpec(Iterable<'a, AfSpecAttrs<'a>>),
+    VfPorts(IterableVfPortsAttrs<'a>),
+    PortSelf(IterablePortSelfAttrs<'a>),
+    AfSpec(IterableAfSpecAttrs<'a>),
     Group(u32),
     NetNsFd(u32),
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
@@ -25745,7 +29493,7 @@ pub enum OpSetlinkDoRequest<'a> {
     GsoMaxSegs(u32),
     GsoMaxSize(u32),
     Pad(&'a [u8]),
-    Xdp(Iterable<'a, XdpAttrs>),
+    Xdp(IterableXdpAttrs<'a>),
     Event(u32),
     NewNetnsid(i32),
     TargetNetnsid(i32),
@@ -25754,7 +29502,7 @@ pub enum OpSetlinkDoRequest<'a> {
     NewIfindex(i32),
     MinMtu(u32),
     MaxMtu(u32),
-    PropList(Iterable<'a, PropListLinkAttrs<'a>>),
+    PropList(IterablePropListLinkAttrs<'a>),
     PermAddress(&'a [u8]),
     ProtoDownReason(&'a CStr),
     ParentDevName(&'a CStr),
@@ -25766,12 +29514,12 @@ pub enum OpSetlinkDoRequest<'a> {
     DevlinkPort(&'a [u8]),
     GsoIpv4MaxSize(u32),
     GroIpv4MaxSize(u32),
-    DpllPin(Iterable<'a, LinkDpllPinAttrs>),
+    DpllPin(IterableLinkDpllPinAttrs<'a>),
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     MaxPacingOffloadHorizon(u32),
     NetnsImmutable(u8),
 }
-impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
+impl<'a> IterableOpSetlinkDoRequest<'a> {
     pub fn get_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -25780,7 +29528,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Address"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Address",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_broadcast(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -25790,7 +29543,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Broadcast"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Broadcast",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifname(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25800,7 +29558,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Ifname"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Ifname",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25810,7 +29573,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Mtu"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Mtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25820,7 +29588,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Link"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_qdisc(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25830,7 +29603,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Qdisc"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Qdisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats(&self) -> Result<PushRtnlLinkStats, ErrorContext> {
         let mut iter = self.clone();
@@ -25840,7 +29618,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Stats"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Stats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_cost(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25850,7 +29633,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Cost"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Cost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25860,7 +29648,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Priority"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_master(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25870,7 +29663,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Master"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Master",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_wireless(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25880,7 +29678,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Wireless"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Wireless",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_protinfo(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25890,7 +29693,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Protinfo"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Protinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_txqlen(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25900,7 +29708,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Txqlen"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Txqlen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_map(&self) -> Result<PushRtnlLinkIfmap, ErrorContext> {
         let mut iter = self.clone();
@@ -25910,7 +29723,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Map"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Map",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_weight(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25920,7 +29738,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Weight"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Weight",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_operstate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -25930,7 +29753,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Operstate"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Operstate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_linkmode(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -25940,9 +29768,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Linkmode"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Linkmode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_linkinfo(&self) -> Result<Iterable<'a, LinkinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_linkinfo(&self) -> Result<IterableLinkinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -25950,7 +29783,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Linkinfo"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Linkinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25960,7 +29798,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NetNsPid"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NetNsPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_ifalias(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25970,7 +29813,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Ifalias"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Ifalias",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_vf(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -25980,9 +29828,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NumVf"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NumVf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vfinfo_list(&self) -> Result<Iterable<'a, VfinfoListAttrs<'a>>, ErrorContext> {
+    pub fn get_vfinfo_list(&self) -> Result<IterableVfinfoListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -25990,7 +29843,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "VfinfoList"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "VfinfoList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_stats64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
@@ -26000,9 +29858,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Stats64"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Stats64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_vf_ports(&self) -> Result<Iterable<'a, VfPortsAttrs>, ErrorContext> {
+    pub fn get_vf_ports(&self) -> Result<IterableVfPortsAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26010,9 +29873,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "VfPorts"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "VfPorts",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_port_self(&self) -> Result<Iterable<'a, PortSelfAttrs>, ErrorContext> {
+    pub fn get_port_self(&self) -> Result<IterablePortSelfAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26020,9 +29888,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "PortSelf"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "PortSelf",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_af_spec(&self) -> Result<Iterable<'a, AfSpecAttrs<'a>>, ErrorContext> {
+    pub fn get_af_spec(&self) -> Result<IterableAfSpecAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26030,7 +29903,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_group(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26040,7 +29918,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Group"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_net_ns_fd(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26050,7 +29933,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NetNsFd"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NetNsFd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"RtextFilter\" (1 bit per enumeration)"]
     pub fn get_ext_mask(&self) -> Result<u32, ErrorContext> {
@@ -26061,7 +29949,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "ExtMask"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "ExtMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_promiscuity(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26071,7 +29964,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Promiscuity"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Promiscuity",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_tx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26081,7 +29979,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NumTxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NumTxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_num_rx_queues(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26091,7 +29994,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NumRxQueues"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NumRxQueues",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -26101,7 +30009,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Carrier"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Carrier",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -26111,7 +30024,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "PhysPortId"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "PhysPortId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_changes(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26121,7 +30039,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "CarrierChanges"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "CarrierChanges",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_switch_id(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -26131,7 +30054,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "PhysSwitchId"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "PhysSwitchId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -26141,7 +30069,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "LinkNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "LinkNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_phys_port_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -26151,7 +30084,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "PhysPortName"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "PhysPortName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -26161,7 +30099,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "ProtoDown"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "ProtoDown",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26171,7 +30114,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "GsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "GsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26181,7 +30129,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "GsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "GsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -26191,9 +30144,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Pad"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_xdp(&self) -> Result<Iterable<'a, XdpAttrs>, ErrorContext> {
+    pub fn get_xdp(&self) -> Result<IterableXdpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26201,7 +30159,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Xdp"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Xdp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_event(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26211,7 +30174,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Event"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Event",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -26221,7 +30189,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NewNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NewNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -26231,7 +30204,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "TargetNetnsid"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "TargetNetnsid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_up_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26241,7 +30219,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "CarrierUpCount"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "CarrierUpCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_carrier_down_count(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26251,7 +30234,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "CarrierDownCount"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "CarrierDownCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_new_ifindex(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -26261,7 +30249,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NewIfindex"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NewIfindex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_min_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26271,7 +30264,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "MinMtu"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "MinMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_max_mtu(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26281,9 +30279,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "MaxMtu"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "MaxMtu",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_prop_list(&self) -> Result<Iterable<'a, PropListLinkAttrs<'a>>, ErrorContext> {
+    pub fn get_prop_list(&self) -> Result<IterablePropListLinkAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26291,7 +30294,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "PropList"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "PropList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_perm_address(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -26301,7 +30309,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "PermAddress"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "PermAddress",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_down_reason(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -26311,7 +30324,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "ProtoDownReason"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "ProtoDownReason",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -26321,7 +30339,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "ParentDevName"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "ParentDevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_parent_dev_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -26331,7 +30354,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "ParentDevBusName"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "ParentDevBusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26341,7 +30369,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "GroMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "GroMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26351,7 +30384,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "TsoMaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "TsoMaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tso_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26361,7 +30399,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "TsoMaxSegs"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "TsoMaxSegs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_allmulti(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26371,7 +30414,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "Allmulti"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "Allmulti",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_devlink_port(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -26381,7 +30429,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "DevlinkPort"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "DevlinkPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gso_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26391,7 +30444,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "GsoIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "GsoIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_gro_ipv4_max_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -26401,9 +30459,14 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "GroIpv4MaxSize"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "GroIpv4MaxSize",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_dpll_pin(&self) -> Result<Iterable<'a, LinkDpllPinAttrs>, ErrorContext> {
+    pub fn get_dpll_pin(&self) -> Result<IterableLinkDpllPinAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26411,7 +30474,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "DpllPin"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "DpllPin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "EDT offload horizon supported by the device (in nsec)."]
     pub fn get_max_pacing_offload_horizon(&self) -> Result<u32, ErrorContext> {
@@ -26422,7 +30490,12 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "MaxPacingOffloadHorizon"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "MaxPacingOffloadHorizon",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_netns_immutable(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -26432,25 +30505,45 @@ impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpSetlinkDoRequest", "NetnsImmutable"))
+        Err(ErrorContext::new_missing(
+            "OpSetlinkDoRequest",
+            "NetnsImmutable",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpSetlinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, Iterable<'a, OpSetlinkDoRequest<'a>>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpSetlinkDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpSetlinkDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpSetlinkDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpSetlinkDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpSetlinkDoRequest<'a> {
     type Item = Result<OpSetlinkDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -26547,7 +30640,7 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 18u16 => OpSetlinkDoRequest::Linkinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26567,7 +30660,7 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 22u16 => OpSetlinkDoRequest::VfinfoList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfinfoListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26577,17 +30670,17 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 24u16 => OpSetlinkDoRequest::VfPorts({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVfPortsAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 25u16 => OpSetlinkDoRequest::PortSelf({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePortSelfAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 26u16 => OpSetlinkDoRequest::AfSpec({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableAfSpecAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26672,7 +30765,7 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 43u16 => OpSetlinkDoRequest::Xdp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableXdpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26717,7 +30810,7 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 52u16 => OpSetlinkDoRequest::PropList({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterablePropListLinkAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26777,7 +30870,7 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
                     val
                 }),
                 65u16 => OpSetlinkDoRequest::DpllPin({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkDpllPinAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26801,14 +30894,15 @@ impl<'a> Iterator for Iterable<'a, OpSetlinkDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpSetlinkDoRequest",
             r#type.and_then(|t| OpSetlinkDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpSetlinkDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpSetlinkDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpSetlinkDoRequest");
         for attr in self.clone() {
@@ -26897,14 +30991,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpSetlinkDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpSetlinkDoRequest<'a>> {
+impl IterableOpSetlinkDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpSetlinkDoRequest", offset));
             return (
@@ -27369,26 +31463,40 @@ impl<Prev: Rec> Drop for PushOpSetlinkDoReply<Prev> {
     }
 }
 #[doc = "Set information about a link."]
-#[doc = "Original name: \"op-setlink-do-reply\""]
 #[derive(Clone)]
 pub enum OpSetlinkDoReply {}
-impl<'a> Iterable<'a, OpSetlinkDoReply> {}
+impl<'a> IterableOpSetlinkDoReply<'a> {}
 impl OpSetlinkDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, Iterable<'_, OpSetlinkDoReply>) {
-        let mut header = PushIfinfomsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfinfomsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, IterableOpSetlinkDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfinfomsg::len()..], buf.as_ptr() as usize),
+            PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpSetlinkDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         LinkAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpSetlinkDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpSetlinkDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpSetlinkDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpSetlinkDoReply<'a> {
     type Item = Result<OpSetlinkDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27409,14 +31517,15 @@ impl Iterator for Iterable<'_, OpSetlinkDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpSetlinkDoReply",
             r#type.and_then(|t| OpSetlinkDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpSetlinkDoReply> {
+impl std::fmt::Debug for IterableOpSetlinkDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpSetlinkDoReply");
         for attr in self.clone() {
@@ -27434,14 +31543,14 @@ impl std::fmt::Debug for Iterable<'_, OpSetlinkDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpSetlinkDoReply> {
+impl IterableOpSetlinkDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfinfomsg::len() {
             stack.push(("OpSetlinkDoReply", offset));
             return (
@@ -27469,7 +31578,7 @@ impl<'r> RequestOpSetlinkDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpSetlinkDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfinfomsg, Iterable<'buf, OpSetlinkDoReply>);
+    type ReplyType<'buf> = (PushIfinfomsg, IterableOpSetlinkDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -27537,26 +31646,40 @@ impl<Prev: Rec> Drop for PushOpGetstatsDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump link stats."]
-#[doc = "Original name: \"op-getstats-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetstatsDumpRequest {}
-impl<'a> Iterable<'a, OpGetstatsDumpRequest> {}
+impl<'a> IterableOpGetstatsDumpRequest<'a> {}
 impl OpGetstatsDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, Iterable<'_, OpGetstatsDumpRequest>) {
-        let mut header = PushIfStatsMsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr() as usize),
+            PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetstatsDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         StatsAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetstatsDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetstatsDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetstatsDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetstatsDumpRequest<'a> {
     type Item = Result<OpGetstatsDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27577,14 +31700,15 @@ impl Iterator for Iterable<'_, OpGetstatsDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetstatsDumpRequest",
             r#type.and_then(|t| OpGetstatsDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetstatsDumpRequest> {
+impl std::fmt::Debug for IterableOpGetstatsDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetstatsDumpRequest");
         for attr in self.clone() {
@@ -27602,14 +31726,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetstatsDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetstatsDumpRequest> {
+impl IterableOpGetstatsDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfStatsMsg::len() {
             stack.push(("OpGetstatsDumpRequest", offset));
             return (
@@ -27689,16 +31813,15 @@ impl<Prev: Rec> Drop for PushOpGetstatsDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump link stats."]
-#[doc = "Original name: \"op-getstats-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetstatsDumpReply<'a> {
     Link64(PushRtnlLinkStats64),
     LinkXstats(&'a [u8]),
     LinkXstatsSlave(&'a [u8]),
-    LinkOffloadXstats(Iterable<'a, LinkOffloadXstats<'a>>),
+    LinkOffloadXstats(IterableLinkOffloadXstats<'a>),
     AfSpec(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
+impl<'a> IterableOpGetstatsDumpReply<'a> {
     pub fn get_link_64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -27707,7 +31830,12 @@ impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDumpReply", "Link64"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDumpReply",
+            "Link64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_xstats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -27717,7 +31845,12 @@ impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDumpReply", "LinkXstats"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDumpReply",
+            "LinkXstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_xstats_slave(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -27727,11 +31860,14 @@ impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDumpReply", "LinkXstatsSlave"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDumpReply",
+            "LinkXstatsSlave",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_link_offload_xstats(
-        &self,
-    ) -> Result<Iterable<'a, LinkOffloadXstats<'a>>, ErrorContext> {
+    pub fn get_link_offload_xstats(&self) -> Result<IterableLinkOffloadXstats<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -27739,7 +31875,12 @@ impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDumpReply", "LinkOffloadXstats"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDumpReply",
+            "LinkOffloadXstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_af_spec(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -27749,25 +31890,45 @@ impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDumpReply", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDumpReply",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetstatsDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, Iterable<'a, OpGetstatsDumpReply<'a>>) {
-        let mut header = PushIfStatsMsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr() as usize),
+            PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetstatsDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         StatsAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetstatsDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetstatsDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetstatsDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetstatsDumpReply<'a> {
     type Item = Result<OpGetstatsDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27794,7 +31955,7 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDumpReply<'a>> {
                     val
                 }),
                 4u16 => OpGetstatsDumpReply::LinkOffloadXstats({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkOffloadXstats::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -27813,14 +31974,15 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetstatsDumpReply",
             r#type.and_then(|t| OpGetstatsDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetstatsDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetstatsDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetstatsDumpReply");
         for attr in self.clone() {
@@ -27844,14 +32006,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetstatsDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetstatsDumpReply<'a>> {
+impl IterableOpGetstatsDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfStatsMsg::len() {
             stack.push(("OpGetstatsDumpReply", offset));
             return (
@@ -27927,7 +32089,7 @@ impl<'r> RequestOpGetstatsDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetstatsDumpRequest<'_> {
-    type ReplyType<'buf> = (PushIfStatsMsg, Iterable<'buf, OpGetstatsDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushIfStatsMsg, IterableOpGetstatsDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -27995,26 +32157,40 @@ impl<Prev: Rec> Drop for PushOpGetstatsDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump link stats."]
-#[doc = "Original name: \"op-getstats-do-request\""]
 #[derive(Clone)]
 pub enum OpGetstatsDoRequest {}
-impl<'a> Iterable<'a, OpGetstatsDoRequest> {}
+impl<'a> IterableOpGetstatsDoRequest<'a> {}
 impl OpGetstatsDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, Iterable<'_, OpGetstatsDoRequest>) {
-        let mut header = PushIfStatsMsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDoRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr() as usize),
+            PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetstatsDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         StatsAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetstatsDoRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetstatsDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetstatsDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetstatsDoRequest<'a> {
     type Item = Result<OpGetstatsDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28035,14 +32211,15 @@ impl Iterator for Iterable<'_, OpGetstatsDoRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetstatsDoRequest",
             r#type.and_then(|t| OpGetstatsDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetstatsDoRequest> {
+impl std::fmt::Debug for IterableOpGetstatsDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetstatsDoRequest");
         for attr in self.clone() {
@@ -28060,14 +32237,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetstatsDoRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetstatsDoRequest> {
+impl IterableOpGetstatsDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfStatsMsg::len() {
             stack.push(("OpGetstatsDoRequest", offset));
             return (
@@ -28147,16 +32324,15 @@ impl<Prev: Rec> Drop for PushOpGetstatsDoReply<Prev> {
     }
 }
 #[doc = "Get / dump link stats."]
-#[doc = "Original name: \"op-getstats-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetstatsDoReply<'a> {
     Link64(PushRtnlLinkStats64),
     LinkXstats(&'a [u8]),
     LinkXstatsSlave(&'a [u8]),
-    LinkOffloadXstats(Iterable<'a, LinkOffloadXstats<'a>>),
+    LinkOffloadXstats(IterableLinkOffloadXstats<'a>),
     AfSpec(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
+impl<'a> IterableOpGetstatsDoReply<'a> {
     pub fn get_link_64(&self) -> Result<PushRtnlLinkStats64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -28165,7 +32341,12 @@ impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDoReply", "Link64"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDoReply",
+            "Link64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_xstats(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -28175,7 +32356,12 @@ impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDoReply", "LinkXstats"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDoReply",
+            "LinkXstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_link_xstats_slave(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -28185,11 +32371,14 @@ impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDoReply", "LinkXstatsSlave"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDoReply",
+            "LinkXstatsSlave",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_link_offload_xstats(
-        &self,
-    ) -> Result<Iterable<'a, LinkOffloadXstats<'a>>, ErrorContext> {
+    pub fn get_link_offload_xstats(&self) -> Result<IterableLinkOffloadXstats<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -28197,7 +32386,12 @@ impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDoReply", "LinkOffloadXstats"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDoReply",
+            "LinkOffloadXstats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_af_spec(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -28207,25 +32401,45 @@ impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetstatsDoReply", "AfSpec"))
+        Err(ErrorContext::new_missing(
+            "OpGetstatsDoReply",
+            "AfSpec",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetstatsDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, Iterable<'a, OpGetstatsDoReply<'a>>) {
-        let mut header = PushIfStatsMsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushIfStatsMsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushIfStatsMsg::len()..], buf.as_ptr() as usize),
+            PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetstatsDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         StatsAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetstatsDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetstatsDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetstatsDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetstatsDoReply<'a> {
     type Item = Result<OpGetstatsDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28252,7 +32466,7 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDoReply<'a>> {
                     val
                 }),
                 4u16 => OpGetstatsDoReply::LinkOffloadXstats({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableLinkOffloadXstats::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -28271,14 +32485,15 @@ impl<'a> Iterator for Iterable<'a, OpGetstatsDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetstatsDoReply",
             r#type.and_then(|t| OpGetstatsDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetstatsDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetstatsDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetstatsDoReply");
         for attr in self.clone() {
@@ -28302,14 +32517,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetstatsDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetstatsDoReply<'a>> {
+impl IterableOpGetstatsDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushIfStatsMsg::len() {
             stack.push(("OpGetstatsDoReply", offset));
             return (
@@ -28383,7 +32598,7 @@ impl<'r> RequestOpGetstatsDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetstatsDoRequest<'_> {
-    type ReplyType<'buf> = (PushIfStatsMsg, Iterable<'buf, OpGetstatsDoReply<'buf>>);
+    type ReplyType<'buf> = (PushIfStatsMsg, IterableOpGetstatsDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 0u16,
@@ -28613,31 +32828,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self

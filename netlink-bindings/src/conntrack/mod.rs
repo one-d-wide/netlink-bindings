@@ -8,12 +8,14 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"conntrack";
 pub const PROTONUM: u16 = 12u16;
-#[doc = "Original name: \"nf-ct-tcp-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NfCtTcpFlags {
     WindowScale = 1 << 0,
@@ -40,7 +42,7 @@ impl NfCtTcpFlags {
         })
     }
 }
-#[doc = "Original name: \"nf-ct-tcp-state\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NfCtTcpState {
     None = 0,
@@ -81,7 +83,7 @@ impl NfCtTcpState {
         })
     }
 }
-#[doc = "Original name: \"nf-ct-sctp-state\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NfCtSctpState {
     None = 0,
@@ -110,7 +112,7 @@ impl NfCtSctpState {
         })
     }
 }
-#[doc = "Original name: \"nf-ct-status\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NfCtStatus {
     Expected = 1 << 0,
@@ -153,7 +155,6 @@ impl NfCtStatus {
         })
     }
 }
-#[doc = "Original name: \"counter-attrs\""]
 #[derive(Clone)]
 pub enum CounterAttrs<'a> {
     Packets(u64),
@@ -162,7 +163,7 @@ pub enum CounterAttrs<'a> {
     BytesOld(u32),
     Pad(&'a [u8]),
 }
-impl<'a> Iterable<'a, CounterAttrs<'a>> {
+impl<'a> IterableCounterAttrs<'a> {
     pub fn get_packets(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -171,7 +172,12 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "Packets"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "Packets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -181,7 +187,12 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "Bytes"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "Bytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_packets_old(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -191,7 +202,12 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "PacketsOld"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "PacketsOld",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_bytes_old(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -201,7 +217,12 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "BytesOld"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "BytesOld",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -211,12 +232,17 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> CounterAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, CounterAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableCounterAttrs<'a> {
+        IterableCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -230,7 +256,25 @@ impl<'a> CounterAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, CounterAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableCounterAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableCounterAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableCounterAttrs<'a> {
     type Item = Result<CounterAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -276,14 +320,15 @@ impl<'a> Iterator for Iterable<'a, CounterAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "CounterAttrs",
             r#type.and_then(|t| CounterAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, CounterAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableCounterAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CounterAttrs");
         for attr in self.clone() {
@@ -307,14 +352,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, CounterAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, CounterAttrs<'a>> {
+impl IterableCounterAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CounterAttrs", offset));
             return (
@@ -370,7 +415,6 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"tuple-proto-attrs\""]
 #[derive(Clone)]
 pub enum TupleProtoAttrs {
     #[doc = "l4 protocol number"]
@@ -388,7 +432,7 @@ pub enum TupleProtoAttrs {
     ProtoIcmpv6Type(u8),
     ProtoIcmpv6Code(u8),
 }
-impl<'a> Iterable<'a, TupleProtoAttrs> {
+impl<'a> IterableTupleProtoAttrs<'a> {
     #[doc = "l4 protocol number"]
     pub fn get_proto_num(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -398,7 +442,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoNum"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoNum",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "l4 source port"]
     pub fn get_proto_src_port(&self) -> Result<u16, ErrorContext> {
@@ -409,7 +458,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoSrcPort"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoSrcPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "l4 source port"]
     pub fn get_proto_dst_port(&self) -> Result<u16, ErrorContext> {
@@ -420,7 +474,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoDstPort"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoDstPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "l4 icmp id"]
     pub fn get_proto_icmp_id(&self) -> Result<u16, ErrorContext> {
@@ -431,7 +490,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpId"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoIcmpId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_icmp_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -441,7 +505,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpType"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoIcmpType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_icmp_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -451,7 +520,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpCode"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoIcmpCode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "l4 icmp id"]
     pub fn get_proto_icmpv6_id(&self) -> Result<u16, ErrorContext> {
@@ -462,7 +536,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpv6Id"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoIcmpv6Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_icmpv6_type(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -472,7 +551,12 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpv6Type"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoIcmpv6Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proto_icmpv6_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -482,12 +566,17 @@ impl<'a> Iterable<'a, TupleProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleProtoAttrs", "ProtoIcmpv6Code"))
+        Err(ErrorContext::new_missing(
+            "TupleProtoAttrs",
+            "ProtoIcmpv6Code",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl TupleProtoAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, TupleProtoAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableTupleProtoAttrs<'_> {
+        IterableTupleProtoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -505,7 +594,25 @@ impl TupleProtoAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, TupleProtoAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableTupleProtoAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableTupleProtoAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableTupleProtoAttrs<'a> {
     type Item = Result<TupleProtoAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -571,14 +678,15 @@ impl Iterator for Iterable<'_, TupleProtoAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "TupleProtoAttrs",
             r#type.and_then(|t| TupleProtoAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, TupleProtoAttrs> {
+impl std::fmt::Debug for IterableTupleProtoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TupleProtoAttrs");
         for attr in self.clone() {
@@ -606,14 +714,14 @@ impl std::fmt::Debug for Iterable<'_, TupleProtoAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, TupleProtoAttrs> {
+impl IterableTupleProtoAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("TupleProtoAttrs", offset));
             return (
@@ -693,7 +801,6 @@ impl Iterable<'_, TupleProtoAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"tuple-ip-attrs\""]
 #[derive(Clone)]
 pub enum TupleIpAttrs {
     #[doc = "ipv4 source address"]
@@ -705,7 +812,7 @@ pub enum TupleIpAttrs {
     #[doc = "ipv6 destination address"]
     IpV6Dst(std::net::Ipv6Addr),
 }
-impl<'a> Iterable<'a, TupleIpAttrs> {
+impl<'a> IterableTupleIpAttrs<'a> {
     #[doc = "ipv4 source address"]
     pub fn get_ip_v4_src(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
         let mut iter = self.clone();
@@ -715,7 +822,12 @@ impl<'a> Iterable<'a, TupleIpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleIpAttrs", "IpV4Src"))
+        Err(ErrorContext::new_missing(
+            "TupleIpAttrs",
+            "IpV4Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "ipv4 destination address"]
     pub fn get_ip_v4_dst(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
@@ -726,7 +838,12 @@ impl<'a> Iterable<'a, TupleIpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleIpAttrs", "IpV4Dst"))
+        Err(ErrorContext::new_missing(
+            "TupleIpAttrs",
+            "IpV4Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "ipv6 source address"]
     pub fn get_ip_v6_src(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
@@ -737,7 +854,12 @@ impl<'a> Iterable<'a, TupleIpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleIpAttrs", "IpV6Src"))
+        Err(ErrorContext::new_missing(
+            "TupleIpAttrs",
+            "IpV6Src",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "ipv6 destination address"]
     pub fn get_ip_v6_dst(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
@@ -748,12 +870,17 @@ impl<'a> Iterable<'a, TupleIpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleIpAttrs", "IpV6Dst"))
+        Err(ErrorContext::new_missing(
+            "TupleIpAttrs",
+            "IpV6Dst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl TupleIpAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, TupleIpAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableTupleIpAttrs<'_> {
+        IterableTupleIpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -766,7 +893,25 @@ impl TupleIpAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, TupleIpAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableTupleIpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableTupleIpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableTupleIpAttrs<'a> {
     type Item = Result<TupleIpAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -807,14 +952,15 @@ impl Iterator for Iterable<'_, TupleIpAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "TupleIpAttrs",
             r#type.and_then(|t| TupleIpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, TupleIpAttrs> {
+impl std::fmt::Debug for IterableTupleIpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TupleIpAttrs");
         for attr in self.clone() {
@@ -837,14 +983,14 @@ impl std::fmt::Debug for Iterable<'_, TupleIpAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, TupleIpAttrs> {
+impl IterableTupleIpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("TupleIpAttrs", offset));
             return (
@@ -894,19 +1040,18 @@ impl Iterable<'_, TupleIpAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"tuple-attrs\""]
 #[derive(Clone)]
 pub enum TupleAttrs<'a> {
     #[doc = "conntrack l3 information"]
-    TupleIp(Iterable<'a, TupleIpAttrs>),
+    TupleIp(IterableTupleIpAttrs<'a>),
     #[doc = "conntrack l4 information"]
-    TupleProto(Iterable<'a, TupleProtoAttrs>),
+    TupleProto(IterableTupleProtoAttrs<'a>),
     #[doc = "conntrack zone id"]
     TupleZone(u16),
 }
-impl<'a> Iterable<'a, TupleAttrs<'a>> {
+impl<'a> IterableTupleAttrs<'a> {
     #[doc = "conntrack l3 information"]
-    pub fn get_tuple_ip(&self) -> Result<Iterable<'a, TupleIpAttrs>, ErrorContext> {
+    pub fn get_tuple_ip(&self) -> Result<IterableTupleIpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -914,10 +1059,15 @@ impl<'a> Iterable<'a, TupleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleAttrs", "TupleIp"))
+        Err(ErrorContext::new_missing(
+            "TupleAttrs",
+            "TupleIp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack l4 information"]
-    pub fn get_tuple_proto(&self) -> Result<Iterable<'a, TupleProtoAttrs>, ErrorContext> {
+    pub fn get_tuple_proto(&self) -> Result<IterableTupleProtoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -925,7 +1075,12 @@ impl<'a> Iterable<'a, TupleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleAttrs", "TupleProto"))
+        Err(ErrorContext::new_missing(
+            "TupleAttrs",
+            "TupleProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack zone id"]
     pub fn get_tuple_zone(&self) -> Result<u16, ErrorContext> {
@@ -936,12 +1091,17 @@ impl<'a> Iterable<'a, TupleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TupleAttrs", "TupleZone"))
+        Err(ErrorContext::new_missing(
+            "TupleAttrs",
+            "TupleZone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> TupleAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, TupleAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableTupleAttrs<'a> {
+        IterableTupleAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -953,7 +1113,25 @@ impl<'a> TupleAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, TupleAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableTupleAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableTupleAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableTupleAttrs<'a> {
     type Item = Result<TupleAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -965,12 +1143,12 @@ impl<'a> Iterator for Iterable<'a, TupleAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => TupleAttrs::TupleIp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleIpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => TupleAttrs::TupleProto({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleProtoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -989,14 +1167,15 @@ impl<'a> Iterator for Iterable<'a, TupleAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "TupleAttrs",
             r#type.and_then(|t| TupleAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, TupleAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableTupleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TupleAttrs");
         for attr in self.clone() {
@@ -1018,14 +1197,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, TupleAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, TupleAttrs<'a>> {
+impl IterableTupleAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("TupleAttrs", offset));
             return (
@@ -1070,7 +1249,6 @@ impl<'a> Iterable<'a, TupleAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"protoinfo-tcp-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoTcpAttrs {
     #[doc = "tcp connection state\nAssociated type: \"NfCtTcpState\" (enum)"]
@@ -1082,7 +1260,7 @@ pub enum ProtoinfoTcpAttrs {
     TcpFlagsOriginal(PushNfCtTcpFlagsMask),
     TcpFlagsReply(PushNfCtTcpFlagsMask),
 }
-impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
+impl<'a> IterableProtoinfoTcpAttrs<'a> {
     #[doc = "tcp connection state\nAssociated type: \"NfCtTcpState\" (enum)"]
     pub fn get_tcp_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1092,7 +1270,12 @@ impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpState"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoTcpAttrs",
+            "TcpState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "window scaling factor in original direction"]
     pub fn get_tcp_wscale_original(&self) -> Result<u8, ErrorContext> {
@@ -1103,7 +1286,12 @@ impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpWscaleOriginal"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoTcpAttrs",
+            "TcpWscaleOriginal",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "window scaling factor in reply direction"]
     pub fn get_tcp_wscale_reply(&self) -> Result<u8, ErrorContext> {
@@ -1114,7 +1302,12 @@ impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpWscaleReply"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoTcpAttrs",
+            "TcpWscaleReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tcp_flags_original(&self) -> Result<PushNfCtTcpFlagsMask, ErrorContext> {
         let mut iter = self.clone();
@@ -1124,7 +1317,12 @@ impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpFlagsOriginal"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoTcpAttrs",
+            "TcpFlagsOriginal",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tcp_flags_reply(&self) -> Result<PushNfCtTcpFlagsMask, ErrorContext> {
         let mut iter = self.clone();
@@ -1134,12 +1332,17 @@ impl<'a> Iterable<'a, ProtoinfoTcpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoTcpAttrs", "TcpFlagsReply"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoTcpAttrs",
+            "TcpFlagsReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ProtoinfoTcpAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ProtoinfoTcpAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableProtoinfoTcpAttrs<'_> {
+        IterableProtoinfoTcpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1153,7 +1356,25 @@ impl ProtoinfoTcpAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ProtoinfoTcpAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableProtoinfoTcpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableProtoinfoTcpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableProtoinfoTcpAttrs<'a> {
     type Item = Result<ProtoinfoTcpAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1199,14 +1420,15 @@ impl Iterator for Iterable<'_, ProtoinfoTcpAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ProtoinfoTcpAttrs",
             r#type.and_then(|t| ProtoinfoTcpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ProtoinfoTcpAttrs> {
+impl std::fmt::Debug for IterableProtoinfoTcpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ProtoinfoTcpAttrs");
         for attr in self.clone() {
@@ -1233,14 +1455,14 @@ impl std::fmt::Debug for Iterable<'_, ProtoinfoTcpAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ProtoinfoTcpAttrs> {
+impl IterableProtoinfoTcpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ProtoinfoTcpAttrs", offset));
             return (
@@ -1296,7 +1518,6 @@ impl Iterable<'_, ProtoinfoTcpAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"protoinfo-dccp-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoDccpAttrs<'a> {
     #[doc = "dccp connection state"]
@@ -1305,7 +1526,7 @@ pub enum ProtoinfoDccpAttrs<'a> {
     DccpHandshakeSeq(u64),
     DccpPad(&'a [u8]),
 }
-impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
+impl<'a> IterableProtoinfoDccpAttrs<'a> {
     #[doc = "dccp connection state"]
     pub fn get_dccp_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1315,7 +1536,12 @@ impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpState"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoDccpAttrs",
+            "DccpState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dccp_role(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1325,7 +1551,12 @@ impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpRole"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoDccpAttrs",
+            "DccpRole",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dccp_handshake_seq(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -1335,7 +1566,12 @@ impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpHandshakeSeq"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoDccpAttrs",
+            "DccpHandshakeSeq",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dccp_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1345,12 +1581,17 @@ impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoDccpAttrs", "DccpPad"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoDccpAttrs",
+            "DccpPad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ProtoinfoDccpAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableProtoinfoDccpAttrs<'a> {
+        IterableProtoinfoDccpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1363,7 +1604,25 @@ impl<'a> ProtoinfoDccpAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ProtoinfoDccpAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableProtoinfoDccpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableProtoinfoDccpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableProtoinfoDccpAttrs<'a> {
     type Item = Result<ProtoinfoDccpAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1404,14 +1663,15 @@ impl<'a> Iterator for Iterable<'a, ProtoinfoDccpAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ProtoinfoDccpAttrs",
             r#type.and_then(|t| ProtoinfoDccpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ProtoinfoDccpAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableProtoinfoDccpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ProtoinfoDccpAttrs");
         for attr in self.clone() {
@@ -1434,14 +1694,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ProtoinfoDccpAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
+impl IterableProtoinfoDccpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ProtoinfoDccpAttrs", offset));
             return (
@@ -1491,7 +1751,6 @@ impl<'a> Iterable<'a, ProtoinfoDccpAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"protoinfo-sctp-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoSctpAttrs {
     #[doc = "sctp connection state\nAssociated type: \"NfCtSctpState\" (enum)"]
@@ -1499,7 +1758,7 @@ pub enum ProtoinfoSctpAttrs {
     VtagOriginal(u32),
     VtagReply(u32),
 }
-impl<'a> Iterable<'a, ProtoinfoSctpAttrs> {
+impl<'a> IterableProtoinfoSctpAttrs<'a> {
     #[doc = "sctp connection state\nAssociated type: \"NfCtSctpState\" (enum)"]
     pub fn get_sctp_state(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -1509,7 +1768,12 @@ impl<'a> Iterable<'a, ProtoinfoSctpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoSctpAttrs", "SctpState"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoSctpAttrs",
+            "SctpState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vtag_original(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1519,7 +1783,12 @@ impl<'a> Iterable<'a, ProtoinfoSctpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoSctpAttrs", "VtagOriginal"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoSctpAttrs",
+            "VtagOriginal",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_vtag_reply(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1529,12 +1798,17 @@ impl<'a> Iterable<'a, ProtoinfoSctpAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoSctpAttrs", "VtagReply"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoSctpAttrs",
+            "VtagReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ProtoinfoSctpAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ProtoinfoSctpAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableProtoinfoSctpAttrs<'_> {
+        IterableProtoinfoSctpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1546,7 +1820,25 @@ impl ProtoinfoSctpAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ProtoinfoSctpAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableProtoinfoSctpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableProtoinfoSctpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableProtoinfoSctpAttrs<'a> {
     type Item = Result<ProtoinfoSctpAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1582,14 +1874,15 @@ impl Iterator for Iterable<'_, ProtoinfoSctpAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ProtoinfoSctpAttrs",
             r#type.and_then(|t| ProtoinfoSctpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ProtoinfoSctpAttrs> {
+impl std::fmt::Debug for IterableProtoinfoSctpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ProtoinfoSctpAttrs");
         for attr in self.clone() {
@@ -1614,14 +1907,14 @@ impl std::fmt::Debug for Iterable<'_, ProtoinfoSctpAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ProtoinfoSctpAttrs> {
+impl IterableProtoinfoSctpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ProtoinfoSctpAttrs", offset));
             return (
@@ -1665,19 +1958,18 @@ impl Iterable<'_, ProtoinfoSctpAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"protoinfo-attrs\""]
 #[derive(Clone)]
 pub enum ProtoinfoAttrs<'a> {
     #[doc = "conntrack tcp state information"]
-    ProtoinfoTcp(Iterable<'a, ProtoinfoTcpAttrs>),
+    ProtoinfoTcp(IterableProtoinfoTcpAttrs<'a>),
     #[doc = "conntrack dccp state information"]
-    ProtoinfoDccp(Iterable<'a, ProtoinfoDccpAttrs<'a>>),
+    ProtoinfoDccp(IterableProtoinfoDccpAttrs<'a>),
     #[doc = "conntrack sctp state information"]
-    ProtoinfoSctp(Iterable<'a, ProtoinfoSctpAttrs>),
+    ProtoinfoSctp(IterableProtoinfoSctpAttrs<'a>),
 }
-impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
+impl<'a> IterableProtoinfoAttrs<'a> {
     #[doc = "conntrack tcp state information"]
-    pub fn get_protoinfo_tcp(&self) -> Result<Iterable<'a, ProtoinfoTcpAttrs>, ErrorContext> {
+    pub fn get_protoinfo_tcp(&self) -> Result<IterableProtoinfoTcpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1685,10 +1977,15 @@ impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoAttrs", "ProtoinfoTcp"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoAttrs",
+            "ProtoinfoTcp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack dccp state information"]
-    pub fn get_protoinfo_dccp(&self) -> Result<Iterable<'a, ProtoinfoDccpAttrs<'a>>, ErrorContext> {
+    pub fn get_protoinfo_dccp(&self) -> Result<IterableProtoinfoDccpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1696,10 +1993,15 @@ impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoAttrs", "ProtoinfoDccp"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoAttrs",
+            "ProtoinfoDccp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack sctp state information"]
-    pub fn get_protoinfo_sctp(&self) -> Result<Iterable<'a, ProtoinfoSctpAttrs>, ErrorContext> {
+    pub fn get_protoinfo_sctp(&self) -> Result<IterableProtoinfoSctpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1707,12 +2009,17 @@ impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ProtoinfoAttrs", "ProtoinfoSctp"))
+        Err(ErrorContext::new_missing(
+            "ProtoinfoAttrs",
+            "ProtoinfoSctp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ProtoinfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ProtoinfoAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableProtoinfoAttrs<'a> {
+        IterableProtoinfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1724,7 +2031,25 @@ impl<'a> ProtoinfoAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ProtoinfoAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableProtoinfoAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableProtoinfoAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableProtoinfoAttrs<'a> {
     type Item = Result<ProtoinfoAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1736,17 +2061,17 @@ impl<'a> Iterator for Iterable<'a, ProtoinfoAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => ProtoinfoAttrs::ProtoinfoTcp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableProtoinfoTcpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => ProtoinfoAttrs::ProtoinfoDccp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableProtoinfoDccpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 3u16 => ProtoinfoAttrs::ProtoinfoSctp({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableProtoinfoSctpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1760,14 +2085,15 @@ impl<'a> Iterator for Iterable<'a, ProtoinfoAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ProtoinfoAttrs",
             r#type.and_then(|t| ProtoinfoAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ProtoinfoAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableProtoinfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ProtoinfoAttrs");
         for attr in self.clone() {
@@ -1789,14 +2115,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ProtoinfoAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
+impl IterableProtoinfoAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ProtoinfoAttrs", offset));
             return (
@@ -1841,13 +2167,12 @@ impl<'a> Iterable<'a, ProtoinfoAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"help-attrs\""]
 #[derive(Clone)]
 pub enum HelpAttrs<'a> {
     #[doc = "helper name"]
     HelpName(&'a CStr),
 }
-impl<'a> Iterable<'a, HelpAttrs<'a>> {
+impl<'a> IterableHelpAttrs<'a> {
     #[doc = "helper name"]
     pub fn get_help_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1857,12 +2182,17 @@ impl<'a> Iterable<'a, HelpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("HelpAttrs", "HelpName"))
+        Err(ErrorContext::new_missing(
+            "HelpAttrs",
+            "HelpName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> HelpAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, HelpAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableHelpAttrs<'a> {
+        IterableHelpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1872,7 +2202,25 @@ impl<'a> HelpAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, HelpAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableHelpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableHelpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableHelpAttrs<'a> {
     type Item = Result<HelpAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1898,14 +2246,15 @@ impl<'a> Iterator for Iterable<'a, HelpAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "HelpAttrs",
             r#type.and_then(|t| HelpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, HelpAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableHelpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HelpAttrs");
         for attr in self.clone() {
@@ -1925,14 +2274,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, HelpAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, HelpAttrs<'a>> {
+impl IterableHelpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("HelpAttrs", offset));
             return (
@@ -1964,13 +2313,12 @@ impl<'a> Iterable<'a, HelpAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"nat-proto-attrs\""]
 #[derive(Clone)]
 pub enum NatProtoAttrs {
     NatPortMin(u16),
     NatPortMax(u16),
 }
-impl<'a> Iterable<'a, NatProtoAttrs> {
+impl<'a> IterableNatProtoAttrs<'a> {
     pub fn get_nat_port_min(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1979,7 +2327,12 @@ impl<'a> Iterable<'a, NatProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatProtoAttrs", "NatPortMin"))
+        Err(ErrorContext::new_missing(
+            "NatProtoAttrs",
+            "NatPortMin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nat_port_max(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -1989,12 +2342,17 @@ impl<'a> Iterable<'a, NatProtoAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatProtoAttrs", "NatPortMax"))
+        Err(ErrorContext::new_missing(
+            "NatProtoAttrs",
+            "NatPortMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl NatProtoAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, NatProtoAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableNatProtoAttrs<'_> {
+        IterableNatProtoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2005,7 +2363,25 @@ impl NatProtoAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, NatProtoAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableNatProtoAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableNatProtoAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableNatProtoAttrs<'a> {
     type Item = Result<NatProtoAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2036,14 +2412,15 @@ impl Iterator for Iterable<'_, NatProtoAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "NatProtoAttrs",
             r#type.and_then(|t| NatProtoAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, NatProtoAttrs> {
+impl std::fmt::Debug for IterableNatProtoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NatProtoAttrs");
         for attr in self.clone() {
@@ -2064,14 +2441,14 @@ impl std::fmt::Debug for Iterable<'_, NatProtoAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, NatProtoAttrs> {
+impl IterableNatProtoAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NatProtoAttrs", offset));
             return (
@@ -2109,16 +2486,15 @@ impl Iterable<'_, NatProtoAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"nat-attrs\""]
 #[derive(Clone)]
 pub enum NatAttrs<'a> {
     NatV4Minip(u32),
     NatV4Maxip(u32),
     NatV6Minip(&'a [u8]),
     NatV6Maxip(&'a [u8]),
-    NatProto(Iterable<'a, NatProtoAttrs>),
+    NatProto(IterableNatProtoAttrs<'a>),
 }
-impl<'a> Iterable<'a, NatAttrs<'a>> {
+impl<'a> IterableNatAttrs<'a> {
     pub fn get_nat_v4_minip(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2127,7 +2503,12 @@ impl<'a> Iterable<'a, NatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatAttrs", "NatV4Minip"))
+        Err(ErrorContext::new_missing(
+            "NatAttrs",
+            "NatV4Minip",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nat_v4_maxip(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2137,7 +2518,12 @@ impl<'a> Iterable<'a, NatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatAttrs", "NatV4Maxip"))
+        Err(ErrorContext::new_missing(
+            "NatAttrs",
+            "NatV4Maxip",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nat_v6_minip(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2147,7 +2533,12 @@ impl<'a> Iterable<'a, NatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatAttrs", "NatV6Minip"))
+        Err(ErrorContext::new_missing(
+            "NatAttrs",
+            "NatV6Minip",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_nat_v6_maxip(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2157,9 +2548,14 @@ impl<'a> Iterable<'a, NatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatAttrs", "NatV6Maxip"))
+        Err(ErrorContext::new_missing(
+            "NatAttrs",
+            "NatV6Maxip",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_proto(&self) -> Result<Iterable<'a, NatProtoAttrs>, ErrorContext> {
+    pub fn get_nat_proto(&self) -> Result<IterableNatProtoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2167,12 +2563,17 @@ impl<'a> Iterable<'a, NatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NatAttrs", "NatProto"))
+        Err(ErrorContext::new_missing(
+            "NatAttrs",
+            "NatProto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> NatAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, NatAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableNatAttrs<'a> {
+        IterableNatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2186,7 +2587,25 @@ impl<'a> NatAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, NatAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableNatAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableNatAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableNatAttrs<'a> {
     type Item = Result<NatAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2218,7 +2637,7 @@ impl<'a> Iterator for Iterable<'a, NatAttrs<'a>> {
                     val
                 }),
                 5u16 => NatAttrs::NatProto({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatProtoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2232,14 +2651,15 @@ impl<'a> Iterator for Iterable<'a, NatAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "NatAttrs",
             r#type.and_then(|t| NatAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, NatAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableNatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NatAttrs");
         for attr in self.clone() {
@@ -2263,14 +2683,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, NatAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, NatAttrs<'a>> {
+impl IterableNatAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NatAttrs", offset));
             return (
@@ -2327,14 +2747,13 @@ impl<'a> Iterable<'a, NatAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"seqadj-attrs\""]
 #[derive(Clone)]
 pub enum SeqadjAttrs {
     CorrectionPos(u32),
     OffsetBefore(u32),
     OffsetAfter(u32),
 }
-impl<'a> Iterable<'a, SeqadjAttrs> {
+impl<'a> IterableSeqadjAttrs<'a> {
     pub fn get_correction_pos(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2343,7 +2762,12 @@ impl<'a> Iterable<'a, SeqadjAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SeqadjAttrs", "CorrectionPos"))
+        Err(ErrorContext::new_missing(
+            "SeqadjAttrs",
+            "CorrectionPos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_offset_before(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2353,7 +2777,12 @@ impl<'a> Iterable<'a, SeqadjAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SeqadjAttrs", "OffsetBefore"))
+        Err(ErrorContext::new_missing(
+            "SeqadjAttrs",
+            "OffsetBefore",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_offset_after(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2363,12 +2792,17 @@ impl<'a> Iterable<'a, SeqadjAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SeqadjAttrs", "OffsetAfter"))
+        Err(ErrorContext::new_missing(
+            "SeqadjAttrs",
+            "OffsetAfter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl SeqadjAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, SeqadjAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableSeqadjAttrs<'_> {
+        IterableSeqadjAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2380,7 +2814,25 @@ impl SeqadjAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, SeqadjAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSeqadjAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSeqadjAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSeqadjAttrs<'a> {
     type Item = Result<SeqadjAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2416,14 +2868,15 @@ impl Iterator for Iterable<'_, SeqadjAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SeqadjAttrs",
             r#type.and_then(|t| SeqadjAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, SeqadjAttrs> {
+impl std::fmt::Debug for IterableSeqadjAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SeqadjAttrs");
         for attr in self.clone() {
@@ -2445,14 +2898,14 @@ impl std::fmt::Debug for Iterable<'_, SeqadjAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, SeqadjAttrs> {
+impl IterableSeqadjAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SeqadjAttrs", offset));
             return (
@@ -2496,12 +2949,11 @@ impl Iterable<'_, SeqadjAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"secctx-attrs\""]
 #[derive(Clone)]
 pub enum SecctxAttrs<'a> {
     SecctxName(&'a CStr),
 }
-impl<'a> Iterable<'a, SecctxAttrs<'a>> {
+impl<'a> IterableSecctxAttrs<'a> {
     pub fn get_secctx_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2510,12 +2962,17 @@ impl<'a> Iterable<'a, SecctxAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SecctxAttrs", "SecctxName"))
+        Err(ErrorContext::new_missing(
+            "SecctxAttrs",
+            "SecctxName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> SecctxAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SecctxAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSecctxAttrs<'a> {
+        IterableSecctxAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2525,7 +2982,25 @@ impl<'a> SecctxAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SecctxAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSecctxAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSecctxAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSecctxAttrs<'a> {
     type Item = Result<SecctxAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2551,14 +3026,15 @@ impl<'a> Iterator for Iterable<'a, SecctxAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SecctxAttrs",
             r#type.and_then(|t| SecctxAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SecctxAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSecctxAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SecctxAttrs");
         for attr in self.clone() {
@@ -2578,14 +3054,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SecctxAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SecctxAttrs<'a>> {
+impl IterableSecctxAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SecctxAttrs", offset));
             return (
@@ -2617,14 +3093,13 @@ impl<'a> Iterable<'a, SecctxAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"synproxy-attrs\""]
 #[derive(Clone)]
 pub enum SynproxyAttrs {
     Isn(u32),
     Its(u32),
     Tsoff(u32),
 }
-impl<'a> Iterable<'a, SynproxyAttrs> {
+impl<'a> IterableSynproxyAttrs<'a> {
     pub fn get_isn(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2633,7 +3108,12 @@ impl<'a> Iterable<'a, SynproxyAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SynproxyAttrs", "Isn"))
+        Err(ErrorContext::new_missing(
+            "SynproxyAttrs",
+            "Isn",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_its(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2643,7 +3123,12 @@ impl<'a> Iterable<'a, SynproxyAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SynproxyAttrs", "Its"))
+        Err(ErrorContext::new_missing(
+            "SynproxyAttrs",
+            "Its",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_tsoff(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2653,12 +3138,17 @@ impl<'a> Iterable<'a, SynproxyAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SynproxyAttrs", "Tsoff"))
+        Err(ErrorContext::new_missing(
+            "SynproxyAttrs",
+            "Tsoff",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl SynproxyAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, SynproxyAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableSynproxyAttrs<'_> {
+        IterableSynproxyAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2670,7 +3160,25 @@ impl SynproxyAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, SynproxyAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSynproxyAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSynproxyAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSynproxyAttrs<'a> {
     type Item = Result<SynproxyAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2706,14 +3214,15 @@ impl Iterator for Iterable<'_, SynproxyAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SynproxyAttrs",
             r#type.and_then(|t| SynproxyAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, SynproxyAttrs> {
+impl std::fmt::Debug for IterableSynproxyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SynproxyAttrs");
         for attr in self.clone() {
@@ -2735,14 +3244,14 @@ impl std::fmt::Debug for Iterable<'_, SynproxyAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, SynproxyAttrs> {
+impl IterableSynproxyAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SynproxyAttrs", offset));
             return (
@@ -2786,46 +3295,45 @@ impl Iterable<'_, SynproxyAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"conntrack-attrs\""]
 #[derive(Clone)]
 pub enum ConntrackAttrs<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    TupleOrig(Iterable<'a, TupleAttrs<'a>>),
+    TupleOrig(IterableTupleAttrs<'a>),
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    TupleReply(Iterable<'a, TupleAttrs<'a>>),
+    TupleReply(IterableTupleAttrs<'a>),
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     Status(u32),
-    Protoinfo(Iterable<'a, ProtoinfoAttrs<'a>>),
-    Help(Iterable<'a, HelpAttrs<'a>>),
-    NatSrc(Iterable<'a, NatAttrs<'a>>),
+    Protoinfo(IterableProtoinfoAttrs<'a>),
+    Help(IterableHelpAttrs<'a>),
+    NatSrc(IterableNatAttrs<'a>),
     Timeout(u32),
     Mark(u32),
-    CountersOrig(Iterable<'a, CounterAttrs<'a>>),
-    CountersReply(Iterable<'a, CounterAttrs<'a>>),
+    CountersOrig(IterableCounterAttrs<'a>),
+    CountersReply(IterableCounterAttrs<'a>),
     Use(u32),
     Id(u32),
-    NatDst(Iterable<'a, NatAttrs<'a>>),
-    TupleMaster(Iterable<'a, TupleAttrs<'a>>),
-    SeqAdjOrig(Iterable<'a, SeqadjAttrs>),
-    SeqAdjReply(Iterable<'a, SeqadjAttrs>),
+    NatDst(IterableNatAttrs<'a>),
+    TupleMaster(IterableTupleAttrs<'a>),
+    SeqAdjOrig(IterableSeqadjAttrs<'a>),
+    SeqAdjReply(IterableSeqadjAttrs<'a>),
     #[doc = "obsolete"]
     Secmark(&'a [u8]),
     #[doc = "conntrack zone id"]
     Zone(u16),
-    Secctx(Iterable<'a, SecctxAttrs<'a>>),
+    Secctx(IterableSecctxAttrs<'a>),
     Timestamp(u64),
     MarkMask(u32),
     Labels(&'a [u8]),
     LabelsMask(&'a [u8]),
-    Synproxy(Iterable<'a, SynproxyAttrs>),
-    Filter(Iterable<'a, TupleAttrs<'a>>),
+    Synproxy(IterableSynproxyAttrs<'a>),
+    Filter(IterableTupleAttrs<'a>),
     #[doc = "conntrack flag bits to change\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     StatusMask(u32),
     TimestampEvent(u64),
 }
-impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
+impl<'a> IterableConntrackAttrs<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_orig(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2833,10 +3341,15 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "TupleOrig"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "TupleOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_reply(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2844,7 +3357,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "TupleReply"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "TupleReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     pub fn get_status(&self) -> Result<u32, ErrorContext> {
@@ -2855,9 +3373,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Status"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Status",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_protoinfo(&self) -> Result<Iterable<'a, ProtoinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_protoinfo(&self) -> Result<IterableProtoinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2865,9 +3388,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Protoinfo"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Protoinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_help(&self) -> Result<Iterable<'a, HelpAttrs<'a>>, ErrorContext> {
+    pub fn get_help(&self) -> Result<IterableHelpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2875,9 +3403,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Help"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Help",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_src(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
+    pub fn get_nat_src(&self) -> Result<IterableNatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2885,7 +3418,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "NatSrc"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "NatSrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2895,7 +3433,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Timeout"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Timeout",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2905,9 +3448,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Mark"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_counters_orig(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
+    pub fn get_counters_orig(&self) -> Result<IterableCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2915,9 +3463,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "CountersOrig"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "CountersOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_counters_reply(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
+    pub fn get_counters_reply(&self) -> Result<IterableCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2925,7 +3478,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "CountersReply"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "CountersReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2935,7 +3493,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Use"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -2945,9 +3508,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_dst(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
+    pub fn get_nat_dst(&self) -> Result<IterableNatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2955,9 +3523,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "NatDst"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "NatDst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_tuple_master(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_master(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2965,9 +3538,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "TupleMaster"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "TupleMaster",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_seq_adj_orig(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
+    pub fn get_seq_adj_orig(&self) -> Result<IterableSeqadjAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2975,9 +3553,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "SeqAdjOrig"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "SeqAdjOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_seq_adj_reply(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
+    pub fn get_seq_adj_reply(&self) -> Result<IterableSeqadjAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2985,7 +3568,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "SeqAdjReply"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "SeqAdjReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "obsolete"]
     pub fn get_secmark(&self) -> Result<&'a [u8], ErrorContext> {
@@ -2996,7 +3584,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Secmark"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Secmark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack zone id"]
     pub fn get_zone(&self) -> Result<u16, ErrorContext> {
@@ -3007,9 +3600,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Zone"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Zone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_secctx(&self) -> Result<Iterable<'a, SecctxAttrs<'a>>, ErrorContext> {
+    pub fn get_secctx(&self) -> Result<IterableSecctxAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3017,7 +3615,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Secctx"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Secctx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_timestamp(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3027,7 +3630,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Timestamp"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Timestamp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3037,7 +3645,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "MarkMask"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "MarkMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3047,7 +3660,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Labels"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Labels",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_labels_mask(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3057,9 +3675,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "LabelsMask"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "LabelsMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_synproxy(&self) -> Result<Iterable<'a, SynproxyAttrs>, ErrorContext> {
+    pub fn get_synproxy(&self) -> Result<IterableSynproxyAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3067,9 +3690,14 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Synproxy"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Synproxy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_filter(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_filter(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3077,7 +3705,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "Filter"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "Filter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack flag bits to change\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     pub fn get_status_mask(&self) -> Result<u32, ErrorContext> {
@@ -3088,7 +3721,12 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "StatusMask"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "StatusMask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_timestamp_event(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -3098,12 +3736,17 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackAttrs", "TimestampEvent"))
+        Err(ErrorContext::new_missing(
+            "ConntrackAttrs",
+            "TimestampEvent",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ConntrackAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ConntrackAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableConntrackAttrs<'a> {
+        IterableConntrackAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3139,7 +3782,25 @@ impl<'a> ConntrackAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableConntrackAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableConntrackAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableConntrackAttrs<'a> {
     type Item = Result<ConntrackAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3151,12 +3812,12 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => ConntrackAttrs::TupleOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => ConntrackAttrs::TupleReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3166,17 +3827,17 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
                     val
                 }),
                 4u16 => ConntrackAttrs::Protoinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableProtoinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => ConntrackAttrs::Help({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableHelpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 6u16 => ConntrackAttrs::NatSrc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3191,12 +3852,12 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
                     val
                 }),
                 9u16 => ConntrackAttrs::CountersOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 10u16 => ConntrackAttrs::CountersReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3211,22 +3872,22 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
                     val
                 }),
                 13u16 => ConntrackAttrs::NatDst({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 14u16 => ConntrackAttrs::TupleMaster({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 15u16 => ConntrackAttrs::SeqAdjOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSeqadjAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 16u16 => ConntrackAttrs::SeqAdjReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSeqadjAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3241,7 +3902,7 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
                     val
                 }),
                 19u16 => ConntrackAttrs::Secctx({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSecctxAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3266,12 +3927,12 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
                     val
                 }),
                 24u16 => ConntrackAttrs::Synproxy({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSynproxyAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 25u16 => ConntrackAttrs::Filter({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3295,14 +3956,15 @@ impl<'a> Iterator for Iterable<'a, ConntrackAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ConntrackAttrs",
             r#type.and_then(|t| ConntrackAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ConntrackAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableConntrackAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ConntrackAttrs");
         for attr in self.clone() {
@@ -3353,14 +4015,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ConntrackAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
+impl IterableConntrackAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ConntrackAttrs", offset));
             return (
@@ -3549,7 +4211,6 @@ impl<'a> Iterable<'a, ConntrackAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"conntrack-stats-attrs\""]
 #[derive(Clone)]
 pub enum ConntrackStatsAttrs {
     #[doc = "obsolete"]
@@ -3574,7 +4235,7 @@ pub enum ConntrackStatsAttrs {
     ClashResolve(u32),
     ChainToolong(u32),
 }
-impl<'a> Iterable<'a, ConntrackStatsAttrs> {
+impl<'a> IterableConntrackStatsAttrs<'a> {
     #[doc = "obsolete"]
     pub fn get_searched(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3584,7 +4245,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Searched"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Searched",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_found(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3594,7 +4260,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Found"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Found",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "obsolete"]
     pub fn get_new(&self) -> Result<u32, ErrorContext> {
@@ -3605,7 +4276,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "New"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "New",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "obsolete"]
     pub fn get_invalid(&self) -> Result<u32, ErrorContext> {
@@ -3616,7 +4292,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Invalid"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Invalid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "obsolete"]
     pub fn get_ignore(&self) -> Result<u32, ErrorContext> {
@@ -3627,7 +4308,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Ignore"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Ignore",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "obsolete"]
     pub fn get_delete(&self) -> Result<u32, ErrorContext> {
@@ -3638,7 +4324,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Delete"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Delete",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "obsolete"]
     pub fn get_delete_list(&self) -> Result<u32, ErrorContext> {
@@ -3649,7 +4340,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "DeleteList"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "DeleteList",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_insert(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3659,7 +4355,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Insert"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Insert",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_insert_failed(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3669,7 +4370,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "InsertFailed"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "InsertFailed",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3679,7 +4385,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Drop"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Drop",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_early_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3689,7 +4400,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "EarlyDrop"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "EarlyDrop",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_error(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3699,7 +4415,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "Error"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "Error",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_search_restart(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3709,7 +4430,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "SearchRestart"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "SearchRestart",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_clash_resolve(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3719,7 +4445,12 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "ClashResolve"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "ClashResolve",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_chain_toolong(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3729,12 +4460,17 @@ impl<'a> Iterable<'a, ConntrackStatsAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ConntrackStatsAttrs", "ChainToolong"))
+        Err(ErrorContext::new_missing(
+            "ConntrackStatsAttrs",
+            "ChainToolong",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ConntrackStatsAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ConntrackStatsAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableConntrackStatsAttrs<'_> {
+        IterableConntrackStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3758,7 +4494,25 @@ impl ConntrackStatsAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ConntrackStatsAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableConntrackStatsAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableConntrackStatsAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableConntrackStatsAttrs<'a> {
     type Item = Result<ConntrackStatsAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3854,14 +4608,15 @@ impl Iterator for Iterable<'_, ConntrackStatsAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ConntrackStatsAttrs",
             r#type.and_then(|t| ConntrackStatsAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ConntrackStatsAttrs> {
+impl std::fmt::Debug for IterableConntrackStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ConntrackStatsAttrs");
         for attr in self.clone() {
@@ -3895,14 +4650,14 @@ impl std::fmt::Debug for Iterable<'_, ConntrackStatsAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ConntrackStatsAttrs> {
+impl IterableConntrackStatsAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ConntrackStatsAttrs", offset));
             return (
@@ -5105,17 +5860,20 @@ impl<Prev: Rec> Drop for PushConntrackStatsAttrs<Prev> {
         }
     }
 }
-#[doc = "Original name: \"nfgenmsg\""]
 #[derive(Clone)]
 pub struct PushNfgenmsg {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushNfgenmsg {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushNfgenmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -5163,17 +5921,20 @@ impl std::fmt::Debug for PushNfgenmsg {
             .finish()
     }
 }
-#[doc = "Original name: \"nf-ct-tcp-flags-mask\""]
 #[derive(Clone)]
 pub struct PushNfCtTcpFlagsMask {
     pub(crate) buf: [u8; 2usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushNfCtTcpFlagsMask {
+    fn default() -> Self {
+        Self { buf: [0u8; 2usize] }
+    }
+}
 impl PushNfCtTcpFlagsMask {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -5284,7 +6045,6 @@ impl<Prev: Rec> Drop for PushOpGetDumpRequest<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"op-get-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetDumpRequest<'a> {
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
@@ -5292,9 +6052,9 @@ pub enum OpGetDumpRequest<'a> {
     Mark(u32),
     #[doc = "conntrack zone id"]
     Zone(u16),
-    Filter(Iterable<'a, TupleAttrs<'a>>),
+    Filter(IterableTupleAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
+impl<'a> IterableOpGetDumpRequest<'a> {
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     pub fn get_status(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5304,7 +6064,12 @@ impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpRequest", "Status"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpRequest",
+            "Status",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5314,7 +6079,12 @@ impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpRequest", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpRequest",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack zone id"]
     pub fn get_zone(&self) -> Result<u16, ErrorContext> {
@@ -5325,9 +6095,14 @@ impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpRequest", "Zone"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpRequest",
+            "Zone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_filter(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_filter(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5335,25 +6110,45 @@ impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpRequest", "Filter"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpRequest",
+            "Filter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ConntrackAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetDumpRequest<'a> {
     type Item = Result<OpGetDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5380,7 +6175,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpRequest<'a>> {
                     val
                 }),
                 25u16 => OpGetDumpRequest::Filter({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5394,14 +6189,15 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetDumpRequest",
             r#type.and_then(|t| OpGetDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetDumpRequest");
         for attr in self.clone() {
@@ -5426,14 +6222,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetDumpRequest<'a>> {
+impl IterableOpGetDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetDumpRequest", offset));
             return (
@@ -5656,37 +6452,36 @@ impl<Prev: Rec> Drop for PushOpGetDumpReply<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"op-get-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetDumpReply<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    TupleOrig(Iterable<'a, TupleAttrs<'a>>),
+    TupleOrig(IterableTupleAttrs<'a>),
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    TupleReply(Iterable<'a, TupleAttrs<'a>>),
+    TupleReply(IterableTupleAttrs<'a>),
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     Status(u32),
-    Protoinfo(Iterable<'a, ProtoinfoAttrs<'a>>),
-    Help(Iterable<'a, HelpAttrs<'a>>),
-    NatSrc(Iterable<'a, NatAttrs<'a>>),
+    Protoinfo(IterableProtoinfoAttrs<'a>),
+    Help(IterableHelpAttrs<'a>),
+    NatSrc(IterableNatAttrs<'a>),
     Timeout(u32),
     Mark(u32),
-    CountersOrig(Iterable<'a, CounterAttrs<'a>>),
-    CountersReply(Iterable<'a, CounterAttrs<'a>>),
+    CountersOrig(IterableCounterAttrs<'a>),
+    CountersReply(IterableCounterAttrs<'a>),
     Use(u32),
     Id(u32),
-    NatDst(Iterable<'a, NatAttrs<'a>>),
-    TupleMaster(Iterable<'a, TupleAttrs<'a>>),
-    SeqAdjOrig(Iterable<'a, SeqadjAttrs>),
-    SeqAdjReply(Iterable<'a, SeqadjAttrs>),
+    NatDst(IterableNatAttrs<'a>),
+    TupleMaster(IterableTupleAttrs<'a>),
+    SeqAdjOrig(IterableSeqadjAttrs<'a>),
+    SeqAdjReply(IterableSeqadjAttrs<'a>),
     #[doc = "conntrack zone id"]
     Zone(u16),
-    Secctx(Iterable<'a, SecctxAttrs<'a>>),
+    Secctx(IterableSecctxAttrs<'a>),
     Labels(&'a [u8]),
-    Synproxy(Iterable<'a, SynproxyAttrs>),
+    Synproxy(IterableSynproxyAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
+impl<'a> IterableOpGetDumpReply<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_orig(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5694,10 +6489,15 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "TupleOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "TupleOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_reply(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5705,7 +6505,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "TupleReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "TupleReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     pub fn get_status(&self) -> Result<u32, ErrorContext> {
@@ -5716,9 +6521,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Status"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Status",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_protoinfo(&self) -> Result<Iterable<'a, ProtoinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_protoinfo(&self) -> Result<IterableProtoinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5726,9 +6536,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Protoinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Protoinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_help(&self) -> Result<Iterable<'a, HelpAttrs<'a>>, ErrorContext> {
+    pub fn get_help(&self) -> Result<IterableHelpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5736,9 +6551,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Help"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Help",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_src(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
+    pub fn get_nat_src(&self) -> Result<IterableNatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5746,7 +6566,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "NatSrc"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "NatSrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5756,7 +6581,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Timeout"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Timeout",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5766,9 +6596,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_counters_orig(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
+    pub fn get_counters_orig(&self) -> Result<IterableCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5776,9 +6611,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "CountersOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "CountersOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_counters_reply(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
+    pub fn get_counters_reply(&self) -> Result<IterableCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5786,7 +6626,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "CountersReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "CountersReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5796,7 +6641,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5806,9 +6656,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_dst(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
+    pub fn get_nat_dst(&self) -> Result<IterableNatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5816,9 +6671,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "NatDst"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "NatDst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_tuple_master(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_master(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5826,9 +6686,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "TupleMaster"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "TupleMaster",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_seq_adj_orig(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
+    pub fn get_seq_adj_orig(&self) -> Result<IterableSeqadjAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5836,9 +6701,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "SeqAdjOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "SeqAdjOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_seq_adj_reply(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
+    pub fn get_seq_adj_reply(&self) -> Result<IterableSeqadjAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5846,7 +6716,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "SeqAdjReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "SeqAdjReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack zone id"]
     pub fn get_zone(&self) -> Result<u16, ErrorContext> {
@@ -5857,9 +6732,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Zone"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Zone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_secctx(&self) -> Result<Iterable<'a, SecctxAttrs<'a>>, ErrorContext> {
+    pub fn get_secctx(&self) -> Result<IterableSecctxAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5867,7 +6747,12 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Secctx"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Secctx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5877,9 +6762,14 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Labels"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Labels",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_synproxy(&self) -> Result<Iterable<'a, SynproxyAttrs>, ErrorContext> {
+    pub fn get_synproxy(&self) -> Result<IterableSynproxyAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5887,25 +6777,45 @@ impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDumpReply", "Synproxy"))
+        Err(ErrorContext::new_missing(
+            "OpGetDumpReply",
+            "Synproxy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ConntrackAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetDumpReply<'a> {
     type Item = Result<OpGetDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5917,12 +6827,12 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => OpGetDumpReply::TupleOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => OpGetDumpReply::TupleReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5932,17 +6842,17 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
                     val
                 }),
                 4u16 => OpGetDumpReply::Protoinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableProtoinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => OpGetDumpReply::Help({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableHelpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 6u16 => OpGetDumpReply::NatSrc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5957,12 +6867,12 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
                     val
                 }),
                 9u16 => OpGetDumpReply::CountersOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 10u16 => OpGetDumpReply::CountersReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5977,22 +6887,22 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
                     val
                 }),
                 13u16 => OpGetDumpReply::NatDst({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 14u16 => OpGetDumpReply::TupleMaster({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 15u16 => OpGetDumpReply::SeqAdjOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSeqadjAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 16u16 => OpGetDumpReply::SeqAdjReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSeqadjAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6002,7 +6912,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
                     val
                 }),
                 19u16 => OpGetDumpReply::Secctx({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSecctxAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6012,7 +6922,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
                     val
                 }),
                 24u16 => OpGetDumpReply::Synproxy({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSynproxyAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6026,14 +6936,15 @@ impl<'a> Iterator for Iterable<'a, OpGetDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetDumpReply",
             r#type.and_then(|t| OpGetDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetDumpReply");
         for attr in self.clone() {
@@ -6074,14 +6985,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetDumpReply<'a>> {
+impl IterableOpGetDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetDumpReply", offset));
             return (
@@ -6247,7 +7158,7 @@ impl<'r> RequestOpGetDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -6337,19 +7248,18 @@ impl<Prev: Rec> Drop for PushOpGetDoRequest<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"op-get-do-request\""]
 #[derive(Clone)]
 pub enum OpGetDoRequest<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    TupleOrig(Iterable<'a, TupleAttrs<'a>>),
+    TupleOrig(IterableTupleAttrs<'a>),
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    TupleReply(Iterable<'a, TupleAttrs<'a>>),
+    TupleReply(IterableTupleAttrs<'a>),
     #[doc = "conntrack zone id"]
     Zone(u16),
 }
-impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
+impl<'a> IterableOpGetDoRequest<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_orig(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6357,10 +7267,15 @@ impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoRequest", "TupleOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoRequest",
+            "TupleOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_reply(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6368,7 +7283,12 @@ impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoRequest", "TupleReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoRequest",
+            "TupleReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack zone id"]
     pub fn get_zone(&self) -> Result<u16, ErrorContext> {
@@ -6379,25 +7299,45 @@ impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoRequest", "Zone"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoRequest",
+            "Zone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ConntrackAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetDoRequest<'a> {
     type Item = Result<OpGetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6409,12 +7349,12 @@ impl<'a> Iterator for Iterable<'a, OpGetDoRequest<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => OpGetDoRequest::TupleOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => OpGetDoRequest::TupleReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6433,14 +7373,15 @@ impl<'a> Iterator for Iterable<'a, OpGetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetDoRequest",
             r#type.and_then(|t| OpGetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetDoRequest");
         for attr in self.clone() {
@@ -6462,14 +7403,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetDoRequest<'a>> {
+impl IterableOpGetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetDoRequest", offset));
             return (
@@ -6686,37 +7627,36 @@ impl<Prev: Rec> Drop for PushOpGetDoReply<Prev> {
     }
 }
 #[doc = "get / dump entries"]
-#[doc = "Original name: \"op-get-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetDoReply<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    TupleOrig(Iterable<'a, TupleAttrs<'a>>),
+    TupleOrig(IterableTupleAttrs<'a>),
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    TupleReply(Iterable<'a, TupleAttrs<'a>>),
+    TupleReply(IterableTupleAttrs<'a>),
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     Status(u32),
-    Protoinfo(Iterable<'a, ProtoinfoAttrs<'a>>),
-    Help(Iterable<'a, HelpAttrs<'a>>),
-    NatSrc(Iterable<'a, NatAttrs<'a>>),
+    Protoinfo(IterableProtoinfoAttrs<'a>),
+    Help(IterableHelpAttrs<'a>),
+    NatSrc(IterableNatAttrs<'a>),
     Timeout(u32),
     Mark(u32),
-    CountersOrig(Iterable<'a, CounterAttrs<'a>>),
-    CountersReply(Iterable<'a, CounterAttrs<'a>>),
+    CountersOrig(IterableCounterAttrs<'a>),
+    CountersReply(IterableCounterAttrs<'a>),
     Use(u32),
     Id(u32),
-    NatDst(Iterable<'a, NatAttrs<'a>>),
-    TupleMaster(Iterable<'a, TupleAttrs<'a>>),
-    SeqAdjOrig(Iterable<'a, SeqadjAttrs>),
-    SeqAdjReply(Iterable<'a, SeqadjAttrs>),
+    NatDst(IterableNatAttrs<'a>),
+    TupleMaster(IterableTupleAttrs<'a>),
+    SeqAdjOrig(IterableSeqadjAttrs<'a>),
+    SeqAdjReply(IterableSeqadjAttrs<'a>),
     #[doc = "conntrack zone id"]
     Zone(u16),
-    Secctx(Iterable<'a, SecctxAttrs<'a>>),
+    Secctx(IterableSecctxAttrs<'a>),
     Labels(&'a [u8]),
-    Synproxy(Iterable<'a, SynproxyAttrs>),
+    Synproxy(IterableSynproxyAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetDoReply<'a>> {
+impl<'a> IterableOpGetDoReply<'a> {
     #[doc = "conntrack l3+l4 protocol information, original direction"]
-    pub fn get_tuple_orig(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_orig(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6724,10 +7664,15 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "TupleOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "TupleOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack l3+l4 protocol information, reply direction"]
-    pub fn get_tuple_reply(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_reply(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6735,7 +7680,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "TupleReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "TupleReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack flag bits\nAssociated type: \"NfCtStatus\" (1 bit per enumeration)"]
     pub fn get_status(&self) -> Result<u32, ErrorContext> {
@@ -6746,9 +7696,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Status"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Status",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_protoinfo(&self) -> Result<Iterable<'a, ProtoinfoAttrs<'a>>, ErrorContext> {
+    pub fn get_protoinfo(&self) -> Result<IterableProtoinfoAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6756,9 +7711,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Protoinfo"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Protoinfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_help(&self) -> Result<Iterable<'a, HelpAttrs<'a>>, ErrorContext> {
+    pub fn get_help(&self) -> Result<IterableHelpAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6766,9 +7726,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Help"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Help",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_src(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
+    pub fn get_nat_src(&self) -> Result<IterableNatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6776,7 +7741,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "NatSrc"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "NatSrc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_timeout(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6786,7 +7756,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Timeout"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Timeout",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_mark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6796,9 +7771,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Mark"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Mark",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_counters_orig(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
+    pub fn get_counters_orig(&self) -> Result<IterableCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6806,9 +7786,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "CountersOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "CountersOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_counters_reply(&self) -> Result<Iterable<'a, CounterAttrs<'a>>, ErrorContext> {
+    pub fn get_counters_reply(&self) -> Result<IterableCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6816,7 +7801,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "CountersReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "CountersReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6826,7 +7816,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6836,9 +7831,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_nat_dst(&self) -> Result<Iterable<'a, NatAttrs<'a>>, ErrorContext> {
+    pub fn get_nat_dst(&self) -> Result<IterableNatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6846,9 +7846,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "NatDst"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "NatDst",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_tuple_master(&self) -> Result<Iterable<'a, TupleAttrs<'a>>, ErrorContext> {
+    pub fn get_tuple_master(&self) -> Result<IterableTupleAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6856,9 +7861,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "TupleMaster"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "TupleMaster",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_seq_adj_orig(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
+    pub fn get_seq_adj_orig(&self) -> Result<IterableSeqadjAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6866,9 +7876,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "SeqAdjOrig"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "SeqAdjOrig",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_seq_adj_reply(&self) -> Result<Iterable<'a, SeqadjAttrs>, ErrorContext> {
+    pub fn get_seq_adj_reply(&self) -> Result<IterableSeqadjAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6876,7 +7891,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "SeqAdjReply"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "SeqAdjReply",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "conntrack zone id"]
     pub fn get_zone(&self) -> Result<u16, ErrorContext> {
@@ -6887,9 +7907,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Zone"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Zone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_secctx(&self) -> Result<Iterable<'a, SecctxAttrs<'a>>, ErrorContext> {
+    pub fn get_secctx(&self) -> Result<IterableSecctxAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6897,7 +7922,12 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Secctx"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Secctx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_labels(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -6907,9 +7937,14 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Labels"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Labels",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_synproxy(&self) -> Result<Iterable<'a, SynproxyAttrs>, ErrorContext> {
+    pub fn get_synproxy(&self) -> Result<IterableSynproxyAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6917,25 +7952,45 @@ impl<'a> Iterable<'a, OpGetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetDoReply", "Synproxy"))
+        Err(ErrorContext::new_missing(
+            "OpGetDoReply",
+            "Synproxy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ConntrackAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetDoReply<'a> {
     type Item = Result<OpGetDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6947,12 +8002,12 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => OpGetDoReply::TupleOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => OpGetDoReply::TupleReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6962,17 +8017,17 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
                     val
                 }),
                 4u16 => OpGetDoReply::Protoinfo({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableProtoinfoAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => OpGetDoReply::Help({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableHelpAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 6u16 => OpGetDoReply::NatSrc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6987,12 +8042,12 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
                     val
                 }),
                 9u16 => OpGetDoReply::CountersOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 10u16 => OpGetDoReply::CountersReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7007,22 +8062,22 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
                     val
                 }),
                 13u16 => OpGetDoReply::NatDst({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 14u16 => OpGetDoReply::TupleMaster({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableTupleAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 15u16 => OpGetDoReply::SeqAdjOrig({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSeqadjAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 16u16 => OpGetDoReply::SeqAdjReply({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSeqadjAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7032,7 +8087,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
                     val
                 }),
                 19u16 => OpGetDoReply::Secctx({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSecctxAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7042,7 +8097,7 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
                     val
                 }),
                 24u16 => OpGetDoReply::Synproxy({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSynproxyAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7056,14 +8111,15 @@ impl<'a> Iterator for Iterable<'a, OpGetDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetDoReply",
             r#type.and_then(|t| OpGetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetDoReply");
         for attr in self.clone() {
@@ -7104,14 +8160,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetDoReply<'a>> {
+impl IterableOpGetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetDoReply", offset));
             return (
@@ -7275,7 +8331,7 @@ impl<'r> RequestOpGetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -7341,26 +8397,40 @@ impl<Prev: Rec> Drop for PushOpGetStatsDumpRequest<Prev> {
     }
 }
 #[doc = "dump pcpu conntrack stats"]
-#[doc = "Original name: \"op-get-stats-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetStatsDumpRequest {}
-impl<'a> Iterable<'a, OpGetStatsDumpRequest> {}
+impl<'a> IterableOpGetStatsDumpRequest<'a> {}
 impl OpGetStatsDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetStatsDumpRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetStatsDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetStatsDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ConntrackStatsAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetStatsDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetStatsDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetStatsDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetStatsDumpRequest<'a> {
     type Item = Result<OpGetStatsDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7381,14 +8451,15 @@ impl Iterator for Iterable<'_, OpGetStatsDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetStatsDumpRequest",
             r#type.and_then(|t| OpGetStatsDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetStatsDumpRequest> {
+impl std::fmt::Debug for IterableOpGetStatsDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetStatsDumpRequest");
         for attr in self.clone() {
@@ -7406,14 +8477,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetStatsDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetStatsDumpRequest> {
+impl IterableOpGetStatsDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetStatsDumpRequest", offset));
             return (
@@ -7517,7 +8588,6 @@ impl<Prev: Rec> Drop for PushOpGetStatsDumpReply<Prev> {
     }
 }
 #[doc = "dump pcpu conntrack stats"]
-#[doc = "Original name: \"op-get-stats-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetStatsDumpReply {
     #[doc = "obsolete"]
@@ -7532,7 +8602,7 @@ pub enum OpGetStatsDumpReply {
     ClashResolve(u32),
     ChainToolong(u32),
 }
-impl<'a> Iterable<'a, OpGetStatsDumpReply> {
+impl<'a> IterableOpGetStatsDumpReply<'a> {
     #[doc = "obsolete"]
     pub fn get_searched(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7542,7 +8612,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "Searched"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "Searched",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_found(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7552,7 +8627,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "Found"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "Found",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_insert(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7562,7 +8642,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "Insert"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "Insert",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_insert_failed(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7572,7 +8657,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "InsertFailed"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "InsertFailed",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7582,7 +8672,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "Drop"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "Drop",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_early_drop(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7592,7 +8687,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "EarlyDrop"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "EarlyDrop",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_error(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7602,7 +8702,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "Error"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "Error",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_search_restart(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7612,7 +8717,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "SearchRestart"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "SearchRestart",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_clash_resolve(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7622,7 +8732,12 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "ClashResolve"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "ClashResolve",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_chain_toolong(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7632,25 +8747,45 @@ impl<'a> Iterable<'a, OpGetStatsDumpReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetStatsDumpReply", "ChainToolong"))
+        Err(ErrorContext::new_missing(
+            "OpGetStatsDumpReply",
+            "ChainToolong",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl OpGetStatsDumpReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetStatsDumpReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetStatsDumpReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetStatsDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ConntrackStatsAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetStatsDumpReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetStatsDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetStatsDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetStatsDumpReply<'a> {
     type Item = Result<OpGetStatsDumpReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7721,14 +8856,15 @@ impl Iterator for Iterable<'_, OpGetStatsDumpReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetStatsDumpReply",
             r#type.and_then(|t| OpGetStatsDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetStatsDumpReply> {
+impl std::fmt::Debug for IterableOpGetStatsDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetStatsDumpReply");
         for attr in self.clone() {
@@ -7757,14 +8893,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetStatsDumpReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetStatsDumpReply> {
+impl IterableOpGetStatsDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetStatsDumpReply", offset));
             return (
@@ -7869,7 +9005,7 @@ impl<'r> RequestOpGetStatsDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetStatsDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetStatsDumpReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetStatsDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -8099,31 +9235,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self

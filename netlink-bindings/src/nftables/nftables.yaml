@@ -1741,6 +1741,7 @@ operations:
             - chain
             - handle
             - id
+            - expressions
     -
       name: destroyrule
       doc: |

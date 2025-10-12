@@ -8,12 +8,14 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use crate::builtin::{PushBuiltinBitfield32, PushBuiltinNfgenmsg, PushDummy, PushNlmsghdr};
-use crate::consts;
-use crate::utils::*;
-use crate::{NetlinkRequest, Protocol};
+use crate::{
+    consts,
+    traits::{NetlinkRequest, Protocol},
+    utils::*,
+};
 pub const PROTONAME: &CStr = c"nftables";
 pub const PROTONUM: u16 = 12u16;
-#[doc = "Original name: \"meta-keys\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum MetaKeys {
     Len = 0,
@@ -96,7 +98,7 @@ impl MetaKeys {
         })
     }
 }
-#[doc = "Original name: \"bitwise-ops\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum BitwiseOps {
     #[doc = "mask-and-xor operation used to implement NOT, AND, OR and XOR\n  dreg = (sreg & mask) ^ xor\nwith these mask and xor values:\n          mask    xor\n  NOT:    1       1\n  OR:     ~x      x\n  XOR:    1       x\n  AND:    x       0\n"]
@@ -120,7 +122,7 @@ impl BitwiseOps {
         })
     }
 }
-#[doc = "Original name: \"cmp-ops\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum CmpOps {
     Eq = 0,
@@ -143,7 +145,7 @@ impl CmpOps {
         })
     }
 }
-#[doc = "Original name: \"object-type\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum ObjectType {
     Unspec = 0,
@@ -176,7 +178,7 @@ impl ObjectType {
         })
     }
 }
-#[doc = "Original name: \"nat-range-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NatRangeFlags {
     MapIps = 1 << 0,
@@ -201,7 +203,7 @@ impl NatRangeFlags {
         })
     }
 }
-#[doc = "Original name: \"table-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum TableFlags {
     Dormant = 1 << 0,
@@ -218,7 +220,7 @@ impl TableFlags {
         })
     }
 }
-#[doc = "Original name: \"chain-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum ChainFlags {
     Base = 1 << 0,
@@ -235,7 +237,7 @@ impl ChainFlags {
         })
     }
 }
-#[doc = "Original name: \"set-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum SetFlags {
     Anonymous = 1 << 0,
@@ -264,7 +266,7 @@ impl SetFlags {
         })
     }
 }
-#[doc = "Original name: \"lookup-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum LookupFlags {
     Invert = 1 << 0,
@@ -277,7 +279,7 @@ impl LookupFlags {
         })
     }
 }
-#[doc = "Original name: \"ct-keys\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum CtKeys {
     State = 0,
@@ -336,7 +338,7 @@ impl CtKeys {
         })
     }
 }
-#[doc = "Original name: \"ct-direction\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum CtDirection {
     Original = 0,
@@ -351,7 +353,7 @@ impl CtDirection {
         })
     }
 }
-#[doc = "Original name: \"quota-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum QuotaFlags {
     Invert = 1 << 0,
@@ -366,7 +368,7 @@ impl QuotaFlags {
         })
     }
 }
-#[doc = "Original name: \"verdict-code\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum VerdictCode {
     Continue = 4294967295,
@@ -397,7 +399,7 @@ impl VerdictCode {
         })
     }
 }
-#[doc = "Original name: \"fib-result\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum FibResult {
     Oif = 0,
@@ -414,7 +416,7 @@ impl FibResult {
         })
     }
 }
-#[doc = "Original name: \"fib-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum FibFlags {
     Saddr = 1 << 0,
@@ -437,7 +439,7 @@ impl FibFlags {
         })
     }
 }
-#[doc = "Original name: \"reject-types\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum RejectTypes {
     IcmpUnreach = 0,
@@ -454,7 +456,7 @@ impl RejectTypes {
         })
     }
 }
-#[doc = "Original name: \"payload-base\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum PayloadBase {
     LinkLayerHeader = 0,
@@ -476,7 +478,7 @@ impl PayloadBase {
     }
 }
 #[doc = "Range operator"]
-#[doc = "Original name: \"range-ops\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum RangeOps {
     Eq = 0,
@@ -492,7 +494,7 @@ impl RangeOps {
     }
 }
 #[doc = "nf_tables registers.\nnf_tables used to have five registers: a verdict register and four data\nregisters of size 16. The data registers have been changed to 16 registers\nof size 4. For compatibility reasons, the NFT_REG_[1-4] registers still\nmap to areas of size 16, the 4 byte registers are addressed using\nNFT_REG32_00 - NFT_REG32_15.\n"]
-#[doc = "Original name: \"registers\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum Registers {
     RegVerdict = 0,
@@ -545,7 +547,7 @@ impl Registers {
         })
     }
 }
-#[doc = "Original name: \"numgen-types\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum NumgenTypes {
     Incremental = 0,
@@ -561,7 +563,7 @@ impl NumgenTypes {
     }
 }
 #[doc = "nf_tables log levels"]
-#[doc = "Original name: \"log-level\" (enum) - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum LogLevel {
     #[doc = "system is unusable"]
@@ -600,7 +602,7 @@ impl LogLevel {
     }
 }
 #[doc = "nf_tables log flags"]
-#[doc = "Original name: \"log-flags\" (flags) - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum LogFlags {
     #[doc = "Log TCP sequence numbers"]
@@ -629,7 +631,6 @@ impl LogFlags {
         })
     }
 }
-#[doc = "Original name: \"log-attrs\""]
 #[derive(Clone)]
 pub enum LogAttrs<'a> {
     #[doc = "netlink group to send messages to"]
@@ -645,7 +646,7 @@ pub enum LogAttrs<'a> {
     #[doc = "logging flags\nAssociated type: \"LogFlags\" (enum)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, LogAttrs<'a>> {
+impl<'a> IterableLogAttrs<'a> {
     #[doc = "netlink group to send messages to"]
     pub fn get_group(&self) -> Result<u16, ErrorContext> {
         let mut iter = self.clone();
@@ -655,7 +656,12 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LogAttrs", "Group"))
+        Err(ErrorContext::new_missing(
+            "LogAttrs",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "prefix to prepend to log messages"]
     pub fn get_prefix(&self) -> Result<&'a CStr, ErrorContext> {
@@ -666,7 +672,12 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LogAttrs", "Prefix"))
+        Err(ErrorContext::new_missing(
+            "LogAttrs",
+            "Prefix",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "length of payload to include in netlink message"]
     pub fn get_snaplen(&self) -> Result<u32, ErrorContext> {
@@ -677,7 +688,12 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LogAttrs", "Snaplen"))
+        Err(ErrorContext::new_missing(
+            "LogAttrs",
+            "Snaplen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "queue threshold"]
     pub fn get_qthreshold(&self) -> Result<u16, ErrorContext> {
@@ -688,7 +704,12 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LogAttrs", "Qthreshold"))
+        Err(ErrorContext::new_missing(
+            "LogAttrs",
+            "Qthreshold",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "log level\nAssociated type: \"LogLevel\" (enum)"]
     pub fn get_level(&self) -> Result<u32, ErrorContext> {
@@ -699,7 +720,12 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LogAttrs", "Level"))
+        Err(ErrorContext::new_missing(
+            "LogAttrs",
+            "Level",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "logging flags\nAssociated type: \"LogFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -710,12 +736,17 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("LogAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "LogAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> LogAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, LogAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableLogAttrs<'a> {
+        IterableLogAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -730,7 +761,25 @@ impl<'a> LogAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, LogAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableLogAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLogAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLogAttrs<'a> {
     type Item = Result<LogAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -781,14 +830,15 @@ impl<'a> Iterator for Iterable<'a, LogAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "LogAttrs",
             r#type.and_then(|t| LogAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, LogAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableLogAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LogAttrs");
         for attr in self.clone() {
@@ -817,14 +867,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, LogAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, LogAttrs<'a>> {
+impl IterableLogAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LogAttrs", offset));
             return (
@@ -886,7 +936,6 @@ impl<'a> Iterable<'a, LogAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"numgen-attrs\""]
 #[derive(Clone)]
 pub enum NumgenAttrs {
     #[doc = "destination register\nAssociated type: \"Registers\" (enum)"]
@@ -898,7 +947,7 @@ pub enum NumgenAttrs {
     #[doc = "offset to be added to the counter"]
     Offset(u32),
 }
-impl<'a> Iterable<'a, NumgenAttrs> {
+impl<'a> IterableNumgenAttrs<'a> {
     #[doc = "destination register\nAssociated type: \"Registers\" (enum)"]
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -908,7 +957,12 @@ impl<'a> Iterable<'a, NumgenAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NumgenAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "NumgenAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "maximum counter value"]
     pub fn get_modulus(&self) -> Result<u32, ErrorContext> {
@@ -919,7 +973,12 @@ impl<'a> Iterable<'a, NumgenAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NumgenAttrs", "Modulus"))
+        Err(ErrorContext::new_missing(
+            "NumgenAttrs",
+            "Modulus",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "operation type\nAssociated type: \"NumgenTypes\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -930,7 +989,12 @@ impl<'a> Iterable<'a, NumgenAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NumgenAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "NumgenAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "offset to be added to the counter"]
     pub fn get_offset(&self) -> Result<u32, ErrorContext> {
@@ -941,12 +1005,17 @@ impl<'a> Iterable<'a, NumgenAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NumgenAttrs", "Offset"))
+        Err(ErrorContext::new_missing(
+            "NumgenAttrs",
+            "Offset",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl NumgenAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, NumgenAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableNumgenAttrs<'_> {
+        IterableNumgenAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -959,7 +1028,25 @@ impl NumgenAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, NumgenAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableNumgenAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableNumgenAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableNumgenAttrs<'a> {
     type Item = Result<NumgenAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1000,14 +1087,15 @@ impl Iterator for Iterable<'_, NumgenAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "NumgenAttrs",
             r#type.and_then(|t| NumgenAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, NumgenAttrs> {
+impl std::fmt::Debug for IterableNumgenAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NumgenAttrs");
         for attr in self.clone() {
@@ -1034,14 +1122,14 @@ impl std::fmt::Debug for Iterable<'_, NumgenAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, NumgenAttrs> {
+impl IterableNumgenAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NumgenAttrs", offset));
             return (
@@ -1091,7 +1179,6 @@ impl Iterable<'_, NumgenAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"range-attrs\""]
 #[derive(Clone)]
 pub enum RangeAttrs<'a> {
     #[doc = "source register of data to compare\nAssociated type: \"Registers\" (enum)"]
@@ -1099,11 +1186,11 @@ pub enum RangeAttrs<'a> {
     #[doc = "cmp operation\nAssociated type: \"RangeOps\" (enum)"]
     Op(u32),
     #[doc = "data range from"]
-    FromData(Iterable<'a, DataAttrs<'a>>),
+    FromData(IterableDataAttrs<'a>),
     #[doc = "data range to"]
-    ToData(Iterable<'a, DataAttrs<'a>>),
+    ToData(IterableDataAttrs<'a>),
 }
-impl<'a> Iterable<'a, RangeAttrs<'a>> {
+impl<'a> IterableRangeAttrs<'a> {
     #[doc = "source register of data to compare\nAssociated type: \"Registers\" (enum)"]
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1113,7 +1200,12 @@ impl<'a> Iterable<'a, RangeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RangeAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "RangeAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "cmp operation\nAssociated type: \"RangeOps\" (enum)"]
     pub fn get_op(&self) -> Result<u32, ErrorContext> {
@@ -1124,10 +1216,15 @@ impl<'a> Iterable<'a, RangeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RangeAttrs", "Op"))
+        Err(ErrorContext::new_missing(
+            "RangeAttrs",
+            "Op",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "data range from"]
-    pub fn get_from_data(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_from_data(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1135,10 +1232,15 @@ impl<'a> Iterable<'a, RangeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RangeAttrs", "FromData"))
+        Err(ErrorContext::new_missing(
+            "RangeAttrs",
+            "FromData",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "data range to"]
-    pub fn get_to_data(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_to_data(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1146,12 +1248,17 @@ impl<'a> Iterable<'a, RangeAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RangeAttrs", "ToData"))
+        Err(ErrorContext::new_missing(
+            "RangeAttrs",
+            "ToData",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> RangeAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, RangeAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableRangeAttrs<'a> {
+        IterableRangeAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1164,7 +1271,25 @@ impl<'a> RangeAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, RangeAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableRangeAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableRangeAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableRangeAttrs<'a> {
     type Item = Result<RangeAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1186,12 +1311,12 @@ impl<'a> Iterator for Iterable<'a, RangeAttrs<'a>> {
                     val
                 }),
                 3u16 => RangeAttrs::FromData({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 4u16 => RangeAttrs::ToData({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1205,14 +1330,15 @@ impl<'a> Iterator for Iterable<'a, RangeAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "RangeAttrs",
             r#type.and_then(|t| RangeAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, RangeAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableRangeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RangeAttrs");
         for attr in self.clone() {
@@ -1239,14 +1365,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, RangeAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, RangeAttrs<'a>> {
+impl IterableRangeAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RangeAttrs", offset));
             return (
@@ -1297,13 +1423,12 @@ impl<'a> Iterable<'a, RangeAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"batch-attrs\""]
 #[derive(Clone)]
 pub enum BatchAttrs {
     #[doc = "generation ID for this changeset"]
     Genid(u32),
 }
-impl<'a> Iterable<'a, BatchAttrs> {
+impl<'a> IterableBatchAttrs<'a> {
     #[doc = "generation ID for this changeset"]
     pub fn get_genid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -1313,12 +1438,17 @@ impl<'a> Iterable<'a, BatchAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("BatchAttrs", "Genid"))
+        Err(ErrorContext::new_missing(
+            "BatchAttrs",
+            "Genid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl BatchAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, BatchAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableBatchAttrs<'_> {
+        IterableBatchAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1328,7 +1458,25 @@ impl BatchAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, BatchAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableBatchAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableBatchAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableBatchAttrs<'a> {
     type Item = Result<BatchAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1354,14 +1502,15 @@ impl Iterator for Iterable<'_, BatchAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "BatchAttrs",
             r#type.and_then(|t| BatchAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, BatchAttrs> {
+impl std::fmt::Debug for IterableBatchAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BatchAttrs");
         for attr in self.clone() {
@@ -1381,14 +1530,14 @@ impl std::fmt::Debug for Iterable<'_, BatchAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, BatchAttrs> {
+impl IterableBatchAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("BatchAttrs", offset));
             return (
@@ -1420,7 +1569,6 @@ impl Iterable<'_, BatchAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"table-attrs\""]
 #[derive(Clone)]
 pub enum TableAttrs<'a> {
     #[doc = "name of the table"]
@@ -1437,7 +1585,7 @@ pub enum TableAttrs<'a> {
     #[doc = "owner of this table through netlink portID"]
     Owner(u32),
 }
-impl<'a> Iterable<'a, TableAttrs<'a>> {
+impl<'a> IterableTableAttrs<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1447,7 +1595,12 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of flags\nAssociated type: \"TableFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -1458,7 +1611,12 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of chains in this table"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -1469,7 +1627,12 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Use"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the table"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -1480,7 +1643,12 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Handle"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -1490,7 +1658,12 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -1501,7 +1674,12 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "owner of this table through netlink portID"]
     pub fn get_owner(&self) -> Result<u32, ErrorContext> {
@@ -1512,12 +1690,17 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("TableAttrs", "Owner"))
+        Err(ErrorContext::new_missing(
+            "TableAttrs",
+            "Owner",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> TableAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, TableAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableTableAttrs<'a> {
+        IterableTableAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1533,7 +1716,25 @@ impl<'a> TableAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, TableAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableTableAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableTableAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableTableAttrs<'a> {
     type Item = Result<TableAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1589,14 +1790,15 @@ impl<'a> Iterator for Iterable<'a, TableAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "TableAttrs",
             r#type.and_then(|t| TableAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, TableAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableTableAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TableAttrs");
         for attr in self.clone() {
@@ -1624,14 +1826,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, TableAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, TableAttrs<'a>> {
+impl IterableTableAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("TableAttrs", offset));
             return (
@@ -1699,7 +1901,6 @@ impl<'a> Iterable<'a, TableAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"chain-attrs\""]
 #[derive(Clone)]
 pub enum ChainAttrs<'a> {
     #[doc = "name of the table containing the chain"]
@@ -1709,7 +1910,7 @@ pub enum ChainAttrs<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
     #[doc = "hook specification for basechains"]
-    Hook(Iterable<'a, NftHookAttrs<'a>>),
+    Hook(IterableNftHookAttrs<'a>),
     #[doc = "numeric policy of the chain"]
     Policy(u32),
     #[doc = "number of references to this chain"]
@@ -1717,7 +1918,7 @@ pub enum ChainAttrs<'a> {
     #[doc = "type name of the chain"]
     Type(&'a CStr),
     #[doc = "counter specification of the chain"]
-    Counters(Iterable<'a, NftCounterAttrs>),
+    Counters(IterableNftCounterAttrs<'a>),
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     Flags(u32),
     #[doc = "uniquely identifies a chain in a transaction"]
@@ -1725,7 +1926,7 @@ pub enum ChainAttrs<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, ChainAttrs<'a>> {
+impl<'a> IterableChainAttrs<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -1735,7 +1936,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the chain"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -1746,7 +1952,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Handle"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -1757,10 +1968,15 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "hook specification for basechains"]
-    pub fn get_hook(&self) -> Result<Iterable<'a, NftHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableNftHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1768,7 +1984,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Hook"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric policy of the chain"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -1779,7 +2000,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Policy"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of references to this chain"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -1790,7 +2016,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Use"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "type name of the chain"]
     pub fn get_type(&self) -> Result<&'a CStr, ErrorContext> {
@@ -1801,10 +2032,15 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "counter specification of the chain"]
-    pub fn get_counters(&self) -> Result<Iterable<'a, NftCounterAttrs>, ErrorContext> {
+    pub fn get_counters(&self) -> Result<IterableNftCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -1812,7 +2048,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Counters"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Counters",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -1823,7 +2064,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a chain in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -1834,7 +2080,12 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -1845,12 +2096,17 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ChainAttrs", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "ChainAttrs",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ChainAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ChainAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableChainAttrs<'a> {
+        IterableChainAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -1870,7 +2126,25 @@ impl<'a> ChainAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ChainAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableChainAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableChainAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableChainAttrs<'a> {
     type Item = Result<ChainAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -1897,7 +2171,7 @@ impl<'a> Iterator for Iterable<'a, ChainAttrs<'a>> {
                     val
                 }),
                 4u16 => ChainAttrs::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1917,7 +2191,7 @@ impl<'a> Iterator for Iterable<'a, ChainAttrs<'a>> {
                     val
                 }),
                 8u16 => ChainAttrs::Counters({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1946,14 +2220,15 @@ impl<'a> Iterator for Iterable<'a, ChainAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ChainAttrs",
             r#type.and_then(|t| ChainAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ChainAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableChainAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ChainAttrs");
         for attr in self.clone() {
@@ -1985,14 +2260,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ChainAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ChainAttrs<'a>> {
+impl IterableChainAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ChainAttrs", offset));
             return (
@@ -2085,14 +2360,13 @@ impl<'a> Iterable<'a, ChainAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"counter-attrs\""]
 #[derive(Clone)]
 pub enum CounterAttrs<'a> {
     Bytes(u64),
     Packets(u64),
     Pad(&'a [u8]),
 }
-impl<'a> Iterable<'a, CounterAttrs<'a>> {
+impl<'a> IterableCounterAttrs<'a> {
     pub fn get_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2101,7 +2375,12 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "Bytes"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "Bytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_packets(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -2111,7 +2390,12 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "Packets"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "Packets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -2121,12 +2405,17 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CounterAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "CounterAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> CounterAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, CounterAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableCounterAttrs<'a> {
+        IterableCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2138,7 +2427,25 @@ impl<'a> CounterAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, CounterAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableCounterAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableCounterAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableCounterAttrs<'a> {
     type Item = Result<CounterAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2174,14 +2481,15 @@ impl<'a> Iterator for Iterable<'a, CounterAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "CounterAttrs",
             r#type.and_then(|t| CounterAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, CounterAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableCounterAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CounterAttrs");
         for attr in self.clone() {
@@ -2203,14 +2511,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, CounterAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, CounterAttrs<'a>> {
+impl IterableCounterAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CounterAttrs", offset));
             return (
@@ -2254,7 +2562,6 @@ impl<'a> Iterable<'a, CounterAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"nft-hook-attrs\""]
 #[derive(Clone)]
 pub enum NftHookAttrs<'a> {
     Num(u32),
@@ -2262,9 +2569,9 @@ pub enum NftHookAttrs<'a> {
     #[doc = "net device name"]
     Dev(&'a CStr),
     #[doc = "list of net devices"]
-    Devs(Iterable<'a, HookDevAttrs<'a>>),
+    Devs(IterableHookDevAttrs<'a>),
 }
-impl<'a> Iterable<'a, NftHookAttrs<'a>> {
+impl<'a> IterableNftHookAttrs<'a> {
     pub fn get_num(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2273,7 +2580,12 @@ impl<'a> Iterable<'a, NftHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NftHookAttrs", "Num"))
+        Err(ErrorContext::new_missing(
+            "NftHookAttrs",
+            "Num",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
@@ -2283,7 +2595,12 @@ impl<'a> Iterable<'a, NftHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NftHookAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "NftHookAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "net device name"]
     pub fn get_dev(&self) -> Result<&'a CStr, ErrorContext> {
@@ -2294,10 +2611,15 @@ impl<'a> Iterable<'a, NftHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NftHookAttrs", "Dev"))
+        Err(ErrorContext::new_missing(
+            "NftHookAttrs",
+            "Dev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of net devices"]
-    pub fn get_devs(&self) -> Result<Iterable<'a, HookDevAttrs<'a>>, ErrorContext> {
+    pub fn get_devs(&self) -> Result<IterableHookDevAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2305,12 +2627,17 @@ impl<'a> Iterable<'a, NftHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NftHookAttrs", "Devs"))
+        Err(ErrorContext::new_missing(
+            "NftHookAttrs",
+            "Devs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> NftHookAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, NftHookAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableNftHookAttrs<'a> {
+        IterableNftHookAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2323,7 +2650,25 @@ impl<'a> NftHookAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, NftHookAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableNftHookAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableNftHookAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableNftHookAttrs<'a> {
     type Item = Result<NftHookAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2350,7 +2695,7 @@ impl<'a> Iterator for Iterable<'a, NftHookAttrs<'a>> {
                     val
                 }),
                 4u16 => NftHookAttrs::Devs({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableHookDevAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2364,14 +2709,15 @@ impl<'a> Iterator for Iterable<'a, NftHookAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "NftHookAttrs",
             r#type.and_then(|t| NftHookAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, NftHookAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableNftHookAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NftHookAttrs");
         for attr in self.clone() {
@@ -2394,14 +2740,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, NftHookAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, NftHookAttrs<'a>> {
+impl IterableNftHookAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NftHookAttrs", offset));
             return (
@@ -2452,13 +2798,12 @@ impl<'a> Iterable<'a, NftHookAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"hook-dev-attrs\""]
 #[derive(Clone)]
 pub enum HookDevAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     Name(&'a CStr),
 }
-impl<'a> Iterable<'a, HookDevAttrs<'a>> {
+impl<'a> IterableHookDevAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_name(&self) -> MultiAttrIterable<Self, HookDevAttrs<'a>, &'a CStr> {
         MultiAttrIterable::new(self.clone(), |variant| {
@@ -2471,8 +2816,8 @@ impl<'a> Iterable<'a, HookDevAttrs<'a>> {
     }
 }
 impl<'a> HookDevAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, HookDevAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableHookDevAttrs<'a> {
+        IterableHookDevAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2482,7 +2827,25 @@ impl<'a> HookDevAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, HookDevAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableHookDevAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableHookDevAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableHookDevAttrs<'a> {
     type Item = Result<HookDevAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2508,14 +2871,15 @@ impl<'a> Iterator for Iterable<'a, HookDevAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "HookDevAttrs",
             r#type.and_then(|t| HookDevAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, HookDevAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableHookDevAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HookDevAttrs");
         for attr in self.clone() {
@@ -2535,14 +2899,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, HookDevAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, HookDevAttrs<'a>> {
+impl IterableHookDevAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("HookDevAttrs", offset));
             return (
@@ -2574,13 +2938,12 @@ impl<'a> Iterable<'a, HookDevAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"nft-counter-attrs\""]
 #[derive(Clone)]
 pub enum NftCounterAttrs {
     Bytes(u64),
     Packets(u64),
 }
-impl<'a> Iterable<'a, NftCounterAttrs> {
+impl<'a> IterableNftCounterAttrs<'a> {
     pub fn get_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2589,7 +2952,12 @@ impl<'a> Iterable<'a, NftCounterAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NftCounterAttrs", "Bytes"))
+        Err(ErrorContext::new_missing(
+            "NftCounterAttrs",
+            "Bytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_packets(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -2599,12 +2967,17 @@ impl<'a> Iterable<'a, NftCounterAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("NftCounterAttrs", "Packets"))
+        Err(ErrorContext::new_missing(
+            "NftCounterAttrs",
+            "Packets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl NftCounterAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, NftCounterAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableNftCounterAttrs<'_> {
+        IterableNftCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2615,7 +2988,25 @@ impl NftCounterAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, NftCounterAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableNftCounterAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableNftCounterAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableNftCounterAttrs<'a> {
     type Item = Result<NftCounterAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2646,14 +3037,15 @@ impl Iterator for Iterable<'_, NftCounterAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "NftCounterAttrs",
             r#type.and_then(|t| NftCounterAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, NftCounterAttrs> {
+impl std::fmt::Debug for IterableNftCounterAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NftCounterAttrs");
         for attr in self.clone() {
@@ -2674,14 +3066,14 @@ impl std::fmt::Debug for Iterable<'_, NftCounterAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, NftCounterAttrs> {
+impl IterableNftCounterAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NftCounterAttrs", offset));
             return (
@@ -2719,7 +3111,6 @@ impl Iterable<'_, NftCounterAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"rule-attrs\""]
 #[derive(Clone)]
 pub enum RuleAttrs<'a> {
     #[doc = "name of the table containing the rule"]
@@ -2729,9 +3120,9 @@ pub enum RuleAttrs<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "compatibility specifications of the rule"]
-    Compat(Iterable<'a, RuleCompatAttrs>),
+    Compat(IterableRuleCompatAttrs<'a>),
     #[doc = "numeric handle of the previous rule"]
     Position(u64),
     #[doc = "user data"]
@@ -2743,7 +3134,7 @@ pub enum RuleAttrs<'a> {
     #[doc = "add the rule to chain by ID, alternative to chain name"]
     ChainId(u32),
 }
-impl<'a> Iterable<'a, RuleAttrs<'a>> {
+impl<'a> IterableRuleAttrs<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -2753,7 +3144,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -2764,7 +3160,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Chain"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -2775,10 +3176,15 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Handle"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2786,10 +3192,15 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "compatibility specifications of the rule"]
-    pub fn get_compat(&self) -> Result<Iterable<'a, RuleCompatAttrs>, ErrorContext> {
+    pub fn get_compat(&self) -> Result<IterableRuleCompatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -2797,7 +3208,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Compat"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Compat",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the previous rule"]
     pub fn get_position(&self) -> Result<u64, ErrorContext> {
@@ -2808,7 +3224,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Position"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Position",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -2819,7 +3240,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a rule in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -2830,7 +3256,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "transaction unique identifier of the previous rule"]
     pub fn get_position_id(&self) -> Result<u32, ErrorContext> {
@@ -2841,7 +3272,12 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "PositionId"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "PositionId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "add the rule to chain by ID, alternative to chain name"]
     pub fn get_chain_id(&self) -> Result<u32, ErrorContext> {
@@ -2852,12 +3288,17 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleAttrs", "ChainId"))
+        Err(ErrorContext::new_missing(
+            "RuleAttrs",
+            "ChainId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> RuleAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, RuleAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableRuleAttrs<'a> {
+        IterableRuleAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -2876,7 +3317,25 @@ impl<'a> RuleAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, RuleAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableRuleAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableRuleAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableRuleAttrs<'a> {
     type Item = Result<RuleAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -2903,12 +3362,12 @@ impl<'a> Iterator for Iterable<'a, RuleAttrs<'a>> {
                     val
                 }),
                 4u16 => RuleAttrs::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => RuleAttrs::Compat({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableRuleCompatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2947,14 +3406,15 @@ impl<'a> Iterator for Iterable<'a, RuleAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "RuleAttrs",
             r#type.and_then(|t| RuleAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, RuleAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableRuleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RuleAttrs");
         for attr in self.clone() {
@@ -2983,14 +3443,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, RuleAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, RuleAttrs<'a>> {
+impl IterableRuleAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RuleAttrs", offset));
             return (
@@ -3077,17 +3537,14 @@ impl<'a> Iterable<'a, RuleAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"expr-list-attrs\""]
 #[derive(Clone)]
 pub enum ExprListAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    Elem(Iterable<'a, ExprAttrs<'a>>),
+    Elem(IterableExprAttrs<'a>),
 }
-impl<'a> Iterable<'a, ExprListAttrs<'a>> {
+impl<'a> IterableExprListAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn get_elem(
-        &self,
-    ) -> MultiAttrIterable<Self, ExprListAttrs<'a>, Iterable<'a, ExprAttrs<'a>>> {
+    pub fn get_elem(&self) -> MultiAttrIterable<Self, ExprListAttrs<'a>, IterableExprAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let ExprListAttrs::Elem(val) = variant {
                 Some(val)
@@ -3098,8 +3555,8 @@ impl<'a> Iterable<'a, ExprListAttrs<'a>> {
     }
 }
 impl<'a> ExprListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprListAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprListAttrs<'a> {
+        IterableExprListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3109,7 +3566,25 @@ impl<'a> ExprListAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprListAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprListAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprListAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprListAttrs<'a> {
     type Item = Result<ExprListAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3121,7 +3596,7 @@ impl<'a> Iterator for Iterable<'a, ExprListAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => ExprListAttrs::Elem({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3135,14 +3610,15 @@ impl<'a> Iterator for Iterable<'a, ExprListAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprListAttrs",
             r#type.and_then(|t| ExprListAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprListAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprListAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprListAttrs");
         for attr in self.clone() {
@@ -3162,14 +3638,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprListAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprListAttrs<'a>> {
+impl IterableExprListAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprListAttrs", offset));
             return (
@@ -3202,7 +3678,6 @@ impl<'a> Iterable<'a, ExprListAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"expr-attrs\""]
 #[derive(Clone)]
 pub enum ExprAttrs<'a> {
     #[doc = "name of the expression type"]
@@ -3210,7 +3685,7 @@ pub enum ExprAttrs<'a> {
     #[doc = "type specific data"]
     Data(ExprOps<'a>),
 }
-impl<'a> Iterable<'a, ExprAttrs<'a>> {
+impl<'a> IterableExprAttrs<'a> {
     #[doc = "name of the expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -3220,7 +3695,12 @@ impl<'a> Iterable<'a, ExprAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "ExprAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "type specific data"]
     pub fn get_data(&self) -> Result<ExprOps<'a>, ErrorContext> {
@@ -3231,63 +3711,77 @@ impl<'a> Iterable<'a, ExprAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "ExprAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
-#[doc = "Original name: \"expr-ops\""]
 #[derive(Debug, Clone)]
 pub enum ExprOps<'a> {
-    Bitwise(Iterable<'a, ExprBitwiseAttrs<'a>>),
-    Cmp(Iterable<'a, ExprCmpAttrs<'a>>),
-    Counter(Iterable<'a, ExprCounterAttrs<'a>>),
-    Ct(Iterable<'a, ExprCtAttrs>),
-    Fib(Iterable<'a, ExprFibAttrs>),
-    FlowOffload(Iterable<'a, ExprFlowOffloadAttrs<'a>>),
-    Immediate(Iterable<'a, ExprImmediateAttrs<'a>>),
-    Lookup(Iterable<'a, ExprLookupAttrs<'a>>),
-    Meta(Iterable<'a, ExprMetaAttrs>),
-    Nat(Iterable<'a, ExprNatAttrs>),
-    Objref(Iterable<'a, ExprObjrefAttrs<'a>>),
-    Payload(Iterable<'a, ExprPayloadAttrs>),
-    Quota(Iterable<'a, QuotaAttrs<'a>>),
-    Reject(Iterable<'a, ExprRejectAttrs>),
-    Target(Iterable<'a, ExprTargetAttrs<'a>>),
-    Tproxy(Iterable<'a, ExprTproxyAttrs>),
-    Match(Iterable<'a, CompatMatchAttrs<'a>>),
-    Range(Iterable<'a, RangeAttrs<'a>>),
-    Numgen(Iterable<'a, NumgenAttrs>),
-    Log(Iterable<'a, LogAttrs<'a>>),
+    Bitwise(IterableExprBitwiseAttrs<'a>),
+    Cmp(IterableExprCmpAttrs<'a>),
+    Counter(IterableExprCounterAttrs<'a>),
+    Ct(IterableExprCtAttrs<'a>),
+    Fib(IterableExprFibAttrs<'a>),
+    FlowOffload(IterableExprFlowOffloadAttrs<'a>),
+    Immediate(IterableExprImmediateAttrs<'a>),
+    Lookup(IterableExprLookupAttrs<'a>),
+    Meta(IterableExprMetaAttrs<'a>),
+    Nat(IterableExprNatAttrs<'a>),
+    Objref(IterableExprObjrefAttrs<'a>),
+    Payload(IterableExprPayloadAttrs<'a>),
+    Quota(IterableQuotaAttrs<'a>),
+    Reject(IterableExprRejectAttrs<'a>),
+    Target(IterableExprTargetAttrs<'a>),
+    Tproxy(IterableExprTproxyAttrs<'a>),
+    Match(IterableCompatMatchAttrs<'a>),
+    Range(IterableRangeAttrs<'a>),
+    Numgen(IterableNumgenAttrs<'a>),
+    Log(IterableLogAttrs<'a>),
 }
 impl<'a> ExprOps<'a> {
     fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
-            b"bitwise" => Some(ExprOps::Bitwise(Iterable::with_loc(buf, loc))),
-            b"cmp" => Some(ExprOps::Cmp(Iterable::with_loc(buf, loc))),
-            b"counter" => Some(ExprOps::Counter(Iterable::with_loc(buf, loc))),
-            b"ct" => Some(ExprOps::Ct(Iterable::with_loc(buf, loc))),
-            b"fib" => Some(ExprOps::Fib(Iterable::with_loc(buf, loc))),
-            b"flow_offload" => Some(ExprOps::FlowOffload(Iterable::with_loc(buf, loc))),
-            b"immediate" => Some(ExprOps::Immediate(Iterable::with_loc(buf, loc))),
-            b"lookup" => Some(ExprOps::Lookup(Iterable::with_loc(buf, loc))),
-            b"meta" => Some(ExprOps::Meta(Iterable::with_loc(buf, loc))),
-            b"nat" => Some(ExprOps::Nat(Iterable::with_loc(buf, loc))),
-            b"objref" => Some(ExprOps::Objref(Iterable::with_loc(buf, loc))),
-            b"payload" => Some(ExprOps::Payload(Iterable::with_loc(buf, loc))),
-            b"quota" => Some(ExprOps::Quota(Iterable::with_loc(buf, loc))),
-            b"reject" => Some(ExprOps::Reject(Iterable::with_loc(buf, loc))),
-            b"target" => Some(ExprOps::Target(Iterable::with_loc(buf, loc))),
-            b"tproxy" => Some(ExprOps::Tproxy(Iterable::with_loc(buf, loc))),
-            b"match" => Some(ExprOps::Match(Iterable::with_loc(buf, loc))),
-            b"range" => Some(ExprOps::Range(Iterable::with_loc(buf, loc))),
-            b"numgen" => Some(ExprOps::Numgen(Iterable::with_loc(buf, loc))),
-            b"log" => Some(ExprOps::Log(Iterable::with_loc(buf, loc))),
+            b"bitwise" => Some(ExprOps::Bitwise(IterableExprBitwiseAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"cmp" => Some(ExprOps::Cmp(IterableExprCmpAttrs::with_loc(buf, loc))),
+            b"counter" => Some(ExprOps::Counter(IterableExprCounterAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"ct" => Some(ExprOps::Ct(IterableExprCtAttrs::with_loc(buf, loc))),
+            b"fib" => Some(ExprOps::Fib(IterableExprFibAttrs::with_loc(buf, loc))),
+            b"flow_offload" => Some(ExprOps::FlowOffload(
+                IterableExprFlowOffloadAttrs::with_loc(buf, loc),
+            )),
+            b"immediate" => Some(ExprOps::Immediate(IterableExprImmediateAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"lookup" => Some(ExprOps::Lookup(IterableExprLookupAttrs::with_loc(buf, loc))),
+            b"meta" => Some(ExprOps::Meta(IterableExprMetaAttrs::with_loc(buf, loc))),
+            b"nat" => Some(ExprOps::Nat(IterableExprNatAttrs::with_loc(buf, loc))),
+            b"objref" => Some(ExprOps::Objref(IterableExprObjrefAttrs::with_loc(buf, loc))),
+            b"payload" => Some(ExprOps::Payload(IterableExprPayloadAttrs::with_loc(
+                buf, loc,
+            ))),
+            b"quota" => Some(ExprOps::Quota(IterableQuotaAttrs::with_loc(buf, loc))),
+            b"reject" => Some(ExprOps::Reject(IterableExprRejectAttrs::with_loc(buf, loc))),
+            b"target" => Some(ExprOps::Target(IterableExprTargetAttrs::with_loc(buf, loc))),
+            b"tproxy" => Some(ExprOps::Tproxy(IterableExprTproxyAttrs::with_loc(buf, loc))),
+            b"match" => Some(ExprOps::Match(IterableCompatMatchAttrs::with_loc(buf, loc))),
+            b"range" => Some(ExprOps::Range(IterableRangeAttrs::with_loc(buf, loc))),
+            b"numgen" => Some(ExprOps::Numgen(IterableNumgenAttrs::with_loc(buf, loc))),
+            b"log" => Some(ExprOps::Log(IterableLogAttrs::with_loc(buf, loc))),
             _ => None,
         }
     }
 }
 impl<'a> ExprAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprAttrs<'a> {
+        IterableExprAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3298,7 +3792,25 @@ impl<'a> ExprAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprAttrs<'a> {
     type Item = Result<ExprAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3332,14 +3844,15 @@ impl<'a> Iterator for Iterable<'a, ExprAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprAttrs",
             r#type.and_then(|t| ExprAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprAttrs");
         for attr in self.clone() {
@@ -3360,14 +3873,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprAttrs<'a>> {
+impl IterableExprAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprAttrs", offset));
             return (
@@ -3405,7 +3918,6 @@ impl<'a> Iterable<'a, ExprAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"rule-compat-attrs\""]
 #[derive(Clone)]
 pub enum RuleCompatAttrs {
     #[doc = "numeric value of the handled protocol"]
@@ -3413,7 +3925,7 @@ pub enum RuleCompatAttrs {
     #[doc = "bitmask of flags"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, RuleCompatAttrs> {
+impl<'a> IterableRuleCompatAttrs<'a> {
     #[doc = "numeric value of the handled protocol"]
     pub fn get_proto(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -3423,7 +3935,12 @@ impl<'a> Iterable<'a, RuleCompatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleCompatAttrs", "Proto"))
+        Err(ErrorContext::new_missing(
+            "RuleCompatAttrs",
+            "Proto",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of flags"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -3434,12 +3951,17 @@ impl<'a> Iterable<'a, RuleCompatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("RuleCompatAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "RuleCompatAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl RuleCompatAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, RuleCompatAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableRuleCompatAttrs<'_> {
+        IterableRuleCompatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3450,7 +3972,25 @@ impl RuleCompatAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, RuleCompatAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableRuleCompatAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableRuleCompatAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableRuleCompatAttrs<'a> {
     type Item = Result<RuleCompatAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3481,14 +4021,15 @@ impl Iterator for Iterable<'_, RuleCompatAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "RuleCompatAttrs",
             r#type.and_then(|t| RuleCompatAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, RuleCompatAttrs> {
+impl std::fmt::Debug for IterableRuleCompatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RuleCompatAttrs");
         for attr in self.clone() {
@@ -3509,14 +4050,14 @@ impl std::fmt::Debug for Iterable<'_, RuleCompatAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, RuleCompatAttrs> {
+impl IterableRuleCompatAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RuleCompatAttrs", offset));
             return (
@@ -3554,7 +4095,6 @@ impl Iterable<'_, RuleCompatAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"set-attrs\""]
 #[derive(Clone)]
 pub enum SetAttrs<'a> {
     #[doc = "table name"]
@@ -3574,7 +4114,7 @@ pub enum SetAttrs<'a> {
     #[doc = "selection policy"]
     Policy(u32),
     #[doc = "set description"]
-    Desc(Iterable<'a, SetDescAttrs<'a>>),
+    Desc(IterableSetDescAttrs<'a>),
     #[doc = "uniquely identifies a set in a transaction"]
     Id(u32),
     #[doc = "default timeout value"]
@@ -3589,15 +4129,15 @@ pub enum SetAttrs<'a> {
     #[doc = "set handle"]
     Handle(u64),
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
-    Expr(Iterable<'a, ExprAttrs<'a>>),
+    Expr(IterableExprAttrs<'a>),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, SetListAttrs<'a>>),
+    Expressions(IterableSetListAttrs<'a>),
     #[doc = "set backend type"]
     Type(&'a CStr),
     #[doc = "number of set elements"]
     Count(u32),
 }
-impl<'a> Iterable<'a, SetAttrs<'a>> {
+impl<'a> IterableSetAttrs<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -3607,7 +4147,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -3618,7 +4163,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of enum nft_set_flags\nAssociated type: \"SetFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -3629,7 +4179,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data type, informational purpose only"]
     pub fn get_key_type(&self) -> Result<u32, ErrorContext> {
@@ -3640,7 +4195,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "KeyType"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "KeyType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data length"]
     pub fn get_key_len(&self) -> Result<u32, ErrorContext> {
@@ -3651,7 +4211,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "KeyLen"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "KeyLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data type"]
     pub fn get_data_type(&self) -> Result<u32, ErrorContext> {
@@ -3662,7 +4227,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "DataType"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "DataType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data length"]
     pub fn get_data_len(&self) -> Result<u32, ErrorContext> {
@@ -3673,7 +4243,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "DataLen"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "DataLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "selection policy"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -3684,10 +4259,15 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Policy"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set description"]
-    pub fn get_desc(&self) -> Result<Iterable<'a, SetDescAttrs<'a>>, ErrorContext> {
+    pub fn get_desc(&self) -> Result<IterableSetDescAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3695,7 +4275,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Desc"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Desc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a set in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -3706,7 +4291,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "default timeout value"]
     pub fn get_timeout(&self) -> Result<u64, ErrorContext> {
@@ -3717,7 +4307,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Timeout"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Timeout",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "garbage collection interval"]
     pub fn get_gc_interval(&self) -> Result<u32, ErrorContext> {
@@ -3728,7 +4323,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "GcInterval"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "GcInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -3739,7 +4339,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -3749,7 +4354,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type"]
     pub fn get_obj_type(&self) -> Result<u32, ErrorContext> {
@@ -3760,7 +4370,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "ObjType"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "ObjType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -3771,10 +4386,15 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Handle"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
-    pub fn get_expr(&self) -> MultiAttrIterable<Self, SetAttrs<'a>, Iterable<'a, ExprAttrs<'a>>> {
+    pub fn get_expr(&self) -> MultiAttrIterable<Self, SetAttrs<'a>, IterableExprAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let SetAttrs::Expr(val) = variant {
                 Some(val)
@@ -3784,7 +4404,7 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
         })
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, SetListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableSetListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3792,7 +4412,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set backend type"]
     pub fn get_type(&self) -> Result<&'a CStr, ErrorContext> {
@@ -3803,7 +4428,12 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of set elements"]
     pub fn get_count(&self) -> Result<u32, ErrorContext> {
@@ -3814,12 +4444,17 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetAttrs", "Count"))
+        Err(ErrorContext::new_missing(
+            "SetAttrs",
+            "Count",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> SetAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetAttrs<'a> {
+        IterableSetAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -3848,7 +4483,25 @@ impl<'a> SetAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetAttrs<'a> {
     type Item = Result<SetAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -3900,7 +4553,7 @@ impl<'a> Iterator for Iterable<'a, SetAttrs<'a>> {
                     val
                 }),
                 9u16 => SetAttrs::Desc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetDescAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3940,12 +4593,12 @@ impl<'a> Iterator for Iterable<'a, SetAttrs<'a>> {
                     val
                 }),
                 17u16 => SetAttrs::Expr({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 18u16 => SetAttrs::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3969,14 +4622,15 @@ impl<'a> Iterator for Iterable<'a, SetAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetAttrs",
             r#type.and_then(|t| SetAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetAttrs");
         for attr in self.clone() {
@@ -4017,14 +4671,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetAttrs<'a>> {
+impl IterableSetAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetAttrs", offset));
             return (
@@ -4171,15 +4825,14 @@ impl<'a> Iterable<'a, SetAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"set-desc-attrs\""]
 #[derive(Clone)]
 pub enum SetDescAttrs<'a> {
     #[doc = "number of elements in set"]
     Size(u32),
     #[doc = "description of field concatenation\nAttribute may repeat multiple times (treat it as array)"]
-    Concat(Iterable<'a, SetDescConcatAttrs<'a>>),
+    Concat(IterableSetDescConcatAttrs<'a>),
 }
-impl<'a> Iterable<'a, SetDescAttrs<'a>> {
+impl<'a> IterableSetDescAttrs<'a> {
     #[doc = "number of elements in set"]
     pub fn get_size(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -4189,12 +4842,17 @@ impl<'a> Iterable<'a, SetDescAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetDescAttrs", "Size"))
+        Err(ErrorContext::new_missing(
+            "SetDescAttrs",
+            "Size",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "description of field concatenation\nAttribute may repeat multiple times (treat it as array)"]
     pub fn get_concat(
         &self,
-    ) -> MultiAttrIterable<Self, SetDescAttrs<'a>, Iterable<'a, SetDescConcatAttrs<'a>>> {
+    ) -> MultiAttrIterable<Self, SetDescAttrs<'a>, IterableSetDescConcatAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let SetDescAttrs::Concat(val) = variant {
                 Some(val)
@@ -4205,8 +4863,8 @@ impl<'a> Iterable<'a, SetDescAttrs<'a>> {
     }
 }
 impl<'a> SetDescAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetDescAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetDescAttrs<'a> {
+        IterableSetDescAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4217,7 +4875,25 @@ impl<'a> SetDescAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetDescAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetDescAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetDescAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetDescAttrs<'a> {
     type Item = Result<SetDescAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4234,7 +4910,7 @@ impl<'a> Iterator for Iterable<'a, SetDescAttrs<'a>> {
                     val
                 }),
                 2u16 => SetDescAttrs::Concat({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetDescConcatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4248,14 +4924,15 @@ impl<'a> Iterator for Iterable<'a, SetDescAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetDescAttrs",
             r#type.and_then(|t| SetDescAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetDescAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetDescAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetDescAttrs");
         for attr in self.clone() {
@@ -4276,14 +4953,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetDescAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetDescAttrs<'a>> {
+impl IterableSetDescAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetDescAttrs", offset));
             return (
@@ -4322,13 +4999,12 @@ impl<'a> Iterable<'a, SetDescAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"set-desc-concat-attrs\""]
 #[derive(Clone)]
 pub enum SetDescConcatAttrs<'a> {
-    Elem(Iterable<'a, SetFieldAttrs>),
+    Elem(IterableSetFieldAttrs<'a>),
 }
-impl<'a> Iterable<'a, SetDescConcatAttrs<'a>> {
-    pub fn get_elem(&self) -> Result<Iterable<'a, SetFieldAttrs>, ErrorContext> {
+impl<'a> IterableSetDescConcatAttrs<'a> {
+    pub fn get_elem(&self) -> Result<IterableSetFieldAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4336,12 +5012,17 @@ impl<'a> Iterable<'a, SetDescConcatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetDescConcatAttrs", "Elem"))
+        Err(ErrorContext::new_missing(
+            "SetDescConcatAttrs",
+            "Elem",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> SetDescConcatAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetDescConcatAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetDescConcatAttrs<'a> {
+        IterableSetDescConcatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4351,7 +5032,25 @@ impl<'a> SetDescConcatAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetDescConcatAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetDescConcatAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetDescConcatAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetDescConcatAttrs<'a> {
     type Item = Result<SetDescConcatAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4363,7 +5062,7 @@ impl<'a> Iterator for Iterable<'a, SetDescConcatAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => SetDescConcatAttrs::Elem({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetFieldAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4377,14 +5076,15 @@ impl<'a> Iterator for Iterable<'a, SetDescConcatAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetDescConcatAttrs",
             r#type.and_then(|t| SetDescConcatAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetDescConcatAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetDescConcatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetDescConcatAttrs");
         for attr in self.clone() {
@@ -4404,14 +5104,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetDescConcatAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetDescConcatAttrs<'a>> {
+impl IterableSetDescConcatAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetDescConcatAttrs", offset));
             return (
@@ -4444,12 +5144,11 @@ impl<'a> Iterable<'a, SetDescConcatAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"set-field-attrs\""]
 #[derive(Clone)]
 pub enum SetFieldAttrs {
     Len(u32),
 }
-impl<'a> Iterable<'a, SetFieldAttrs> {
+impl<'a> IterableSetFieldAttrs<'a> {
     pub fn get_len(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -4458,12 +5157,17 @@ impl<'a> Iterable<'a, SetFieldAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetFieldAttrs", "Len"))
+        Err(ErrorContext::new_missing(
+            "SetFieldAttrs",
+            "Len",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl SetFieldAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, SetFieldAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableSetFieldAttrs<'_> {
+        IterableSetFieldAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4473,7 +5177,25 @@ impl SetFieldAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, SetFieldAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetFieldAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetFieldAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetFieldAttrs<'a> {
     type Item = Result<SetFieldAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4499,14 +5221,15 @@ impl Iterator for Iterable<'_, SetFieldAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetFieldAttrs",
             r#type.and_then(|t| SetFieldAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, SetFieldAttrs> {
+impl std::fmt::Debug for IterableSetFieldAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetFieldAttrs");
         for attr in self.clone() {
@@ -4526,14 +5249,14 @@ impl std::fmt::Debug for Iterable<'_, SetFieldAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, SetFieldAttrs> {
+impl IterableSetFieldAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetFieldAttrs", offset));
             return (
@@ -4565,17 +5288,14 @@ impl Iterable<'_, SetFieldAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"set-list-attrs\""]
 #[derive(Clone)]
 pub enum SetListAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    Elem(Iterable<'a, ExprAttrs<'a>>),
+    Elem(IterableExprAttrs<'a>),
 }
-impl<'a> Iterable<'a, SetListAttrs<'a>> {
+impl<'a> IterableSetListAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn get_elem(
-        &self,
-    ) -> MultiAttrIterable<Self, SetListAttrs<'a>, Iterable<'a, ExprAttrs<'a>>> {
+    pub fn get_elem(&self) -> MultiAttrIterable<Self, SetListAttrs<'a>, IterableExprAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let SetListAttrs::Elem(val) = variant {
                 Some(val)
@@ -4586,8 +5306,8 @@ impl<'a> Iterable<'a, SetListAttrs<'a>> {
     }
 }
 impl<'a> SetListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetListAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetListAttrs<'a> {
+        IterableSetListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4597,7 +5317,25 @@ impl<'a> SetListAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetListAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetListAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetListAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetListAttrs<'a> {
     type Item = Result<SetListAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4609,7 +5347,7 @@ impl<'a> Iterator for Iterable<'a, SetListAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => SetListAttrs::Elem({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4623,14 +5361,15 @@ impl<'a> Iterator for Iterable<'a, SetListAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetListAttrs",
             r#type.and_then(|t| SetListAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetListAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetListAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetListAttrs");
         for attr in self.clone() {
@@ -4650,14 +5389,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetListAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetListAttrs<'a>> {
+impl IterableSetListAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetListAttrs", offset));
             return (
@@ -4690,13 +5429,12 @@ impl<'a> Iterable<'a, SetListAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"setelem-attrs\""]
 #[derive(Clone)]
 pub enum SetelemAttrs<'a> {
     #[doc = "key value"]
-    Key(Iterable<'a, DataAttrs<'a>>),
+    Key(IterableDataAttrs<'a>),
     #[doc = "data value of mapping"]
-    Data(Iterable<'a, DataAttrs<'a>>),
+    Data(IterableDataAttrs<'a>),
     #[doc = "bitmask of nft_set_elem_flags"]
     Flags(&'a [u8]),
     #[doc = "timeout value"]
@@ -4706,17 +5444,17 @@ pub enum SetelemAttrs<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
     #[doc = "expression"]
-    Expr(Iterable<'a, ExprAttrs<'a>>),
+    Expr(IterableExprAttrs<'a>),
     #[doc = "stateful object reference"]
     Objref(&'a CStr),
     #[doc = "closing key value"]
-    KeyEnd(Iterable<'a, DataAttrs<'a>>),
+    KeyEnd(IterableDataAttrs<'a>),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
 }
-impl<'a> Iterable<'a, SetelemAttrs<'a>> {
+impl<'a> IterableSetelemAttrs<'a> {
     #[doc = "key value"]
-    pub fn get_key(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_key(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4724,10 +5462,15 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Key"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Key",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "data value of mapping"]
-    pub fn get_data(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_data(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4735,7 +5478,12 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of nft_set_elem_flags"]
     pub fn get_flags(&self) -> Result<&'a [u8], ErrorContext> {
@@ -4746,7 +5494,12 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "timeout value"]
     pub fn get_timeout(&self) -> Result<u64, ErrorContext> {
@@ -4757,7 +5510,12 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Timeout"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Timeout",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "expiration time"]
     pub fn get_expiration(&self) -> Result<u64, ErrorContext> {
@@ -4768,7 +5526,12 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Expiration"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Expiration",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -4779,10 +5542,15 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "expression"]
-    pub fn get_expr(&self) -> Result<Iterable<'a, ExprAttrs<'a>>, ErrorContext> {
+    pub fn get_expr(&self) -> Result<IterableExprAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4790,7 +5558,12 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Expr"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Expr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object reference"]
     pub fn get_objref(&self) -> Result<&'a CStr, ErrorContext> {
@@ -4801,10 +5574,15 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Objref"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Objref",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "closing key value"]
-    pub fn get_key_end(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_key_end(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4812,10 +5590,15 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "KeyEnd"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "KeyEnd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4823,12 +5606,17 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemAttrs", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "SetelemAttrs",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> SetelemAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetelemAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetelemAttrs<'a> {
+        IterableSetelemAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -4847,7 +5635,25 @@ impl<'a> SetelemAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetelemAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetelemAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetelemAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetelemAttrs<'a> {
     type Item = Result<SetelemAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -4859,12 +5665,12 @@ impl<'a> Iterator for Iterable<'a, SetelemAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => SetelemAttrs::Key({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 2u16 => SetelemAttrs::Data({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4889,7 +5695,7 @@ impl<'a> Iterator for Iterable<'a, SetelemAttrs<'a>> {
                     val
                 }),
                 7u16 => SetelemAttrs::Expr({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4899,12 +5705,12 @@ impl<'a> Iterator for Iterable<'a, SetelemAttrs<'a>> {
                     val
                 }),
                 9u16 => SetelemAttrs::KeyEnd({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 10u16 => SetelemAttrs::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4918,14 +5724,15 @@ impl<'a> Iterator for Iterable<'a, SetelemAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetelemAttrs",
             r#type.and_then(|t| SetelemAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetelemAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetelemAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetelemAttrs");
         for attr in self.clone() {
@@ -4954,14 +5761,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetelemAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetelemAttrs<'a>> {
+impl IterableSetelemAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetelemAttrs", offset));
             return (
@@ -5048,17 +5855,16 @@ impl<'a> Iterable<'a, SetelemAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"setelem-list-elem-attrs\""]
 #[derive(Clone)]
 pub enum SetelemListElemAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    Elem(Iterable<'a, SetelemAttrs<'a>>),
+    Elem(IterableSetelemAttrs<'a>),
 }
-impl<'a> Iterable<'a, SetelemListElemAttrs<'a>> {
+impl<'a> IterableSetelemListElemAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_elem(
         &self,
-    ) -> MultiAttrIterable<Self, SetelemListElemAttrs<'a>, Iterable<'a, SetelemAttrs<'a>>> {
+    ) -> MultiAttrIterable<Self, SetelemListElemAttrs<'a>, IterableSetelemAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let SetelemListElemAttrs::Elem(val) = variant {
                 Some(val)
@@ -5069,8 +5875,8 @@ impl<'a> Iterable<'a, SetelemListElemAttrs<'a>> {
     }
 }
 impl<'a> SetelemListElemAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetelemListElemAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetelemListElemAttrs<'a> {
+        IterableSetelemListElemAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5080,7 +5886,25 @@ impl<'a> SetelemListElemAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetelemListElemAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetelemListElemAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetelemListElemAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetelemListElemAttrs<'a> {
     type Item = Result<SetelemListElemAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5092,7 +5916,7 @@ impl<'a> Iterator for Iterable<'a, SetelemListElemAttrs<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 1u16 => SetelemListElemAttrs::Elem({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5106,14 +5930,15 @@ impl<'a> Iterator for Iterable<'a, SetelemListElemAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetelemListElemAttrs",
             r#type.and_then(|t| SetelemListElemAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetelemListElemAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetelemListElemAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetelemListElemAttrs");
         for attr in self.clone() {
@@ -5133,14 +5958,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetelemListElemAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetelemListElemAttrs<'a>> {
+impl IterableSetelemListElemAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetelemListElemAttrs", offset));
             return (
@@ -5173,15 +5998,14 @@ impl<'a> Iterable<'a, SetelemListElemAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"setelem-list-attrs\""]
 #[derive(Clone)]
 pub enum SetelemListAttrs<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
     SetId(u32),
 }
-impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
+impl<'a> IterableSetelemListAttrs<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -5190,7 +6014,12 @@ impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemListAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "SetelemListAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -5200,9 +6029,14 @@ impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemListAttrs", "Set"))
+        Err(ErrorContext::new_missing(
+            "SetelemListAttrs",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5210,7 +6044,12 @@ impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemListAttrs", "Elements"))
+        Err(ErrorContext::new_missing(
+            "SetelemListAttrs",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5220,12 +6059,17 @@ impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("SetelemListAttrs", "SetId"))
+        Err(ErrorContext::new_missing(
+            "SetelemListAttrs",
+            "SetId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> SetelemListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, SetelemListAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableSetelemListAttrs<'a> {
+        IterableSetelemListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5238,7 +6082,25 @@ impl<'a> SetelemListAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, SetelemListAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableSetelemListAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSetelemListAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSetelemListAttrs<'a> {
     type Item = Result<SetelemListAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5260,7 +6122,7 @@ impl<'a> Iterator for Iterable<'a, SetelemListAttrs<'a>> {
                     val
                 }),
                 3u16 => SetelemListAttrs::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5279,14 +6141,15 @@ impl<'a> Iterator for Iterable<'a, SetelemListAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "SetelemListAttrs",
             r#type.and_then(|t| SetelemListAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, SetelemListAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableSetelemListAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SetelemListAttrs");
         for attr in self.clone() {
@@ -5309,14 +6172,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, SetelemListAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
+impl IterableSetelemListAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetelemListAttrs", offset));
             return (
@@ -5367,7 +6230,6 @@ impl<'a> Iterable<'a, SetelemListAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"gen-attrs\""]
 #[derive(Clone)]
 pub enum GenAttrs<'a> {
     #[doc = "ruleset generation id"]
@@ -5375,7 +6237,7 @@ pub enum GenAttrs<'a> {
     ProcPid(u32),
     ProcName(&'a CStr),
 }
-impl<'a> Iterable<'a, GenAttrs<'a>> {
+impl<'a> IterableGenAttrs<'a> {
     #[doc = "ruleset generation id"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5385,7 +6247,12 @@ impl<'a> Iterable<'a, GenAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("GenAttrs", "Id"))
+        Err(ErrorContext::new_missing(
+            "GenAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proc_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -5395,7 +6262,12 @@ impl<'a> Iterable<'a, GenAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("GenAttrs", "ProcPid"))
+        Err(ErrorContext::new_missing(
+            "GenAttrs",
+            "ProcPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proc_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -5405,12 +6277,17 @@ impl<'a> Iterable<'a, GenAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("GenAttrs", "ProcName"))
+        Err(ErrorContext::new_missing(
+            "GenAttrs",
+            "ProcName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> GenAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, GenAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableGenAttrs<'a> {
+        IterableGenAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5422,7 +6299,25 @@ impl<'a> GenAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, GenAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableGenAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableGenAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableGenAttrs<'a> {
     type Item = Result<GenAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5458,14 +6353,15 @@ impl<'a> Iterator for Iterable<'a, GenAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "GenAttrs",
             r#type.and_then(|t| GenAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, GenAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableGenAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("GenAttrs");
         for attr in self.clone() {
@@ -5487,14 +6383,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, GenAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, GenAttrs<'a>> {
+impl IterableGenAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("GenAttrs", offset));
             return (
@@ -5538,7 +6434,6 @@ impl<'a> Iterable<'a, GenAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"obj-attrs\""]
 #[derive(Clone)]
 pub enum ObjAttrs<'a> {
     #[doc = "name of the table containing the expression"]
@@ -5557,7 +6452,7 @@ pub enum ObjAttrs<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, ObjAttrs<'a>> {
+impl<'a> IterableObjAttrs<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -5567,7 +6462,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -5578,7 +6478,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -5589,7 +6494,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object data"]
     pub fn get_data(&self) -> Result<ObjData<'a>, ErrorContext> {
@@ -5600,7 +6510,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of references to this expression"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -5611,7 +6526,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Use"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "object handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -5622,7 +6542,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Handle"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5632,7 +6557,12 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -5643,31 +6573,35 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ObjAttrs", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "ObjAttrs",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
-#[doc = "Original name: \"obj-data\""]
 #[derive(Debug, Clone)]
 pub enum ObjData<'a> {
-    Counter(Iterable<'a, CounterAttrs<'a>>),
-    Quota(Iterable<'a, QuotaAttrs<'a>>),
+    Counter(IterableCounterAttrs<'a>),
+    Quota(IterableQuotaAttrs<'a>),
 }
 impl<'a> ObjData<'a> {
     fn select_with_loc(selector: u32, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector {
             val if val == ObjectType::Counter as u32 => {
-                Some(ObjData::Counter(Iterable::with_loc(buf, loc)))
+                Some(ObjData::Counter(IterableCounterAttrs::with_loc(buf, loc)))
             }
             val if val == ObjectType::Quota as u32 => {
-                Some(ObjData::Quota(Iterable::with_loc(buf, loc)))
+                Some(ObjData::Quota(IterableQuotaAttrs::with_loc(buf, loc)))
             }
             _ => None,
         }
     }
 }
 impl<'a> ObjAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ObjAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableObjAttrs<'a> {
+        IterableObjAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5684,7 +6618,25 @@ impl<'a> ObjAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ObjAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableObjAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableObjAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableObjAttrs<'a> {
     type Item = Result<ObjAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5748,14 +6700,15 @@ impl<'a> Iterator for Iterable<'a, ObjAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ObjAttrs",
             r#type.and_then(|t| ObjAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ObjAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableObjAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ObjAttrs");
         for attr in self.clone() {
@@ -5784,14 +6737,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ObjAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ObjAttrs<'a>> {
+impl IterableObjAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ObjAttrs", offset));
             return (
@@ -5865,7 +6818,6 @@ impl<'a> Iterable<'a, ObjAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"quota-attrs\""]
 #[derive(Clone)]
 pub enum QuotaAttrs<'a> {
     Bytes(u64),
@@ -5874,7 +6826,7 @@ pub enum QuotaAttrs<'a> {
     Pad(&'a [u8]),
     Consumed(u64),
 }
-impl<'a> Iterable<'a, QuotaAttrs<'a>> {
+impl<'a> IterableQuotaAttrs<'a> {
     pub fn get_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -5883,7 +6835,12 @@ impl<'a> Iterable<'a, QuotaAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("QuotaAttrs", "Bytes"))
+        Err(ErrorContext::new_missing(
+            "QuotaAttrs",
+            "Bytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"QuotaFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -5894,7 +6851,12 @@ impl<'a> Iterable<'a, QuotaAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("QuotaAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "QuotaAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -5904,7 +6866,12 @@ impl<'a> Iterable<'a, QuotaAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("QuotaAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "QuotaAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_consumed(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -5914,12 +6881,17 @@ impl<'a> Iterable<'a, QuotaAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("QuotaAttrs", "Consumed"))
+        Err(ErrorContext::new_missing(
+            "QuotaAttrs",
+            "Consumed",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> QuotaAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, QuotaAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableQuotaAttrs<'a> {
+        IterableQuotaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -5932,7 +6904,25 @@ impl<'a> QuotaAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, QuotaAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableQuotaAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableQuotaAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableQuotaAttrs<'a> {
     type Item = Result<QuotaAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -5973,14 +6963,15 @@ impl<'a> Iterator for Iterable<'a, QuotaAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "QuotaAttrs",
             r#type.and_then(|t| QuotaAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, QuotaAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableQuotaAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("QuotaAttrs");
         for attr in self.clone() {
@@ -6005,14 +6996,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, QuotaAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, QuotaAttrs<'a>> {
+impl IterableQuotaAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("QuotaAttrs", offset));
             return (
@@ -6062,18 +7053,17 @@ impl<'a> Iterable<'a, QuotaAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"flowtable-attrs\""]
 #[derive(Clone)]
 pub enum FlowtableAttrs<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
-    Hook(Iterable<'a, FlowtableHookAttrs<'a>>),
+    Hook(IterableFlowtableHookAttrs<'a>),
     Use(u32),
     Handle(u64),
     Pad(&'a [u8]),
     Flags(u32),
 }
-impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
+impl<'a> IterableFlowtableAttrs<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6082,7 +7072,12 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Table"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -6092,9 +7087,14 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_hook(&self) -> Result<Iterable<'a, FlowtableHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableFlowtableHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6102,7 +7102,12 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Hook"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6112,7 +7117,12 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Use"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -6122,7 +7132,12 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Handle"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -6132,7 +7147,12 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6142,12 +7162,17 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "FlowtableAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> FlowtableAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, FlowtableAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableFlowtableAttrs<'a> {
+        IterableFlowtableAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -6163,7 +7188,25 @@ impl<'a> FlowtableAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, FlowtableAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableFlowtableAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableFlowtableAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableFlowtableAttrs<'a> {
     type Item = Result<FlowtableAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6185,7 +7228,7 @@ impl<'a> Iterator for Iterable<'a, FlowtableAttrs<'a>> {
                     val
                 }),
                 3u16 => FlowtableAttrs::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableFlowtableHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6219,14 +7262,15 @@ impl<'a> Iterator for Iterable<'a, FlowtableAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "FlowtableAttrs",
             r#type.and_then(|t| FlowtableAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, FlowtableAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableFlowtableAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowtableAttrs");
         for attr in self.clone() {
@@ -6252,14 +7296,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowtableAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
+impl IterableFlowtableAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("FlowtableAttrs", offset));
             return (
@@ -6328,14 +7372,13 @@ impl<'a> Iterable<'a, FlowtableAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"flowtable-hook-attrs\""]
 #[derive(Clone)]
 pub enum FlowtableHookAttrs<'a> {
     Num(u32),
     Priority(u32),
-    Devs(Iterable<'a, HookDevAttrs<'a>>),
+    Devs(IterableHookDevAttrs<'a>),
 }
-impl<'a> Iterable<'a, FlowtableHookAttrs<'a>> {
+impl<'a> IterableFlowtableHookAttrs<'a> {
     pub fn get_num(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6344,7 +7387,12 @@ impl<'a> Iterable<'a, FlowtableHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableHookAttrs", "Num"))
+        Err(ErrorContext::new_missing(
+            "FlowtableHookAttrs",
+            "Num",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_priority(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6354,9 +7402,14 @@ impl<'a> Iterable<'a, FlowtableHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableHookAttrs", "Priority"))
+        Err(ErrorContext::new_missing(
+            "FlowtableHookAttrs",
+            "Priority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_devs(&self) -> Result<Iterable<'a, HookDevAttrs<'a>>, ErrorContext> {
+    pub fn get_devs(&self) -> Result<IterableHookDevAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6364,12 +7417,17 @@ impl<'a> Iterable<'a, FlowtableHookAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("FlowtableHookAttrs", "Devs"))
+        Err(ErrorContext::new_missing(
+            "FlowtableHookAttrs",
+            "Devs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> FlowtableHookAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, FlowtableHookAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableFlowtableHookAttrs<'a> {
+        IterableFlowtableHookAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -6381,7 +7439,25 @@ impl<'a> FlowtableHookAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, FlowtableHookAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableFlowtableHookAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableFlowtableHookAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableFlowtableHookAttrs<'a> {
     type Item = Result<FlowtableHookAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6403,7 +7479,7 @@ impl<'a> Iterator for Iterable<'a, FlowtableHookAttrs<'a>> {
                     val
                 }),
                 3u16 => FlowtableHookAttrs::Devs({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableHookDevAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6417,14 +7493,15 @@ impl<'a> Iterator for Iterable<'a, FlowtableHookAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "FlowtableHookAttrs",
             r#type.and_then(|t| FlowtableHookAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, FlowtableHookAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableFlowtableHookAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowtableHookAttrs");
         for attr in self.clone() {
@@ -6446,14 +7523,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, FlowtableHookAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, FlowtableHookAttrs<'a>> {
+impl IterableFlowtableHookAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("FlowtableHookAttrs", offset));
             return (
@@ -6498,19 +7575,18 @@ impl<'a> Iterable<'a, FlowtableHookAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"expr-bitwise-attrs\""]
 #[derive(Clone)]
 pub enum ExprBitwiseAttrs<'a> {
     Sreg(u32),
     Dreg(u32),
     Len(u32),
-    Mask(Iterable<'a, DataAttrs<'a>>),
-    Xor(Iterable<'a, DataAttrs<'a>>),
+    Mask(IterableDataAttrs<'a>),
+    Xor(IterableDataAttrs<'a>),
     #[doc = "Associated type: \"BitwiseOps\" (enum)"]
     Op(u32),
-    Data(Iterable<'a, DataAttrs<'a>>),
+    Data(IterableDataAttrs<'a>),
 }
-impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
+impl<'a> IterableExprBitwiseAttrs<'a> {
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6519,7 +7595,12 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6529,7 +7610,12 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_len(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -6539,9 +7625,14 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Len"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Len",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_mask(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_mask(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6549,9 +7640,14 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Mask"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Mask",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_xor(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_xor(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6559,7 +7655,12 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Xor"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Xor",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"BitwiseOps\" (enum)"]
     pub fn get_op(&self) -> Result<u32, ErrorContext> {
@@ -6570,9 +7671,14 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Op"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Op",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_data(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_data(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6580,12 +7686,17 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprBitwiseAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprBitwiseAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprBitwiseAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprBitwiseAttrs<'a> {
+        IterableExprBitwiseAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -6601,7 +7712,25 @@ impl<'a> ExprBitwiseAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprBitwiseAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprBitwiseAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprBitwiseAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprBitwiseAttrs<'a> {
     type Item = Result<ExprBitwiseAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6628,12 +7757,12 @@ impl<'a> Iterator for Iterable<'a, ExprBitwiseAttrs<'a>> {
                     val
                 }),
                 4u16 => ExprBitwiseAttrs::Mask({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => ExprBitwiseAttrs::Xor({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6643,7 +7772,7 @@ impl<'a> Iterator for Iterable<'a, ExprBitwiseAttrs<'a>> {
                     val
                 }),
                 7u16 => ExprBitwiseAttrs::Data({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6657,14 +7786,15 @@ impl<'a> Iterator for Iterable<'a, ExprBitwiseAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprBitwiseAttrs",
             r#type.and_then(|t| ExprBitwiseAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprBitwiseAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprBitwiseAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprBitwiseAttrs");
         for attr in self.clone() {
@@ -6692,14 +7822,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprBitwiseAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
+impl IterableExprBitwiseAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprBitwiseAttrs", offset));
             return (
@@ -6768,15 +7898,14 @@ impl<'a> Iterable<'a, ExprBitwiseAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"expr-cmp-attrs\""]
 #[derive(Clone)]
 pub enum ExprCmpAttrs<'a> {
     Sreg(u32),
     #[doc = "Associated type: \"CmpOps\" (enum)"]
     Op(u32),
-    Data(Iterable<'a, DataAttrs<'a>>),
+    Data(IterableDataAttrs<'a>),
 }
-impl<'a> Iterable<'a, ExprCmpAttrs<'a>> {
+impl<'a> IterableExprCmpAttrs<'a> {
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6785,7 +7914,12 @@ impl<'a> Iterable<'a, ExprCmpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCmpAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "ExprCmpAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"CmpOps\" (enum)"]
     pub fn get_op(&self) -> Result<u32, ErrorContext> {
@@ -6796,9 +7930,14 @@ impl<'a> Iterable<'a, ExprCmpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCmpAttrs", "Op"))
+        Err(ErrorContext::new_missing(
+            "ExprCmpAttrs",
+            "Op",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_data(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_data(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6806,12 +7945,17 @@ impl<'a> Iterable<'a, ExprCmpAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCmpAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "ExprCmpAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprCmpAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprCmpAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprCmpAttrs<'a> {
+        IterableExprCmpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -6823,7 +7967,25 @@ impl<'a> ExprCmpAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprCmpAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprCmpAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprCmpAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprCmpAttrs<'a> {
     type Item = Result<ExprCmpAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -6845,7 +8007,7 @@ impl<'a> Iterator for Iterable<'a, ExprCmpAttrs<'a>> {
                     val
                 }),
                 3u16 => ExprCmpAttrs::Data({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -6859,14 +8021,15 @@ impl<'a> Iterator for Iterable<'a, ExprCmpAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprCmpAttrs",
             r#type.and_then(|t| ExprCmpAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprCmpAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprCmpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprCmpAttrs");
         for attr in self.clone() {
@@ -6890,14 +8053,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprCmpAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprCmpAttrs<'a>> {
+impl IterableExprCmpAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprCmpAttrs", offset));
             return (
@@ -6942,13 +8105,12 @@ impl<'a> Iterable<'a, ExprCmpAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"data-attrs\""]
 #[derive(Clone)]
 pub enum DataAttrs<'a> {
     Value(&'a [u8]),
-    Verdict(Iterable<'a, VerdictAttrs<'a>>),
+    Verdict(IterableVerdictAttrs<'a>),
 }
-impl<'a> Iterable<'a, DataAttrs<'a>> {
+impl<'a> IterableDataAttrs<'a> {
     pub fn get_value(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6957,9 +8119,14 @@ impl<'a> Iterable<'a, DataAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("DataAttrs", "Value"))
+        Err(ErrorContext::new_missing(
+            "DataAttrs",
+            "Value",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_verdict(&self) -> Result<Iterable<'a, VerdictAttrs<'a>>, ErrorContext> {
+    pub fn get_verdict(&self) -> Result<IterableVerdictAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6967,12 +8134,17 @@ impl<'a> Iterable<'a, DataAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("DataAttrs", "Verdict"))
+        Err(ErrorContext::new_missing(
+            "DataAttrs",
+            "Verdict",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> DataAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, DataAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableDataAttrs<'a> {
+        IterableDataAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -6983,7 +8155,25 @@ impl<'a> DataAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, DataAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableDataAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableDataAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableDataAttrs<'a> {
     type Item = Result<DataAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7000,7 +8190,7 @@ impl<'a> Iterator for Iterable<'a, DataAttrs<'a>> {
                     val
                 }),
                 2u16 => DataAttrs::Verdict({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableVerdictAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7014,14 +8204,15 @@ impl<'a> Iterator for Iterable<'a, DataAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "DataAttrs",
             r#type.and_then(|t| DataAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, DataAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableDataAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("DataAttrs");
         for attr in self.clone() {
@@ -7042,14 +8233,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, DataAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, DataAttrs<'a>> {
+impl IterableDataAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("DataAttrs", offset));
             return (
@@ -7088,7 +8279,6 @@ impl<'a> Iterable<'a, DataAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"verdict-attrs\""]
 #[derive(Clone)]
 pub enum VerdictAttrs<'a> {
     #[doc = "nf_tables verdict\nAssociated type: \"VerdictCode\" (enum)"]
@@ -7098,7 +8288,7 @@ pub enum VerdictAttrs<'a> {
     #[doc = "jump target chain ID"]
     ChainId(u32),
 }
-impl<'a> Iterable<'a, VerdictAttrs<'a>> {
+impl<'a> IterableVerdictAttrs<'a> {
     #[doc = "nf_tables verdict\nAssociated type: \"VerdictCode\" (enum)"]
     pub fn get_code(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7108,7 +8298,12 @@ impl<'a> Iterable<'a, VerdictAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VerdictAttrs", "Code"))
+        Err(ErrorContext::new_missing(
+            "VerdictAttrs",
+            "Code",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "jump target chain name"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -7119,7 +8314,12 @@ impl<'a> Iterable<'a, VerdictAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VerdictAttrs", "Chain"))
+        Err(ErrorContext::new_missing(
+            "VerdictAttrs",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "jump target chain ID"]
     pub fn get_chain_id(&self) -> Result<u32, ErrorContext> {
@@ -7130,12 +8330,17 @@ impl<'a> Iterable<'a, VerdictAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("VerdictAttrs", "ChainId"))
+        Err(ErrorContext::new_missing(
+            "VerdictAttrs",
+            "ChainId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> VerdictAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, VerdictAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableVerdictAttrs<'a> {
+        IterableVerdictAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7147,7 +8352,25 @@ impl<'a> VerdictAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, VerdictAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableVerdictAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableVerdictAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableVerdictAttrs<'a> {
     type Item = Result<VerdictAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7183,14 +8406,15 @@ impl<'a> Iterator for Iterable<'a, VerdictAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "VerdictAttrs",
             r#type.and_then(|t| VerdictAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, VerdictAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableVerdictAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VerdictAttrs");
         for attr in self.clone() {
@@ -7214,14 +8438,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, VerdictAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, VerdictAttrs<'a>> {
+impl IterableVerdictAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VerdictAttrs", offset));
             return (
@@ -7265,7 +8489,6 @@ impl<'a> Iterable<'a, VerdictAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-counter-attrs\""]
 #[derive(Clone)]
 pub enum ExprCounterAttrs<'a> {
     #[doc = "Number of bytes"]
@@ -7274,7 +8497,7 @@ pub enum ExprCounterAttrs<'a> {
     Packets(u64),
     Pad(&'a [u8]),
 }
-impl<'a> Iterable<'a, ExprCounterAttrs<'a>> {
+impl<'a> IterableExprCounterAttrs<'a> {
     #[doc = "Number of bytes"]
     pub fn get_bytes(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -7284,7 +8507,12 @@ impl<'a> Iterable<'a, ExprCounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCounterAttrs", "Bytes"))
+        Err(ErrorContext::new_missing(
+            "ExprCounterAttrs",
+            "Bytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Number of packets"]
     pub fn get_packets(&self) -> Result<u64, ErrorContext> {
@@ -7295,7 +8523,12 @@ impl<'a> Iterable<'a, ExprCounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCounterAttrs", "Packets"))
+        Err(ErrorContext::new_missing(
+            "ExprCounterAttrs",
+            "Packets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -7305,12 +8538,17 @@ impl<'a> Iterable<'a, ExprCounterAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCounterAttrs", "Pad"))
+        Err(ErrorContext::new_missing(
+            "ExprCounterAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprCounterAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprCounterAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprCounterAttrs<'a> {
+        IterableExprCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7322,7 +8560,25 @@ impl<'a> ExprCounterAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprCounterAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprCounterAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprCounterAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprCounterAttrs<'a> {
     type Item = Result<ExprCounterAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7358,14 +8614,15 @@ impl<'a> Iterator for Iterable<'a, ExprCounterAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprCounterAttrs",
             r#type.and_then(|t| ExprCounterAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprCounterAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprCounterAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprCounterAttrs");
         for attr in self.clone() {
@@ -7387,14 +8644,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprCounterAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprCounterAttrs<'a>> {
+impl IterableExprCounterAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprCounterAttrs", offset));
             return (
@@ -7438,7 +8695,6 @@ impl<'a> Iterable<'a, ExprCounterAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-fib-attrs\""]
 #[derive(Clone)]
 pub enum ExprFibAttrs {
     Dreg(u32),
@@ -7447,7 +8703,7 @@ pub enum ExprFibAttrs {
     #[doc = "Associated type: \"FibFlags\" (enum)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, ExprFibAttrs> {
+impl<'a> IterableExprFibAttrs<'a> {
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -7456,7 +8712,12 @@ impl<'a> Iterable<'a, ExprFibAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprFibAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprFibAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"FibResult\" (enum)"]
     pub fn get_result(&self) -> Result<u32, ErrorContext> {
@@ -7467,7 +8728,12 @@ impl<'a> Iterable<'a, ExprFibAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprFibAttrs", "Result"))
+        Err(ErrorContext::new_missing(
+            "ExprFibAttrs",
+            "Result",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"FibFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -7478,12 +8744,17 @@ impl<'a> Iterable<'a, ExprFibAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprFibAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "ExprFibAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprFibAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprFibAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprFibAttrs<'_> {
+        IterableExprFibAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7495,7 +8766,25 @@ impl ExprFibAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprFibAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprFibAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprFibAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprFibAttrs<'a> {
     type Item = Result<ExprFibAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7531,14 +8820,15 @@ impl Iterator for Iterable<'_, ExprFibAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprFibAttrs",
             r#type.and_then(|t| ExprFibAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprFibAttrs> {
+impl std::fmt::Debug for IterableExprFibAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprFibAttrs");
         for attr in self.clone() {
@@ -7564,14 +8854,14 @@ impl std::fmt::Debug for Iterable<'_, ExprFibAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprFibAttrs> {
+impl IterableExprFibAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprFibAttrs", offset));
             return (
@@ -7615,7 +8905,6 @@ impl Iterable<'_, ExprFibAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-ct-attrs\""]
 #[derive(Clone)]
 pub enum ExprCtAttrs {
     Dreg(u32),
@@ -7625,7 +8914,7 @@ pub enum ExprCtAttrs {
     Direction(u8),
     Sreg(u32),
 }
-impl<'a> Iterable<'a, ExprCtAttrs> {
+impl<'a> IterableExprCtAttrs<'a> {
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -7634,7 +8923,12 @@ impl<'a> Iterable<'a, ExprCtAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCtAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprCtAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"CtKeys\" (enum)"]
     pub fn get_key(&self) -> Result<u32, ErrorContext> {
@@ -7645,7 +8939,12 @@ impl<'a> Iterable<'a, ExprCtAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCtAttrs", "Key"))
+        Err(ErrorContext::new_missing(
+            "ExprCtAttrs",
+            "Key",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"CtDirection\" (enum)"]
     pub fn get_direction(&self) -> Result<u8, ErrorContext> {
@@ -7656,7 +8955,12 @@ impl<'a> Iterable<'a, ExprCtAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCtAttrs", "Direction"))
+        Err(ErrorContext::new_missing(
+            "ExprCtAttrs",
+            "Direction",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -7666,12 +8970,17 @@ impl<'a> Iterable<'a, ExprCtAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprCtAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "ExprCtAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprCtAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprCtAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprCtAttrs<'_> {
+        IterableExprCtAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7684,7 +8993,25 @@ impl ExprCtAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprCtAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprCtAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprCtAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprCtAttrs<'a> {
     type Item = Result<ExprCtAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7725,14 +9052,15 @@ impl Iterator for Iterable<'_, ExprCtAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprCtAttrs",
             r#type.and_then(|t| ExprCtAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprCtAttrs> {
+impl std::fmt::Debug for IterableExprCtAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprCtAttrs");
         for attr in self.clone() {
@@ -7760,14 +9088,14 @@ impl std::fmt::Debug for Iterable<'_, ExprCtAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprCtAttrs> {
+impl IterableExprCtAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprCtAttrs", offset));
             return (
@@ -7817,13 +9145,12 @@ impl Iterable<'_, ExprCtAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-flow-offload-attrs\""]
 #[derive(Clone)]
 pub enum ExprFlowOffloadAttrs<'a> {
     #[doc = "Flow offload table name"]
     Name(&'a CStr),
 }
-impl<'a> Iterable<'a, ExprFlowOffloadAttrs<'a>> {
+impl<'a> IterableExprFlowOffloadAttrs<'a> {
     #[doc = "Flow offload table name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -7833,12 +9160,17 @@ impl<'a> Iterable<'a, ExprFlowOffloadAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprFlowOffloadAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "ExprFlowOffloadAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprFlowOffloadAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprFlowOffloadAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprFlowOffloadAttrs<'a> {
+        IterableExprFlowOffloadAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7848,7 +9180,25 @@ impl<'a> ExprFlowOffloadAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprFlowOffloadAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprFlowOffloadAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprFlowOffloadAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprFlowOffloadAttrs<'a> {
     type Item = Result<ExprFlowOffloadAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7874,14 +9224,15 @@ impl<'a> Iterator for Iterable<'a, ExprFlowOffloadAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprFlowOffloadAttrs",
             r#type.and_then(|t| ExprFlowOffloadAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprFlowOffloadAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprFlowOffloadAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprFlowOffloadAttrs");
         for attr in self.clone() {
@@ -7901,14 +9252,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprFlowOffloadAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprFlowOffloadAttrs<'a>> {
+impl IterableExprFlowOffloadAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprFlowOffloadAttrs", offset));
             return (
@@ -7940,13 +9291,12 @@ impl<'a> Iterable<'a, ExprFlowOffloadAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-immediate-attrs\""]
 #[derive(Clone)]
 pub enum ExprImmediateAttrs<'a> {
     Dreg(u32),
-    Data(Iterable<'a, DataAttrs<'a>>),
+    Data(IterableDataAttrs<'a>),
 }
-impl<'a> Iterable<'a, ExprImmediateAttrs<'a>> {
+impl<'a> IterableExprImmediateAttrs<'a> {
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -7955,9 +9305,14 @@ impl<'a> Iterable<'a, ExprImmediateAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprImmediateAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprImmediateAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_data(&self) -> Result<Iterable<'a, DataAttrs<'a>>, ErrorContext> {
+    pub fn get_data(&self) -> Result<IterableDataAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -7965,12 +9320,17 @@ impl<'a> Iterable<'a, ExprImmediateAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprImmediateAttrs", "Data"))
+        Err(ErrorContext::new_missing(
+            "ExprImmediateAttrs",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprImmediateAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprImmediateAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprImmediateAttrs<'a> {
+        IterableExprImmediateAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -7981,7 +9341,25 @@ impl<'a> ExprImmediateAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprImmediateAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprImmediateAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprImmediateAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprImmediateAttrs<'a> {
     type Item = Result<ExprImmediateAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -7998,7 +9376,7 @@ impl<'a> Iterator for Iterable<'a, ExprImmediateAttrs<'a>> {
                     val
                 }),
                 2u16 => ExprImmediateAttrs::Data({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDataAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -8012,14 +9390,15 @@ impl<'a> Iterator for Iterable<'a, ExprImmediateAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprImmediateAttrs",
             r#type.and_then(|t| ExprImmediateAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprImmediateAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprImmediateAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprImmediateAttrs");
         for attr in self.clone() {
@@ -8040,14 +9419,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprImmediateAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprImmediateAttrs<'a>> {
+impl IterableExprImmediateAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprImmediateAttrs", offset));
             return (
@@ -8086,7 +9465,6 @@ impl<'a> Iterable<'a, ExprImmediateAttrs<'a>> {
         (stack, missing)
     }
 }
-#[doc = "Original name: \"expr-lookup-attrs\""]
 #[derive(Clone)]
 pub enum ExprLookupAttrs<'a> {
     #[doc = "Name of set to use"]
@@ -8098,7 +9476,7 @@ pub enum ExprLookupAttrs<'a> {
     #[doc = "Associated type: \"LookupFlags\" (enum)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
+impl<'a> IterableExprLookupAttrs<'a> {
     #[doc = "Name of set to use"]
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -8108,7 +9486,12 @@ impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprLookupAttrs", "Set"))
+        Err(ErrorContext::new_missing(
+            "ExprLookupAttrs",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "ID of set to use"]
     pub fn get_set_id(&self) -> Result<u32, ErrorContext> {
@@ -8119,7 +9502,12 @@ impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprLookupAttrs", "SetId"))
+        Err(ErrorContext::new_missing(
+            "ExprLookupAttrs",
+            "SetId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8129,7 +9517,12 @@ impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprLookupAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "ExprLookupAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8139,7 +9532,12 @@ impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprLookupAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprLookupAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"LookupFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -8150,12 +9548,17 @@ impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprLookupAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "ExprLookupAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprLookupAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprLookupAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprLookupAttrs<'a> {
+        IterableExprLookupAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -8169,7 +9572,25 @@ impl<'a> ExprLookupAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprLookupAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprLookupAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprLookupAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprLookupAttrs<'a> {
     type Item = Result<ExprLookupAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -8215,14 +9636,15 @@ impl<'a> Iterator for Iterable<'a, ExprLookupAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprLookupAttrs",
             r#type.and_then(|t| ExprLookupAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprLookupAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprLookupAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprLookupAttrs");
         for attr in self.clone() {
@@ -8248,14 +9670,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprLookupAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
+impl IterableExprLookupAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprLookupAttrs", offset));
             return (
@@ -8311,7 +9733,6 @@ impl<'a> Iterable<'a, ExprLookupAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-meta-attrs\""]
 #[derive(Clone)]
 pub enum ExprMetaAttrs {
     Dreg(u32),
@@ -8319,7 +9740,7 @@ pub enum ExprMetaAttrs {
     Key(u32),
     Sreg(u32),
 }
-impl<'a> Iterable<'a, ExprMetaAttrs> {
+impl<'a> IterableExprMetaAttrs<'a> {
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -8328,7 +9749,12 @@ impl<'a> Iterable<'a, ExprMetaAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprMetaAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprMetaAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"MetaKeys\" (enum)"]
     pub fn get_key(&self) -> Result<u32, ErrorContext> {
@@ -8339,7 +9765,12 @@ impl<'a> Iterable<'a, ExprMetaAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprMetaAttrs", "Key"))
+        Err(ErrorContext::new_missing(
+            "ExprMetaAttrs",
+            "Key",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8349,12 +9780,17 @@ impl<'a> Iterable<'a, ExprMetaAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprMetaAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "ExprMetaAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprMetaAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprMetaAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprMetaAttrs<'_> {
+        IterableExprMetaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -8366,7 +9802,25 @@ impl ExprMetaAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprMetaAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprMetaAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprMetaAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprMetaAttrs<'a> {
     type Item = Result<ExprMetaAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -8402,14 +9856,15 @@ impl Iterator for Iterable<'_, ExprMetaAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprMetaAttrs",
             r#type.and_then(|t| ExprMetaAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprMetaAttrs> {
+impl std::fmt::Debug for IterableExprMetaAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprMetaAttrs");
         for attr in self.clone() {
@@ -8433,14 +9888,14 @@ impl std::fmt::Debug for Iterable<'_, ExprMetaAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprMetaAttrs> {
+impl IterableExprMetaAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprMetaAttrs", offset));
             return (
@@ -8484,7 +9939,6 @@ impl Iterable<'_, ExprMetaAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-nat-attrs\""]
 #[derive(Clone)]
 pub enum ExprNatAttrs {
     Type(u32),
@@ -8496,7 +9950,7 @@ pub enum ExprNatAttrs {
     #[doc = "Associated type: \"NatRangeFlags\" (1 bit per enumeration)"]
     Flags(u32),
 }
-impl<'a> Iterable<'a, ExprNatAttrs> {
+impl<'a> IterableExprNatAttrs<'a> {
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -8505,7 +9959,12 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_family(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8515,7 +9974,12 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "Family"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "Family",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reg_addr_min(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8525,7 +9989,12 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "RegAddrMin"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "RegAddrMin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reg_addr_max(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8535,7 +10004,12 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "RegAddrMax"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "RegAddrMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reg_proto_min(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8545,7 +10019,12 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "RegProtoMin"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "RegProtoMin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reg_proto_max(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8555,7 +10034,12 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "RegProtoMax"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "RegProtoMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "Associated type: \"NatRangeFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -8566,12 +10050,17 @@ impl<'a> Iterable<'a, ExprNatAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprNatAttrs", "Flags"))
+        Err(ErrorContext::new_missing(
+            "ExprNatAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprNatAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprNatAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprNatAttrs<'_> {
+        IterableExprNatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -8587,7 +10076,25 @@ impl ExprNatAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprNatAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprNatAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprNatAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprNatAttrs<'a> {
     type Item = Result<ExprNatAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -8643,14 +10150,15 @@ impl Iterator for Iterable<'_, ExprNatAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprNatAttrs",
             r#type.and_then(|t| ExprNatAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprNatAttrs> {
+impl std::fmt::Debug for IterableExprNatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprNatAttrs");
         for attr in self.clone() {
@@ -8678,14 +10186,14 @@ impl std::fmt::Debug for Iterable<'_, ExprNatAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprNatAttrs> {
+impl IterableExprNatAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprNatAttrs", offset));
             return (
@@ -8753,7 +10261,6 @@ impl Iterable<'_, ExprNatAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-payload-attrs\""]
 #[derive(Clone)]
 pub enum ExprPayloadAttrs {
     #[doc = "destination register to load data into\nAssociated type: \"Registers\" (enum)"]
@@ -8773,7 +10280,7 @@ pub enum ExprPayloadAttrs {
     #[doc = "checksum flags"]
     CsumFlags(u32),
 }
-impl<'a> Iterable<'a, ExprPayloadAttrs> {
+impl<'a> IterableExprPayloadAttrs<'a> {
     #[doc = "destination register to load data into\nAssociated type: \"Registers\" (enum)"]
     pub fn get_dreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -8783,7 +10290,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "Dreg"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "Dreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "payload base\nAssociated type: \"PayloadBase\" (enum)"]
     pub fn get_base(&self) -> Result<u32, ErrorContext> {
@@ -8794,7 +10306,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "Base"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "Base",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "payload offset relative to base"]
     pub fn get_offset(&self) -> Result<u32, ErrorContext> {
@@ -8805,7 +10322,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "Offset"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "Offset",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "payload length"]
     pub fn get_len(&self) -> Result<u32, ErrorContext> {
@@ -8816,7 +10338,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "Len"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "Len",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "source register to load data from\nAssociated type: \"Registers\" (enum)"]
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
@@ -8827,7 +10354,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "Sreg"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "Sreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "checksum type"]
     pub fn get_csum_type(&self) -> Result<u32, ErrorContext> {
@@ -8838,7 +10370,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "CsumType"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "CsumType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "checksum offset relative to base"]
     pub fn get_csum_offset(&self) -> Result<u32, ErrorContext> {
@@ -8849,7 +10386,12 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "CsumOffset"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "CsumOffset",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "checksum flags"]
     pub fn get_csum_flags(&self) -> Result<u32, ErrorContext> {
@@ -8860,12 +10402,17 @@ impl<'a> Iterable<'a, ExprPayloadAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprPayloadAttrs", "CsumFlags"))
+        Err(ErrorContext::new_missing(
+            "ExprPayloadAttrs",
+            "CsumFlags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprPayloadAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprPayloadAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprPayloadAttrs<'_> {
+        IterableExprPayloadAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -8882,7 +10429,25 @@ impl ExprPayloadAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprPayloadAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprPayloadAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprPayloadAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprPayloadAttrs<'a> {
     type Item = Result<ExprPayloadAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -8943,14 +10508,15 @@ impl Iterator for Iterable<'_, ExprPayloadAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprPayloadAttrs",
             r#type.and_then(|t| ExprPayloadAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprPayloadAttrs> {
+impl std::fmt::Debug for IterableExprPayloadAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprPayloadAttrs");
         for attr in self.clone() {
@@ -8983,14 +10549,14 @@ impl std::fmt::Debug for Iterable<'_, ExprPayloadAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprPayloadAttrs> {
+impl IterableExprPayloadAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprPayloadAttrs", offset));
             return (
@@ -9064,14 +10630,13 @@ impl Iterable<'_, ExprPayloadAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-reject-attrs\""]
 #[derive(Clone)]
 pub enum ExprRejectAttrs {
     #[doc = "Associated type: \"RejectTypes\" (enum)"]
     Type(u32),
     IcmpCode(u8),
 }
-impl<'a> Iterable<'a, ExprRejectAttrs> {
+impl<'a> IterableExprRejectAttrs<'a> {
     #[doc = "Associated type: \"RejectTypes\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9081,7 +10646,12 @@ impl<'a> Iterable<'a, ExprRejectAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprRejectAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "ExprRejectAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_icmp_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
@@ -9091,12 +10661,17 @@ impl<'a> Iterable<'a, ExprRejectAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprRejectAttrs", "IcmpCode"))
+        Err(ErrorContext::new_missing(
+            "ExprRejectAttrs",
+            "IcmpCode",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprRejectAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprRejectAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprRejectAttrs<'_> {
+        IterableExprRejectAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9107,7 +10682,25 @@ impl ExprRejectAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprRejectAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprRejectAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprRejectAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprRejectAttrs<'a> {
     type Item = Result<ExprRejectAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9138,14 +10731,15 @@ impl Iterator for Iterable<'_, ExprRejectAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprRejectAttrs",
             r#type.and_then(|t| ExprRejectAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprRejectAttrs> {
+impl std::fmt::Debug for IterableExprRejectAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprRejectAttrs");
         for attr in self.clone() {
@@ -9168,14 +10762,14 @@ impl std::fmt::Debug for Iterable<'_, ExprRejectAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprRejectAttrs> {
+impl IterableExprRejectAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprRejectAttrs", offset));
             return (
@@ -9213,14 +10807,13 @@ impl Iterable<'_, ExprRejectAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-target-attrs\""]
 #[derive(Clone)]
 pub enum ExprTargetAttrs<'a> {
     Name(&'a CStr),
     Rev(u32),
     Info(&'a [u8]),
 }
-impl<'a> Iterable<'a, ExprTargetAttrs<'a>> {
+impl<'a> IterableExprTargetAttrs<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9229,7 +10822,12 @@ impl<'a> Iterable<'a, ExprTargetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprTargetAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "ExprTargetAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9239,7 +10837,12 @@ impl<'a> Iterable<'a, ExprTargetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprTargetAttrs", "Rev"))
+        Err(ErrorContext::new_missing(
+            "ExprTargetAttrs",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_info(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9249,12 +10852,17 @@ impl<'a> Iterable<'a, ExprTargetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprTargetAttrs", "Info"))
+        Err(ErrorContext::new_missing(
+            "ExprTargetAttrs",
+            "Info",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprTargetAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprTargetAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprTargetAttrs<'a> {
+        IterableExprTargetAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9266,7 +10874,25 @@ impl<'a> ExprTargetAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprTargetAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprTargetAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprTargetAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprTargetAttrs<'a> {
     type Item = Result<ExprTargetAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9302,14 +10928,15 @@ impl<'a> Iterator for Iterable<'a, ExprTargetAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprTargetAttrs",
             r#type.and_then(|t| ExprTargetAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprTargetAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprTargetAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprTargetAttrs");
         for attr in self.clone() {
@@ -9331,14 +10958,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprTargetAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprTargetAttrs<'a>> {
+impl IterableExprTargetAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprTargetAttrs", offset));
             return (
@@ -9382,14 +11009,13 @@ impl<'a> Iterable<'a, ExprTargetAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-tproxy-attrs\""]
 #[derive(Clone)]
 pub enum ExprTproxyAttrs {
     Family(u32),
     RegAddr(u32),
     RegPort(u32),
 }
-impl<'a> Iterable<'a, ExprTproxyAttrs> {
+impl<'a> IterableExprTproxyAttrs<'a> {
     pub fn get_family(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9398,7 +11024,12 @@ impl<'a> Iterable<'a, ExprTproxyAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprTproxyAttrs", "Family"))
+        Err(ErrorContext::new_missing(
+            "ExprTproxyAttrs",
+            "Family",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reg_addr(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9408,7 +11039,12 @@ impl<'a> Iterable<'a, ExprTproxyAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprTproxyAttrs", "RegAddr"))
+        Err(ErrorContext::new_missing(
+            "ExprTproxyAttrs",
+            "RegAddr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_reg_port(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9418,12 +11054,17 @@ impl<'a> Iterable<'a, ExprTproxyAttrs> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprTproxyAttrs", "RegPort"))
+        Err(ErrorContext::new_missing(
+            "ExprTproxyAttrs",
+            "RegPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl ExprTproxyAttrs {
-    pub fn new(buf: &'_ [u8]) -> Iterable<'_, ExprTproxyAttrs> {
-        Iterable::new(buf)
+    pub fn new(buf: &'_ [u8]) -> IterableExprTproxyAttrs<'_> {
+        IterableExprTproxyAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9435,7 +11076,25 @@ impl ExprTproxyAttrs {
         Some(res)
     }
 }
-impl Iterator for Iterable<'_, ExprTproxyAttrs> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprTproxyAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprTproxyAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprTproxyAttrs<'a> {
     type Item = Result<ExprTproxyAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9471,14 +11130,15 @@ impl Iterator for Iterable<'_, ExprTproxyAttrs> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprTproxyAttrs",
             r#type.and_then(|t| ExprTproxyAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, ExprTproxyAttrs> {
+impl std::fmt::Debug for IterableExprTproxyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprTproxyAttrs");
         for attr in self.clone() {
@@ -9500,14 +11160,14 @@ impl std::fmt::Debug for Iterable<'_, ExprTproxyAttrs> {
         fmt.finish()
     }
 }
-impl Iterable<'_, ExprTproxyAttrs> {
+impl IterableExprTproxyAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprTproxyAttrs", offset));
             return (
@@ -9551,7 +11211,6 @@ impl Iterable<'_, ExprTproxyAttrs> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"expr-objref-attrs\""]
 #[derive(Clone)]
 pub enum ExprObjrefAttrs<'a> {
     ImmType(u32),
@@ -9563,7 +11222,7 @@ pub enum ExprObjrefAttrs<'a> {
     #[doc = "id of object map"]
     SetId(u32),
 }
-impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
+impl<'a> IterableExprObjrefAttrs<'a> {
     pub fn get_imm_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9572,7 +11231,12 @@ impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprObjrefAttrs", "ImmType"))
+        Err(ErrorContext::new_missing(
+            "ExprObjrefAttrs",
+            "ImmType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "object name"]
     pub fn get_imm_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -9583,7 +11247,12 @@ impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprObjrefAttrs", "ImmName"))
+        Err(ErrorContext::new_missing(
+            "ExprObjrefAttrs",
+            "ImmName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set_sreg(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9593,7 +11262,12 @@ impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprObjrefAttrs", "SetSreg"))
+        Err(ErrorContext::new_missing(
+            "ExprObjrefAttrs",
+            "SetSreg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of object map"]
     pub fn get_set_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -9604,7 +11278,12 @@ impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprObjrefAttrs", "SetName"))
+        Err(ErrorContext::new_missing(
+            "ExprObjrefAttrs",
+            "SetName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "id of object map"]
     pub fn get_set_id(&self) -> Result<u32, ErrorContext> {
@@ -9615,12 +11294,17 @@ impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("ExprObjrefAttrs", "SetId"))
+        Err(ErrorContext::new_missing(
+            "ExprObjrefAttrs",
+            "SetId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> ExprObjrefAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, ExprObjrefAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableExprObjrefAttrs<'a> {
+        IterableExprObjrefAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9634,7 +11318,25 @@ impl<'a> ExprObjrefAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, ExprObjrefAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprObjrefAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprObjrefAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprObjrefAttrs<'a> {
     type Item = Result<ExprObjrefAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9680,14 +11382,15 @@ impl<'a> Iterator for Iterable<'a, ExprObjrefAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "ExprObjrefAttrs",
             r#type.and_then(|t| ExprObjrefAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, ExprObjrefAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableExprObjrefAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ExprObjrefAttrs");
         for attr in self.clone() {
@@ -9711,14 +11414,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, ExprObjrefAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
+impl IterableExprObjrefAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprObjrefAttrs", offset));
             return (
@@ -9774,14 +11477,13 @@ impl<'a> Iterable<'a, ExprObjrefAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"compat-target-attrs\""]
 #[derive(Clone)]
 pub enum CompatTargetAttrs<'a> {
     Name(&'a CStr),
     Rev(u32),
     Info(&'a [u8]),
 }
-impl<'a> Iterable<'a, CompatTargetAttrs<'a>> {
+impl<'a> IterableCompatTargetAttrs<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9790,7 +11492,12 @@ impl<'a> Iterable<'a, CompatTargetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatTargetAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "CompatTargetAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9800,7 +11507,12 @@ impl<'a> Iterable<'a, CompatTargetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatTargetAttrs", "Rev"))
+        Err(ErrorContext::new_missing(
+            "CompatTargetAttrs",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_info(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9810,12 +11522,17 @@ impl<'a> Iterable<'a, CompatTargetAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatTargetAttrs", "Info"))
+        Err(ErrorContext::new_missing(
+            "CompatTargetAttrs",
+            "Info",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> CompatTargetAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, CompatTargetAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableCompatTargetAttrs<'a> {
+        IterableCompatTargetAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9827,7 +11544,25 @@ impl<'a> CompatTargetAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, CompatTargetAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableCompatTargetAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableCompatTargetAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableCompatTargetAttrs<'a> {
     type Item = Result<CompatTargetAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -9863,14 +11598,15 @@ impl<'a> Iterator for Iterable<'a, CompatTargetAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "CompatTargetAttrs",
             r#type.and_then(|t| CompatTargetAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, CompatTargetAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableCompatTargetAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CompatTargetAttrs");
         for attr in self.clone() {
@@ -9892,14 +11628,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, CompatTargetAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, CompatTargetAttrs<'a>> {
+impl IterableCompatTargetAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CompatTargetAttrs", offset));
             return (
@@ -9943,14 +11679,13 @@ impl<'a> Iterable<'a, CompatTargetAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"compat-match-attrs\""]
 #[derive(Clone)]
 pub enum CompatMatchAttrs<'a> {
     Name(&'a CStr),
     Rev(u32),
     Info(&'a [u8]),
 }
-impl<'a> Iterable<'a, CompatMatchAttrs<'a>> {
+impl<'a> IterableCompatMatchAttrs<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9959,7 +11694,12 @@ impl<'a> Iterable<'a, CompatMatchAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatMatchAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "CompatMatchAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -9969,7 +11709,12 @@ impl<'a> Iterable<'a, CompatMatchAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatMatchAttrs", "Rev"))
+        Err(ErrorContext::new_missing(
+            "CompatMatchAttrs",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_info(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
@@ -9979,12 +11724,17 @@ impl<'a> Iterable<'a, CompatMatchAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatMatchAttrs", "Info"))
+        Err(ErrorContext::new_missing(
+            "CompatMatchAttrs",
+            "Info",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> CompatMatchAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, CompatMatchAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableCompatMatchAttrs<'a> {
+        IterableCompatMatchAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -9996,7 +11746,25 @@ impl<'a> CompatMatchAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, CompatMatchAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableCompatMatchAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableCompatMatchAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableCompatMatchAttrs<'a> {
     type Item = Result<CompatMatchAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -10032,14 +11800,15 @@ impl<'a> Iterator for Iterable<'a, CompatMatchAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "CompatMatchAttrs",
             r#type.and_then(|t| CompatMatchAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, CompatMatchAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableCompatMatchAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CompatMatchAttrs");
         for attr in self.clone() {
@@ -10061,14 +11830,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, CompatMatchAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, CompatMatchAttrs<'a>> {
+impl IterableCompatMatchAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CompatMatchAttrs", offset));
             return (
@@ -10112,14 +11881,13 @@ impl<'a> Iterable<'a, CompatMatchAttrs<'a>> {
         (stack, None)
     }
 }
-#[doc = "Original name: \"compat-attrs\""]
 #[derive(Clone)]
 pub enum CompatAttrs<'a> {
     Name(&'a CStr),
     Rev(u32),
     Type(u32),
 }
-impl<'a> Iterable<'a, CompatAttrs<'a>> {
+impl<'a> IterableCompatAttrs<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -10128,7 +11896,12 @@ impl<'a> Iterable<'a, CompatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatAttrs", "Name"))
+        Err(ErrorContext::new_missing(
+            "CompatAttrs",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10138,7 +11911,12 @@ impl<'a> Iterable<'a, CompatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatAttrs", "Rev"))
+        Err(ErrorContext::new_missing(
+            "CompatAttrs",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -10148,12 +11926,17 @@ impl<'a> Iterable<'a, CompatAttrs<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("CompatAttrs", "Type"))
+        Err(ErrorContext::new_missing(
+            "CompatAttrs",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> CompatAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> Iterable<'a, CompatAttrs<'a>> {
-        Iterable::new(buf)
+    pub fn new(buf: &'a [u8]) -> IterableCompatAttrs<'a> {
+        IterableCompatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
@@ -10165,7 +11948,25 @@ impl<'a> CompatAttrs<'a> {
         Some(res)
     }
 }
-impl<'a> Iterator for Iterable<'a, CompatAttrs<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableCompatAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableCompatAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableCompatAttrs<'a> {
     type Item = Result<CompatAttrs<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -10201,14 +12002,15 @@ impl<'a> Iterator for Iterable<'a, CompatAttrs<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "CompatAttrs",
             r#type.and_then(|t| CompatAttrs::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, CompatAttrs<'a>> {
+impl<'a> std::fmt::Debug for IterableCompatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CompatAttrs");
         for attr in self.clone() {
@@ -10230,14 +12032,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, CompatAttrs<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, CompatAttrs<'a>> {
+impl IterableCompatAttrs<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CompatAttrs", offset));
             return (
@@ -13610,17 +15412,20 @@ impl<Prev: Rec> Drop for PushCompatAttrs<Prev> {
         }
     }
 }
-#[doc = "Original name: \"nfgenmsg\""]
 #[derive(Clone)]
 pub struct PushNfgenmsg {
     pub(crate) buf: [u8; 4usize],
 }
+#[doc = "Create zero-initialized struct"]
+impl Default for PushNfgenmsg {
+    fn default() -> Self {
+        Self { buf: [0u8; 4usize] }
+    }
+}
 impl PushNfgenmsg {
     #[doc = "Create zero-initialized struct"]
     pub fn new() -> Self {
-        Self {
-            buf: [0u8; Self::len()],
-        }
+        Default::default()
     }
     #[doc = "Copy from contents from other slice"]
     pub fn new_from_slice(other: &[u8]) -> Option<Self> {
@@ -13710,26 +15515,40 @@ impl<Prev: Rec> Drop for PushOpGetcompatDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump nft_compat info"]
-#[doc = "Original name: \"op-getcompat-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetcompatDumpRequest {}
-impl<'a> Iterable<'a, OpGetcompatDumpRequest> {}
+impl<'a> IterableOpGetcompatDumpRequest<'a> {}
 impl OpGetcompatDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetcompatDumpRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetcompatDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetcompatDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         CompatAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetcompatDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetcompatDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetcompatDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetcompatDumpRequest<'a> {
     type Item = Result<OpGetcompatDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -13750,14 +15569,15 @@ impl Iterator for Iterable<'_, OpGetcompatDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetcompatDumpRequest",
             r#type.and_then(|t| OpGetcompatDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetcompatDumpRequest> {
+impl std::fmt::Debug for IterableOpGetcompatDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetcompatDumpRequest");
         for attr in self.clone() {
@@ -13775,14 +15595,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetcompatDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetcompatDumpRequest> {
+impl IterableOpGetcompatDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetcompatDumpRequest", offset));
             return (
@@ -13860,14 +15680,13 @@ impl<Prev: Rec> Drop for PushOpGetcompatDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump nft_compat info"]
-#[doc = "Original name: \"op-getcompat-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetcompatDumpReply<'a> {
     Name(&'a CStr),
     Rev(u32),
     Type(u32),
 }
-impl<'a> Iterable<'a, OpGetcompatDumpReply<'a>> {
+impl<'a> IterableOpGetcompatDumpReply<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -13876,7 +15695,12 @@ impl<'a> Iterable<'a, OpGetcompatDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDumpReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDumpReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -13886,7 +15710,12 @@ impl<'a> Iterable<'a, OpGetcompatDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDumpReply", "Rev"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDumpReply",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -13896,25 +15725,45 @@ impl<'a> Iterable<'a, OpGetcompatDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDumpReply", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDumpReply",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetcompatDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetcompatDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetcompatDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         CompatAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetcompatDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetcompatDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetcompatDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetcompatDumpReply<'a> {
     type Item = Result<OpGetcompatDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -13950,14 +15799,15 @@ impl<'a> Iterator for Iterable<'a, OpGetcompatDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetcompatDumpReply",
             r#type.and_then(|t| OpGetcompatDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetcompatDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetcompatDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetcompatDumpReply");
         for attr in self.clone() {
@@ -13979,14 +15829,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetcompatDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetcompatDumpReply<'a>> {
+impl IterableOpGetcompatDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetcompatDumpReply", offset));
             return (
@@ -14049,7 +15899,7 @@ impl<'r> RequestOpGetcompatDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetcompatDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetcompatDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetcompatDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -14142,14 +15992,13 @@ impl<Prev: Rec> Drop for PushOpGetcompatDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump nft_compat info"]
-#[doc = "Original name: \"op-getcompat-do-request\""]
 #[derive(Clone)]
 pub enum OpGetcompatDoRequest<'a> {
     Name(&'a CStr),
     Rev(u32),
     Type(u32),
 }
-impl<'a> Iterable<'a, OpGetcompatDoRequest<'a>> {
+impl<'a> IterableOpGetcompatDoRequest<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -14158,7 +16007,12 @@ impl<'a> Iterable<'a, OpGetcompatDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -14168,7 +16022,12 @@ impl<'a> Iterable<'a, OpGetcompatDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDoRequest", "Rev"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDoRequest",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -14178,25 +16037,45 @@ impl<'a> Iterable<'a, OpGetcompatDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDoRequest", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDoRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetcompatDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetcompatDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetcompatDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         CompatAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetcompatDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetcompatDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetcompatDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetcompatDoRequest<'a> {
     type Item = Result<OpGetcompatDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -14232,14 +16111,15 @@ impl<'a> Iterator for Iterable<'a, OpGetcompatDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetcompatDoRequest",
             r#type.and_then(|t| OpGetcompatDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetcompatDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetcompatDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetcompatDoRequest");
         for attr in self.clone() {
@@ -14261,14 +16141,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetcompatDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetcompatDoRequest<'a>> {
+impl IterableOpGetcompatDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetcompatDoRequest", offset));
             return (
@@ -14379,14 +16259,13 @@ impl<Prev: Rec> Drop for PushOpGetcompatDoReply<Prev> {
     }
 }
 #[doc = "Get / dump nft_compat info"]
-#[doc = "Original name: \"op-getcompat-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetcompatDoReply<'a> {
     Name(&'a CStr),
     Rev(u32),
     Type(u32),
 }
-impl<'a> Iterable<'a, OpGetcompatDoReply<'a>> {
+impl<'a> IterableOpGetcompatDoReply<'a> {
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -14395,7 +16274,12 @@ impl<'a> Iterable<'a, OpGetcompatDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDoReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDoReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_rev(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -14405,7 +16289,12 @@ impl<'a> Iterable<'a, OpGetcompatDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDoReply", "Rev"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDoReply",
+            "Rev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -14415,25 +16304,45 @@ impl<'a> Iterable<'a, OpGetcompatDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetcompatDoReply", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetcompatDoReply",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetcompatDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetcompatDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetcompatDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         CompatAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetcompatDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetcompatDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetcompatDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetcompatDoReply<'a> {
     type Item = Result<OpGetcompatDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -14469,14 +16378,15 @@ impl<'a> Iterator for Iterable<'a, OpGetcompatDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetcompatDoReply",
             r#type.and_then(|t| OpGetcompatDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetcompatDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetcompatDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetcompatDoReply");
         for attr in self.clone() {
@@ -14498,14 +16408,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetcompatDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetcompatDoReply<'a>> {
+impl IterableOpGetcompatDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetcompatDoReply", offset));
             return (
@@ -14566,7 +16476,7 @@ impl<'r> RequestOpGetcompatDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetcompatDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetcompatDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetcompatDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -14640,13 +16550,12 @@ impl<Prev: Rec> Drop for PushOpBatchBeginDoRequest<Prev> {
     }
 }
 #[doc = "Start a batch of operations"]
-#[doc = "Original name: \"op-batch-begin-do-request\""]
 #[derive(Clone)]
 pub enum OpBatchBeginDoRequest {
     #[doc = "generation ID for this changeset"]
     Genid(u32),
 }
-impl<'a> Iterable<'a, OpBatchBeginDoRequest> {
+impl<'a> IterableOpBatchBeginDoRequest<'a> {
     #[doc = "generation ID for this changeset"]
     pub fn get_genid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -14656,25 +16565,45 @@ impl<'a> Iterable<'a, OpBatchBeginDoRequest> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpBatchBeginDoRequest", "Genid"))
+        Err(ErrorContext::new_missing(
+            "OpBatchBeginDoRequest",
+            "Genid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl OpBatchBeginDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpBatchBeginDoRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchBeginDoRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpBatchBeginDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         BatchAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpBatchBeginDoRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpBatchBeginDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpBatchBeginDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpBatchBeginDoRequest<'a> {
     type Item = Result<OpBatchBeginDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -14700,14 +16629,15 @@ impl Iterator for Iterable<'_, OpBatchBeginDoRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpBatchBeginDoRequest",
             r#type.and_then(|t| OpBatchBeginDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpBatchBeginDoRequest> {
+impl std::fmt::Debug for IterableOpBatchBeginDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpBatchBeginDoRequest");
         for attr in self.clone() {
@@ -14727,14 +16657,14 @@ impl std::fmt::Debug for Iterable<'_, OpBatchBeginDoRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpBatchBeginDoRequest> {
+impl IterableOpBatchBeginDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchBeginDoRequest", offset));
             return (
@@ -14814,13 +16744,12 @@ impl<Prev: Rec> Drop for PushOpBatchBeginDoReply<Prev> {
     }
 }
 #[doc = "Start a batch of operations"]
-#[doc = "Original name: \"op-batch-begin-do-reply\""]
 #[derive(Clone)]
 pub enum OpBatchBeginDoReply {
     #[doc = "generation ID for this changeset"]
     Genid(u32),
 }
-impl<'a> Iterable<'a, OpBatchBeginDoReply> {
+impl<'a> IterableOpBatchBeginDoReply<'a> {
     #[doc = "generation ID for this changeset"]
     pub fn get_genid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -14830,25 +16759,45 @@ impl<'a> Iterable<'a, OpBatchBeginDoReply> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpBatchBeginDoReply", "Genid"))
+        Err(ErrorContext::new_missing(
+            "OpBatchBeginDoReply",
+            "Genid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl OpBatchBeginDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpBatchBeginDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchBeginDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpBatchBeginDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         BatchAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpBatchBeginDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpBatchBeginDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpBatchBeginDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpBatchBeginDoReply<'a> {
     type Item = Result<OpBatchBeginDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -14874,14 +16823,15 @@ impl Iterator for Iterable<'_, OpBatchBeginDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpBatchBeginDoReply",
             r#type.and_then(|t| OpBatchBeginDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpBatchBeginDoReply> {
+impl std::fmt::Debug for IterableOpBatchBeginDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpBatchBeginDoReply");
         for attr in self.clone() {
@@ -14901,14 +16851,14 @@ impl std::fmt::Debug for Iterable<'_, OpBatchBeginDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpBatchBeginDoReply> {
+impl IterableOpBatchBeginDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchBeginDoReply", offset));
             return (
@@ -14957,7 +16907,7 @@ impl<'r> RequestOpBatchBeginDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpBatchBeginDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpBatchBeginDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpBatchBeginDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -15031,13 +16981,12 @@ impl<Prev: Rec> Drop for PushOpBatchEndDoRequest<Prev> {
     }
 }
 #[doc = "Finish a batch of operations"]
-#[doc = "Original name: \"op-batch-end-do-request\""]
 #[derive(Clone)]
 pub enum OpBatchEndDoRequest {
     #[doc = "generation ID for this changeset"]
     Genid(u32),
 }
-impl<'a> Iterable<'a, OpBatchEndDoRequest> {
+impl<'a> IterableOpBatchEndDoRequest<'a> {
     #[doc = "generation ID for this changeset"]
     pub fn get_genid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -15047,25 +16996,45 @@ impl<'a> Iterable<'a, OpBatchEndDoRequest> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpBatchEndDoRequest", "Genid"))
+        Err(ErrorContext::new_missing(
+            "OpBatchEndDoRequest",
+            "Genid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl OpBatchEndDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpBatchEndDoRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchEndDoRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpBatchEndDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         BatchAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpBatchEndDoRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpBatchEndDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpBatchEndDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpBatchEndDoRequest<'a> {
     type Item = Result<OpBatchEndDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -15091,14 +17060,15 @@ impl Iterator for Iterable<'_, OpBatchEndDoRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpBatchEndDoRequest",
             r#type.and_then(|t| OpBatchEndDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpBatchEndDoRequest> {
+impl std::fmt::Debug for IterableOpBatchEndDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpBatchEndDoRequest");
         for attr in self.clone() {
@@ -15118,14 +17088,14 @@ impl std::fmt::Debug for Iterable<'_, OpBatchEndDoRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpBatchEndDoRequest> {
+impl IterableOpBatchEndDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchEndDoRequest", offset));
             return (
@@ -15199,26 +17169,40 @@ impl<Prev: Rec> Drop for PushOpBatchEndDoReply<Prev> {
     }
 }
 #[doc = "Finish a batch of operations"]
-#[doc = "Original name: \"op-batch-end-do-reply\""]
 #[derive(Clone)]
 pub enum OpBatchEndDoReply {}
-impl<'a> Iterable<'a, OpBatchEndDoReply> {}
+impl<'a> IterableOpBatchEndDoReply<'a> {}
 impl OpBatchEndDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpBatchEndDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchEndDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpBatchEndDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         BatchAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpBatchEndDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpBatchEndDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpBatchEndDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpBatchEndDoReply<'a> {
     type Item = Result<OpBatchEndDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -15239,14 +17223,15 @@ impl Iterator for Iterable<'_, OpBatchEndDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpBatchEndDoReply",
             r#type.and_then(|t| OpBatchEndDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpBatchEndDoReply> {
+impl std::fmt::Debug for IterableOpBatchEndDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpBatchEndDoReply");
         for attr in self.clone() {
@@ -15264,14 +17249,14 @@ impl std::fmt::Debug for Iterable<'_, OpBatchEndDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpBatchEndDoReply> {
+impl IterableOpBatchEndDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchEndDoReply", offset));
             return (
@@ -15299,7 +17284,7 @@ impl<'r> RequestOpBatchEndDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpBatchEndDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpBatchEndDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpBatchEndDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -15396,7 +17381,6 @@ impl<Prev: Rec> Drop for PushOpNewtableDoRequest<Prev> {
     }
 }
 #[doc = "Create a new table."]
-#[doc = "Original name: \"op-newtable-do-request\""]
 #[derive(Clone)]
 pub enum OpNewtableDoRequest<'a> {
     #[doc = "name of the table"]
@@ -15406,7 +17390,7 @@ pub enum OpNewtableDoRequest<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpNewtableDoRequest<'a>> {
+impl<'a> IterableOpNewtableDoRequest<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -15416,7 +17400,12 @@ impl<'a> Iterable<'a, OpNewtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewtableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpNewtableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of flags\nAssociated type: \"TableFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -15427,7 +17416,12 @@ impl<'a> Iterable<'a, OpNewtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewtableDoRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpNewtableDoRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -15438,25 +17432,45 @@ impl<'a> Iterable<'a, OpNewtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewtableDoRequest", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpNewtableDoRequest",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewtableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewtableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewtableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewtableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewtableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewtableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewtableDoRequest<'a> {
     type Item = Result<OpNewtableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -15492,14 +17506,15 @@ impl<'a> Iterator for Iterable<'a, OpNewtableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewtableDoRequest",
             r#type.and_then(|t| OpNewtableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewtableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewtableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewtableDoRequest");
         for attr in self.clone() {
@@ -15523,14 +17538,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewtableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewtableDoRequest<'a>> {
+impl IterableOpNewtableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewtableDoRequest", offset));
             return (
@@ -15616,26 +17631,40 @@ impl<Prev: Rec> Drop for PushOpNewtableDoReply<Prev> {
     }
 }
 #[doc = "Create a new table."]
-#[doc = "Original name: \"op-newtable-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewtableDoReply {}
-impl<'a> Iterable<'a, OpNewtableDoReply> {}
+impl<'a> IterableOpNewtableDoReply<'a> {}
 impl OpNewtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewtableDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewtableDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewtableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewtableDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewtableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewtableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewtableDoReply<'a> {
     type Item = Result<OpNewtableDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -15656,14 +17685,15 @@ impl Iterator for Iterable<'_, OpNewtableDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewtableDoReply",
             r#type.and_then(|t| OpNewtableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewtableDoReply> {
+impl std::fmt::Debug for IterableOpNewtableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewtableDoReply");
         for attr in self.clone() {
@@ -15681,14 +17711,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewtableDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewtableDoReply> {
+impl IterableOpNewtableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewtableDoReply", offset));
             return (
@@ -15716,7 +17746,7 @@ impl<'r> RequestOpNewtableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewtableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewtableDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewtableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -15784,26 +17814,40 @@ impl<Prev: Rec> Drop for PushOpGettableDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump tables."]
-#[doc = "Original name: \"op-gettable-dump-request\""]
 #[derive(Clone)]
 pub enum OpGettableDumpRequest {}
-impl<'a> Iterable<'a, OpGettableDumpRequest> {}
+impl<'a> IterableOpGettableDumpRequest<'a> {}
 impl OpGettableDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGettableDumpRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGettableDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGettableDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGettableDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGettableDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGettableDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGettableDumpRequest<'a> {
     type Item = Result<OpGettableDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -15824,14 +17868,15 @@ impl Iterator for Iterable<'_, OpGettableDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGettableDumpRequest",
             r#type.and_then(|t| OpGettableDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGettableDumpRequest> {
+impl std::fmt::Debug for IterableOpGettableDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGettableDumpRequest");
         for attr in self.clone() {
@@ -15849,14 +17894,14 @@ impl std::fmt::Debug for Iterable<'_, OpGettableDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGettableDumpRequest> {
+impl IterableOpGettableDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDumpRequest", offset));
             return (
@@ -15956,7 +18001,6 @@ impl<Prev: Rec> Drop for PushOpGettableDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump tables."]
-#[doc = "Original name: \"op-gettable-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGettableDumpReply<'a> {
     #[doc = "name of the table"]
@@ -15972,7 +18016,7 @@ pub enum OpGettableDumpReply<'a> {
     #[doc = "owner of this table through netlink portID"]
     Owner(u32),
 }
-impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
+impl<'a> IterableOpGettableDumpReply<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -15982,7 +18026,12 @@ impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDumpReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDumpReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of flags\nAssociated type: \"TableFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -15993,7 +18042,12 @@ impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDumpReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDumpReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of chains in this table"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -16004,7 +18058,12 @@ impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDumpReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDumpReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the table"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -16015,7 +18074,12 @@ impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -16026,7 +18090,12 @@ impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDumpReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDumpReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "owner of this table through netlink portID"]
     pub fn get_owner(&self) -> Result<u32, ErrorContext> {
@@ -16037,25 +18106,45 @@ impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDumpReply", "Owner"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDumpReply",
+            "Owner",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGettableDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGettableDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGettableDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGettableDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGettableDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGettableDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGettableDumpReply<'a> {
     type Item = Result<OpGettableDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -16106,14 +18195,15 @@ impl<'a> Iterator for Iterable<'a, OpGettableDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGettableDumpReply",
             r#type.and_then(|t| OpGettableDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGettableDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGettableDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGettableDumpReply");
         for attr in self.clone() {
@@ -16140,14 +18230,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettableDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGettableDumpReply<'a>> {
+impl IterableOpGettableDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDumpReply", offset));
             return (
@@ -16228,7 +18318,7 @@ impl<'r> RequestOpGettableDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGettableDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGettableDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGettableDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -16313,13 +18403,12 @@ impl<Prev: Rec> Drop for PushOpGettableDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump tables."]
-#[doc = "Original name: \"op-gettable-do-request\""]
 #[derive(Clone)]
 pub enum OpGettableDoRequest<'a> {
     #[doc = "name of the table"]
     Name(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGettableDoRequest<'a>> {
+impl<'a> IterableOpGettableDoRequest<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -16329,25 +18418,45 @@ impl<'a> Iterable<'a, OpGettableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGettableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGettableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGettableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGettableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGettableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGettableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGettableDoRequest<'a> {
     type Item = Result<OpGettableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -16373,14 +18482,15 @@ impl<'a> Iterator for Iterable<'a, OpGettableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGettableDoRequest",
             r#type.and_then(|t| OpGettableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGettableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGettableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGettableDoRequest");
         for attr in self.clone() {
@@ -16400,14 +18510,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGettableDoRequest<'a>> {
+impl IterableOpGettableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDoRequest", offset));
             return (
@@ -16528,7 +18638,6 @@ impl<Prev: Rec> Drop for PushOpGettableDoReply<Prev> {
     }
 }
 #[doc = "Get / dump tables."]
-#[doc = "Original name: \"op-gettable-do-reply\""]
 #[derive(Clone)]
 pub enum OpGettableDoReply<'a> {
     #[doc = "name of the table"]
@@ -16544,7 +18653,7 @@ pub enum OpGettableDoReply<'a> {
     #[doc = "owner of this table through netlink portID"]
     Owner(u32),
 }
-impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
+impl<'a> IterableOpGettableDoReply<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -16554,7 +18663,12 @@ impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of flags\nAssociated type: \"TableFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -16565,7 +18679,12 @@ impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of chains in this table"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -16576,7 +18695,12 @@ impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the table"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -16587,7 +18711,12 @@ impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -16598,7 +18727,12 @@ impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "owner of this table through netlink portID"]
     pub fn get_owner(&self) -> Result<u32, ErrorContext> {
@@ -16609,25 +18743,45 @@ impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGettableDoReply", "Owner"))
+        Err(ErrorContext::new_missing(
+            "OpGettableDoReply",
+            "Owner",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGettableDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGettableDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGettableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGettableDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGettableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGettableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGettableDoReply<'a> {
     type Item = Result<OpGettableDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -16678,14 +18832,15 @@ impl<'a> Iterator for Iterable<'a, OpGettableDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGettableDoReply",
             r#type.and_then(|t| OpGettableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGettableDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGettableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGettableDoReply");
         for attr in self.clone() {
@@ -16712,14 +18867,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGettableDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGettableDoReply<'a>> {
+impl IterableOpGettableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDoReply", offset));
             return (
@@ -16798,7 +18953,7 @@ impl<'r> RequestOpGettableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGettableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGettableDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGettableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -16889,7 +19044,6 @@ impl<Prev: Rec> Drop for PushOpDeltableDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing table."]
-#[doc = "Original name: \"op-deltable-do-request\""]
 #[derive(Clone)]
 pub enum OpDeltableDoRequest<'a> {
     #[doc = "name of the table"]
@@ -16897,7 +19051,7 @@ pub enum OpDeltableDoRequest<'a> {
     #[doc = "numeric handle of the table"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDeltableDoRequest<'a>> {
+impl<'a> IterableOpDeltableDoRequest<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -16907,7 +19061,12 @@ impl<'a> Iterable<'a, OpDeltableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDeltableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDeltableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the table"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -16918,25 +19077,45 @@ impl<'a> Iterable<'a, OpDeltableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDeltableDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDeltableDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDeltableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDeltableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDeltableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDeltableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDeltableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDeltableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDeltableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDeltableDoRequest<'a> {
     type Item = Result<OpDeltableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -16967,14 +19146,15 @@ impl<'a> Iterator for Iterable<'a, OpDeltableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDeltableDoRequest",
             r#type.and_then(|t| OpDeltableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDeltableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDeltableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDeltableDoRequest");
         for attr in self.clone() {
@@ -16995,14 +19175,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDeltableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDeltableDoRequest<'a>> {
+impl IterableOpDeltableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDeltableDoRequest", offset));
             return (
@@ -17082,26 +19262,40 @@ impl<Prev: Rec> Drop for PushOpDeltableDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing table."]
-#[doc = "Original name: \"op-deltable-do-reply\""]
 #[derive(Clone)]
 pub enum OpDeltableDoReply {}
-impl<'a> Iterable<'a, OpDeltableDoReply> {}
+impl<'a> IterableOpDeltableDoReply<'a> {}
 impl OpDeltableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDeltableDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDeltableDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDeltableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDeltableDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDeltableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDeltableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDeltableDoReply<'a> {
     type Item = Result<OpDeltableDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -17122,14 +19316,15 @@ impl Iterator for Iterable<'_, OpDeltableDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDeltableDoReply",
             r#type.and_then(|t| OpDeltableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDeltableDoReply> {
+impl std::fmt::Debug for IterableOpDeltableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDeltableDoReply");
         for attr in self.clone() {
@@ -17147,14 +19342,14 @@ impl std::fmt::Debug for Iterable<'_, OpDeltableDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDeltableDoReply> {
+impl IterableOpDeltableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDeltableDoReply", offset));
             return (
@@ -17182,7 +19377,7 @@ impl<'r> RequestOpDeltableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDeltableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDeltableDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDeltableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -17273,7 +19468,6 @@ impl<Prev: Rec> Drop for PushOpDestroytableDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing table with destroy semantics (ignoring ENOENT\nerrors).\n"]
-#[doc = "Original name: \"op-destroytable-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroytableDoRequest<'a> {
     #[doc = "name of the table"]
@@ -17281,7 +19475,7 @@ pub enum OpDestroytableDoRequest<'a> {
     #[doc = "numeric handle of the table"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDestroytableDoRequest<'a>> {
+impl<'a> IterableOpDestroytableDoRequest<'a> {
     #[doc = "name of the table"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -17291,7 +19485,12 @@ impl<'a> Iterable<'a, OpDestroytableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroytableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDestroytableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the table"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -17302,25 +19501,45 @@ impl<'a> Iterable<'a, OpDestroytableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroytableDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDestroytableDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroytableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroytableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroytableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroytableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroytableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroytableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroytableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroytableDoRequest<'a> {
     type Item = Result<OpDestroytableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -17351,14 +19570,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroytableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroytableDoRequest",
             r#type.and_then(|t| OpDestroytableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroytableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroytableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroytableDoRequest");
         for attr in self.clone() {
@@ -17379,14 +19599,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroytableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroytableDoRequest<'a>> {
+impl IterableOpDestroytableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroytableDoRequest", offset));
             return (
@@ -17466,26 +19686,40 @@ impl<Prev: Rec> Drop for PushOpDestroytableDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing table with destroy semantics (ignoring ENOENT\nerrors).\n"]
-#[doc = "Original name: \"op-destroytable-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroytableDoReply {}
-impl<'a> Iterable<'a, OpDestroytableDoReply> {}
+impl<'a> IterableOpDestroytableDoReply<'a> {}
 impl OpDestroytableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroytableDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroytableDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroytableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         TableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroytableDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroytableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroytableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroytableDoReply<'a> {
     type Item = Result<OpDestroytableDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -17506,14 +19740,15 @@ impl Iterator for Iterable<'_, OpDestroytableDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroytableDoReply",
             r#type.and_then(|t| OpDestroytableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroytableDoReply> {
+impl std::fmt::Debug for IterableOpDestroytableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroytableDoReply");
         for attr in self.clone() {
@@ -17531,14 +19766,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroytableDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroytableDoReply> {
+impl IterableOpDestroytableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroytableDoReply", offset));
             return (
@@ -17566,7 +19801,7 @@ impl<'r> RequestOpDestroytableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroytableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroytableDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroytableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -17708,7 +19943,6 @@ impl<Prev: Rec> Drop for PushOpNewchainDoRequest<Prev> {
     }
 }
 #[doc = "Create a new chain."]
-#[doc = "Original name: \"op-newchain-do-request\""]
 #[derive(Clone)]
 pub enum OpNewchainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
@@ -17718,17 +19952,17 @@ pub enum OpNewchainDoRequest<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
     #[doc = "hook specification for basechains"]
-    Hook(Iterable<'a, NftHookAttrs<'a>>),
+    Hook(IterableNftHookAttrs<'a>),
     #[doc = "numeric policy of the chain"]
     Policy(u32),
     #[doc = "counter specification of the chain"]
-    Counters(Iterable<'a, NftCounterAttrs>),
+    Counters(IterableNftCounterAttrs<'a>),
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     Flags(u32),
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
+impl<'a> IterableOpNewchainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -17738,7 +19972,12 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the chain"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -17749,7 +19988,12 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -17760,10 +20004,15 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "hook specification for basechains"]
-    pub fn get_hook(&self) -> Result<Iterable<'a, NftHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableNftHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17771,7 +20020,12 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric policy of the chain"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -17782,10 +20036,15 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Policy"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "counter specification of the chain"]
-    pub fn get_counters(&self) -> Result<Iterable<'a, NftCounterAttrs>, ErrorContext> {
+    pub fn get_counters(&self) -> Result<IterableNftCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17793,7 +20052,12 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Counters"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Counters",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -17804,7 +20068,12 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -17815,25 +20084,45 @@ impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewchainDoRequest", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewchainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewchainDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewchainDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewchainDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewchainDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewchainDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewchainDoRequest<'a> {
     type Item = Result<OpNewchainDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -17860,7 +20149,7 @@ impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
                     val
                 }),
                 4u16 => OpNewchainDoRequest::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -17870,7 +20159,7 @@ impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
                     val
                 }),
                 8u16 => OpNewchainDoRequest::Counters({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -17894,14 +20183,15 @@ impl<'a> Iterator for Iterable<'a, OpNewchainDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewchainDoRequest",
             r#type.and_then(|t| OpNewchainDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewchainDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewchainDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewchainDoRequest");
         for attr in self.clone() {
@@ -17930,14 +20220,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewchainDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewchainDoRequest<'a>> {
+impl IterableOpNewchainDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewchainDoRequest", offset));
             return (
@@ -18054,26 +20344,40 @@ impl<Prev: Rec> Drop for PushOpNewchainDoReply<Prev> {
     }
 }
 #[doc = "Create a new chain."]
-#[doc = "Original name: \"op-newchain-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewchainDoReply {}
-impl<'a> Iterable<'a, OpNewchainDoReply> {}
+impl<'a> IterableOpNewchainDoReply<'a> {}
 impl OpNewchainDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewchainDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewchainDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewchainDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewchainDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewchainDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewchainDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewchainDoReply<'a> {
     type Item = Result<OpNewchainDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -18094,14 +20398,15 @@ impl Iterator for Iterable<'_, OpNewchainDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewchainDoReply",
             r#type.and_then(|t| OpNewchainDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewchainDoReply> {
+impl std::fmt::Debug for IterableOpNewchainDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewchainDoReply");
         for attr in self.clone() {
@@ -18119,14 +20424,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewchainDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewchainDoReply> {
+impl IterableOpNewchainDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewchainDoReply", offset));
             return (
@@ -18154,7 +20459,7 @@ impl<'r> RequestOpNewchainDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewchainDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewchainDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewchainDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -18222,26 +20527,40 @@ impl<Prev: Rec> Drop for PushOpGetchainDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump chains."]
-#[doc = "Original name: \"op-getchain-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetchainDumpRequest {}
-impl<'a> Iterable<'a, OpGetchainDumpRequest> {}
+impl<'a> IterableOpGetchainDumpRequest<'a> {}
 impl OpGetchainDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetchainDumpRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetchainDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetchainDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetchainDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetchainDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetchainDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetchainDumpRequest<'a> {
     type Item = Result<OpGetchainDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -18262,14 +20581,15 @@ impl Iterator for Iterable<'_, OpGetchainDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetchainDumpRequest",
             r#type.and_then(|t| OpGetchainDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetchainDumpRequest> {
+impl std::fmt::Debug for IterableOpGetchainDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetchainDumpRequest");
         for attr in self.clone() {
@@ -18287,14 +20607,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetchainDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetchainDumpRequest> {
+impl IterableOpGetchainDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDumpRequest", offset));
             return (
@@ -18450,7 +20770,6 @@ impl<Prev: Rec> Drop for PushOpGetchainDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump chains."]
-#[doc = "Original name: \"op-getchain-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetchainDumpReply<'a> {
     #[doc = "name of the table containing the chain"]
@@ -18460,7 +20779,7 @@ pub enum OpGetchainDumpReply<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
     #[doc = "hook specification for basechains"]
-    Hook(Iterable<'a, NftHookAttrs<'a>>),
+    Hook(IterableNftHookAttrs<'a>),
     #[doc = "numeric policy of the chain"]
     Policy(u32),
     #[doc = "number of references to this chain"]
@@ -18468,7 +20787,7 @@ pub enum OpGetchainDumpReply<'a> {
     #[doc = "type name of the chain"]
     Type(&'a CStr),
     #[doc = "counter specification of the chain"]
-    Counters(Iterable<'a, NftCounterAttrs>),
+    Counters(IterableNftCounterAttrs<'a>),
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     Flags(u32),
     #[doc = "uniquely identifies a chain in a transaction"]
@@ -18476,7 +20795,7 @@ pub enum OpGetchainDumpReply<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
+impl<'a> IterableOpGetchainDumpReply<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -18486,7 +20805,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the chain"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -18497,7 +20821,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -18508,10 +20837,15 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "hook specification for basechains"]
-    pub fn get_hook(&self) -> Result<Iterable<'a, NftHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableNftHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -18519,7 +20853,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric policy of the chain"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -18530,7 +20869,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Policy"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of references to this chain"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -18541,7 +20885,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "type name of the chain"]
     pub fn get_type(&self) -> Result<&'a CStr, ErrorContext> {
@@ -18552,10 +20901,15 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "counter specification of the chain"]
-    pub fn get_counters(&self) -> Result<Iterable<'a, NftCounterAttrs>, ErrorContext> {
+    pub fn get_counters(&self) -> Result<IterableNftCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -18563,7 +20917,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Counters"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Counters",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -18574,7 +20933,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a chain in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -18585,7 +20949,12 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -18596,25 +20965,45 @@ impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDumpReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDumpReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetchainDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetchainDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetchainDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetchainDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetchainDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetchainDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetchainDumpReply<'a> {
     type Item = Result<OpGetchainDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -18641,7 +21030,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDumpReply<'a>> {
                     val
                 }),
                 4u16 => OpGetchainDumpReply::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -18661,7 +21050,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDumpReply<'a>> {
                     val
                 }),
                 8u16 => OpGetchainDumpReply::Counters({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -18690,14 +21079,15 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetchainDumpReply",
             r#type.and_then(|t| OpGetchainDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetchainDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetchainDumpReply");
         for attr in self.clone() {
@@ -18729,14 +21119,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetchainDumpReply<'a>> {
+impl IterableOpGetchainDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDumpReply", offset));
             return (
@@ -18848,7 +21238,7 @@ impl<'r> RequestOpGetchainDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetchainDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetchainDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetchainDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -18950,7 +21340,6 @@ impl<Prev: Rec> Drop for PushOpGetchainDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump chains."]
-#[doc = "Original name: \"op-getchain-do-request\""]
 #[derive(Clone)]
 pub enum OpGetchainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
@@ -18958,7 +21347,7 @@ pub enum OpGetchainDoRequest<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetchainDoRequest<'a>> {
+impl<'a> IterableOpGetchainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -18968,7 +21357,12 @@ impl<'a> Iterable<'a, OpGetchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -18979,25 +21373,45 @@ impl<'a> Iterable<'a, OpGetchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetchainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetchainDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetchainDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetchainDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetchainDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetchainDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetchainDoRequest<'a> {
     type Item = Result<OpGetchainDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -19028,14 +21442,15 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetchainDoRequest",
             r#type.and_then(|t| OpGetchainDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetchainDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetchainDoRequest");
         for attr in self.clone() {
@@ -19056,14 +21471,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetchainDoRequest<'a>> {
+impl IterableOpGetchainDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDoRequest", offset));
             return (
@@ -19246,7 +21661,6 @@ impl<Prev: Rec> Drop for PushOpGetchainDoReply<Prev> {
     }
 }
 #[doc = "Get / dump chains."]
-#[doc = "Original name: \"op-getchain-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetchainDoReply<'a> {
     #[doc = "name of the table containing the chain"]
@@ -19256,7 +21670,7 @@ pub enum OpGetchainDoReply<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
     #[doc = "hook specification for basechains"]
-    Hook(Iterable<'a, NftHookAttrs<'a>>),
+    Hook(IterableNftHookAttrs<'a>),
     #[doc = "numeric policy of the chain"]
     Policy(u32),
     #[doc = "number of references to this chain"]
@@ -19264,7 +21678,7 @@ pub enum OpGetchainDoReply<'a> {
     #[doc = "type name of the chain"]
     Type(&'a CStr),
     #[doc = "counter specification of the chain"]
-    Counters(Iterable<'a, NftCounterAttrs>),
+    Counters(IterableNftCounterAttrs<'a>),
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     Flags(u32),
     #[doc = "uniquely identifies a chain in a transaction"]
@@ -19272,7 +21686,7 @@ pub enum OpGetchainDoReply<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
+impl<'a> IterableOpGetchainDoReply<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -19282,7 +21696,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the chain"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -19293,7 +21712,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -19304,10 +21728,15 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "hook specification for basechains"]
-    pub fn get_hook(&self) -> Result<Iterable<'a, NftHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableNftHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -19315,7 +21744,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric policy of the chain"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -19326,7 +21760,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Policy"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of references to this chain"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -19337,7 +21776,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "type name of the chain"]
     pub fn get_type(&self) -> Result<&'a CStr, ErrorContext> {
@@ -19348,10 +21792,15 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "counter specification of the chain"]
-    pub fn get_counters(&self) -> Result<Iterable<'a, NftCounterAttrs>, ErrorContext> {
+    pub fn get_counters(&self) -> Result<IterableNftCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -19359,7 +21808,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Counters"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Counters",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -19370,7 +21824,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a chain in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -19381,7 +21840,12 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -19392,25 +21856,45 @@ impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetchainDoReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetchainDoReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetchainDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetchainDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetchainDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetchainDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetchainDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetchainDoReply<'a> {
     type Item = Result<OpGetchainDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -19437,7 +21921,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
                     val
                 }),
                 4u16 => OpGetchainDoReply::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19457,7 +21941,7 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
                     val
                 }),
                 8u16 => OpGetchainDoReply::Counters({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19486,14 +21970,15 @@ impl<'a> Iterator for Iterable<'a, OpGetchainDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetchainDoReply",
             r#type.and_then(|t| OpGetchainDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetchainDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetchainDoReply");
         for attr in self.clone() {
@@ -19525,14 +22010,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetchainDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetchainDoReply<'a>> {
+impl IterableOpGetchainDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDoReply", offset));
             return (
@@ -19642,7 +22127,7 @@ impl<'r> RequestOpGetchainDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetchainDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetchainDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetchainDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -19758,7 +22243,6 @@ impl<Prev: Rec> Drop for PushOpDelchainDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing chain."]
-#[doc = "Original name: \"op-delchain-do-request\""]
 #[derive(Clone)]
 pub enum OpDelchainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
@@ -19768,9 +22252,9 @@ pub enum OpDelchainDoRequest<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
     #[doc = "hook specification for basechains"]
-    Hook(Iterable<'a, NftHookAttrs<'a>>),
+    Hook(IterableNftHookAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpDelchainDoRequest<'a>> {
+impl<'a> IterableOpDelchainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -19780,7 +22264,12 @@ impl<'a> Iterable<'a, OpDelchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelchainDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelchainDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the chain"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -19791,7 +22280,12 @@ impl<'a> Iterable<'a, OpDelchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelchainDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDelchainDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -19802,10 +22296,15 @@ impl<'a> Iterable<'a, OpDelchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelchainDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDelchainDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "hook specification for basechains"]
-    pub fn get_hook(&self) -> Result<Iterable<'a, NftHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableNftHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -19813,25 +22312,45 @@ impl<'a> Iterable<'a, OpDelchainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelchainDoRequest", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpDelchainDoRequest",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelchainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDelchainDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelchainDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelchainDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelchainDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelchainDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelchainDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelchainDoRequest<'a> {
     type Item = Result<OpDelchainDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -19858,7 +22377,7 @@ impl<'a> Iterator for Iterable<'a, OpDelchainDoRequest<'a>> {
                     val
                 }),
                 4u16 => OpDelchainDoRequest::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19872,14 +22391,15 @@ impl<'a> Iterator for Iterable<'a, OpDelchainDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelchainDoRequest",
             r#type.and_then(|t| OpDelchainDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelchainDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelchainDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelchainDoRequest");
         for attr in self.clone() {
@@ -19902,14 +22422,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelchainDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelchainDoRequest<'a>> {
+impl IterableOpDelchainDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelchainDoRequest", offset));
             return (
@@ -20002,26 +22522,40 @@ impl<Prev: Rec> Drop for PushOpDelchainDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing chain."]
-#[doc = "Original name: \"op-delchain-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelchainDoReply {}
-impl<'a> Iterable<'a, OpDelchainDoReply> {}
+impl<'a> IterableOpDelchainDoReply<'a> {}
 impl OpDelchainDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDelchainDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelchainDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelchainDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelchainDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelchainDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelchainDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelchainDoReply<'a> {
     type Item = Result<OpDelchainDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20042,14 +22576,15 @@ impl Iterator for Iterable<'_, OpDelchainDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelchainDoReply",
             r#type.and_then(|t| OpDelchainDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelchainDoReply> {
+impl std::fmt::Debug for IterableOpDelchainDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelchainDoReply");
         for attr in self.clone() {
@@ -20067,14 +22602,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelchainDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelchainDoReply> {
+impl IterableOpDelchainDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelchainDoReply", offset));
             return (
@@ -20102,7 +22637,7 @@ impl<'r> RequestOpDelchainDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelchainDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDelchainDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDelchainDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -20218,7 +22753,6 @@ impl<Prev: Rec> Drop for PushOpDestroychainDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing chain with destroy semantics (ignoring ENOENT\nerrors).\n"]
-#[doc = "Original name: \"op-destroychain-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroychainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
@@ -20228,9 +22762,9 @@ pub enum OpDestroychainDoRequest<'a> {
     #[doc = "name of the chain"]
     Name(&'a CStr),
     #[doc = "hook specification for basechains"]
-    Hook(Iterable<'a, NftHookAttrs<'a>>),
+    Hook(IterableNftHookAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpDestroychainDoRequest<'a>> {
+impl<'a> IterableOpDestroychainDoRequest<'a> {
     #[doc = "name of the table containing the chain"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -20240,7 +22774,12 @@ impl<'a> Iterable<'a, OpDestroychainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroychainDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDestroychainDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the chain"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -20251,7 +22790,12 @@ impl<'a> Iterable<'a, OpDestroychainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroychainDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDestroychainDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -20262,10 +22806,15 @@ impl<'a> Iterable<'a, OpDestroychainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroychainDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDestroychainDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "hook specification for basechains"]
-    pub fn get_hook(&self) -> Result<Iterable<'a, NftHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableNftHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -20273,25 +22822,45 @@ impl<'a> Iterable<'a, OpDestroychainDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroychainDoRequest", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpDestroychainDoRequest",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroychainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroychainDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroychainDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroychainDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroychainDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroychainDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroychainDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroychainDoRequest<'a> {
     type Item = Result<OpDestroychainDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20318,7 +22887,7 @@ impl<'a> Iterator for Iterable<'a, OpDestroychainDoRequest<'a>> {
                     val
                 }),
                 4u16 => OpDestroychainDoRequest::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableNftHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -20332,14 +22901,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroychainDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroychainDoRequest",
             r#type.and_then(|t| OpDestroychainDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroychainDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroychainDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroychainDoRequest");
         for attr in self.clone() {
@@ -20362,14 +22932,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroychainDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroychainDoRequest<'a>> {
+impl IterableOpDestroychainDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroychainDoRequest", offset));
             return (
@@ -20462,26 +23032,40 @@ impl<Prev: Rec> Drop for PushOpDestroychainDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing chain with destroy semantics (ignoring ENOENT\nerrors).\n"]
-#[doc = "Original name: \"op-destroychain-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroychainDoReply {}
-impl<'a> Iterable<'a, OpDestroychainDoReply> {}
+impl<'a> IterableOpDestroychainDoReply<'a> {}
 impl OpDestroychainDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroychainDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroychainDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroychainDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ChainAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroychainDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroychainDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroychainDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroychainDoReply<'a> {
     type Item = Result<OpDestroychainDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20502,14 +23086,15 @@ impl Iterator for Iterable<'_, OpDestroychainDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroychainDoReply",
             r#type.and_then(|t| OpDestroychainDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroychainDoReply> {
+impl std::fmt::Debug for IterableOpDestroychainDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroychainDoReply");
         for attr in self.clone() {
@@ -20527,14 +23112,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroychainDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroychainDoReply> {
+impl IterableOpDestroychainDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroychainDoReply", offset));
             return (
@@ -20562,7 +23147,7 @@ impl<'r> RequestOpDestroychainDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroychainDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroychainDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroychainDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -20710,7 +23295,6 @@ impl<Prev: Rec> Drop for PushOpNewruleDoRequest<Prev> {
     }
 }
 #[doc = "Create a new rule."]
-#[doc = "Original name: \"op-newrule-do-request\""]
 #[derive(Clone)]
 pub enum OpNewruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -20720,9 +23304,9 @@ pub enum OpNewruleDoRequest<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "compatibility specifications of the rule"]
-    Compat(Iterable<'a, RuleCompatAttrs>),
+    Compat(IterableRuleCompatAttrs<'a>),
     #[doc = "numeric handle of the previous rule"]
     Position(u64),
     #[doc = "user data"]
@@ -20732,7 +23316,7 @@ pub enum OpNewruleDoRequest<'a> {
     #[doc = "add the rule to chain by ID, alternative to chain name"]
     ChainId(u32),
 }
-impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
+impl<'a> IterableOpNewruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -20742,7 +23326,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -20753,7 +23342,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -20764,10 +23358,15 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -20775,10 +23374,15 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "compatibility specifications of the rule"]
-    pub fn get_compat(&self) -> Result<Iterable<'a, RuleCompatAttrs>, ErrorContext> {
+    pub fn get_compat(&self) -> Result<IterableRuleCompatAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -20786,7 +23390,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Compat"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Compat",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the previous rule"]
     pub fn get_position(&self) -> Result<u64, ErrorContext> {
@@ -20797,7 +23406,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Position"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Position",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -20808,7 +23422,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "transaction unique identifier of the previous rule"]
     pub fn get_position_id(&self) -> Result<u32, ErrorContext> {
@@ -20819,7 +23438,12 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "PositionId"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "PositionId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "add the rule to chain by ID, alternative to chain name"]
     pub fn get_chain_id(&self) -> Result<u32, ErrorContext> {
@@ -20830,25 +23454,45 @@ impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewruleDoRequest", "ChainId"))
+        Err(ErrorContext::new_missing(
+            "OpNewruleDoRequest",
+            "ChainId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewruleDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewruleDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewruleDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewruleDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewruleDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewruleDoRequest<'a> {
     type Item = Result<OpNewruleDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -20875,12 +23519,12 @@ impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
                     val
                 }),
                 4u16 => OpNewruleDoRequest::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => OpNewruleDoRequest::Compat({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableRuleCompatAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -20914,14 +23558,15 @@ impl<'a> Iterator for Iterable<'a, OpNewruleDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewruleDoRequest",
             r#type.and_then(|t| OpNewruleDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewruleDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewruleDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewruleDoRequest");
         for attr in self.clone() {
@@ -20949,14 +23594,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewruleDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewruleDoRequest<'a>> {
+impl IterableOpNewruleDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewruleDoRequest", offset));
             return (
@@ -21079,26 +23724,40 @@ impl<Prev: Rec> Drop for PushOpNewruleDoReply<Prev> {
     }
 }
 #[doc = "Create a new rule."]
-#[doc = "Original name: \"op-newrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewruleDoReply {}
-impl<'a> Iterable<'a, OpNewruleDoReply> {}
+impl<'a> IterableOpNewruleDoReply<'a> {}
 impl OpNewruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewruleDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewruleDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewruleDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewruleDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewruleDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewruleDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewruleDoReply<'a> {
     type Item = Result<OpNewruleDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -21119,14 +23778,15 @@ impl Iterator for Iterable<'_, OpNewruleDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewruleDoReply",
             r#type.and_then(|t| OpNewruleDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewruleDoReply> {
+impl std::fmt::Debug for IterableOpNewruleDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewruleDoReply");
         for attr in self.clone() {
@@ -21144,14 +23804,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewruleDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewruleDoReply> {
+impl IterableOpNewruleDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewruleDoReply", offset));
             return (
@@ -21179,7 +23839,7 @@ impl<'r> RequestOpNewruleDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewruleDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewruleDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewruleDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -21281,7 +23941,6 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump rules."]
-#[doc = "Original name: \"op-getrule-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetruleDumpRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -21289,7 +23948,7 @@ pub enum OpGetruleDumpRequest<'a> {
     #[doc = "name of the chain containing the rule"]
     Chain(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetruleDumpRequest<'a>> {
+impl<'a> IterableOpGetruleDumpRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21299,7 +23958,12 @@ impl<'a> Iterable<'a, OpGetruleDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -21310,25 +23974,45 @@ impl<'a> Iterable<'a, OpGetruleDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleDumpRequest<'a> {
     type Item = Result<OpGetruleDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -21359,14 +24043,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleDumpRequest",
             r#type.and_then(|t| OpGetruleDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleDumpRequest");
         for attr in self.clone() {
@@ -21387,14 +24072,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleDumpRequest<'a>> {
+impl IterableOpGetruleDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDumpRequest", offset));
             return (
@@ -21534,7 +24219,6 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump rules."]
-#[doc = "Original name: \"op-getrule-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetruleDumpReply<'a> {
     #[doc = "name of the table containing the rule"]
@@ -21544,13 +24228,13 @@ pub enum OpGetruleDumpReply<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "numeric handle of the previous rule"]
     Position(u64),
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
+impl<'a> IterableOpGetruleDumpReply<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21560,7 +24244,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -21571,7 +24260,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -21582,10 +24276,15 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -21593,7 +24292,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the previous rule"]
     pub fn get_position(&self) -> Result<u64, ErrorContext> {
@@ -21604,7 +24308,12 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Position"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Position",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -21615,25 +24324,45 @@ impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDumpReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDumpReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleDumpReply<'a> {
     type Item = Result<OpGetruleDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -21660,7 +24389,7 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
                     val
                 }),
                 4u16 => OpGetruleDumpReply::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -21684,14 +24413,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleDumpReply",
             r#type.and_then(|t| OpGetruleDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleDumpReply");
         for attr in self.clone() {
@@ -21716,14 +24446,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleDumpReply<'a>> {
+impl IterableOpGetruleDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDumpReply", offset));
             return (
@@ -21805,7 +24535,7 @@ impl<'r> RequestOpGetruleDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetruleDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetruleDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetruleDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -21913,7 +24643,6 @@ impl<Prev: Rec> Drop for PushOpGetruleDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump rules."]
-#[doc = "Original name: \"op-getrule-do-request\""]
 #[derive(Clone)]
 pub enum OpGetruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -21923,7 +24652,7 @@ pub enum OpGetruleDoRequest<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpGetruleDoRequest<'a>> {
+impl<'a> IterableOpGetruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -21933,7 +24662,12 @@ impl<'a> Iterable<'a, OpGetruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -21944,7 +24678,12 @@ impl<'a> Iterable<'a, OpGetruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -21955,25 +24694,45 @@ impl<'a> Iterable<'a, OpGetruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleDoRequest<'a> {
     type Item = Result<OpGetruleDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -22009,14 +24768,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleDoRequest",
             r#type.and_then(|t| OpGetruleDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleDoRequest");
         for attr in self.clone() {
@@ -22038,14 +24798,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleDoRequest<'a>> {
+impl IterableOpGetruleDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDoRequest", offset));
             return (
@@ -22191,7 +24951,6 @@ impl<Prev: Rec> Drop for PushOpGetruleDoReply<Prev> {
     }
 }
 #[doc = "Get / dump rules."]
-#[doc = "Original name: \"op-getrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetruleDoReply<'a> {
     #[doc = "name of the table containing the rule"]
@@ -22201,13 +24960,13 @@ pub enum OpGetruleDoReply<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "numeric handle of the previous rule"]
     Position(u64),
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
+impl<'a> IterableOpGetruleDoReply<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -22217,7 +24976,12 @@ impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -22228,7 +24992,12 @@ impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoReply", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoReply",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -22239,10 +25008,15 @@ impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -22250,7 +25024,12 @@ impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoReply", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoReply",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the previous rule"]
     pub fn get_position(&self) -> Result<u64, ErrorContext> {
@@ -22261,7 +25040,12 @@ impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoReply", "Position"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoReply",
+            "Position",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -22272,25 +25056,45 @@ impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleDoReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleDoReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleDoReply<'a> {
     type Item = Result<OpGetruleDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -22317,7 +25121,7 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDoReply<'a>> {
                     val
                 }),
                 4u16 => OpGetruleDoReply::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -22341,14 +25145,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleDoReply",
             r#type.and_then(|t| OpGetruleDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleDoReply");
         for attr in self.clone() {
@@ -22373,14 +25178,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleDoReply<'a>> {
+impl IterableOpGetruleDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDoReply", offset));
             return (
@@ -22460,7 +25265,7 @@ impl<'r> RequestOpGetruleDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetruleDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetruleDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetruleDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -22568,7 +25373,6 @@ impl<Prev: Rec> Drop for PushOpGetruleResetDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump rules and reset stateful expressions."]
-#[doc = "Original name: \"op-getrule-reset-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetruleResetDumpRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -22578,7 +25382,7 @@ pub enum OpGetruleResetDumpRequest<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpGetruleResetDumpRequest<'a>> {
+impl<'a> IterableOpGetruleResetDumpRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -22588,7 +25392,12 @@ impl<'a> Iterable<'a, OpGetruleResetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -22599,7 +25408,12 @@ impl<'a> Iterable<'a, OpGetruleResetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -22610,25 +25424,45 @@ impl<'a> Iterable<'a, OpGetruleResetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleResetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleResetDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleResetDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleResetDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleResetDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleResetDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleResetDumpRequest<'a> {
     type Item = Result<OpGetruleResetDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -22664,14 +25498,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleResetDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleResetDumpRequest",
             r#type.and_then(|t| OpGetruleResetDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleResetDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleResetDumpRequest");
         for attr in self.clone() {
@@ -22693,14 +25528,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleResetDumpRequest<'a>> {
+impl IterableOpGetruleResetDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleResetDumpRequest", offset));
             return (
@@ -22846,7 +25681,6 @@ impl<Prev: Rec> Drop for PushOpGetruleResetDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump rules and reset stateful expressions."]
-#[doc = "Original name: \"op-getrule-reset-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetruleResetDumpReply<'a> {
     #[doc = "name of the table containing the rule"]
@@ -22856,13 +25690,13 @@ pub enum OpGetruleResetDumpReply<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "numeric handle of the previous rule"]
     Position(u64),
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
+impl<'a> IterableOpGetruleResetDumpReply<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -22872,7 +25706,12 @@ impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -22883,7 +25722,12 @@ impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpReply", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpReply",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -22894,10 +25738,15 @@ impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -22905,7 +25754,12 @@ impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpReply", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpReply",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the previous rule"]
     pub fn get_position(&self) -> Result<u64, ErrorContext> {
@@ -22916,7 +25770,12 @@ impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpReply", "Position"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpReply",
+            "Position",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -22927,25 +25786,45 @@ impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDumpReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDumpReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleResetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleResetDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleResetDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleResetDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleResetDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleResetDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleResetDumpReply<'a> {
     type Item = Result<OpGetruleResetDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -22972,7 +25851,7 @@ impl<'a> Iterator for Iterable<'a, OpGetruleResetDumpReply<'a>> {
                     val
                 }),
                 4u16 => OpGetruleResetDumpReply::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -22996,14 +25875,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleResetDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleResetDumpReply",
             r#type.and_then(|t| OpGetruleResetDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleResetDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleResetDumpReply");
         for attr in self.clone() {
@@ -23028,14 +25908,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleResetDumpReply<'a>> {
+impl IterableOpGetruleResetDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleResetDumpReply", offset));
             return (
@@ -23117,7 +25997,7 @@ impl<'r> RequestOpGetruleResetDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetruleResetDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetruleResetDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetruleResetDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -23225,7 +26105,6 @@ impl<Prev: Rec> Drop for PushOpGetruleResetDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump rules and reset stateful expressions."]
-#[doc = "Original name: \"op-getrule-reset-do-request\""]
 #[derive(Clone)]
 pub enum OpGetruleResetDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -23235,7 +26114,7 @@ pub enum OpGetruleResetDoRequest<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpGetruleResetDoRequest<'a>> {
+impl<'a> IterableOpGetruleResetDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23245,7 +26124,12 @@ impl<'a> Iterable<'a, OpGetruleResetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -23256,7 +26140,12 @@ impl<'a> Iterable<'a, OpGetruleResetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -23267,25 +26156,45 @@ impl<'a> Iterable<'a, OpGetruleResetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleResetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleResetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleResetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleResetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleResetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleResetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleResetDoRequest<'a> {
     type Item = Result<OpGetruleResetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -23321,14 +26230,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleResetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleResetDoRequest",
             r#type.and_then(|t| OpGetruleResetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleResetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleResetDoRequest");
         for attr in self.clone() {
@@ -23350,14 +26260,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleResetDoRequest<'a>> {
+impl IterableOpGetruleResetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleResetDoRequest", offset));
             return (
@@ -23503,7 +26413,6 @@ impl<Prev: Rec> Drop for PushOpGetruleResetDoReply<Prev> {
     }
 }
 #[doc = "Get / dump rules and reset stateful expressions."]
-#[doc = "Original name: \"op-getrule-reset-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetruleResetDoReply<'a> {
     #[doc = "name of the table containing the rule"]
@@ -23513,13 +26422,13 @@ pub enum OpGetruleResetDoReply<'a> {
     #[doc = "numeric handle of the rule"]
     Handle(u64),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, ExprListAttrs<'a>>),
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "numeric handle of the previous rule"]
     Position(u64),
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
+impl<'a> IterableOpGetruleResetDoReply<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23529,7 +26438,12 @@ impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -23540,7 +26454,12 @@ impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoReply", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoReply",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -23551,10 +26470,15 @@ impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, ExprListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -23562,7 +26486,12 @@ impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoReply", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoReply",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the previous rule"]
     pub fn get_position(&self) -> Result<u64, ErrorContext> {
@@ -23573,7 +26502,12 @@ impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoReply", "Position"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoReply",
+            "Position",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -23584,25 +26518,45 @@ impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetruleResetDoReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetruleResetDoReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetruleResetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetruleResetDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetruleResetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetruleResetDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetruleResetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetruleResetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetruleResetDoReply<'a> {
     type Item = Result<OpGetruleResetDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -23629,7 +26583,7 @@ impl<'a> Iterator for Iterable<'a, OpGetruleResetDoReply<'a>> {
                     val
                 }),
                 4u16 => OpGetruleResetDoReply::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -23653,14 +26607,15 @@ impl<'a> Iterator for Iterable<'a, OpGetruleResetDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetruleResetDoReply",
             r#type.and_then(|t| OpGetruleResetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetruleResetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetruleResetDoReply");
         for attr in self.clone() {
@@ -23685,14 +26640,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetruleResetDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetruleResetDoReply<'a>> {
+impl IterableOpGetruleResetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleResetDoReply", offset));
             return (
@@ -23772,7 +26727,7 @@ impl<'r> RequestOpGetruleResetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetruleResetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetruleResetDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetruleResetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -23869,6 +26824,14 @@ impl<Prev: Rec> PushOpDelruleDoRequest<Prev> {
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "list of expressions"]
+    pub fn nested_expressions(mut self) -> PushExprListAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        PushExprListAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
     #[doc = "uniquely identifies a rule in a transaction"]
     pub fn push_id(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 8u16, 4 as u16);
@@ -23886,7 +26849,6 @@ impl<Prev: Rec> Drop for PushOpDelruleDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing rule."]
-#[doc = "Original name: \"op-delrule-do-request\""]
 #[derive(Clone)]
 pub enum OpDelruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -23895,10 +26857,12 @@ pub enum OpDelruleDoRequest<'a> {
     Chain(&'a CStr),
     #[doc = "numeric handle of the rule"]
     Handle(u64),
+    #[doc = "list of expressions"]
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "uniquely identifies a rule in a transaction"]
     Id(u32),
 }
-impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
+impl<'a> IterableOpDelruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -23908,7 +26872,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -23919,7 +26888,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -23930,7 +26904,28 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "list of expressions"]
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDelruleDoRequest::Expressions(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a rule in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -23941,25 +26936,45 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelruleDoRequest", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpDelruleDoRequest",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDelruleDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelruleDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelruleDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelruleDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelruleDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelruleDoRequest<'a> {
     type Item = Result<OpDelruleDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -23985,6 +27000,11 @@ impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
+                4u16 => OpDelruleDoRequest::Expressions({
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
                 8u16 => OpDelruleDoRequest::Id({
                     let res = parse_u32(next);
                     let Some(val) = res else { break };
@@ -24000,14 +27020,15 @@ impl<'a> Iterator for Iterable<'a, OpDelruleDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelruleDoRequest",
             r#type.and_then(|t| OpDelruleDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelruleDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelruleDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelruleDoRequest");
         for attr in self.clone() {
@@ -24024,20 +27045,21 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelruleDoRequest<'a>> {
                 OpDelruleDoRequest::Table(val) => fmt.field("Table", &val),
                 OpDelruleDoRequest::Chain(val) => fmt.field("Chain", &val),
                 OpDelruleDoRequest::Handle(val) => fmt.field("Handle", &val),
+                OpDelruleDoRequest::Expressions(val) => fmt.field("Expressions", &val),
                 OpDelruleDoRequest::Id(val) => fmt.field("Id", &val),
             };
         }
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
+impl IterableOpDelruleDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelruleDoRequest", offset));
             return (
@@ -24050,6 +27072,7 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
         }
         let mut attrs = self.clone();
         let mut last_off = cur + attrs.pos;
+        let mut missing = None;
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
@@ -24071,6 +27094,12 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
                         break;
                     }
                 }
+                OpDelruleDoRequest::Expressions(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
                 OpDelruleDoRequest::Id(val) => {
                     if last_off == offset {
                         stack.push(("Id", last_off));
@@ -24084,7 +27113,7 @@ impl<'a> Iterable<'a, OpDelruleDoRequest<'a>> {
         if !stack.is_empty() {
             stack.push(("OpDelruleDoRequest", cur));
         }
-        (stack, None)
+        (stack, missing)
     }
 }
 #[doc = "Delete an existing rule."]
@@ -24129,26 +27158,40 @@ impl<Prev: Rec> Drop for PushOpDelruleDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing rule."]
-#[doc = "Original name: \"op-delrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelruleDoReply {}
-impl<'a> Iterable<'a, OpDelruleDoReply> {}
+impl<'a> IterableOpDelruleDoReply<'a> {}
 impl OpDelruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDelruleDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelruleDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelruleDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelruleDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelruleDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelruleDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelruleDoReply<'a> {
     type Item = Result<OpDelruleDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -24169,14 +27212,15 @@ impl Iterator for Iterable<'_, OpDelruleDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelruleDoReply",
             r#type.and_then(|t| OpDelruleDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelruleDoReply> {
+impl std::fmt::Debug for IterableOpDelruleDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelruleDoReply");
         for attr in self.clone() {
@@ -24194,14 +27238,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelruleDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelruleDoReply> {
+impl IterableOpDelruleDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelruleDoReply", offset));
             return (
@@ -24229,7 +27273,7 @@ impl<'r> RequestOpDelruleDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelruleDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDelruleDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDelruleDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -24326,6 +27370,14 @@ impl<Prev: Rec> PushOpDestroyruleDoRequest<Prev> {
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "list of expressions"]
+    pub fn nested_expressions(mut self) -> PushExprListAttrs<Self> {
+        let header_offset = push_nested_header(self.as_rec_mut(), 4u16);
+        PushExprListAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
     #[doc = "uniquely identifies a rule in a transaction"]
     pub fn push_id(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 8u16, 4 as u16);
@@ -24343,7 +27395,6 @@ impl<Prev: Rec> Drop for PushOpDestroyruleDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing rule with destroy semantics (ignoring ENOENT errors).\n"]
-#[doc = "Original name: \"op-destroyrule-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroyruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
@@ -24352,10 +27403,12 @@ pub enum OpDestroyruleDoRequest<'a> {
     Chain(&'a CStr),
     #[doc = "numeric handle of the rule"]
     Handle(u64),
+    #[doc = "list of expressions"]
+    Expressions(IterableExprListAttrs<'a>),
     #[doc = "uniquely identifies a rule in a transaction"]
     Id(u32),
 }
-impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
+impl<'a> IterableOpDestroyruleDoRequest<'a> {
     #[doc = "name of the table containing the rule"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -24365,7 +27418,12 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyruleDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyruleDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of the chain containing the rule"]
     pub fn get_chain(&self) -> Result<&'a CStr, ErrorContext> {
@@ -24376,7 +27434,12 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyruleDoRequest", "Chain"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyruleDoRequest",
+            "Chain",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "numeric handle of the rule"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -24387,7 +27450,28 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyruleDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyruleDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "list of expressions"]
+    pub fn get_expressions(&self) -> Result<IterableExprListAttrs<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpDestroyruleDoRequest::Expressions(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "OpDestroyruleDoRequest",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a rule in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -24398,25 +27482,45 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyruleDoRequest", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyruleDoRequest",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroyruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroyruleDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyruleDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroyruleDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroyruleDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroyruleDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroyruleDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroyruleDoRequest<'a> {
     type Item = Result<OpDestroyruleDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -24442,6 +27546,11 @@ impl<'a> Iterator for Iterable<'a, OpDestroyruleDoRequest<'a>> {
                     let Some(val) = res else { break };
                     val
                 }),
+                4u16 => OpDestroyruleDoRequest::Expressions({
+                    let res = Some(IterableExprListAttrs::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
                 8u16 => OpDestroyruleDoRequest::Id({
                     let res = parse_u32(next);
                     let Some(val) = res else { break };
@@ -24457,14 +27566,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroyruleDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroyruleDoRequest",
             r#type.and_then(|t| OpDestroyruleDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroyruleDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroyruleDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroyruleDoRequest");
         for attr in self.clone() {
@@ -24481,20 +27591,21 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroyruleDoRequest<'a>> {
                 OpDestroyruleDoRequest::Table(val) => fmt.field("Table", &val),
                 OpDestroyruleDoRequest::Chain(val) => fmt.field("Chain", &val),
                 OpDestroyruleDoRequest::Handle(val) => fmt.field("Handle", &val),
+                OpDestroyruleDoRequest::Expressions(val) => fmt.field("Expressions", &val),
                 OpDestroyruleDoRequest::Id(val) => fmt.field("Id", &val),
             };
         }
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
+impl IterableOpDestroyruleDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyruleDoRequest", offset));
             return (
@@ -24507,6 +27618,7 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
         }
         let mut attrs = self.clone();
         let mut last_off = cur + attrs.pos;
+        let mut missing = None;
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
@@ -24528,6 +27640,12 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
                         break;
                     }
                 }
+                OpDestroyruleDoRequest::Expressions(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
                 OpDestroyruleDoRequest::Id(val) => {
                     if last_off == offset {
                         stack.push(("Id", last_off));
@@ -24541,7 +27659,7 @@ impl<'a> Iterable<'a, OpDestroyruleDoRequest<'a>> {
         if !stack.is_empty() {
             stack.push(("OpDestroyruleDoRequest", cur));
         }
-        (stack, None)
+        (stack, missing)
     }
 }
 #[doc = "Delete an existing rule with destroy semantics (ignoring ENOENT errors).\n"]
@@ -24586,26 +27704,40 @@ impl<Prev: Rec> Drop for PushOpDestroyruleDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing rule with destroy semantics (ignoring ENOENT errors).\n"]
-#[doc = "Original name: \"op-destroyrule-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroyruleDoReply {}
-impl<'a> Iterable<'a, OpDestroyruleDoReply> {}
+impl<'a> IterableOpDestroyruleDoReply<'a> {}
 impl OpDestroyruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroyruleDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroyruleDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroyruleDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         RuleAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroyruleDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroyruleDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroyruleDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroyruleDoReply<'a> {
     type Item = Result<OpDestroyruleDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -24626,14 +27758,15 @@ impl Iterator for Iterable<'_, OpDestroyruleDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroyruleDoReply",
             r#type.and_then(|t| OpDestroyruleDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroyruleDoReply> {
+impl std::fmt::Debug for IterableOpDestroyruleDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroyruleDoReply");
         for attr in self.clone() {
@@ -24651,14 +27784,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroyruleDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroyruleDoReply> {
+impl IterableOpDestroyruleDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyruleDoReply", offset));
             return (
@@ -24686,7 +27819,7 @@ impl<'r> RequestOpDestroyruleDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroyruleDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroyruleDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroyruleDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -24862,7 +27995,6 @@ impl<Prev: Rec> Drop for PushOpNewsetDoRequest<Prev> {
     }
 }
 #[doc = "Create a new set."]
-#[doc = "Original name: \"op-newset-do-request\""]
 #[derive(Clone)]
 pub enum OpNewsetDoRequest<'a> {
     #[doc = "table name"]
@@ -24882,7 +28014,7 @@ pub enum OpNewsetDoRequest<'a> {
     #[doc = "selection policy"]
     Policy(u32),
     #[doc = "set description"]
-    Desc(Iterable<'a, SetDescAttrs<'a>>),
+    Desc(IterableSetDescAttrs<'a>),
     #[doc = "uniquely identifies a set in a transaction"]
     Id(u32),
     #[doc = "default timeout value"]
@@ -24894,7 +28026,7 @@ pub enum OpNewsetDoRequest<'a> {
     #[doc = "stateful object type"]
     ObjType(u32),
 }
-impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
+impl<'a> IterableOpNewsetDoRequest<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -24904,7 +28036,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -24915,7 +28052,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of enum nft_set_flags\nAssociated type: \"SetFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -24926,7 +28068,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data type, informational purpose only"]
     pub fn get_key_type(&self) -> Result<u32, ErrorContext> {
@@ -24937,7 +28084,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "KeyType"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "KeyType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data length"]
     pub fn get_key_len(&self) -> Result<u32, ErrorContext> {
@@ -24948,7 +28100,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "KeyLen"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "KeyLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data type"]
     pub fn get_data_type(&self) -> Result<u32, ErrorContext> {
@@ -24959,7 +28116,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "DataType"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "DataType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data length"]
     pub fn get_data_len(&self) -> Result<u32, ErrorContext> {
@@ -24970,7 +28132,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "DataLen"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "DataLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "selection policy"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -24981,10 +28148,15 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Policy"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set description"]
-    pub fn get_desc(&self) -> Result<Iterable<'a, SetDescAttrs<'a>>, ErrorContext> {
+    pub fn get_desc(&self) -> Result<IterableSetDescAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -24992,7 +28164,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Desc"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Desc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "uniquely identifies a set in a transaction"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -25003,7 +28180,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "default timeout value"]
     pub fn get_timeout(&self) -> Result<u64, ErrorContext> {
@@ -25014,7 +28196,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Timeout"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Timeout",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "garbage collection interval"]
     pub fn get_gc_interval(&self) -> Result<u32, ErrorContext> {
@@ -25025,7 +28212,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "GcInterval"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "GcInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -25036,7 +28228,12 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type"]
     pub fn get_obj_type(&self) -> Result<u32, ErrorContext> {
@@ -25047,25 +28244,45 @@ impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetDoRequest", "ObjType"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetDoRequest",
+            "ObjType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewsetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewsetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewsetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewsetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewsetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewsetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewsetDoRequest<'a> {
     type Item = Result<OpNewsetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -25117,7 +28334,7 @@ impl<'a> Iterator for Iterable<'a, OpNewsetDoRequest<'a>> {
                     val
                 }),
                 9u16 => OpNewsetDoRequest::Desc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetDescAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -25156,14 +28373,15 @@ impl<'a> Iterator for Iterable<'a, OpNewsetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewsetDoRequest",
             r#type.and_then(|t| OpNewsetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewsetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewsetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewsetDoRequest");
         for attr in self.clone() {
@@ -25198,14 +28416,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewsetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewsetDoRequest<'a>> {
+impl IterableOpNewsetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetDoRequest", offset));
             return (
@@ -25358,26 +28576,40 @@ impl<Prev: Rec> Drop for PushOpNewsetDoReply<Prev> {
     }
 }
 #[doc = "Create a new set."]
-#[doc = "Original name: \"op-newset-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewsetDoReply {}
-impl<'a> Iterable<'a, OpNewsetDoReply> {}
+impl<'a> IterableOpNewsetDoReply<'a> {}
 impl OpNewsetDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewsetDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewsetDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewsetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewsetDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewsetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewsetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewsetDoReply<'a> {
     type Item = Result<OpNewsetDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -25398,14 +28630,15 @@ impl Iterator for Iterable<'_, OpNewsetDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewsetDoReply",
             r#type.and_then(|t| OpNewsetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewsetDoReply> {
+impl std::fmt::Debug for IterableOpNewsetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewsetDoReply");
         for attr in self.clone() {
@@ -25423,14 +28656,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewsetDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewsetDoReply> {
+impl IterableOpNewsetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetDoReply", offset));
             return (
@@ -25458,7 +28691,7 @@ impl<'r> RequestOpNewsetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewsetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewsetDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewsetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -25543,13 +28776,12 @@ impl<Prev: Rec> Drop for PushOpGetsetDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump sets."]
-#[doc = "Original name: \"op-getset-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetsetDumpRequest<'a> {
     #[doc = "table name"]
     Table(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetsetDumpRequest<'a>> {
+impl<'a> IterableOpGetsetDumpRequest<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25559,25 +28791,45 @@ impl<'a> Iterable<'a, OpGetsetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetDumpRequest<'a> {
     type Item = Result<OpGetsetDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -25603,14 +28855,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetDumpRequest",
             r#type.and_then(|t| OpGetsetDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetDumpRequest");
         for attr in self.clone() {
@@ -25630,14 +28883,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetDumpRequest<'a>> {
+impl IterableOpGetsetDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDumpRequest", offset));
             return (
@@ -25829,7 +29082,6 @@ impl<Prev: Rec> Drop for PushOpGetsetDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump sets."]
-#[doc = "Original name: \"op-getset-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetsetDumpReply<'a> {
     #[doc = "table name"]
@@ -25849,7 +29101,7 @@ pub enum OpGetsetDumpReply<'a> {
     #[doc = "selection policy"]
     Policy(u32),
     #[doc = "set description"]
-    Desc(Iterable<'a, SetDescAttrs<'a>>),
+    Desc(IterableSetDescAttrs<'a>),
     #[doc = "garbage collection interval"]
     GcInterval(u32),
     #[doc = "user data"]
@@ -25859,11 +29111,11 @@ pub enum OpGetsetDumpReply<'a> {
     #[doc = "set handle"]
     Handle(u64),
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
-    Expr(Iterable<'a, ExprAttrs<'a>>),
+    Expr(IterableExprAttrs<'a>),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, SetListAttrs<'a>>),
+    Expressions(IterableSetListAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
+impl<'a> IterableOpGetsetDumpReply<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -25873,7 +29125,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -25884,7 +29141,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of enum nft_set_flags\nAssociated type: \"SetFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -25895,7 +29157,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data type, informational purpose only"]
     pub fn get_key_type(&self) -> Result<u32, ErrorContext> {
@@ -25906,7 +29173,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "KeyType"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "KeyType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data length"]
     pub fn get_key_len(&self) -> Result<u32, ErrorContext> {
@@ -25917,7 +29189,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "KeyLen"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "KeyLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data type"]
     pub fn get_data_type(&self) -> Result<u32, ErrorContext> {
@@ -25928,7 +29205,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "DataType"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "DataType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data length"]
     pub fn get_data_len(&self) -> Result<u32, ErrorContext> {
@@ -25939,7 +29221,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "DataLen"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "DataLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "selection policy"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -25950,10 +29237,15 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Policy"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set description"]
-    pub fn get_desc(&self) -> Result<Iterable<'a, SetDescAttrs<'a>>, ErrorContext> {
+    pub fn get_desc(&self) -> Result<IterableSetDescAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -25961,7 +29253,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Desc"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Desc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "garbage collection interval"]
     pub fn get_gc_interval(&self) -> Result<u32, ErrorContext> {
@@ -25972,7 +29269,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "GcInterval"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "GcInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -25983,7 +29285,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type"]
     pub fn get_obj_type(&self) -> Result<u32, ErrorContext> {
@@ -25994,7 +29301,12 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "ObjType"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "ObjType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -26005,12 +29317,17 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
     pub fn get_expr(
         &self,
-    ) -> MultiAttrIterable<Self, OpGetsetDumpReply<'a>, Iterable<'a, ExprAttrs<'a>>> {
+    ) -> MultiAttrIterable<Self, OpGetsetDumpReply<'a>, IterableExprAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let OpGetsetDumpReply::Expr(val) = variant {
                 Some(val)
@@ -26020,7 +29337,7 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
         })
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, SetListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableSetListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26028,25 +29345,45 @@ impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDumpReply", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDumpReply",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetDumpReply<'a> {
     type Item = Result<OpGetsetDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -26098,7 +29435,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDumpReply<'a>> {
                     val
                 }),
                 9u16 => OpGetsetDumpReply::Desc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetDescAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26123,12 +29460,12 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDumpReply<'a>> {
                     val
                 }),
                 17u16 => OpGetsetDumpReply::Expr({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 18u16 => OpGetsetDumpReply::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -26142,14 +29479,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetDumpReply",
             r#type.and_then(|t| OpGetsetDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetDumpReply");
         for attr in self.clone() {
@@ -26185,14 +29523,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetDumpReply<'a>> {
+impl IterableOpGetsetDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDumpReply", offset));
             return (
@@ -26328,7 +29666,7 @@ impl<'r> RequestOpGetsetDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetsetDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetsetDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetsetDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -26430,7 +29768,6 @@ impl<Prev: Rec> Drop for PushOpGetsetDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump sets."]
-#[doc = "Original name: \"op-getset-do-request\""]
 #[derive(Clone)]
 pub enum OpGetsetDoRequest<'a> {
     #[doc = "table name"]
@@ -26438,7 +29775,7 @@ pub enum OpGetsetDoRequest<'a> {
     #[doc = "set name"]
     Name(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetsetDoRequest<'a>> {
+impl<'a> IterableOpGetsetDoRequest<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -26448,7 +29785,12 @@ impl<'a> Iterable<'a, OpGetsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -26459,25 +29801,45 @@ impl<'a> Iterable<'a, OpGetsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetDoRequest<'a> {
     type Item = Result<OpGetsetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -26508,14 +29870,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetDoRequest",
             r#type.and_then(|t| OpGetsetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetDoRequest");
         for attr in self.clone() {
@@ -26536,14 +29899,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetDoRequest<'a>> {
+impl IterableOpGetsetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDoRequest", offset));
             return (
@@ -26741,7 +30104,6 @@ impl<Prev: Rec> Drop for PushOpGetsetDoReply<Prev> {
     }
 }
 #[doc = "Get / dump sets."]
-#[doc = "Original name: \"op-getset-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetsetDoReply<'a> {
     #[doc = "table name"]
@@ -26761,7 +30123,7 @@ pub enum OpGetsetDoReply<'a> {
     #[doc = "selection policy"]
     Policy(u32),
     #[doc = "set description"]
-    Desc(Iterable<'a, SetDescAttrs<'a>>),
+    Desc(IterableSetDescAttrs<'a>),
     #[doc = "garbage collection interval"]
     GcInterval(u32),
     #[doc = "user data"]
@@ -26771,11 +30133,11 @@ pub enum OpGetsetDoReply<'a> {
     #[doc = "set handle"]
     Handle(u64),
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
-    Expr(Iterable<'a, ExprAttrs<'a>>),
+    Expr(IterableExprAttrs<'a>),
     #[doc = "list of expressions"]
-    Expressions(Iterable<'a, SetListAttrs<'a>>),
+    Expressions(IterableSetListAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
+impl<'a> IterableOpGetsetDoReply<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -26785,7 +30147,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -26796,7 +30163,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "bitmask of enum nft_set_flags\nAssociated type: \"SetFlags\" (enum)"]
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
@@ -26807,7 +30179,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data type, informational purpose only"]
     pub fn get_key_type(&self) -> Result<u32, ErrorContext> {
@@ -26818,7 +30195,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "KeyType"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "KeyType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "key data length"]
     pub fn get_key_len(&self) -> Result<u32, ErrorContext> {
@@ -26829,7 +30211,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "KeyLen"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "KeyLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data type"]
     pub fn get_data_type(&self) -> Result<u32, ErrorContext> {
@@ -26840,7 +30227,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "DataType"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "DataType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "mapping data length"]
     pub fn get_data_len(&self) -> Result<u32, ErrorContext> {
@@ -26851,7 +30243,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "DataLen"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "DataLen",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "selection policy"]
     pub fn get_policy(&self) -> Result<u32, ErrorContext> {
@@ -26862,10 +30259,15 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Policy"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set description"]
-    pub fn get_desc(&self) -> Result<Iterable<'a, SetDescAttrs<'a>>, ErrorContext> {
+    pub fn get_desc(&self) -> Result<IterableSetDescAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26873,7 +30275,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Desc"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Desc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "garbage collection interval"]
     pub fn get_gc_interval(&self) -> Result<u32, ErrorContext> {
@@ -26884,7 +30291,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "GcInterval"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "GcInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -26895,7 +30307,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type"]
     pub fn get_obj_type(&self) -> Result<u32, ErrorContext> {
@@ -26906,7 +30323,12 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "ObjType"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "ObjType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -26917,12 +30339,15 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
-    pub fn get_expr(
-        &self,
-    ) -> MultiAttrIterable<Self, OpGetsetDoReply<'a>, Iterable<'a, ExprAttrs<'a>>> {
+    pub fn get_expr(&self) -> MultiAttrIterable<Self, OpGetsetDoReply<'a>, IterableExprAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let OpGetsetDoReply::Expr(val) = variant {
                 Some(val)
@@ -26932,7 +30357,7 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
         })
     }
     #[doc = "list of expressions"]
-    pub fn get_expressions(&self) -> Result<Iterable<'a, SetListAttrs<'a>>, ErrorContext> {
+    pub fn get_expressions(&self) -> Result<IterableSetListAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -26940,25 +30365,45 @@ impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetDoReply", "Expressions"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetDoReply",
+            "Expressions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetDoReply<'a> {
     type Item = Result<OpGetsetDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27010,7 +30455,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDoReply<'a>> {
                     val
                 }),
                 9u16 => OpGetsetDoReply::Desc({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetDescAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -27035,12 +30480,12 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDoReply<'a>> {
                     val
                 }),
                 17u16 => OpGetsetDoReply::Expr({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableExprAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
                 18u16 => OpGetsetDoReply::Expressions({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetListAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -27054,14 +30499,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetDoReply",
             r#type.and_then(|t| OpGetsetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetDoReply");
         for attr in self.clone() {
@@ -27097,14 +30543,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetDoReply<'a>> {
+impl IterableOpGetsetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDoReply", offset));
             return (
@@ -27238,7 +30684,7 @@ impl<'r> RequestOpGetsetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetsetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetsetDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetsetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -27346,7 +30792,6 @@ impl<Prev: Rec> Drop for PushOpDelsetDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing set."]
-#[doc = "Original name: \"op-delset-do-request\""]
 #[derive(Clone)]
 pub enum OpDelsetDoRequest<'a> {
     #[doc = "table name"]
@@ -27356,7 +30801,7 @@ pub enum OpDelsetDoRequest<'a> {
     #[doc = "set handle"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDelsetDoRequest<'a>> {
+impl<'a> IterableOpDelsetDoRequest<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -27366,7 +30811,12 @@ impl<'a> Iterable<'a, OpDelsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelsetDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelsetDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -27377,7 +30827,12 @@ impl<'a> Iterable<'a, OpDelsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelsetDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDelsetDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -27388,25 +30843,45 @@ impl<'a> Iterable<'a, OpDelsetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelsetDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDelsetDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelsetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDelsetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelsetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelsetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelsetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelsetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelsetDoRequest<'a> {
     type Item = Result<OpDelsetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27442,14 +30917,15 @@ impl<'a> Iterator for Iterable<'a, OpDelsetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelsetDoRequest",
             r#type.and_then(|t| OpDelsetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelsetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelsetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelsetDoRequest");
         for attr in self.clone() {
@@ -27471,14 +30947,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelsetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelsetDoRequest<'a>> {
+impl IterableOpDelsetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetDoRequest", offset));
             return (
@@ -27564,26 +31040,40 @@ impl<Prev: Rec> Drop for PushOpDelsetDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing set."]
-#[doc = "Original name: \"op-delset-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelsetDoReply {}
-impl<'a> Iterable<'a, OpDelsetDoReply> {}
+impl<'a> IterableOpDelsetDoReply<'a> {}
 impl OpDelsetDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDelsetDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelsetDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelsetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelsetDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelsetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelsetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelsetDoReply<'a> {
     type Item = Result<OpDelsetDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27604,14 +31094,15 @@ impl Iterator for Iterable<'_, OpDelsetDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelsetDoReply",
             r#type.and_then(|t| OpDelsetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelsetDoReply> {
+impl std::fmt::Debug for IterableOpDelsetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelsetDoReply");
         for attr in self.clone() {
@@ -27629,14 +31120,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelsetDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelsetDoReply> {
+impl IterableOpDelsetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetDoReply", offset));
             return (
@@ -27664,7 +31155,7 @@ impl<'r> RequestOpDelsetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelsetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDelsetDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDelsetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -27772,7 +31263,6 @@ impl<Prev: Rec> Drop for PushOpDestroysetDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing set with destroy semantics (ignoring ENOENT errors).\n"]
-#[doc = "Original name: \"op-destroyset-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroysetDoRequest<'a> {
     #[doc = "table name"]
@@ -27782,7 +31272,7 @@ pub enum OpDestroysetDoRequest<'a> {
     #[doc = "set handle"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDestroysetDoRequest<'a>> {
+impl<'a> IterableOpDestroysetDoRequest<'a> {
     #[doc = "table name"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -27792,7 +31282,12 @@ impl<'a> Iterable<'a, OpDestroysetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroysetDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDestroysetDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set name"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -27803,7 +31298,12 @@ impl<'a> Iterable<'a, OpDestroysetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroysetDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDestroysetDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "set handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -27814,25 +31314,45 @@ impl<'a> Iterable<'a, OpDestroysetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroysetDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDestroysetDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroysetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroysetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroysetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroysetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroysetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroysetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroysetDoRequest<'a> {
     type Item = Result<OpDestroysetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -27868,14 +31388,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroysetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroysetDoRequest",
             r#type.and_then(|t| OpDestroysetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroysetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroysetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroysetDoRequest");
         for attr in self.clone() {
@@ -27897,14 +31418,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroysetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroysetDoRequest<'a>> {
+impl IterableOpDestroysetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroysetDoRequest", offset));
             return (
@@ -27990,26 +31511,40 @@ impl<Prev: Rec> Drop for PushOpDestroysetDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing set with destroy semantics (ignoring ENOENT errors).\n"]
-#[doc = "Original name: \"op-destroyset-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroysetDoReply {}
-impl<'a> Iterable<'a, OpDestroysetDoReply> {}
+impl<'a> IterableOpDestroysetDoReply<'a> {}
 impl OpDestroysetDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroysetDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroysetDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroysetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroysetDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroysetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroysetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroysetDoReply<'a> {
     type Item = Result<OpDestroysetDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28030,14 +31565,15 @@ impl Iterator for Iterable<'_, OpDestroysetDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroysetDoReply",
             r#type.and_then(|t| OpDestroysetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroysetDoReply> {
+impl std::fmt::Debug for IterableOpDestroysetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroysetDoReply");
         for attr in self.clone() {
@@ -28055,14 +31591,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroysetDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroysetDoReply> {
+impl IterableOpDestroysetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroysetDoReply", offset));
             return (
@@ -28090,7 +31626,7 @@ impl<'r> RequestOpDestroysetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroysetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroysetDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroysetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -28200,15 +31736,14 @@ impl<Prev: Rec> Drop for PushOpNewsetelemDoRequest<Prev> {
     }
 }
 #[doc = "Create a new set element."]
-#[doc = "Original name: \"op-newsetelem-do-request\""]
 #[derive(Clone)]
 pub enum OpNewsetelemDoRequest<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
     SetId(u32),
 }
-impl<'a> Iterable<'a, OpNewsetelemDoRequest<'a>> {
+impl<'a> IterableOpNewsetelemDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -28217,7 +31752,12 @@ impl<'a> Iterable<'a, OpNewsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetelemDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetelemDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -28227,9 +31767,14 @@ impl<'a> Iterable<'a, OpNewsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetelemDoRequest", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetelemDoRequest",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -28237,7 +31782,12 @@ impl<'a> Iterable<'a, OpNewsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetelemDoRequest", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetelemDoRequest",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -28247,25 +31797,45 @@ impl<'a> Iterable<'a, OpNewsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewsetelemDoRequest", "SetId"))
+        Err(ErrorContext::new_missing(
+            "OpNewsetelemDoRequest",
+            "SetId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewsetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewsetelemDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetelemDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewsetelemDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewsetelemDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewsetelemDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewsetelemDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewsetelemDoRequest<'a> {
     type Item = Result<OpNewsetelemDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28287,7 +31857,7 @@ impl<'a> Iterator for Iterable<'a, OpNewsetelemDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpNewsetelemDoRequest::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -28306,14 +31876,15 @@ impl<'a> Iterator for Iterable<'a, OpNewsetelemDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewsetelemDoRequest",
             r#type.and_then(|t| OpNewsetelemDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewsetelemDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewsetelemDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewsetelemDoRequest");
         for attr in self.clone() {
@@ -28336,14 +31907,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewsetelemDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewsetelemDoRequest<'a>> {
+impl IterableOpNewsetelemDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetelemDoRequest", offset));
             return (
@@ -28436,26 +32007,40 @@ impl<Prev: Rec> Drop for PushOpNewsetelemDoReply<Prev> {
     }
 }
 #[doc = "Create a new set element."]
-#[doc = "Original name: \"op-newsetelem-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewsetelemDoReply {}
-impl<'a> Iterable<'a, OpNewsetelemDoReply> {}
+impl<'a> IterableOpNewsetelemDoReply<'a> {}
 impl OpNewsetelemDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewsetelemDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewsetelemDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewsetelemDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewsetelemDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewsetelemDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewsetelemDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewsetelemDoReply<'a> {
     type Item = Result<OpNewsetelemDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28476,14 +32061,15 @@ impl Iterator for Iterable<'_, OpNewsetelemDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewsetelemDoReply",
             r#type.and_then(|t| OpNewsetelemDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewsetelemDoReply> {
+impl std::fmt::Debug for IterableOpNewsetelemDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewsetelemDoReply");
         for attr in self.clone() {
@@ -28501,14 +32087,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewsetelemDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewsetelemDoReply> {
+impl IterableOpNewsetelemDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetelemDoReply", offset));
             return (
@@ -28536,7 +32122,7 @@ impl<'r> RequestOpNewsetelemDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewsetelemDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewsetelemDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewsetelemDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -28634,13 +32220,12 @@ impl<Prev: Rec> Drop for PushOpGetsetelemDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump set elements."]
-#[doc = "Original name: \"op-getsetelem-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetsetelemDumpRequest<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetsetelemDumpRequest<'a>> {
+impl<'a> IterableOpGetsetelemDumpRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -28649,7 +32234,12 @@ impl<'a> Iterable<'a, OpGetsetelemDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDumpRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDumpRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -28659,25 +32249,45 @@ impl<'a> Iterable<'a, OpGetsetelemDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDumpRequest", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDumpRequest",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemDumpRequest<'a> {
     type Item = Result<OpGetsetelemDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28708,14 +32318,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemDumpRequest",
             r#type.and_then(|t| OpGetsetelemDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemDumpRequest");
         for attr in self.clone() {
@@ -28736,14 +32347,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemDumpRequest<'a>> {
+impl IterableOpGetsetelemDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemDumpRequest", offset));
             return (
@@ -28860,14 +32471,13 @@ impl<Prev: Rec> Drop for PushOpGetsetelemDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump set elements."]
-#[doc = "Original name: \"op-getsetelem-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetsetelemDumpReply<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetelemDumpReply<'a>> {
+impl<'a> IterableOpGetsetelemDumpReply<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -28876,7 +32486,12 @@ impl<'a> Iterable<'a, OpGetsetelemDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -28886,9 +32501,14 @@ impl<'a> Iterable<'a, OpGetsetelemDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDumpReply", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDumpReply",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -28896,25 +32516,45 @@ impl<'a> Iterable<'a, OpGetsetelemDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDumpReply", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDumpReply",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemDumpReply<'a> {
     type Item = Result<OpGetsetelemDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -28936,7 +32576,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDumpReply<'a>> {
                     val
                 }),
                 3u16 => OpGetsetelemDumpReply::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -28950,14 +32590,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemDumpReply",
             r#type.and_then(|t| OpGetsetelemDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemDumpReply");
         for attr in self.clone() {
@@ -28979,14 +32620,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemDumpReply<'a>> {
+impl IterableOpGetsetelemDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemDumpReply", offset));
             return (
@@ -29050,7 +32691,7 @@ impl<'r> RequestOpGetsetelemDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetsetelemDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetsetelemDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetsetelemDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -29155,14 +32796,13 @@ impl<Prev: Rec> Drop for PushOpGetsetelemDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump set elements."]
-#[doc = "Original name: \"op-getsetelem-do-request\""]
 #[derive(Clone)]
 pub enum OpGetsetelemDoRequest<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetelemDoRequest<'a>> {
+impl<'a> IterableOpGetsetelemDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -29171,7 +32811,12 @@ impl<'a> Iterable<'a, OpGetsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -29181,9 +32826,14 @@ impl<'a> Iterable<'a, OpGetsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDoRequest", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDoRequest",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -29191,25 +32841,45 @@ impl<'a> Iterable<'a, OpGetsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDoRequest", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDoRequest",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemDoRequest<'a> {
     type Item = Result<OpGetsetelemDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -29231,7 +32901,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpGetsetelemDoRequest::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -29245,14 +32915,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemDoRequest",
             r#type.and_then(|t| OpGetsetelemDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemDoRequest");
         for attr in self.clone() {
@@ -29274,14 +32945,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemDoRequest<'a>> {
+impl IterableOpGetsetelemDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemDoRequest", offset));
             return (
@@ -29375,13 +33046,12 @@ impl<Prev: Rec> Drop for PushOpGetsetelemDoReply<Prev> {
     }
 }
 #[doc = "Get / dump set elements."]
-#[doc = "Original name: \"op-getsetelem-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetsetelemDoReply<'a> {
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetelemDoReply<'a>> {
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+impl<'a> IterableOpGetsetelemDoReply<'a> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -29389,25 +33059,45 @@ impl<'a> Iterable<'a, OpGetsetelemDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemDoReply", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemDoReply",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemDoReply<'a> {
     type Item = Result<OpGetsetelemDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -29419,7 +33109,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDoReply<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 3u16 => OpGetsetelemDoReply::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -29433,14 +33123,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemDoReply",
             r#type.and_then(|t| OpGetsetelemDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemDoReply");
         for attr in self.clone() {
@@ -29460,14 +33151,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemDoReply<'a>> {
+impl IterableOpGetsetelemDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemDoReply", offset));
             return (
@@ -29517,7 +33208,7 @@ impl<'r> RequestOpGetsetelemDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetsetelemDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetsetelemDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetsetelemDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -29615,13 +33306,12 @@ impl<Prev: Rec> Drop for PushOpGetsetelemResetDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump set elements and reset stateful expressions."]
-#[doc = "Original name: \"op-getsetelem-reset-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetsetelemResetDumpRequest<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
+impl<'a> IterableOpGetsetelemResetDumpRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -29630,7 +33320,12 @@ impl<'a> Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDumpRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDumpRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -29640,25 +33335,45 @@ impl<'a> Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDumpRequest", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDumpRequest",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemResetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemResetDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemResetDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemResetDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemResetDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemResetDumpRequest<'a> {
     type Item = Result<OpGetsetelemResetDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -29689,14 +33404,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemResetDumpRequest",
             r#type.and_then(|t| OpGetsetelemResetDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemResetDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemResetDumpRequest");
         for attr in self.clone() {
@@ -29717,14 +33433,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDumpRequest<'a>> {
+impl IterableOpGetsetelemResetDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemResetDumpRequest", offset));
             return (
@@ -29841,14 +33557,13 @@ impl<Prev: Rec> Drop for PushOpGetsetelemResetDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump set elements and reset stateful expressions."]
-#[doc = "Original name: \"op-getsetelem-reset-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetsetelemResetDumpReply<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
+impl<'a> IterableOpGetsetelemResetDumpReply<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -29857,7 +33572,12 @@ impl<'a> Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -29867,9 +33587,14 @@ impl<'a> Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDumpReply", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDumpReply",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -29877,25 +33602,45 @@ impl<'a> Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDumpReply", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDumpReply",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemResetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemResetDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemResetDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemResetDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemResetDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemResetDumpReply<'a> {
     type Item = Result<OpGetsetelemResetDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -29917,7 +33662,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
                     val
                 }),
                 3u16 => OpGetsetelemResetDumpReply::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -29931,14 +33676,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemResetDumpReply",
             r#type.and_then(|t| OpGetsetelemResetDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemResetDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemResetDumpReply");
         for attr in self.clone() {
@@ -29960,14 +33706,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDumpReply<'a>> {
+impl IterableOpGetsetelemResetDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemResetDumpReply", offset));
             return (
@@ -30031,10 +33777,7 @@ impl<'r> RequestOpGetsetelemResetDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetsetelemResetDumpRequest<'_> {
-    type ReplyType<'buf> = (
-        PushNfgenmsg,
-        Iterable<'buf, OpGetsetelemResetDumpReply<'buf>>,
-    );
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetsetelemResetDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -30109,13 +33852,12 @@ impl<Prev: Rec> Drop for PushOpGetsetelemResetDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump set elements and reset stateful expressions."]
-#[doc = "Original name: \"op-getsetelem-reset-do-request\""]
 #[derive(Clone)]
 pub enum OpGetsetelemResetDoRequest<'a> {
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+impl<'a> IterableOpGetsetelemResetDoRequest<'a> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -30123,25 +33865,45 @@ impl<'a> Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDoRequest", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDoRequest",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemResetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemResetDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemResetDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemResetDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemResetDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemResetDoRequest<'a> {
     type Item = Result<OpGetsetelemResetDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -30153,7 +33915,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
             r#type = Some(header.r#type);
             let res = match header.r#type {
                 3u16 => OpGetsetelemResetDoRequest::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -30167,14 +33929,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemResetDoRequest",
             r#type.and_then(|t| OpGetsetelemResetDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemResetDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemResetDoRequest");
         for attr in self.clone() {
@@ -30194,14 +33957,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDoRequest<'a>> {
+impl IterableOpGetsetelemResetDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemResetDoRequest", offset));
             return (
@@ -30313,14 +34076,13 @@ impl<Prev: Rec> Drop for PushOpGetsetelemResetDoReply<Prev> {
     }
 }
 #[doc = "Get / dump set elements and reset stateful expressions."]
-#[doc = "Original name: \"op-getsetelem-reset-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetsetelemResetDoReply<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDoReply<'a>> {
+impl<'a> IterableOpGetsetelemResetDoReply<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -30329,7 +34091,12 @@ impl<'a> Iterable<'a, OpGetsetelemResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -30339,9 +34106,14 @@ impl<'a> Iterable<'a, OpGetsetelemResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDoReply", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDoReply",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -30349,25 +34121,45 @@ impl<'a> Iterable<'a, OpGetsetelemResetDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetsetelemResetDoReply", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpGetsetelemResetDoReply",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetsetelemResetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetsetelemResetDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetsetelemResetDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetsetelemResetDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetsetelemResetDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetsetelemResetDoReply<'a> {
     type Item = Result<OpGetsetelemResetDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -30389,7 +34181,7 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDoReply<'a>> {
                     val
                 }),
                 3u16 => OpGetsetelemResetDoReply::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -30403,14 +34195,15 @@ impl<'a> Iterator for Iterable<'a, OpGetsetelemResetDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetsetelemResetDoReply",
             r#type.and_then(|t| OpGetsetelemResetDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetsetelemResetDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetsetelemResetDoReply");
         for attr in self.clone() {
@@ -30432,14 +34225,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetsetelemResetDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetsetelemResetDoReply<'a>> {
+impl IterableOpGetsetelemResetDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemResetDoReply", offset));
             return (
@@ -30501,7 +34294,7 @@ impl<'r> RequestOpGetsetelemResetDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetsetelemResetDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetsetelemResetDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetsetelemResetDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -30606,14 +34399,13 @@ impl<Prev: Rec> Drop for PushOpDelsetelemDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing set element."]
-#[doc = "Original name: \"op-delsetelem-do-request\""]
 #[derive(Clone)]
 pub enum OpDelsetelemDoRequest<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpDelsetelemDoRequest<'a>> {
+impl<'a> IterableOpDelsetelemDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -30622,7 +34414,12 @@ impl<'a> Iterable<'a, OpDelsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelsetelemDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelsetelemDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -30632,9 +34429,14 @@ impl<'a> Iterable<'a, OpDelsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelsetelemDoRequest", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpDelsetelemDoRequest",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -30642,25 +34444,45 @@ impl<'a> Iterable<'a, OpDelsetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelsetelemDoRequest", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpDelsetelemDoRequest",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelsetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDelsetelemDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetelemDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelsetelemDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelsetelemDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelsetelemDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelsetelemDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelsetelemDoRequest<'a> {
     type Item = Result<OpDelsetelemDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -30682,7 +34504,7 @@ impl<'a> Iterator for Iterable<'a, OpDelsetelemDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpDelsetelemDoRequest::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -30696,14 +34518,15 @@ impl<'a> Iterator for Iterable<'a, OpDelsetelemDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelsetelemDoRequest",
             r#type.and_then(|t| OpDelsetelemDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelsetelemDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelsetelemDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelsetelemDoRequest");
         for attr in self.clone() {
@@ -30725,14 +34548,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelsetelemDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelsetelemDoRequest<'a>> {
+impl IterableOpDelsetelemDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetelemDoRequest", offset));
             return (
@@ -30819,26 +34642,40 @@ impl<Prev: Rec> Drop for PushOpDelsetelemDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing set element."]
-#[doc = "Original name: \"op-delsetelem-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelsetelemDoReply {}
-impl<'a> Iterable<'a, OpDelsetelemDoReply> {}
+impl<'a> IterableOpDelsetelemDoReply<'a> {}
 impl OpDelsetelemDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDelsetelemDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelsetelemDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelsetelemDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelsetelemDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelsetelemDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelsetelemDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelsetelemDoReply<'a> {
     type Item = Result<OpDelsetelemDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -30859,14 +34696,15 @@ impl Iterator for Iterable<'_, OpDelsetelemDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelsetelemDoReply",
             r#type.and_then(|t| OpDelsetelemDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelsetelemDoReply> {
+impl std::fmt::Debug for IterableOpDelsetelemDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelsetelemDoReply");
         for attr in self.clone() {
@@ -30884,14 +34722,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelsetelemDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelsetelemDoReply> {
+impl IterableOpDelsetelemDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetelemDoReply", offset));
             return (
@@ -30919,7 +34757,7 @@ impl<'r> RequestOpDelsetelemDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelsetelemDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDelsetelemDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDelsetelemDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -31024,14 +34862,13 @@ impl<Prev: Rec> Drop for PushOpDestroysetelemDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing set element with destroy semantics."]
-#[doc = "Original name: \"op-destroysetelem-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroysetelemDoRequest<'a> {
     Table(&'a CStr),
     Set(&'a CStr),
-    Elements(Iterable<'a, SetelemListElemAttrs<'a>>),
+    Elements(IterableSetelemListElemAttrs<'a>),
 }
-impl<'a> Iterable<'a, OpDestroysetelemDoRequest<'a>> {
+impl<'a> IterableOpDestroysetelemDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -31040,7 +34877,12 @@ impl<'a> Iterable<'a, OpDestroysetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroysetelemDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDestroysetelemDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_set(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -31050,9 +34892,14 @@ impl<'a> Iterable<'a, OpDestroysetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroysetelemDoRequest", "Set"))
+        Err(ErrorContext::new_missing(
+            "OpDestroysetelemDoRequest",
+            "Set",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_elements(&self) -> Result<Iterable<'a, SetelemListElemAttrs<'a>>, ErrorContext> {
+    pub fn get_elements(&self) -> Result<IterableSetelemListElemAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -31060,25 +34907,45 @@ impl<'a> Iterable<'a, OpDestroysetelemDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroysetelemDoRequest", "Elements"))
+        Err(ErrorContext::new_missing(
+            "OpDestroysetelemDoRequest",
+            "Elements",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroysetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroysetelemDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetelemDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroysetelemDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroysetelemDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroysetelemDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroysetelemDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroysetelemDoRequest<'a> {
     type Item = Result<OpDestroysetelemDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -31100,7 +34967,7 @@ impl<'a> Iterator for Iterable<'a, OpDestroysetelemDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpDestroysetelemDoRequest::Elements({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableSetelemListElemAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -31114,14 +34981,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroysetelemDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroysetelemDoRequest",
             r#type.and_then(|t| OpDestroysetelemDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroysetelemDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroysetelemDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroysetelemDoRequest");
         for attr in self.clone() {
@@ -31143,14 +35011,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroysetelemDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroysetelemDoRequest<'a>> {
+impl IterableOpDestroysetelemDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroysetelemDoRequest", offset));
             return (
@@ -31237,26 +35105,40 @@ impl<Prev: Rec> Drop for PushOpDestroysetelemDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing set element with destroy semantics."]
-#[doc = "Original name: \"op-destroysetelem-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroysetelemDoReply {}
-impl<'a> Iterable<'a, OpDestroysetelemDoReply> {}
+impl<'a> IterableOpDestroysetelemDoReply<'a> {}
 impl OpDestroysetelemDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroysetelemDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroysetelemDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroysetelemDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         SetelemListAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroysetelemDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroysetelemDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroysetelemDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroysetelemDoReply<'a> {
     type Item = Result<OpDestroysetelemDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -31277,14 +35159,15 @@ impl Iterator for Iterable<'_, OpDestroysetelemDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroysetelemDoReply",
             r#type.and_then(|t| OpDestroysetelemDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroysetelemDoReply> {
+impl std::fmt::Debug for IterableOpDestroysetelemDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroysetelemDoReply");
         for attr in self.clone() {
@@ -31302,14 +35185,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroysetelemDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroysetelemDoReply> {
+impl IterableOpDestroysetelemDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroysetelemDoReply", offset));
             return (
@@ -31337,7 +35220,7 @@ impl<'r> RequestOpDestroysetelemDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroysetelemDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroysetelemDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroysetelemDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -31405,26 +35288,40 @@ impl<Prev: Rec> Drop for PushOpGetgenDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump rule-set generation."]
-#[doc = "Original name: \"op-getgen-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetgenDumpRequest {}
-impl<'a> Iterable<'a, OpGetgenDumpRequest> {}
+impl<'a> IterableOpGetgenDumpRequest<'a> {}
 impl OpGetgenDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetgenDumpRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetgenDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetgenDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         GenAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetgenDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetgenDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetgenDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetgenDumpRequest<'a> {
     type Item = Result<OpGetgenDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -31445,14 +35342,15 @@ impl Iterator for Iterable<'_, OpGetgenDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetgenDumpRequest",
             r#type.and_then(|t| OpGetgenDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetgenDumpRequest> {
+impl std::fmt::Debug for IterableOpGetgenDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetgenDumpRequest");
         for attr in self.clone() {
@@ -31470,14 +35368,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetgenDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetgenDumpRequest> {
+impl IterableOpGetgenDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDumpRequest", offset));
             return (
@@ -31556,7 +35454,6 @@ impl<Prev: Rec> Drop for PushOpGetgenDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump rule-set generation."]
-#[doc = "Original name: \"op-getgen-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetgenDumpReply<'a> {
     #[doc = "ruleset generation id"]
@@ -31564,7 +35461,7 @@ pub enum OpGetgenDumpReply<'a> {
     ProcPid(u32),
     ProcName(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetgenDumpReply<'a>> {
+impl<'a> IterableOpGetgenDumpReply<'a> {
     #[doc = "ruleset generation id"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -31574,7 +35471,12 @@ impl<'a> Iterable<'a, OpGetgenDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetgenDumpReply", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpGetgenDumpReply",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proc_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -31584,7 +35486,12 @@ impl<'a> Iterable<'a, OpGetgenDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetgenDumpReply", "ProcPid"))
+        Err(ErrorContext::new_missing(
+            "OpGetgenDumpReply",
+            "ProcPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proc_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -31594,25 +35501,45 @@ impl<'a> Iterable<'a, OpGetgenDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetgenDumpReply", "ProcName"))
+        Err(ErrorContext::new_missing(
+            "OpGetgenDumpReply",
+            "ProcName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetgenDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetgenDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetgenDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         GenAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetgenDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetgenDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetgenDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetgenDumpReply<'a> {
     type Item = Result<OpGetgenDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -31648,14 +35575,15 @@ impl<'a> Iterator for Iterable<'a, OpGetgenDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetgenDumpReply",
             r#type.and_then(|t| OpGetgenDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetgenDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetgenDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetgenDumpReply");
         for attr in self.clone() {
@@ -31677,14 +35605,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetgenDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetgenDumpReply<'a>> {
+impl IterableOpGetgenDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDumpReply", offset));
             return (
@@ -31747,7 +35675,7 @@ impl<'r> RequestOpGetgenDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetgenDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetgenDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetgenDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -31815,26 +35743,40 @@ impl<Prev: Rec> Drop for PushOpGetgenDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump rule-set generation."]
-#[doc = "Original name: \"op-getgen-do-request\""]
 #[derive(Clone)]
 pub enum OpGetgenDoRequest {}
-impl<'a> Iterable<'a, OpGetgenDoRequest> {}
+impl<'a> IterableOpGetgenDoRequest<'a> {}
 impl OpGetgenDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetgenDoRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetgenDoRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetgenDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         GenAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetgenDoRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetgenDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetgenDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetgenDoRequest<'a> {
     type Item = Result<OpGetgenDoRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -31855,14 +35797,15 @@ impl Iterator for Iterable<'_, OpGetgenDoRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetgenDoRequest",
             r#type.and_then(|t| OpGetgenDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetgenDoRequest> {
+impl std::fmt::Debug for IterableOpGetgenDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetgenDoRequest");
         for attr in self.clone() {
@@ -31880,14 +35823,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetgenDoRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetgenDoRequest> {
+impl IterableOpGetgenDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDoRequest", offset));
             return (
@@ -31966,7 +35909,6 @@ impl<Prev: Rec> Drop for PushOpGetgenDoReply<Prev> {
     }
 }
 #[doc = "Get / dump rule-set generation."]
-#[doc = "Original name: \"op-getgen-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetgenDoReply<'a> {
     #[doc = "ruleset generation id"]
@@ -31974,7 +35916,7 @@ pub enum OpGetgenDoReply<'a> {
     ProcPid(u32),
     ProcName(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetgenDoReply<'a>> {
+impl<'a> IterableOpGetgenDoReply<'a> {
     #[doc = "ruleset generation id"]
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -31984,7 +35926,12 @@ impl<'a> Iterable<'a, OpGetgenDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetgenDoReply", "Id"))
+        Err(ErrorContext::new_missing(
+            "OpGetgenDoReply",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proc_pid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -31994,7 +35941,12 @@ impl<'a> Iterable<'a, OpGetgenDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetgenDoReply", "ProcPid"))
+        Err(ErrorContext::new_missing(
+            "OpGetgenDoReply",
+            "ProcPid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_proc_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -32004,25 +35956,45 @@ impl<'a> Iterable<'a, OpGetgenDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetgenDoReply", "ProcName"))
+        Err(ErrorContext::new_missing(
+            "OpGetgenDoReply",
+            "ProcName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetgenDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetgenDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetgenDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         GenAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetgenDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetgenDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetgenDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetgenDoReply<'a> {
     type Item = Result<OpGetgenDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -32058,14 +36030,15 @@ impl<'a> Iterator for Iterable<'a, OpGetgenDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetgenDoReply",
             r#type.and_then(|t| OpGetgenDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetgenDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetgenDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetgenDoReply");
         for attr in self.clone() {
@@ -32087,14 +36060,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetgenDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetgenDoReply<'a>> {
+impl IterableOpGetgenDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDoReply", offset));
             return (
@@ -32155,7 +36128,7 @@ impl<'r> RequestOpGetgenDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetgenDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetgenDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetgenDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -32298,7 +36271,6 @@ impl<Prev: Rec> Drop for PushOpNewobjDoRequest<Prev> {
     }
 }
 #[doc = "Create a new stateful object."]
-#[doc = "Original name: \"op-newobj-do-request\""]
 #[derive(Clone)]
 pub enum OpNewobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
@@ -32312,7 +36284,7 @@ pub enum OpNewobjDoRequest<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
+impl<'a> IterableOpNewobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -32322,7 +36294,12 @@ impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewobjDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewobjDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -32333,7 +36310,12 @@ impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewobjDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpNewobjDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -32344,7 +36326,12 @@ impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewobjDoRequest", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpNewobjDoRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object data"]
     pub fn get_data(&self) -> Result<ObjData<'a>, ErrorContext> {
@@ -32355,7 +36342,12 @@ impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewobjDoRequest", "Data"))
+        Err(ErrorContext::new_missing(
+            "OpNewobjDoRequest",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -32366,25 +36358,45 @@ impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewobjDoRequest", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpNewobjDoRequest",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewobjDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewobjDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewobjDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewobjDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewobjDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewobjDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewobjDoRequest<'a> {
     type Item = Result<OpNewobjDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -32433,14 +36445,15 @@ impl<'a> Iterator for Iterable<'a, OpNewobjDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewobjDoRequest",
             r#type.and_then(|t| OpNewobjDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewobjDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewobjDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewobjDoRequest");
         for attr in self.clone() {
@@ -32466,14 +36479,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewobjDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewobjDoRequest<'a>> {
+impl IterableOpNewobjDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewobjDoRequest", offset));
             return (
@@ -32571,26 +36584,40 @@ impl<Prev: Rec> Drop for PushOpNewobjDoReply<Prev> {
     }
 }
 #[doc = "Create a new stateful object."]
-#[doc = "Original name: \"op-newobj-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewobjDoReply {}
-impl<'a> Iterable<'a, OpNewobjDoReply> {}
+impl<'a> IterableOpNewobjDoReply<'a> {}
 impl OpNewobjDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewobjDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewobjDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewobjDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewobjDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewobjDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewobjDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewobjDoReply<'a> {
     type Item = Result<OpNewobjDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -32611,14 +36638,15 @@ impl Iterator for Iterable<'_, OpNewobjDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewobjDoReply",
             r#type.and_then(|t| OpNewobjDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewobjDoReply> {
+impl std::fmt::Debug for IterableOpNewobjDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewobjDoReply");
         for attr in self.clone() {
@@ -32636,14 +36664,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewobjDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewobjDoReply> {
+impl IterableOpNewobjDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewobjDoReply", offset));
             return (
@@ -32671,7 +36699,7 @@ impl<'r> RequestOpNewobjDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewobjDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewobjDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewobjDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -32762,7 +36790,6 @@ impl<Prev: Rec> Drop for PushOpGetobjDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump stateful objects."]
-#[doc = "Original name: \"op-getobj-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetobjDumpRequest<'a> {
     #[doc = "name of the table containing the expression"]
@@ -32770,7 +36797,7 @@ pub enum OpGetobjDumpRequest<'a> {
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     Type(u32),
 }
-impl<'a> Iterable<'a, OpGetobjDumpRequest<'a>> {
+impl<'a> IterableOpGetobjDumpRequest<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -32780,7 +36807,12 @@ impl<'a> Iterable<'a, OpGetobjDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -32791,25 +36823,45 @@ impl<'a> Iterable<'a, OpGetobjDumpRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpRequest", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetobjDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetobjDumpRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDumpRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetobjDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetobjDumpRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetobjDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetobjDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetobjDumpRequest<'a> {
     type Item = Result<OpGetobjDumpRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -32840,14 +36892,15 @@ impl<'a> Iterator for Iterable<'a, OpGetobjDumpRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetobjDumpRequest",
             r#type.and_then(|t| OpGetobjDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDumpRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetobjDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetobjDumpRequest");
         for attr in self.clone() {
@@ -32870,14 +36923,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDumpRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetobjDumpRequest<'a>> {
+impl IterableOpGetobjDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDumpRequest", offset));
             return (
@@ -33044,7 +37097,6 @@ impl<Prev: Rec> Drop for PushOpGetobjDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump stateful objects."]
-#[doc = "Original name: \"op-getobj-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetobjDumpReply<'a> {
     #[doc = "name of the table containing the expression"]
@@ -33062,7 +37114,7 @@ pub enum OpGetobjDumpReply<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
+impl<'a> IterableOpGetobjDumpReply<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -33072,7 +37124,12 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -33083,7 +37140,12 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -33094,7 +37156,12 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object data"]
     pub fn get_data(&self) -> Result<ObjData<'a>, ErrorContext> {
@@ -33105,7 +37172,12 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Data"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of references to this expression"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -33116,7 +37188,12 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "object handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -33127,7 +37204,12 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -33138,25 +37220,45 @@ impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDumpReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDumpReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetobjDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetobjDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetobjDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetobjDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetobjDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetobjDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetobjDumpReply<'a> {
     type Item = Result<OpGetobjDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -33215,14 +37317,15 @@ impl<'a> Iterator for Iterable<'a, OpGetobjDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetobjDumpReply",
             r#type.and_then(|t| OpGetobjDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetobjDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetobjDumpReply");
         for attr in self.clone() {
@@ -33250,14 +37353,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetobjDumpReply<'a>> {
+impl IterableOpGetobjDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDumpReply", offset));
             return (
@@ -33344,7 +37447,7 @@ impl<'r> RequestOpGetobjDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetobjDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetobjDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetobjDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -33452,7 +37555,6 @@ impl<Prev: Rec> Drop for PushOpGetobjDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump stateful objects."]
-#[doc = "Original name: \"op-getobj-do-request\""]
 #[derive(Clone)]
 pub enum OpGetobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
@@ -33462,7 +37564,7 @@ pub enum OpGetobjDoRequest<'a> {
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     Type(u32),
 }
-impl<'a> Iterable<'a, OpGetobjDoRequest<'a>> {
+impl<'a> IterableOpGetobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -33472,7 +37574,12 @@ impl<'a> Iterable<'a, OpGetobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -33483,7 +37590,12 @@ impl<'a> Iterable<'a, OpGetobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -33494,25 +37606,45 @@ impl<'a> Iterable<'a, OpGetobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoRequest", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetobjDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetobjDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetobjDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetobjDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetobjDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetobjDoRequest<'a> {
     type Item = Result<OpGetobjDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -33548,14 +37680,15 @@ impl<'a> Iterator for Iterable<'a, OpGetobjDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetobjDoRequest",
             r#type.and_then(|t| OpGetobjDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetobjDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetobjDoRequest");
         for attr in self.clone() {
@@ -33579,14 +37712,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetobjDoRequest<'a>> {
+impl IterableOpGetobjDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDoRequest", offset));
             return (
@@ -33759,7 +37892,6 @@ impl<Prev: Rec> Drop for PushOpGetobjDoReply<Prev> {
     }
 }
 #[doc = "Get / dump stateful objects."]
-#[doc = "Original name: \"op-getobj-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetobjDoReply<'a> {
     #[doc = "name of the table containing the expression"]
@@ -33777,7 +37909,7 @@ pub enum OpGetobjDoReply<'a> {
     #[doc = "user data"]
     Userdata(&'a [u8]),
 }
-impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
+impl<'a> IterableOpGetobjDoReply<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -33787,7 +37919,12 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -33798,7 +37935,12 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -33809,7 +37951,12 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object data"]
     pub fn get_data(&self) -> Result<ObjData<'a>, ErrorContext> {
@@ -33820,7 +37967,12 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Data"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Data",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "number of references to this expression"]
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
@@ -33831,7 +37983,12 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "object handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -33842,7 +37999,12 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "user data"]
     pub fn get_userdata(&self) -> Result<&'a [u8], ErrorContext> {
@@ -33853,25 +38015,45 @@ impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetobjDoReply", "Userdata"))
+        Err(ErrorContext::new_missing(
+            "OpGetobjDoReply",
+            "Userdata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetobjDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetobjDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetobjDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetobjDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetobjDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetobjDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetobjDoReply<'a> {
     type Item = Result<OpGetobjDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -33930,14 +38112,15 @@ impl<'a> Iterator for Iterable<'a, OpGetobjDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetobjDoReply",
             r#type.and_then(|t| OpGetobjDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetobjDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetobjDoReply");
         for attr in self.clone() {
@@ -33965,14 +38148,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetobjDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetobjDoReply<'a>> {
+impl IterableOpGetobjDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDoReply", offset));
             return (
@@ -34057,7 +38240,7 @@ impl<'r> RequestOpGetobjDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetobjDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetobjDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetobjDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -34171,7 +38354,6 @@ impl<Prev: Rec> Drop for PushOpDelobjDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing stateful object."]
-#[doc = "Original name: \"op-delobj-do-request\""]
 #[derive(Clone)]
 pub enum OpDelobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
@@ -34183,7 +38365,7 @@ pub enum OpDelobjDoRequest<'a> {
     #[doc = "object handle"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDelobjDoRequest<'a>> {
+impl<'a> IterableOpDelobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -34193,7 +38375,12 @@ impl<'a> Iterable<'a, OpDelobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelobjDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelobjDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -34204,7 +38391,12 @@ impl<'a> Iterable<'a, OpDelobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelobjDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDelobjDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -34215,7 +38407,12 @@ impl<'a> Iterable<'a, OpDelobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelobjDoRequest", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpDelobjDoRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "object handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -34226,25 +38423,45 @@ impl<'a> Iterable<'a, OpDelobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelobjDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDelobjDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDelobjDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelobjDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelobjDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelobjDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelobjDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelobjDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelobjDoRequest<'a> {
     type Item = Result<OpDelobjDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -34285,14 +38502,15 @@ impl<'a> Iterator for Iterable<'a, OpDelobjDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelobjDoRequest",
             r#type.and_then(|t| OpDelobjDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelobjDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelobjDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelobjDoRequest");
         for attr in self.clone() {
@@ -34317,14 +38535,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelobjDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelobjDoRequest<'a>> {
+impl IterableOpDelobjDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelobjDoRequest", offset));
             return (
@@ -34416,26 +38634,40 @@ impl<Prev: Rec> Drop for PushOpDelobjDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing stateful object."]
-#[doc = "Original name: \"op-delobj-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelobjDoReply {}
-impl<'a> Iterable<'a, OpDelobjDoReply> {}
+impl<'a> IterableOpDelobjDoReply<'a> {}
 impl OpDelobjDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDelobjDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelobjDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelobjDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelobjDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelobjDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelobjDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelobjDoReply<'a> {
     type Item = Result<OpDelobjDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -34456,14 +38688,15 @@ impl Iterator for Iterable<'_, OpDelobjDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelobjDoReply",
             r#type.and_then(|t| OpDelobjDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelobjDoReply> {
+impl std::fmt::Debug for IterableOpDelobjDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelobjDoReply");
         for attr in self.clone() {
@@ -34481,14 +38714,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelobjDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelobjDoReply> {
+impl IterableOpDelobjDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelobjDoReply", offset));
             return (
@@ -34516,7 +38749,7 @@ impl<'r> RequestOpDelobjDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelobjDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDelobjDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDelobjDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -34630,7 +38863,6 @@ impl<Prev: Rec> Drop for PushOpDestroyobjDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing stateful object with destroy semantics."]
-#[doc = "Original name: \"op-destroyobj-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroyobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
@@ -34642,7 +38874,7 @@ pub enum OpDestroyobjDoRequest<'a> {
     #[doc = "object handle"]
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDestroyobjDoRequest<'a>> {
+impl<'a> IterableOpDestroyobjDoRequest<'a> {
     #[doc = "name of the table containing the expression"]
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -34652,7 +38884,12 @@ impl<'a> Iterable<'a, OpDestroyobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyobjDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyobjDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "name of this expression type"]
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -34663,7 +38900,12 @@ impl<'a> Iterable<'a, OpDestroyobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyobjDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyobjDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "stateful object type\nAssociated type: \"ObjectType\" (enum)"]
     pub fn get_type(&self) -> Result<u32, ErrorContext> {
@@ -34674,7 +38916,12 @@ impl<'a> Iterable<'a, OpDestroyobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyobjDoRequest", "Type"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyobjDoRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     #[doc = "object handle"]
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
@@ -34685,25 +38932,45 @@ impl<'a> Iterable<'a, OpDestroyobjDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyobjDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyobjDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroyobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroyobjDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyobjDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroyobjDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroyobjDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroyobjDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroyobjDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroyobjDoRequest<'a> {
     type Item = Result<OpDestroyobjDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -34744,14 +39011,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroyobjDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroyobjDoRequest",
             r#type.and_then(|t| OpDestroyobjDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroyobjDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroyobjDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroyobjDoRequest");
         for attr in self.clone() {
@@ -34776,14 +39044,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroyobjDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroyobjDoRequest<'a>> {
+impl IterableOpDestroyobjDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyobjDoRequest", offset));
             return (
@@ -34875,26 +39143,40 @@ impl<Prev: Rec> Drop for PushOpDestroyobjDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing stateful object with destroy semantics."]
-#[doc = "Original name: \"op-destroyobj-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroyobjDoReply {}
-impl<'a> Iterable<'a, OpDestroyobjDoReply> {}
+impl<'a> IterableOpDestroyobjDoReply<'a> {}
 impl OpDestroyobjDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroyobjDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroyobjDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroyobjDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         ObjAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroyobjDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroyobjDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroyobjDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroyobjDoReply<'a> {
     type Item = Result<OpDestroyobjDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -34915,14 +39197,15 @@ impl Iterator for Iterable<'_, OpDestroyobjDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroyobjDoReply",
             r#type.and_then(|t| OpDestroyobjDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroyobjDoReply> {
+impl std::fmt::Debug for IterableOpDestroyobjDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroyobjDoReply");
         for attr in self.clone() {
@@ -34940,14 +39223,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroyobjDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroyobjDoReply> {
+impl IterableOpDestroyobjDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyobjDoReply", offset));
             return (
@@ -34975,7 +39258,7 @@ impl<'r> RequestOpDestroyobjDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroyobjDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroyobjDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroyobjDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -35085,15 +39368,14 @@ impl<Prev: Rec> Drop for PushOpNewflowtableDoRequest<Prev> {
     }
 }
 #[doc = "Create a new flow table."]
-#[doc = "Original name: \"op-newflowtable-do-request\""]
 #[derive(Clone)]
 pub enum OpNewflowtableDoRequest<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
-    Hook(Iterable<'a, FlowtableHookAttrs<'a>>),
+    Hook(IterableFlowtableHookAttrs<'a>),
     Flags(u32),
 }
-impl<'a> Iterable<'a, OpNewflowtableDoRequest<'a>> {
+impl<'a> IterableOpNewflowtableDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -35102,7 +39384,12 @@ impl<'a> Iterable<'a, OpNewflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewflowtableDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpNewflowtableDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -35112,9 +39399,14 @@ impl<'a> Iterable<'a, OpNewflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewflowtableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpNewflowtableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_hook(&self) -> Result<Iterable<'a, FlowtableHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableFlowtableHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -35122,7 +39414,12 @@ impl<'a> Iterable<'a, OpNewflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewflowtableDoRequest", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpNewflowtableDoRequest",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -35132,25 +39429,45 @@ impl<'a> Iterable<'a, OpNewflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpNewflowtableDoRequest", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpNewflowtableDoRequest",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpNewflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpNewflowtableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewflowtableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewflowtableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpNewflowtableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewflowtableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewflowtableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewflowtableDoRequest<'a> {
     type Item = Result<OpNewflowtableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -35172,7 +39489,7 @@ impl<'a> Iterator for Iterable<'a, OpNewflowtableDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpNewflowtableDoRequest::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableFlowtableHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -35191,14 +39508,15 @@ impl<'a> Iterator for Iterable<'a, OpNewflowtableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewflowtableDoRequest",
             r#type.and_then(|t| OpNewflowtableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpNewflowtableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpNewflowtableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewflowtableDoRequest");
         for attr in self.clone() {
@@ -35221,14 +39539,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpNewflowtableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpNewflowtableDoRequest<'a>> {
+impl IterableOpNewflowtableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewflowtableDoRequest", offset));
             return (
@@ -35321,26 +39639,40 @@ impl<Prev: Rec> Drop for PushOpNewflowtableDoReply<Prev> {
     }
 }
 #[doc = "Create a new flow table."]
-#[doc = "Original name: \"op-newflowtable-do-reply\""]
 #[derive(Clone)]
 pub enum OpNewflowtableDoReply {}
-impl<'a> Iterable<'a, OpNewflowtableDoReply> {}
+impl<'a> IterableOpNewflowtableDoReply<'a> {}
 impl OpNewflowtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpNewflowtableDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewflowtableDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpNewflowtableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpNewflowtableDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpNewflowtableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpNewflowtableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpNewflowtableDoReply<'a> {
     type Item = Result<OpNewflowtableDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -35361,14 +39693,15 @@ impl Iterator for Iterable<'_, OpNewflowtableDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpNewflowtableDoReply",
             r#type.and_then(|t| OpNewflowtableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpNewflowtableDoReply> {
+impl std::fmt::Debug for IterableOpNewflowtableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpNewflowtableDoReply");
         for attr in self.clone() {
@@ -35386,14 +39719,14 @@ impl std::fmt::Debug for Iterable<'_, OpNewflowtableDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpNewflowtableDoReply> {
+impl IterableOpNewflowtableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewflowtableDoReply", offset));
             return (
@@ -35421,7 +39754,7 @@ impl<'r> RequestOpNewflowtableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpNewflowtableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpNewflowtableDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpNewflowtableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -35489,26 +39822,40 @@ impl<Prev: Rec> Drop for PushOpGetflowtableDumpRequest<Prev> {
     }
 }
 #[doc = "Get / dump flow tables."]
-#[doc = "Original name: \"op-getflowtable-dump-request\""]
 #[derive(Clone)]
 pub enum OpGetflowtableDumpRequest {}
-impl<'a> Iterable<'a, OpGetflowtableDumpRequest> {}
+impl<'a> IterableOpGetflowtableDumpRequest<'a> {}
 impl OpGetflowtableDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpGetflowtableDumpRequest>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDumpRequest<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetflowtableDumpRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpGetflowtableDumpRequest> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetflowtableDumpRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetflowtableDumpRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetflowtableDumpRequest<'a> {
     type Item = Result<OpGetflowtableDumpRequest, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -35529,14 +39876,15 @@ impl Iterator for Iterable<'_, OpGetflowtableDumpRequest> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetflowtableDumpRequest",
             r#type.and_then(|t| OpGetflowtableDumpRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpGetflowtableDumpRequest> {
+impl std::fmt::Debug for IterableOpGetflowtableDumpRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetflowtableDumpRequest");
         for attr in self.clone() {
@@ -35554,14 +39902,14 @@ impl std::fmt::Debug for Iterable<'_, OpGetflowtableDumpRequest> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpGetflowtableDumpRequest> {
+impl IterableOpGetflowtableDumpRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetflowtableDumpRequest", offset));
             return (
@@ -35666,17 +40014,16 @@ impl<Prev: Rec> Drop for PushOpGetflowtableDumpReply<Prev> {
     }
 }
 #[doc = "Get / dump flow tables."]
-#[doc = "Original name: \"op-getflowtable-dump-reply\""]
 #[derive(Clone)]
 pub enum OpGetflowtableDumpReply<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
-    Hook(Iterable<'a, FlowtableHookAttrs<'a>>),
+    Hook(IterableFlowtableHookAttrs<'a>),
     Use(u32),
     Handle(u64),
     Flags(u32),
 }
-impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
+impl<'a> IterableOpGetflowtableDumpReply<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -35685,7 +40032,12 @@ impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDumpReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDumpReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -35695,9 +40047,14 @@ impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDumpReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDumpReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_hook(&self) -> Result<Iterable<'a, FlowtableHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableFlowtableHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -35705,7 +40062,12 @@ impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDumpReply", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDumpReply",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -35715,7 +40077,12 @@ impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDumpReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDumpReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -35725,7 +40092,12 @@ impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDumpReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDumpReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -35735,25 +40107,45 @@ impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDumpReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDumpReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetflowtableDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetflowtableDumpReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDumpReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetflowtableDumpReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetflowtableDumpReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetflowtableDumpReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetflowtableDumpReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetflowtableDumpReply<'a> {
     type Item = Result<OpGetflowtableDumpReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -35775,7 +40167,7 @@ impl<'a> Iterator for Iterable<'a, OpGetflowtableDumpReply<'a>> {
                     val
                 }),
                 3u16 => OpGetflowtableDumpReply::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableFlowtableHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -35804,14 +40196,15 @@ impl<'a> Iterator for Iterable<'a, OpGetflowtableDumpReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetflowtableDumpReply",
             r#type.and_then(|t| OpGetflowtableDumpReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetflowtableDumpReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetflowtableDumpReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetflowtableDumpReply");
         for attr in self.clone() {
@@ -35836,14 +40229,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetflowtableDumpReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetflowtableDumpReply<'a>> {
+impl IterableOpGetflowtableDumpReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetflowtableDumpReply", offset));
             return (
@@ -35925,7 +40318,7 @@ impl<'r> RequestOpGetflowtableDumpRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetflowtableDumpRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetflowtableDumpReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetflowtableDumpReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -36023,13 +40416,12 @@ impl<Prev: Rec> Drop for PushOpGetflowtableDoRequest<Prev> {
     }
 }
 #[doc = "Get / dump flow tables."]
-#[doc = "Original name: \"op-getflowtable-do-request\""]
 #[derive(Clone)]
 pub enum OpGetflowtableDoRequest<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
 }
-impl<'a> Iterable<'a, OpGetflowtableDoRequest<'a>> {
+impl<'a> IterableOpGetflowtableDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -36038,7 +40430,12 @@ impl<'a> Iterable<'a, OpGetflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -36048,25 +40445,45 @@ impl<'a> Iterable<'a, OpGetflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetflowtableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetflowtableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetflowtableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetflowtableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetflowtableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetflowtableDoRequest<'a> {
     type Item = Result<OpGetflowtableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -36097,14 +40514,15 @@ impl<'a> Iterator for Iterable<'a, OpGetflowtableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetflowtableDoRequest",
             r#type.and_then(|t| OpGetflowtableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetflowtableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetflowtableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetflowtableDoRequest");
         for attr in self.clone() {
@@ -36125,14 +40543,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetflowtableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetflowtableDoRequest<'a>> {
+impl IterableOpGetflowtableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetflowtableDoRequest", offset));
             return (
@@ -36264,17 +40682,16 @@ impl<Prev: Rec> Drop for PushOpGetflowtableDoReply<Prev> {
     }
 }
 #[doc = "Get / dump flow tables."]
-#[doc = "Original name: \"op-getflowtable-do-reply\""]
 #[derive(Clone)]
 pub enum OpGetflowtableDoReply<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
-    Hook(Iterable<'a, FlowtableHookAttrs<'a>>),
+    Hook(IterableFlowtableHookAttrs<'a>),
     Use(u32),
     Handle(u64),
     Flags(u32),
 }
-impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
+impl<'a> IterableOpGetflowtableDoReply<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -36283,7 +40700,12 @@ impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoReply", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoReply",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -36293,9 +40715,14 @@ impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoReply", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoReply",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_hook(&self) -> Result<Iterable<'a, FlowtableHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableFlowtableHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -36303,7 +40730,12 @@ impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoReply", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoReply",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_use(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -36313,7 +40745,12 @@ impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoReply", "Use"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoReply",
+            "Use",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -36323,7 +40760,12 @@ impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoReply", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoReply",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
@@ -36333,25 +40775,45 @@ impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpGetflowtableDoReply", "Flags"))
+        Err(ErrorContext::new_missing(
+            "OpGetflowtableDoReply",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpGetflowtableDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpGetflowtableDoReply<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDoReply<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpGetflowtableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpGetflowtableDoReply<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpGetflowtableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpGetflowtableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpGetflowtableDoReply<'a> {
     type Item = Result<OpGetflowtableDoReply<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -36373,7 +40835,7 @@ impl<'a> Iterator for Iterable<'a, OpGetflowtableDoReply<'a>> {
                     val
                 }),
                 3u16 => OpGetflowtableDoReply::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableFlowtableHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -36402,14 +40864,15 @@ impl<'a> Iterator for Iterable<'a, OpGetflowtableDoReply<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpGetflowtableDoReply",
             r#type.and_then(|t| OpGetflowtableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpGetflowtableDoReply<'a>> {
+impl<'a> std::fmt::Debug for IterableOpGetflowtableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpGetflowtableDoReply");
         for attr in self.clone() {
@@ -36434,14 +40897,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpGetflowtableDoReply<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpGetflowtableDoReply<'a>> {
+impl IterableOpGetflowtableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetflowtableDoReply", offset));
             return (
@@ -36521,7 +40984,7 @@ impl<'r> RequestOpGetflowtableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpGetflowtableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpGetflowtableDoReply<'buf>>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpGetflowtableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -36631,15 +41094,14 @@ impl<Prev: Rec> Drop for PushOpDelflowtableDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing flow table."]
-#[doc = "Original name: \"op-delflowtable-do-request\""]
 #[derive(Clone)]
 pub enum OpDelflowtableDoRequest<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
-    Hook(Iterable<'a, FlowtableHookAttrs<'a>>),
+    Hook(IterableFlowtableHookAttrs<'a>),
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDelflowtableDoRequest<'a>> {
+impl<'a> IterableOpDelflowtableDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -36648,7 +41110,12 @@ impl<'a> Iterable<'a, OpDelflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelflowtableDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDelflowtableDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -36658,9 +41125,14 @@ impl<'a> Iterable<'a, OpDelflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelflowtableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDelflowtableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_hook(&self) -> Result<Iterable<'a, FlowtableHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableFlowtableHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -36668,7 +41140,12 @@ impl<'a> Iterable<'a, OpDelflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelflowtableDoRequest", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpDelflowtableDoRequest",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -36678,25 +41155,45 @@ impl<'a> Iterable<'a, OpDelflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDelflowtableDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDelflowtableDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDelflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDelflowtableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelflowtableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelflowtableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDelflowtableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelflowtableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelflowtableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelflowtableDoRequest<'a> {
     type Item = Result<OpDelflowtableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -36718,7 +41215,7 @@ impl<'a> Iterator for Iterable<'a, OpDelflowtableDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpDelflowtableDoRequest::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableFlowtableHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -36737,14 +41234,15 @@ impl<'a> Iterator for Iterable<'a, OpDelflowtableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelflowtableDoRequest",
             r#type.and_then(|t| OpDelflowtableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDelflowtableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDelflowtableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelflowtableDoRequest");
         for attr in self.clone() {
@@ -36767,14 +41265,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDelflowtableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDelflowtableDoRequest<'a>> {
+impl IterableOpDelflowtableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelflowtableDoRequest", offset));
             return (
@@ -36867,26 +41365,40 @@ impl<Prev: Rec> Drop for PushOpDelflowtableDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing flow table."]
-#[doc = "Original name: \"op-delflowtable-do-reply\""]
 #[derive(Clone)]
 pub enum OpDelflowtableDoReply {}
-impl<'a> Iterable<'a, OpDelflowtableDoReply> {}
+impl<'a> IterableOpDelflowtableDoReply<'a> {}
 impl OpDelflowtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDelflowtableDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelflowtableDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDelflowtableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDelflowtableDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDelflowtableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDelflowtableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDelflowtableDoReply<'a> {
     type Item = Result<OpDelflowtableDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -36907,14 +41419,15 @@ impl Iterator for Iterable<'_, OpDelflowtableDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDelflowtableDoReply",
             r#type.and_then(|t| OpDelflowtableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDelflowtableDoReply> {
+impl std::fmt::Debug for IterableOpDelflowtableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDelflowtableDoReply");
         for attr in self.clone() {
@@ -36932,14 +41445,14 @@ impl std::fmt::Debug for Iterable<'_, OpDelflowtableDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDelflowtableDoReply> {
+impl IterableOpDelflowtableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelflowtableDoReply", offset));
             return (
@@ -36967,7 +41480,7 @@ impl<'r> RequestOpDelflowtableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDelflowtableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDelflowtableDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDelflowtableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -37077,15 +41590,14 @@ impl<Prev: Rec> Drop for PushOpDestroyflowtableDoRequest<Prev> {
     }
 }
 #[doc = "Delete an existing flow table with destroy semantics."]
-#[doc = "Original name: \"op-destroyflowtable-do-request\""]
 #[derive(Clone)]
 pub enum OpDestroyflowtableDoRequest<'a> {
     Table(&'a CStr),
     Name(&'a CStr),
-    Hook(Iterable<'a, FlowtableHookAttrs<'a>>),
+    Hook(IterableFlowtableHookAttrs<'a>),
     Handle(u64),
 }
-impl<'a> Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
+impl<'a> IterableOpDestroyflowtableDoRequest<'a> {
     pub fn get_table(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -37094,7 +41606,12 @@ impl<'a> Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyflowtableDoRequest", "Table"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyflowtableDoRequest",
+            "Table",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
@@ -37104,9 +41621,14 @@ impl<'a> Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyflowtableDoRequest", "Name"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyflowtableDoRequest",
+            "Name",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
-    pub fn get_hook(&self) -> Result<Iterable<'a, FlowtableHookAttrs<'a>>, ErrorContext> {
+    pub fn get_hook(&self) -> Result<IterableFlowtableHookAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -37114,7 +41636,12 @@ impl<'a> Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyflowtableDoRequest", "Hook"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyflowtableDoRequest",
+            "Hook",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
     pub fn get_handle(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
@@ -37124,25 +41651,45 @@ impl<'a> Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
                 return Ok(val);
             }
         }
-        Err(self.error_missing("OpDestroyflowtableDoRequest", "Handle"))
+        Err(ErrorContext::new_missing(
+            "OpDestroyflowtableDoRequest",
+            "Handle",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
     }
 }
 impl<'a> OpDestroyflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, Iterable<'a, OpDestroyflowtableDoRequest<'a>>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyflowtableDoRequest<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroyflowtableDoRequest::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl<'a> Iterator for Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroyflowtableDoRequest<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroyflowtableDoRequest<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroyflowtableDoRequest<'a> {
     type Item = Result<OpDestroyflowtableDoRequest<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -37164,7 +41711,7 @@ impl<'a> Iterator for Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
                     val
                 }),
                 3u16 => OpDestroyflowtableDoRequest::Hook({
-                    let res = Some(Iterable::with_loc(next, self.orig_loc));
+                    let res = Some(IterableFlowtableHookAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -37183,14 +41730,15 @@ impl<'a> Iterator for Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroyflowtableDoRequest",
             r#type.and_then(|t| OpDestroyflowtableDoRequest::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl<'a> std::fmt::Debug for Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
+impl<'a> std::fmt::Debug for IterableOpDestroyflowtableDoRequest<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroyflowtableDoRequest");
         for attr in self.clone() {
@@ -37213,14 +41761,14 @@ impl<'a> std::fmt::Debug for Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
         fmt.finish()
     }
 }
-impl<'a> Iterable<'a, OpDestroyflowtableDoRequest<'a>> {
+impl IterableOpDestroyflowtableDoRequest<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyflowtableDoRequest", offset));
             return (
@@ -37313,26 +41861,40 @@ impl<Prev: Rec> Drop for PushOpDestroyflowtableDoReply<Prev> {
     }
 }
 #[doc = "Delete an existing flow table with destroy semantics."]
-#[doc = "Original name: \"op-destroyflowtable-do-reply\""]
 #[derive(Clone)]
 pub enum OpDestroyflowtableDoReply {}
-impl<'a> Iterable<'a, OpDestroyflowtableDoReply> {}
+impl<'a> IterableOpDestroyflowtableDoReply<'a> {}
 impl OpDestroyflowtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, Iterable<'_, OpDestroyflowtableDoReply>) {
-        let mut header = PushNfgenmsg::new();
-        header
-            .as_mut_slice()
-            .clone_from_slice(&buf[..PushNfgenmsg::len()]);
+    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroyflowtableDoReply<'_>) {
+        let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
-            header,
-            Iterable::with_loc(&buf[PushNfgenmsg::len()..], buf.as_ptr() as usize),
+            PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
+            IterableOpDestroyflowtableDoReply::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         FlowtableAttrs::attr_from_type(r#type)
     }
 }
-impl Iterator for Iterable<'_, OpDestroyflowtableDoReply> {
+#[derive(Clone, Copy, Default)]
+pub struct IterableOpDestroyflowtableDoReply<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableOpDestroyflowtableDoReply<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableOpDestroyflowtableDoReply<'a> {
     type Item = Result<OpDestroyflowtableDoReply, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
@@ -37353,14 +41915,15 @@ impl Iterator for Iterable<'_, OpDestroyflowtableDoReply> {
             };
             return Some(Ok(res));
         }
-        Some(Err(self.error_context(
+        Some(Err(ErrorContext::new(
             "OpDestroyflowtableDoReply",
             r#type.and_then(|t| OpDestroyflowtableDoReply::attr_from_type(t)),
-            self.buf.as_ptr().wrapping_add(pos),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
         )))
     }
 }
-impl std::fmt::Debug for Iterable<'_, OpDestroyflowtableDoReply> {
+impl std::fmt::Debug for IterableOpDestroyflowtableDoReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OpDestroyflowtableDoReply");
         for attr in self.clone() {
@@ -37378,14 +41941,14 @@ impl std::fmt::Debug for Iterable<'_, OpDestroyflowtableDoReply> {
         fmt.finish()
     }
 }
-impl Iterable<'_, OpDestroyflowtableDoReply> {
+impl IterableOpDestroyflowtableDoReply<'_> {
     pub fn lookup_attr(
         &self,
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
         let mut stack = Vec::new();
-        let cur = self.calc_offset(self.buf.as_ptr() as usize);
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyflowtableDoReply", offset));
             return (
@@ -37413,7 +41976,7 @@ impl<'r> RequestOpDestroyflowtableDoRequest<'r> {
     }
 }
 impl NetlinkRequest for RequestOpDestroyflowtableDoRequest<'_> {
-    type ReplyType<'buf> = (PushNfgenmsg, Iterable<'buf, OpDestroyflowtableDoReply>);
+    type ReplyType<'buf> = (PushNfgenmsg, IterableOpDestroyflowtableDoReply<'buf>);
     fn protocol(&self) -> Protocol {
         Protocol::Raw {
             protonum: 12u16,
@@ -37643,31 +42206,31 @@ impl<'buf> Request<'buf> {
     pub fn buf_mut(&mut self) -> &mut Vec<u8> {
         self.buf.buf_mut()
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` flag"]
     pub fn set_create(mut self) -> Self {
         self.flags |= consts::NLM_F_CREATE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_EXCL`] flag"]
+    #[doc = "Set `NLM_F_EXCL` flag"]
     pub fn set_excl(mut self) -> Self {
         self.flags |= consts::NLM_F_EXCL as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_REPLACE` flag"]
     pub fn set_replace(mut self) -> Self {
         self.flags |= consts::NLM_F_REPLACE as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_CREATE`] and [`libc::NLM_F_REPLACE`] flag"]
+    #[doc = "Set `NLM_F_CREATE` and `NLM_F_REPLACE` flag"]
     pub fn set_change(self) -> Self {
         self.set_create().set_replace()
     }
-    #[doc = "Set [`libc::NLM_F_APPEND`] flag"]
+    #[doc = "Set `NLM_F_APPEND` flag"]
     pub fn set_append(mut self) -> Self {
         self.flags |= consts::NLM_F_APPEND as u16;
         self
     }
-    #[doc = "Set [`libc::NLM_F_DUMP`] flag"]
+    #[doc = "Set `NLM_F_DUMP` flag"]
     fn set_dump(mut self) -> Self {
         self.flags |= consts::NLM_F_DUMP as u16;
         self
