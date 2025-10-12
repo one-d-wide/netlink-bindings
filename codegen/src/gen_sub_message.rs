@@ -182,10 +182,13 @@ pub fn gen_sub_attr(
         }
         (Some(h), Some((iter, a))) => {
             select.extend(quote! {
-                #value => Some(#type_name::#select_ident(
-                    #h::new_from_slice(&#buf_name[..#h::len()])?,
-                    #iter::with_loc(&#buf_name[#h::len()..], #loc_name),
-                )),
+                #value => {
+                    let (header, attrs) = #buf_name.split_at(#buf_name.len().min(#h::len()));
+                    Some(#type_name::#select_ident(
+                        #h::new_from_slice(header)?,
+                        #iter::with_loc(attrs),
+                    ))
+                },
             });
             variants.extend(quote!(#select_ident(#h, #a),));
         }

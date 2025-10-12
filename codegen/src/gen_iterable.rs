@@ -114,17 +114,18 @@ pub fn gen_iterable_attrs(
         if fixed_header.construct_header.is_some() {
             quote! {
                 pub fn new(buf: &#iterable_lifetime [u8]) -> #iter <#iterable_lifetime> {
-                    let mut header = #header::new();
-                    header.as_mut_slice().clone_from_slice(&buf[..#header::len()]);
-                    #iter::with_loc(&buf[#header::len()..], buf.as_ptr() as usize)
+                    let (_header, attrs) = buf.split_at(buf.len().min(#header::len()));
+                    #iter::with_loc(attrs, buf.as_ptr() as usize)
                 }
             }
         } else {
             quote! {
                 pub fn new(buf: &#iterable_lifetime [u8]) -> (#header, #iter <#iterable_lifetime>) {
-                    let mut header = #header::new();
-                    header.as_mut_slice().clone_from_slice(&buf[..#header::len()]);
-                    (header, #iter::with_loc(&buf[#header::len()..], buf.as_ptr() as usize))
+                    let (header, attrs) = buf.split_at(buf.len().min(#header::len()));
+                    (
+                        #header::new_from_slice(header).unwrap_or_default(),
+                        #iter::with_loc(attrs, buf.as_ptr() as usize),
+                    )
                 }
             }
         }

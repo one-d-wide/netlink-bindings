@@ -629,10 +629,17 @@ pub fn gen_writable_struct(
             pub(crate) buf: [u8; #len],
         }
 
+        #[doc = "Create zero-initialized struct"]
+        impl Default for #type_name {
+            fn default() -> Self {
+                Self { buf: [0u8; #len] }
+            }
+        }
+
         impl #type_name {
             #[doc = "Create zero-initialized struct"]
             pub fn new() -> Self {
-                Self { buf: [0u8; Self::len()] }
+                Default::default()
             }
             #[doc = "Copy from contents from other slice"]
             pub fn new_from_slice(other: &[u8]) -> Option<Self> {
