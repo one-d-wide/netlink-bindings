@@ -509,12 +509,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "netlink-bindings"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85ed068bac7485f771ee093c7da8aace09fd75b25eb08a141e9c58fe5e50b807"
-
-[[package]]
 name = "netlink-codegen"
 version = "0.1.0"
 dependencies = [
@@ -534,7 +528,7 @@ dependencies = [
  "libc",
  "macro_rules_attribute",
  "maybe-async",
- "netlink-bindings 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "netlink-bindings",
  "smol",
  "smol-macros",
  "tokio",
@@ -640,7 +634,7 @@ version = "0.1.0"
 dependencies = [
  "argh",
  "libc",
- "netlink-bindings 0.2.2",
+ "netlink-bindings",
  "netlink-socket2",
 ]
 
