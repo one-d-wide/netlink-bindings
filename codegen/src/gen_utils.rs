@@ -100,6 +100,7 @@ pub fn lifetime_needed_attr(attr: &AttrProp) -> bool {
             | AttrType::String
             | AttrType::Binary { r#struct: None, .. }
             | AttrType::Nest { .. }
+            | AttrType::IndexedArray { .. }
     ) && !attr.is_ipv4()
         && !attr.is_ipv6()
         && !attr.is_ip()

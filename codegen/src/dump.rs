@@ -320,7 +320,7 @@ fn dump_shorthand_attr(
             writeln!(out, "for {entry_var} in {var}.{name}() {{").unwrap();
 
             match sub_type {
-                IndexedArrayType::U32 => {
+                IndexedArrayType::Plain { attr } => {
                     dump_shorthand_attr(out, n, spec, attr, Some(entry_var));
                 }
                 IndexedArrayType::Nest { nested_attributes } => {
