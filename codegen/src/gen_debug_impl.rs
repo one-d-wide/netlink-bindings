@@ -71,7 +71,7 @@ pub fn gen_introspect_attrs(
 
         match &next.r#type {
             AttrType::Unused => continue,
-            _ if next.r#enum.is_some() => {
+            _ if next.r#enum.is_some() && !matches!(next.r#type, AttrType::IndexedArray { .. }) => {
                 let Some(r#enum) = &next.r#enum else {unreachable!()};
                 let enum_def = spec.find_def(r#enum);
                 let enum_type = format_ident!("{}", kebab_to_type(r#enum));

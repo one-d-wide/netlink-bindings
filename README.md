@@ -136,14 +136,14 @@ See full code in the [example](./netlink-socket/examples/wireguard-setup.rs).
 ## Async sockets
 
 Async functionality is available using the same interface, you just need to
-enable it, and add `.await` keyword, in all places where async IO is expected.
+enable it, and to add `.await` keyword in all places where async IO is expected.
 
 ```toml
 [dependencies]
 netlink-socket2 = { ... , features = [ "tokio" ] } # or "smol"
 ```
 
-An earlier example, but using async, would look like:
+An earlier example, but using async, would look like this:
 
 ```rust,compile_fail
 use netlink_bindings::wireguard;

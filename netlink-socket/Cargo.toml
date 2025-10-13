@@ -35,8 +35,8 @@ smol = [ "async", "dep:smol", "dep:smol-macros", "dep:macro_rules_attribute" ]
 
 [dependencies]
 libc = "0.2"
-# netlink-bindings = { path = "../netlink-bindings", features = [ "nlctrl" ] }
-netlink-bindings = { version = "0.2", features = [ "nlctrl" ] }
+netlink-bindings = { path = "../netlink-bindings", features = [ "nlctrl" ] }
+# netlink-bindings = { version = "0.2", features = [ "nlctrl" ] }
 
 maybe-async = { version = "0", features = [ "is_sync" ] }
 
