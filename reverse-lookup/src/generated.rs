@@ -35,74 +35,62 @@ impl Debug for ReverseLookup<'_> {
         match proto {
             Protocol::Raw { protonum, .. } => match protonum {
                 0u16 => match (value, request_value, is_dump) {
-                    #[cfg(feature = "rt-addr")]
-                    (20u16, None, false) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpNewaddrDoRequest::new(buf),
+                    #[cfg(feature = "rt-route")]
+                    (26u16, None, true) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpGetrouteDumpRequest::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (20u16, None, false) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (20u16, Some(20u16), false) => {
-                        Debug::fmt(&netlink_bindings::rt_addr::OpNewaddrDoReply::new(buf), fmt)
-                    }
-                    #[cfg(not(feature = "rt-addr"))]
-                    (20u16, Some(20u16), false) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (21u16, None, false) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpDeladdrDoRequest::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (26u16, None, true) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (24u16, Some(26u16), true) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpGetrouteDumpReply::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (21u16, None, false) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (21u16, Some(21u16), false) => {
-                        Debug::fmt(&netlink_bindings::rt_addr::OpDeladdrDoReply::new(buf), fmt)
-                    }
-                    #[cfg(not(feature = "rt-addr"))]
-                    (21u16, Some(21u16), false) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (22u16, None, true) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpGetaddrDumpRequest::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (24u16, Some(26u16), true) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (26u16, None, false) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpGetrouteDoRequest::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (22u16, None, true) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (20u16, Some(22u16), true) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpGetaddrDumpReply::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (26u16, None, false) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (24u16, Some(26u16), false) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpGetrouteDoReply::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (20u16, Some(22u16), true) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (58u16, None, true) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpGetmulticastDumpRequest::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (24u16, Some(26u16), false) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (24u16, None, false) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpNewrouteDoRequest::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (58u16, None, true) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (58u16, Some(58u16), true) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpGetmulticastDumpReply::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (24u16, None, false) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (24u16, Some(24u16), false) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpNewrouteDoReply::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (58u16, Some(58u16), true) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (58u16, None, false) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpGetmulticastDoRequest::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (24u16, Some(24u16), false) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (25u16, None, false) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpDelrouteDoRequest::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (58u16, None, false) => consider(fmt, "rt-addr"),
-                    #[cfg(feature = "rt-addr")]
-                    (58u16, Some(58u16), false) => Debug::fmt(
-                        &netlink_bindings::rt_addr::OpGetmulticastDoReply::new(buf),
+                    #[cfg(not(feature = "rt-route"))]
+                    (25u16, None, false) => consider(fmt, "rt-route"),
+                    #[cfg(feature = "rt-route")]
+                    (25u16, Some(25u16), false) => Debug::fmt(
+                        &netlink_bindings::rt_route::OpDelrouteDoReply::new(buf),
                         fmt,
                     ),
-                    #[cfg(not(feature = "rt-addr"))]
-                    (58u16, Some(58u16), false) => consider(fmt, "rt-addr"),
+                    #[cfg(not(feature = "rt-route"))]
+                    (25u16, Some(25u16), false) => consider(fmt, "rt-route"),
                     #[cfg(feature = "rt-link")]
                     (16u16, None, false) => Debug::fmt(
                         &netlink_bindings::rt_link::OpNewlinkDoRequest::new(buf),
@@ -280,62 +268,6 @@ impl Debug for ReverseLookup<'_> {
                     ),
                     #[cfg(not(feature = "rt-neigh"))]
                     (67u16, Some(67u16), false) => consider(fmt, "rt-neigh"),
-                    #[cfg(feature = "rt-route")]
-                    (26u16, None, true) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpGetrouteDumpRequest::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (26u16, None, true) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (24u16, Some(26u16), true) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpGetrouteDumpReply::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (24u16, Some(26u16), true) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (26u16, None, false) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpGetrouteDoRequest::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (26u16, None, false) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (24u16, Some(26u16), false) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpGetrouteDoReply::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (24u16, Some(26u16), false) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (24u16, None, false) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpNewrouteDoRequest::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (24u16, None, false) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (24u16, Some(24u16), false) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpNewrouteDoReply::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (24u16, Some(24u16), false) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (25u16, None, false) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpDelrouteDoRequest::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (25u16, None, false) => consider(fmt, "rt-route"),
-                    #[cfg(feature = "rt-route")]
-                    (25u16, Some(25u16), false) => Debug::fmt(
-                        &netlink_bindings::rt_route::OpDelrouteDoReply::new(buf),
-                        fmt,
-                    ),
-                    #[cfg(not(feature = "rt-route"))]
-                    (25u16, Some(25u16), false) => consider(fmt, "rt-route"),
                     #[cfg(feature = "rt-rule")]
                     (32u16, None, false) => Debug::fmt(
                         &netlink_bindings::rt_rule::OpNewruleDoRequest::new(buf),
@@ -545,6 +477,74 @@ impl Debug for ReverseLookup<'_> {
                     }
                     #[cfg(not(feature = "tc"))]
                     (100u16, Some(102u16), false) => consider(fmt, "tc"),
+                    #[cfg(feature = "rt-addr")]
+                    (20u16, None, false) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpNewaddrDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (20u16, None, false) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (20u16, Some(20u16), false) => {
+                        Debug::fmt(&netlink_bindings::rt_addr::OpNewaddrDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "rt-addr"))]
+                    (20u16, Some(20u16), false) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (21u16, None, false) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpDeladdrDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (21u16, None, false) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (21u16, Some(21u16), false) => {
+                        Debug::fmt(&netlink_bindings::rt_addr::OpDeladdrDoReply::new(buf), fmt)
+                    }
+                    #[cfg(not(feature = "rt-addr"))]
+                    (21u16, Some(21u16), false) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (22u16, None, true) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpGetaddrDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (22u16, None, true) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (20u16, Some(22u16), true) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpGetaddrDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (20u16, Some(22u16), true) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (58u16, None, true) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpGetmulticastDumpRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (58u16, None, true) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (58u16, Some(58u16), true) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpGetmulticastDumpReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (58u16, Some(58u16), true) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (58u16, None, false) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpGetmulticastDoRequest::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (58u16, None, false) => consider(fmt, "rt-addr"),
+                    #[cfg(feature = "rt-addr")]
+                    (58u16, Some(58u16), false) => Debug::fmt(
+                        &netlink_bindings::rt_addr::OpGetmulticastDoReply::new(buf),
+                        fmt,
+                    ),
+                    #[cfg(not(feature = "rt-addr"))]
+                    (58u16, Some(58u16), false) => consider(fmt, "rt-addr"),
                     _ => write!(
                         fmt,
                         "(Unknown operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
@@ -1221,6 +1221,54 @@ impl Debug for ReverseLookup<'_> {
                 let value = value as u8;
                 let request_value = request_value.map(|val| val as u8);
                 match name {
+                    #[cfg(feature = "nl80211")]
+                    b"nl80211" => match (value, request_value, is_dump) {
+                        (1u8, None, true) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetWiphyDumpRequest::new(buf),
+                            fmt,
+                        ),
+                        (3u8, Some(1u8), true) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetWiphyDumpReply::new(buf),
+                            fmt,
+                        ),
+                        (1u8, None, false) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetWiphyDoRequest::new(buf),
+                            fmt,
+                        ),
+                        (3u8, Some(1u8), false) => {
+                            Debug::fmt(&netlink_bindings::nl80211::OpGetWiphyDoReply::new(buf), fmt)
+                        }
+                        (5u8, None, true) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetInterfaceDumpRequest::new(buf),
+                            fmt,
+                        ),
+                        (7u8, Some(5u8), true) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetInterfaceDumpReply::new(buf),
+                            fmt,
+                        ),
+                        (5u8, None, false) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetInterfaceDoRequest::new(buf),
+                            fmt,
+                        ),
+                        (7u8, Some(5u8), false) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetInterfaceDoReply::new(buf),
+                            fmt,
+                        ),
+                        (95u8, None, false) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetProtocolFeaturesDoRequest::new(buf),
+                            fmt,
+                        ),
+                        (95u8, Some(95u8), false) => Debug::fmt(
+                            &netlink_bindings::nl80211::OpGetProtocolFeaturesDoReply::new(buf),
+                            fmt,
+                        ),
+                        _ => write!(
+                            fmt,
+                            "(Unknown genl operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
+                        ),
+                    },
+                    #[cfg(not(feature = "nl80211"))]
+                    b"nl80211" => consider(fmt, "nl80211"),
                     #[cfg(feature = "nlctrl")]
                     b"nlctrl" => match (value, request_value, is_dump) {
                         (3u8, None, true) => Debug::fmt(
