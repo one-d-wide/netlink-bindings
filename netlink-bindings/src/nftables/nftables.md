@@ -308,6 +308,10 @@ PushOpNewchainDoRequest::new(&mut vec)
 
   // user data
   .push_userdata(val) // &[u8]
+
+  // type name of the chain
+  .push_type(val) // &CStr
+  .push_type_bytes(val) // &[u8]
   ;
 ```
 

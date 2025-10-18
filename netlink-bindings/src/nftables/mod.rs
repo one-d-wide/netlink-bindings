@@ -769,11 +769,7 @@ pub struct IterableLogAttrs<'a> {
 }
 impl<'a> IterableLogAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -856,12 +852,8 @@ impl<'a> std::fmt::Debug for IterableLogAttrs<'_> {
                 LogAttrs::Prefix(val) => fmt.field("Prefix", &val),
                 LogAttrs::Snaplen(val) => fmt.field("Snaplen", &val),
                 LogAttrs::Qthreshold(val) => fmt.field("Qthreshold", &val),
-                LogAttrs::Level(val) => {
-                    fmt.field("Level", &FormatEnum(val.into(), LogLevel::from_value))
-                }
-                LogAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), LogFlags::from_value))
-                }
+                LogAttrs::Level(val) => fmt.field("Level", &FormatEnum(val.into(), LogLevel::from_value)),
+                LogAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), LogFlags::from_value)),
             };
         }
         fmt.finish()
@@ -877,10 +869,7 @@ impl IterableLogAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("LogAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| LogAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| LogAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -1036,11 +1025,7 @@ pub struct IterableNumgenAttrs<'a> {
 }
 impl<'a> IterableNumgenAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -1109,13 +1094,9 @@ impl std::fmt::Debug for IterableNumgenAttrs<'_> {
                 }
             };
             match attr {
-                NumgenAttrs::Dreg(val) => {
-                    fmt.field("Dreg", &FormatEnum(val.into(), Registers::from_value))
-                }
+                NumgenAttrs::Dreg(val) => fmt.field("Dreg", &FormatEnum(val.into(), Registers::from_value)),
                 NumgenAttrs::Modulus(val) => fmt.field("Modulus", &val),
-                NumgenAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), NumgenTypes::from_value))
-                }
+                NumgenAttrs::Type(val) => fmt.field("Type", &FormatEnum(val.into(), NumgenTypes::from_value)),
                 NumgenAttrs::Offset(val) => fmt.field("Offset", &val),
             };
         }
@@ -1132,10 +1113,7 @@ impl IterableNumgenAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NumgenAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| NumgenAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| NumgenAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -1279,11 +1257,7 @@ pub struct IterableRangeAttrs<'a> {
 }
 impl<'a> IterableRangeAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -1352,12 +1326,8 @@ impl<'a> std::fmt::Debug for IterableRangeAttrs<'_> {
                 }
             };
             match attr {
-                RangeAttrs::Sreg(val) => {
-                    fmt.field("Sreg", &FormatEnum(val.into(), Registers::from_value))
-                }
-                RangeAttrs::Op(val) => {
-                    fmt.field("Op", &FormatEnum(val.into(), RangeOps::from_value))
-                }
+                RangeAttrs::Sreg(val) => fmt.field("Sreg", &FormatEnum(val.into(), Registers::from_value)),
+                RangeAttrs::Op(val) => fmt.field("Op", &FormatEnum(val.into(), RangeOps::from_value)),
                 RangeAttrs::FromData(val) => fmt.field("FromData", &val),
                 RangeAttrs::ToData(val) => fmt.field("ToData", &val),
             };
@@ -1375,10 +1345,7 @@ impl IterableRangeAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RangeAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| RangeAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| RangeAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -1466,11 +1433,7 @@ pub struct IterableBatchAttrs<'a> {
 }
 impl<'a> IterableBatchAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -1540,10 +1503,7 @@ impl IterableBatchAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("BatchAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| BatchAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| BatchAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -1724,11 +1684,7 @@ pub struct IterableTableAttrs<'a> {
 }
 impl<'a> IterableTableAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -1813,9 +1769,7 @@ impl<'a> std::fmt::Debug for IterableTableAttrs<'_> {
             };
             match attr {
                 TableAttrs::Name(val) => fmt.field("Name", &val),
-                TableAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value))
-                }
+                TableAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value)),
                 TableAttrs::Use(val) => fmt.field("Use", &val),
                 TableAttrs::Handle(val) => fmt.field("Handle", &val),
                 TableAttrs::Pad(val) => fmt.field("Pad", &val),
@@ -1836,10 +1790,7 @@ impl IterableTableAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("TableAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| TableAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| TableAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -2134,11 +2085,7 @@ pub struct IterableChainAttrs<'a> {
 }
 impl<'a> IterableChainAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -2250,9 +2197,7 @@ impl<'a> std::fmt::Debug for IterableChainAttrs<'_> {
                 ChainAttrs::Use(val) => fmt.field("Use", &val),
                 ChainAttrs::Type(val) => fmt.field("Type", &val),
                 ChainAttrs::Counters(val) => fmt.field("Counters", &val),
-                ChainAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value))
-                }
+                ChainAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value)),
                 ChainAttrs::Id(val) => fmt.field("Id", &val),
                 ChainAttrs::Userdata(val) => fmt.field("Userdata", &val),
             };
@@ -2270,10 +2215,7 @@ impl IterableChainAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ChainAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ChainAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ChainAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -2435,11 +2377,7 @@ pub struct IterableCounterAttrs<'a> {
 }
 impl<'a> IterableCounterAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -2521,10 +2459,7 @@ impl IterableCounterAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CounterAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| CounterAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| CounterAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -2658,11 +2593,7 @@ pub struct IterableNftHookAttrs<'a> {
 }
 impl<'a> IterableNftHookAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -2750,10 +2681,7 @@ impl IterableNftHookAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NftHookAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| NftHookAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| NftHookAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -2835,11 +2763,7 @@ pub struct IterableHookDevAttrs<'a> {
 }
 impl<'a> IterableHookDevAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -2909,10 +2833,7 @@ impl IterableHookDevAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("HookDevAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| HookDevAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| HookDevAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -2996,11 +2917,7 @@ pub struct IterableNftCounterAttrs<'a> {
 }
 impl<'a> IterableNftCounterAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -3076,10 +2993,7 @@ impl IterableNftCounterAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("NftCounterAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| NftCounterAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| NftCounterAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -3325,11 +3239,7 @@ pub struct IterableRuleAttrs<'a> {
 }
 impl<'a> IterableRuleAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -3453,10 +3363,7 @@ impl IterableRuleAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RuleAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| RuleAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| RuleAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -3574,11 +3481,7 @@ pub struct IterableExprListAttrs<'a> {
 }
 impl<'a> IterableExprListAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -3648,10 +3551,7 @@ impl IterableExprListAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprListAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprListAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprListAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -3745,28 +3645,18 @@ pub enum ExprOps<'a> {
 impl<'a> ExprOps<'a> {
     fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
         match selector.to_bytes() {
-            b"bitwise" => Some(ExprOps::Bitwise(IterableExprBitwiseAttrs::with_loc(
-                buf, loc,
-            ))),
+            b"bitwise" => Some(ExprOps::Bitwise(IterableExprBitwiseAttrs::with_loc(buf, loc))),
             b"cmp" => Some(ExprOps::Cmp(IterableExprCmpAttrs::with_loc(buf, loc))),
-            b"counter" => Some(ExprOps::Counter(IterableExprCounterAttrs::with_loc(
-                buf, loc,
-            ))),
+            b"counter" => Some(ExprOps::Counter(IterableExprCounterAttrs::with_loc(buf, loc))),
             b"ct" => Some(ExprOps::Ct(IterableExprCtAttrs::with_loc(buf, loc))),
             b"fib" => Some(ExprOps::Fib(IterableExprFibAttrs::with_loc(buf, loc))),
-            b"flow_offload" => Some(ExprOps::FlowOffload(
-                IterableExprFlowOffloadAttrs::with_loc(buf, loc),
-            )),
-            b"immediate" => Some(ExprOps::Immediate(IterableExprImmediateAttrs::with_loc(
-                buf, loc,
-            ))),
+            b"flow_offload" => Some(ExprOps::FlowOffload(IterableExprFlowOffloadAttrs::with_loc(buf, loc))),
+            b"immediate" => Some(ExprOps::Immediate(IterableExprImmediateAttrs::with_loc(buf, loc))),
             b"lookup" => Some(ExprOps::Lookup(IterableExprLookupAttrs::with_loc(buf, loc))),
             b"meta" => Some(ExprOps::Meta(IterableExprMetaAttrs::with_loc(buf, loc))),
             b"nat" => Some(ExprOps::Nat(IterableExprNatAttrs::with_loc(buf, loc))),
             b"objref" => Some(ExprOps::Objref(IterableExprObjrefAttrs::with_loc(buf, loc))),
-            b"payload" => Some(ExprOps::Payload(IterableExprPayloadAttrs::with_loc(
-                buf, loc,
-            ))),
+            b"payload" => Some(ExprOps::Payload(IterableExprPayloadAttrs::with_loc(buf, loc))),
             b"quota" => Some(ExprOps::Quota(IterableQuotaAttrs::with_loc(buf, loc))),
             b"reject" => Some(ExprOps::Reject(IterableExprRejectAttrs::with_loc(buf, loc))),
             b"target" => Some(ExprOps::Target(IterableExprTargetAttrs::with_loc(buf, loc))),
@@ -3800,11 +3690,7 @@ pub struct IterableExprAttrs<'a> {
 }
 impl<'a> IterableExprAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -3883,10 +3769,7 @@ impl IterableExprAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -3980,11 +3863,7 @@ pub struct IterableRuleCompatAttrs<'a> {
 }
 impl<'a> IterableRuleCompatAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -4060,10 +3939,7 @@ impl IterableRuleCompatAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("RuleCompatAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| RuleCompatAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| RuleCompatAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -4491,11 +4367,7 @@ pub struct IterableSetAttrs<'a> {
 }
 impl<'a> IterableSetAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -4646,9 +4518,7 @@ impl<'a> std::fmt::Debug for IterableSetAttrs<'_> {
             match attr {
                 SetAttrs::Table(val) => fmt.field("Table", &val),
                 SetAttrs::Name(val) => fmt.field("Name", &val),
-                SetAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value))
-                }
+                SetAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value)),
                 SetAttrs::KeyType(val) => fmt.field("KeyType", &val),
                 SetAttrs::KeyLen(val) => fmt.field("KeyLen", &val),
                 SetAttrs::DataType(val) => fmt.field("DataType", &val),
@@ -4681,10 +4551,7 @@ impl IterableSetAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -4850,9 +4717,7 @@ impl<'a> IterableSetDescAttrs<'a> {
         ))
     }
     #[doc = "description of field concatenation\nAttribute may repeat multiple times (treat it as array)"]
-    pub fn get_concat(
-        &self,
-    ) -> MultiAttrIterable<Self, SetDescAttrs<'a>, IterableSetDescConcatAttrs<'a>> {
+    pub fn get_concat(&self) -> MultiAttrIterable<Self, SetDescAttrs<'a>, IterableSetDescConcatAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let SetDescAttrs::Concat(val) = variant {
                 Some(val)
@@ -4883,11 +4748,7 @@ pub struct IterableSetDescAttrs<'a> {
 }
 impl<'a> IterableSetDescAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -4963,10 +4824,7 @@ impl IterableSetDescAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetDescAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetDescAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetDescAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -5040,11 +4898,7 @@ pub struct IterableSetDescConcatAttrs<'a> {
 }
 impl<'a> IterableSetDescConcatAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -5114,10 +4968,7 @@ impl IterableSetDescConcatAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetDescConcatAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetDescConcatAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetDescConcatAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -5185,11 +5036,7 @@ pub struct IterableSetFieldAttrs<'a> {
 }
 impl<'a> IterableSetFieldAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -5259,10 +5106,7 @@ impl IterableSetFieldAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetFieldAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetFieldAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetFieldAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -5325,11 +5169,7 @@ pub struct IterableSetListAttrs<'a> {
 }
 impl<'a> IterableSetListAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -5399,10 +5239,7 @@ impl IterableSetListAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetListAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetListAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetListAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -5643,11 +5480,7 @@ pub struct IterableSetelemAttrs<'a> {
 }
 impl<'a> IterableSetelemAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -5771,10 +5604,7 @@ impl IterableSetelemAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetelemAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetelemAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetelemAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -5862,9 +5692,7 @@ pub enum SetelemListElemAttrs<'a> {
 }
 impl<'a> IterableSetelemListElemAttrs<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn get_elem(
-        &self,
-    ) -> MultiAttrIterable<Self, SetelemListElemAttrs<'a>, IterableSetelemAttrs<'a>> {
+    pub fn get_elem(&self) -> MultiAttrIterable<Self, SetelemListElemAttrs<'a>, IterableSetelemAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let SetelemListElemAttrs::Elem(val) = variant {
                 Some(val)
@@ -5894,11 +5722,7 @@ pub struct IterableSetelemListElemAttrs<'a> {
 }
 impl<'a> IterableSetelemListElemAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -6090,11 +5914,7 @@ pub struct IterableSetelemListAttrs<'a> {
 }
 impl<'a> IterableSetelemListAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -6182,10 +6002,7 @@ impl IterableSetelemListAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("SetelemListAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SetelemListAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| SetelemListAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -6307,11 +6124,7 @@ pub struct IterableGenAttrs<'a> {
 }
 impl<'a> IterableGenAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -6393,10 +6206,7 @@ impl IterableGenAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("GenAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| GenAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| GenAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -6592,9 +6402,7 @@ impl<'a> ObjData<'a> {
             val if val == ObjectType::Counter as u32 => {
                 Some(ObjData::Counter(IterableCounterAttrs::with_loc(buf, loc)))
             }
-            val if val == ObjectType::Quota as u32 => {
-                Some(ObjData::Quota(IterableQuotaAttrs::with_loc(buf, loc)))
-            }
+            val if val == ObjectType::Quota as u32 => Some(ObjData::Quota(IterableQuotaAttrs::with_loc(buf, loc))),
             _ => None,
         }
     }
@@ -6626,11 +6434,7 @@ pub struct IterableObjAttrs<'a> {
 }
 impl<'a> IterableObjAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -6724,9 +6528,7 @@ impl<'a> std::fmt::Debug for IterableObjAttrs<'_> {
             match attr {
                 ObjAttrs::Table(val) => fmt.field("Table", &val),
                 ObjAttrs::Name(val) => fmt.field("Name", &val),
-                ObjAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                ObjAttrs::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
                 ObjAttrs::Data(val) => fmt.field("Data", &val),
                 ObjAttrs::Use(val) => fmt.field("Use", &val),
                 ObjAttrs::Handle(val) => fmt.field("Handle", &val),
@@ -6747,10 +6549,7 @@ impl IterableObjAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ObjAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ObjAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ObjAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -6912,11 +6711,7 @@ pub struct IterableQuotaAttrs<'a> {
 }
 impl<'a> IterableQuotaAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -6986,9 +6781,7 @@ impl<'a> std::fmt::Debug for IterableQuotaAttrs<'_> {
             };
             match attr {
                 QuotaAttrs::Bytes(val) => fmt.field("Bytes", &val),
-                QuotaAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), QuotaFlags::from_value))
-                }
+                QuotaAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), QuotaFlags::from_value)),
                 QuotaAttrs::Pad(val) => fmt.field("Pad", &val),
                 QuotaAttrs::Consumed(val) => fmt.field("Consumed", &val),
             };
@@ -7006,10 +6799,7 @@ impl IterableQuotaAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("QuotaAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| QuotaAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| QuotaAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -7196,11 +6986,7 @@ pub struct IterableFlowtableAttrs<'a> {
 }
 impl<'a> IterableFlowtableAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -7306,10 +7092,7 @@ impl IterableFlowtableAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("FlowtableAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| FlowtableAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| FlowtableAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -7447,11 +7230,7 @@ pub struct IterableFlowtableHookAttrs<'a> {
 }
 impl<'a> IterableFlowtableHookAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -7533,10 +7312,7 @@ impl IterableFlowtableHookAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("FlowtableHookAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| FlowtableHookAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| FlowtableHookAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -7720,11 +7496,7 @@ pub struct IterableExprBitwiseAttrs<'a> {
 }
 impl<'a> IterableExprBitwiseAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -7813,9 +7585,7 @@ impl<'a> std::fmt::Debug for IterableExprBitwiseAttrs<'_> {
                 ExprBitwiseAttrs::Len(val) => fmt.field("Len", &val),
                 ExprBitwiseAttrs::Mask(val) => fmt.field("Mask", &val),
                 ExprBitwiseAttrs::Xor(val) => fmt.field("Xor", &val),
-                ExprBitwiseAttrs::Op(val) => {
-                    fmt.field("Op", &FormatEnum(val.into(), BitwiseOps::from_value))
-                }
+                ExprBitwiseAttrs::Op(val) => fmt.field("Op", &FormatEnum(val.into(), BitwiseOps::from_value)),
                 ExprBitwiseAttrs::Data(val) => fmt.field("Data", &val),
             };
         }
@@ -7832,10 +7602,7 @@ impl IterableExprBitwiseAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprBitwiseAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprBitwiseAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprBitwiseAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -7975,11 +7742,7 @@ pub struct IterableExprCmpAttrs<'a> {
 }
 impl<'a> IterableExprCmpAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -8044,9 +7807,7 @@ impl<'a> std::fmt::Debug for IterableExprCmpAttrs<'_> {
             };
             match attr {
                 ExprCmpAttrs::Sreg(val) => fmt.field("Sreg", &val),
-                ExprCmpAttrs::Op(val) => {
-                    fmt.field("Op", &FormatEnum(val.into(), CmpOps::from_value))
-                }
+                ExprCmpAttrs::Op(val) => fmt.field("Op", &FormatEnum(val.into(), CmpOps::from_value)),
                 ExprCmpAttrs::Data(val) => fmt.field("Data", &val),
             };
         }
@@ -8063,10 +7824,7 @@ impl IterableExprCmpAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprCmpAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprCmpAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprCmpAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -8163,11 +7921,7 @@ pub struct IterableDataAttrs<'a> {
 }
 impl<'a> IterableDataAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -8243,10 +7997,7 @@ impl IterableDataAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("DataAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| DataAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| DataAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -8360,11 +8111,7 @@ pub struct IterableVerdictAttrs<'a> {
 }
 impl<'a> IterableVerdictAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -8428,9 +8175,7 @@ impl<'a> std::fmt::Debug for IterableVerdictAttrs<'_> {
                 }
             };
             match attr {
-                VerdictAttrs::Code(val) => {
-                    fmt.field("Code", &FormatEnum(val.into(), VerdictCode::from_value))
-                }
+                VerdictAttrs::Code(val) => fmt.field("Code", &FormatEnum(val.into(), VerdictCode::from_value)),
                 VerdictAttrs::Chain(val) => fmt.field("Chain", &val),
                 VerdictAttrs::ChainId(val) => fmt.field("ChainId", &val),
             };
@@ -8448,10 +8193,7 @@ impl IterableVerdictAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("VerdictAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| VerdictAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| VerdictAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -8568,11 +8310,7 @@ pub struct IterableExprCounterAttrs<'a> {
 }
 impl<'a> IterableExprCounterAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -8654,10 +8392,7 @@ impl IterableExprCounterAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprCounterAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprCounterAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprCounterAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -8774,11 +8509,7 @@ pub struct IterableExprFibAttrs<'a> {
 }
 impl<'a> IterableExprFibAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -8843,12 +8574,8 @@ impl std::fmt::Debug for IterableExprFibAttrs<'_> {
             };
             match attr {
                 ExprFibAttrs::Dreg(val) => fmt.field("Dreg", &val),
-                ExprFibAttrs::Result(val) => {
-                    fmt.field("Result", &FormatEnum(val.into(), FibResult::from_value))
-                }
-                ExprFibAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), FibFlags::from_value))
-                }
+                ExprFibAttrs::Result(val) => fmt.field("Result", &FormatEnum(val.into(), FibResult::from_value)),
+                ExprFibAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), FibFlags::from_value)),
             };
         }
         fmt.finish()
@@ -8864,10 +8591,7 @@ impl IterableExprFibAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprFibAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprFibAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprFibAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -9001,11 +8725,7 @@ pub struct IterableExprCtAttrs<'a> {
 }
 impl<'a> IterableExprCtAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -9075,13 +8795,8 @@ impl std::fmt::Debug for IterableExprCtAttrs<'_> {
             };
             match attr {
                 ExprCtAttrs::Dreg(val) => fmt.field("Dreg", &val),
-                ExprCtAttrs::Key(val) => {
-                    fmt.field("Key", &FormatEnum(val.into(), CtKeys::from_value))
-                }
-                ExprCtAttrs::Direction(val) => fmt.field(
-                    "Direction",
-                    &FormatEnum(val.into(), CtDirection::from_value),
-                ),
+                ExprCtAttrs::Key(val) => fmt.field("Key", &FormatEnum(val.into(), CtKeys::from_value)),
+                ExprCtAttrs::Direction(val) => fmt.field("Direction", &FormatEnum(val.into(), CtDirection::from_value)),
                 ExprCtAttrs::Sreg(val) => fmt.field("Sreg", &val),
             };
         }
@@ -9098,10 +8813,7 @@ impl IterableExprCtAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprCtAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprCtAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprCtAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -9188,11 +8900,7 @@ pub struct IterableExprFlowOffloadAttrs<'a> {
 }
 impl<'a> IterableExprFlowOffloadAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -9349,11 +9057,7 @@ pub struct IterableExprImmediateAttrs<'a> {
 }
 impl<'a> IterableExprImmediateAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -9429,10 +9133,7 @@ impl IterableExprImmediateAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprImmediateAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprImmediateAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprImmediateAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -9580,11 +9281,7 @@ pub struct IterableExprLookupAttrs<'a> {
 }
 impl<'a> IterableExprLookupAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -9662,9 +9359,7 @@ impl<'a> std::fmt::Debug for IterableExprLookupAttrs<'_> {
                 ExprLookupAttrs::SetId(val) => fmt.field("SetId", &val),
                 ExprLookupAttrs::Sreg(val) => fmt.field("Sreg", &val),
                 ExprLookupAttrs::Dreg(val) => fmt.field("Dreg", &val),
-                ExprLookupAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), LookupFlags::from_value))
-                }
+                ExprLookupAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), LookupFlags::from_value)),
             };
         }
         fmt.finish()
@@ -9680,10 +9375,7 @@ impl IterableExprLookupAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprLookupAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprLookupAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprLookupAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -9810,11 +9502,7 @@ pub struct IterableExprMetaAttrs<'a> {
 }
 impl<'a> IterableExprMetaAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -9879,9 +9567,7 @@ impl std::fmt::Debug for IterableExprMetaAttrs<'_> {
             };
             match attr {
                 ExprMetaAttrs::Dreg(val) => fmt.field("Dreg", &val),
-                ExprMetaAttrs::Key(val) => {
-                    fmt.field("Key", &FormatEnum(val.into(), MetaKeys::from_value))
-                }
+                ExprMetaAttrs::Key(val) => fmt.field("Key", &FormatEnum(val.into(), MetaKeys::from_value)),
                 ExprMetaAttrs::Sreg(val) => fmt.field("Sreg", &val),
             };
         }
@@ -9898,10 +9584,7 @@ impl IterableExprMetaAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprMetaAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprMetaAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprMetaAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -10084,11 +9767,7 @@ pub struct IterableExprNatAttrs<'a> {
 }
 impl<'a> IterableExprNatAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -10178,9 +9857,7 @@ impl std::fmt::Debug for IterableExprNatAttrs<'_> {
                 ExprNatAttrs::RegAddrMax(val) => fmt.field("RegAddrMax", &val),
                 ExprNatAttrs::RegProtoMin(val) => fmt.field("RegProtoMin", &val),
                 ExprNatAttrs::RegProtoMax(val) => fmt.field("RegProtoMax", &val),
-                ExprNatAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), NatRangeFlags::from_value))
-                }
+                ExprNatAttrs::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), NatRangeFlags::from_value)),
             };
         }
         fmt.finish()
@@ -10196,10 +9873,7 @@ impl IterableExprNatAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprNatAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprNatAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprNatAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -10437,11 +10111,7 @@ pub struct IterableExprPayloadAttrs<'a> {
 }
 impl<'a> IterableExprPayloadAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -10530,17 +10200,11 @@ impl std::fmt::Debug for IterableExprPayloadAttrs<'_> {
                 }
             };
             match attr {
-                ExprPayloadAttrs::Dreg(val) => {
-                    fmt.field("Dreg", &FormatEnum(val.into(), Registers::from_value))
-                }
-                ExprPayloadAttrs::Base(val) => {
-                    fmt.field("Base", &FormatEnum(val.into(), PayloadBase::from_value))
-                }
+                ExprPayloadAttrs::Dreg(val) => fmt.field("Dreg", &FormatEnum(val.into(), Registers::from_value)),
+                ExprPayloadAttrs::Base(val) => fmt.field("Base", &FormatEnum(val.into(), PayloadBase::from_value)),
                 ExprPayloadAttrs::Offset(val) => fmt.field("Offset", &val),
                 ExprPayloadAttrs::Len(val) => fmt.field("Len", &val),
-                ExprPayloadAttrs::Sreg(val) => {
-                    fmt.field("Sreg", &FormatEnum(val.into(), Registers::from_value))
-                }
+                ExprPayloadAttrs::Sreg(val) => fmt.field("Sreg", &FormatEnum(val.into(), Registers::from_value)),
                 ExprPayloadAttrs::CsumType(val) => fmt.field("CsumType", &val),
                 ExprPayloadAttrs::CsumOffset(val) => fmt.field("CsumOffset", &val),
                 ExprPayloadAttrs::CsumFlags(val) => fmt.field("CsumFlags", &val),
@@ -10559,10 +10223,7 @@ impl IterableExprPayloadAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprPayloadAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprPayloadAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprPayloadAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -10690,11 +10351,7 @@ pub struct IterableExprRejectAttrs<'a> {
 }
 impl<'a> IterableExprRejectAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -10753,9 +10410,7 @@ impl std::fmt::Debug for IterableExprRejectAttrs<'_> {
                 }
             };
             match attr {
-                ExprRejectAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), RejectTypes::from_value))
-                }
+                ExprRejectAttrs::Type(val) => fmt.field("Type", &FormatEnum(val.into(), RejectTypes::from_value)),
                 ExprRejectAttrs::IcmpCode(val) => fmt.field("IcmpCode", &val),
             };
         }
@@ -10772,10 +10427,7 @@ impl IterableExprRejectAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprRejectAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprRejectAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprRejectAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -10882,11 +10534,7 @@ pub struct IterableExprTargetAttrs<'a> {
 }
 impl<'a> IterableExprTargetAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -10968,10 +10616,7 @@ impl IterableExprTargetAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprTargetAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprTargetAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprTargetAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -11084,11 +10729,7 @@ pub struct IterableExprTproxyAttrs<'a> {
 }
 impl<'a> IterableExprTproxyAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -11170,10 +10811,7 @@ impl IterableExprTproxyAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprTproxyAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprTproxyAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprTproxyAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -11326,11 +10964,7 @@ pub struct IterableExprObjrefAttrs<'a> {
 }
 impl<'a> IterableExprObjrefAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -11424,10 +11058,7 @@ impl IterableExprObjrefAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("ExprObjrefAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| ExprObjrefAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| ExprObjrefAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -11552,11 +11183,7 @@ pub struct IterableCompatTargetAttrs<'a> {
 }
 impl<'a> IterableCompatTargetAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -11638,10 +11265,7 @@ impl IterableCompatTargetAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CompatTargetAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| CompatTargetAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| CompatTargetAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -11754,11 +11378,7 @@ pub struct IterableCompatMatchAttrs<'a> {
 }
 impl<'a> IterableCompatMatchAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -11840,10 +11460,7 @@ impl IterableCompatMatchAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CompatMatchAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| CompatMatchAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| CompatMatchAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -11956,11 +11573,7 @@ pub struct IterableCompatAttrs<'a> {
 }
 impl<'a> IterableCompatAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -12042,10 +11655,7 @@ impl IterableCompatAttrs<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset {
             stack.push(("CompatAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| CompatAttrs::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| CompatAttrs::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -12114,11 +11724,7 @@ impl<Prev: Rec> PushLogAttrs<Prev> {
     }
     #[doc = "prefix to prepend to log messages"]
     pub fn push_prefix(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12345,11 +11951,7 @@ impl<Prev: Rec> PushTableAttrs<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12430,11 +12032,7 @@ impl<Prev: Rec> PushChainAttrs<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12453,11 +12051,7 @@ impl<Prev: Rec> PushChainAttrs<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12490,11 +12084,7 @@ impl<Prev: Rec> PushChainAttrs<Prev> {
     }
     #[doc = "type name of the chain"]
     pub fn push_type(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            7u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 7u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12624,11 +12214,7 @@ impl<Prev: Rec> PushNftHookAttrs<Prev> {
     }
     #[doc = "net device name"]
     pub fn push_dev(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12682,11 +12268,7 @@ impl<Prev: Rec> PushHookDevAttrs<Prev> {
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12775,11 +12357,7 @@ impl<Prev: Rec> PushRuleAttrs<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12792,11 +12370,7 @@ impl<Prev: Rec> PushRuleAttrs<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -12935,11 +12509,7 @@ impl<Prev: Rec> PushExprAttrs<Prev> {
     }
     #[doc = "name of the expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13311,11 +12881,7 @@ impl<Prev: Rec> PushSetAttrs<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13328,11 +12894,7 @@ impl<Prev: Rec> PushSetAttrs<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13446,11 +13008,7 @@ impl<Prev: Rec> PushSetAttrs<Prev> {
     }
     #[doc = "set backend type"]
     pub fn push_type(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            19u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 19u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13716,11 +13274,7 @@ impl<Prev: Rec> PushSetelemAttrs<Prev> {
     }
     #[doc = "stateful object reference"]
     pub fn push_objref(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            8u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 8u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13822,11 +13376,7 @@ impl<Prev: Rec> PushSetelemListAttrs<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13837,11 +13387,7 @@ impl<Prev: Rec> PushSetelemListAttrs<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13908,11 +13454,7 @@ impl<Prev: Rec> PushGenAttrs<Prev> {
         self
     }
     pub fn push_proc_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13957,11 +13499,7 @@ impl<Prev: Rec> PushObjAttrs<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -13974,11 +13512,7 @@ impl<Prev: Rec> PushObjAttrs<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -14135,11 +13669,7 @@ impl<Prev: Rec> PushFlowtableAttrs<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -14150,11 +13680,7 @@ impl<Prev: Rec> PushFlowtableAttrs<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -14453,11 +13979,7 @@ impl<Prev: Rec> PushVerdictAttrs<Prev> {
     }
     #[doc = "jump target chain name"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -14664,11 +14186,7 @@ impl<Prev: Rec> PushExprFlowOffloadAttrs<Prev> {
     }
     #[doc = "Flow offload table name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -14759,11 +14277,7 @@ impl<Prev: Rec> PushExprLookupAttrs<Prev> {
     }
     #[doc = "Name of set to use"]
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15073,11 +14587,7 @@ impl<Prev: Rec> PushExprTargetAttrs<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15185,11 +14695,7 @@ impl<Prev: Rec> PushExprObjrefAttrs<Prev> {
     }
     #[doc = "object name"]
     pub fn push_imm_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15207,11 +14713,7 @@ impl<Prev: Rec> PushExprObjrefAttrs<Prev> {
     }
     #[doc = "name of object map"]
     pub fn push_set_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            4u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 4u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15262,11 +14764,7 @@ impl<Prev: Rec> PushCompatTargetAttrs<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15320,11 +14818,7 @@ impl<Prev: Rec> PushCompatMatchAttrs<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15378,11 +14872,7 @@ impl<Prev: Rec> PushCompatAttrs<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15538,11 +15028,7 @@ pub struct IterableOpGetcompatDumpRequest<'a> {
 }
 impl<'a> IterableOpGetcompatDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -15645,11 +15131,7 @@ impl<Prev: Rec> PushOpGetcompatDumpReply<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -15753,11 +15235,7 @@ pub struct IterableOpGetcompatDumpReply<'a> {
 }
 impl<'a> IterableOpGetcompatDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -15920,9 +15398,7 @@ impl NetlinkRequest for RequestOpGetcompatDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetcompatDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetcompatDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump nft_compat info"]
@@ -15957,11 +15433,7 @@ impl<Prev: Rec> PushOpGetcompatDoRequest<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -16065,11 +15537,7 @@ pub struct IterableOpGetcompatDoRequest<'a> {
 }
 impl<'a> IterableOpGetcompatDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -16224,11 +15692,7 @@ impl<Prev: Rec> PushOpGetcompatDoReply<Prev> {
         prev
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -16332,11 +15796,7 @@ pub struct IterableOpGetcompatDoReply<'a> {
 }
 impl<'a> IterableOpGetcompatDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -16418,10 +15878,7 @@ impl IterableOpGetcompatDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetcompatDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetcompatDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetcompatDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -16497,9 +15954,7 @@ impl NetlinkRequest for RequestOpGetcompatDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetcompatDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetcompatDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Start a batch of operations"]
@@ -16593,11 +16048,7 @@ pub struct IterableOpBatchBeginDoRequest<'a> {
 }
 impl<'a> IterableOpBatchBeginDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -16787,11 +16238,7 @@ pub struct IterableOpBatchBeginDoReply<'a> {
 }
 impl<'a> IterableOpBatchBeginDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -16861,10 +16308,7 @@ impl IterableOpBatchBeginDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchBeginDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpBatchBeginDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpBatchBeginDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -16928,9 +16372,7 @@ impl NetlinkRequest for RequestOpBatchBeginDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpBatchBeginDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpBatchBeginDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Finish a batch of operations"]
@@ -17024,11 +16466,7 @@ pub struct IterableOpBatchEndDoRequest<'a> {
 }
 impl<'a> IterableOpBatchEndDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -17098,10 +16536,7 @@ impl IterableOpBatchEndDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchEndDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpBatchEndDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpBatchEndDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -17192,11 +16627,7 @@ pub struct IterableOpBatchEndDoReply<'a> {
 }
 impl<'a> IterableOpBatchEndDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -17259,10 +16690,7 @@ impl IterableOpBatchEndDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpBatchEndDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpBatchEndDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpBatchEndDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -17305,9 +16733,7 @@ impl NetlinkRequest for RequestOpBatchEndDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpBatchEndDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpBatchEndDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new table."]
@@ -17343,11 +16769,7 @@ impl<Prev: Rec> PushOpNewtableDoRequest<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -17460,11 +16882,7 @@ pub struct IterableOpNewtableDoRequest<'a> {
 }
 impl<'a> IterableOpNewtableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -17529,9 +16947,7 @@ impl<'a> std::fmt::Debug for IterableOpNewtableDoRequest<'_> {
             };
             match attr {
                 OpNewtableDoRequest::Name(val) => fmt.field("Name", &val),
-                OpNewtableDoRequest::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value))
-                }
+                OpNewtableDoRequest::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value)),
                 OpNewtableDoRequest::Userdata(val) => fmt.field("Userdata", &val),
             };
         }
@@ -17548,10 +16964,7 @@ impl IterableOpNewtableDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewtableDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewtableDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewtableDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -17654,11 +17067,7 @@ pub struct IterableOpNewtableDoReply<'a> {
 }
 impl<'a> IterableOpNewtableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -17721,10 +17130,7 @@ impl IterableOpNewtableDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewtableDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewtableDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewtableDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -17767,9 +17173,7 @@ impl NetlinkRequest for RequestOpNewtableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewtableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewtableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump tables."]
@@ -17837,11 +17241,7 @@ pub struct IterableOpGettableDumpRequest<'a> {
 }
 impl<'a> IterableOpGettableDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -17945,11 +17345,7 @@ impl<Prev: Rec> PushOpGettableDumpReply<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -18134,11 +17530,7 @@ pub struct IterableOpGettableDumpReply<'a> {
 }
 impl<'a> IterableOpGettableDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -18218,9 +17610,7 @@ impl<'a> std::fmt::Debug for IterableOpGettableDumpReply<'_> {
             };
             match attr {
                 OpGettableDumpReply::Name(val) => fmt.field("Name", &val),
-                OpGettableDumpReply::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value))
-                }
+                OpGettableDumpReply::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value)),
                 OpGettableDumpReply::Use(val) => fmt.field("Use", &val),
                 OpGettableDumpReply::Handle(val) => fmt.field("Handle", &val),
                 OpGettableDumpReply::Userdata(val) => fmt.field("Userdata", &val),
@@ -18240,10 +17630,7 @@ impl IterableOpGettableDumpReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDumpReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGettableDumpReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGettableDumpReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -18339,9 +17726,7 @@ impl NetlinkRequest for RequestOpGettableDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGettableDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGettableDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump tables."]
@@ -18377,11 +17762,7 @@ impl<Prev: Rec> PushOpGettableDoRequest<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -18446,11 +17827,7 @@ pub struct IterableOpGettableDoRequest<'a> {
 }
 impl<'a> IterableOpGettableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -18520,10 +17897,7 @@ impl IterableOpGettableDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGettableDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGettableDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -18582,11 +17956,7 @@ impl<Prev: Rec> PushOpGettableDoReply<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -18771,11 +18141,7 @@ pub struct IterableOpGettableDoReply<'a> {
 }
 impl<'a> IterableOpGettableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -18855,9 +18221,7 @@ impl<'a> std::fmt::Debug for IterableOpGettableDoReply<'_> {
             };
             match attr {
                 OpGettableDoReply::Name(val) => fmt.field("Name", &val),
-                OpGettableDoReply::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value))
-                }
+                OpGettableDoReply::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value)),
                 OpGettableDoReply::Use(val) => fmt.field("Use", &val),
                 OpGettableDoReply::Handle(val) => fmt.field("Handle", &val),
                 OpGettableDoReply::Userdata(val) => fmt.field("Userdata", &val),
@@ -18877,10 +18241,7 @@ impl IterableOpGettableDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGettableDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGettableDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGettableDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -18974,9 +18335,7 @@ impl NetlinkRequest for RequestOpGettableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGettableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGettableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing table."]
@@ -19012,11 +18371,7 @@ impl<Prev: Rec> PushOpDeltableDoRequest<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -19105,11 +18460,7 @@ pub struct IterableOpDeltableDoRequest<'a> {
 }
 impl<'a> IterableOpDeltableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -19185,10 +18536,7 @@ impl IterableOpDeltableDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDeltableDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDeltableDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDeltableDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -19285,11 +18633,7 @@ pub struct IterableOpDeltableDoReply<'a> {
 }
 impl<'a> IterableOpDeltableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -19352,10 +18696,7 @@ impl IterableOpDeltableDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDeltableDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDeltableDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDeltableDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -19398,9 +18739,7 @@ impl NetlinkRequest for RequestOpDeltableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDeltableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDeltableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing table with destroy semantics (ignoring ENOENT\nerrors).\n"]
@@ -19436,11 +18775,7 @@ impl<Prev: Rec> PushOpDestroytableDoRequest<Prev> {
     }
     #[doc = "name of the table"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -19529,11 +18864,7 @@ pub struct IterableOpDestroytableDoRequest<'a> {
 }
 impl<'a> IterableOpDestroytableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -19709,11 +19040,7 @@ pub struct IterableOpDestroytableDoReply<'a> {
 }
 impl<'a> IterableOpDestroytableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -19822,9 +19149,7 @@ impl NetlinkRequest for RequestOpDestroytableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDestroytableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDestroytableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new chain."]
@@ -19860,11 +19185,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -19883,11 +19204,7 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -19910,6 +19227,19 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
     pub fn push_policy(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 5u16, 4 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    #[doc = "type name of the chain"]
+    pub fn push_type(mut self, value: &CStr) -> Self {
+        push_header(self.as_rec_mut(), 7u16, value.to_bytes_with_nul().len() as u16);
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "type name of the chain"]
+    pub fn push_type_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
         self
     }
     #[doc = "counter specification of the chain"]
@@ -19955,6 +19285,8 @@ pub enum OpNewchainDoRequest<'a> {
     Hook(IterableNftHookAttrs<'a>),
     #[doc = "numeric policy of the chain"]
     Policy(u32),
+    #[doc = "type name of the chain"]
+    Type(&'a CStr),
     #[doc = "counter specification of the chain"]
     Counters(IterableNftCounterAttrs<'a>),
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
@@ -20043,6 +19375,22 @@ impl<'a> IterableOpNewchainDoRequest<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "type name of the chain"]
+    pub fn get_type(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpNewchainDoRequest::Type(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
     #[doc = "counter specification of the chain"]
     pub fn get_counters(&self) -> Result<IterableNftCounterAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
@@ -20112,11 +19460,7 @@ pub struct IterableOpNewchainDoRequest<'a> {
 }
 impl<'a> IterableOpNewchainDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -20155,6 +19499,11 @@ impl<'a> Iterator for IterableOpNewchainDoRequest<'a> {
                 }),
                 5u16 => OpNewchainDoRequest::Policy({
                     let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => OpNewchainDoRequest::Type({
+                    let res = CStr::from_bytes_with_nul(next).ok();
                     let Some(val) = res else { break };
                     val
                 }),
@@ -20210,10 +19559,9 @@ impl<'a> std::fmt::Debug for IterableOpNewchainDoRequest<'_> {
                 OpNewchainDoRequest::Name(val) => fmt.field("Name", &val),
                 OpNewchainDoRequest::Hook(val) => fmt.field("Hook", &val),
                 OpNewchainDoRequest::Policy(val) => fmt.field("Policy", &val),
+                OpNewchainDoRequest::Type(val) => fmt.field("Type", &val),
                 OpNewchainDoRequest::Counters(val) => fmt.field("Counters", &val),
-                OpNewchainDoRequest::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value))
-                }
+                OpNewchainDoRequest::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value)),
                 OpNewchainDoRequest::Userdata(val) => fmt.field("Userdata", &val),
             };
         }
@@ -20230,10 +19578,7 @@ impl IterableOpNewchainDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewchainDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewchainDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewchainDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -20271,6 +19616,12 @@ impl IterableOpNewchainDoRequest<'_> {
                 OpNewchainDoRequest::Policy(val) => {
                     if last_off == offset {
                         stack.push(("Policy", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::Type(val) => {
+                    if last_off == offset {
+                        stack.push(("Type", last_off));
                         break;
                     }
                 }
@@ -20367,11 +19718,7 @@ pub struct IterableOpNewchainDoReply<'a> {
 }
 impl<'a> IterableOpNewchainDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -20434,10 +19781,7 @@ impl IterableOpNewchainDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewchainDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewchainDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewchainDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -20480,9 +19824,7 @@ impl NetlinkRequest for RequestOpNewchainDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewchainDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewchainDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump chains."]
@@ -20550,11 +19892,7 @@ pub struct IterableOpGetchainDumpRequest<'a> {
 }
 impl<'a> IterableOpGetchainDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -20658,11 +19996,7 @@ impl<Prev: Rec> PushOpGetchainDumpReply<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -20681,11 +20015,7 @@ impl<Prev: Rec> PushOpGetchainDumpReply<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -20718,11 +20048,7 @@ impl<Prev: Rec> PushOpGetchainDumpReply<Prev> {
     }
     #[doc = "type name of the chain"]
     pub fn push_type(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            7u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 7u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -20993,11 +20319,7 @@ pub struct IterableOpGetchainDumpReply<'a> {
 }
 impl<'a> IterableOpGetchainDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -21109,9 +20431,7 @@ impl<'a> std::fmt::Debug for IterableOpGetchainDumpReply<'_> {
                 OpGetchainDumpReply::Use(val) => fmt.field("Use", &val),
                 OpGetchainDumpReply::Type(val) => fmt.field("Type", &val),
                 OpGetchainDumpReply::Counters(val) => fmt.field("Counters", &val),
-                OpGetchainDumpReply::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value))
-                }
+                OpGetchainDumpReply::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value)),
                 OpGetchainDumpReply::Id(val) => fmt.field("Id", &val),
                 OpGetchainDumpReply::Userdata(val) => fmt.field("Userdata", &val),
             };
@@ -21129,10 +20449,7 @@ impl IterableOpGetchainDumpReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDumpReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetchainDumpReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetchainDumpReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -21259,9 +20576,7 @@ impl NetlinkRequest for RequestOpGetchainDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetchainDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetchainDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump chains."]
@@ -21297,11 +20612,7 @@ impl<Prev: Rec> PushOpGetchainDoRequest<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -21314,11 +20625,7 @@ impl<Prev: Rec> PushOpGetchainDoRequest<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -21401,11 +20708,7 @@ pub struct IterableOpGetchainDoRequest<'a> {
 }
 impl<'a> IterableOpGetchainDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -21481,10 +20784,7 @@ impl IterableOpGetchainDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetchainDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetchainDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -21549,11 +20849,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -21572,11 +20868,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -21609,11 +20901,7 @@ impl<Prev: Rec> PushOpGetchainDoReply<Prev> {
     }
     #[doc = "type name of the chain"]
     pub fn push_type(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            7u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 7u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -21884,11 +21172,7 @@ pub struct IterableOpGetchainDoReply<'a> {
 }
 impl<'a> IterableOpGetchainDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -22000,9 +21284,7 @@ impl<'a> std::fmt::Debug for IterableOpGetchainDoReply<'_> {
                 OpGetchainDoReply::Use(val) => fmt.field("Use", &val),
                 OpGetchainDoReply::Type(val) => fmt.field("Type", &val),
                 OpGetchainDoReply::Counters(val) => fmt.field("Counters", &val),
-                OpGetchainDoReply::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value))
-                }
+                OpGetchainDoReply::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value)),
                 OpGetchainDoReply::Id(val) => fmt.field("Id", &val),
                 OpGetchainDoReply::Userdata(val) => fmt.field("Userdata", &val),
             };
@@ -22020,10 +21302,7 @@ impl IterableOpGetchainDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetchainDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetchainDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetchainDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -22148,9 +21427,7 @@ impl NetlinkRequest for RequestOpGetchainDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetchainDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetchainDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing chain."]
@@ -22186,11 +21463,7 @@ impl<Prev: Rec> PushOpDelchainDoRequest<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -22209,11 +21482,7 @@ impl<Prev: Rec> PushOpDelchainDoRequest<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -22340,11 +21609,7 @@ pub struct IterableOpDelchainDoRequest<'a> {
 }
 impl<'a> IterableOpDelchainDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -22432,10 +21697,7 @@ impl IterableOpDelchainDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelchainDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelchainDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelchainDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -22545,11 +21807,7 @@ pub struct IterableOpDelchainDoReply<'a> {
 }
 impl<'a> IterableOpDelchainDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -22612,10 +21870,7 @@ impl IterableOpDelchainDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelchainDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelchainDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelchainDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -22658,9 +21913,7 @@ impl NetlinkRequest for RequestOpDelchainDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDelchainDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDelchainDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing chain with destroy semantics (ignoring ENOENT\nerrors).\n"]
@@ -22696,11 +21949,7 @@ impl<Prev: Rec> PushOpDestroychainDoRequest<Prev> {
     }
     #[doc = "name of the table containing the chain"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -22719,11 +21968,7 @@ impl<Prev: Rec> PushOpDestroychainDoRequest<Prev> {
     }
     #[doc = "name of the chain"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -22850,11 +22095,7 @@ pub struct IterableOpDestroychainDoRequest<'a> {
 }
 impl<'a> IterableOpDestroychainDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -23055,11 +22296,7 @@ pub struct IterableOpDestroychainDoReply<'a> {
 }
 impl<'a> IterableOpDestroychainDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -23168,9 +22405,7 @@ impl NetlinkRequest for RequestOpDestroychainDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDestroychainDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDestroychainDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new rule."]
@@ -23206,11 +22441,7 @@ impl<Prev: Rec> PushOpNewruleDoRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -23223,11 +22454,7 @@ impl<Prev: Rec> PushOpNewruleDoRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -23482,11 +22709,7 @@ pub struct IterableOpNewruleDoRequest<'a> {
 }
 impl<'a> IterableOpNewruleDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -23604,10 +22827,7 @@ impl IterableOpNewruleDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewruleDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewruleDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewruleDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -23747,11 +22967,7 @@ pub struct IterableOpNewruleDoReply<'a> {
 }
 impl<'a> IterableOpNewruleDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -23814,10 +23030,7 @@ impl IterableOpNewruleDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewruleDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewruleDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewruleDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -23860,9 +23073,7 @@ impl NetlinkRequest for RequestOpNewruleDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewruleDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewruleDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump rules."]
@@ -23898,11 +23109,7 @@ impl<Prev: Rec> PushOpGetruleDumpRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -23915,11 +23122,7 @@ impl<Prev: Rec> PushOpGetruleDumpRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -24002,11 +23205,7 @@ pub struct IterableOpGetruleDumpRequest<'a> {
 }
 impl<'a> IterableOpGetruleDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -24150,11 +23349,7 @@ impl<Prev: Rec> PushOpGetruleDumpReply<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -24167,11 +23362,7 @@ impl<Prev: Rec> PushOpGetruleDumpReply<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -24352,11 +23543,7 @@ pub struct IterableOpGetruleDumpReply<'a> {
 }
 impl<'a> IterableOpGetruleDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -24456,10 +23643,7 @@ impl IterableOpGetruleDumpReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDumpReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetruleDumpReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetruleDumpReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -24556,9 +23740,7 @@ impl NetlinkRequest for RequestOpGetruleDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetruleDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetruleDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump rules."]
@@ -24594,11 +23776,7 @@ impl<Prev: Rec> PushOpGetruleDoRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -24611,11 +23789,7 @@ impl<Prev: Rec> PushOpGetruleDoRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -24722,11 +23896,7 @@ pub struct IterableOpGetruleDoRequest<'a> {
 }
 impl<'a> IterableOpGetruleDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -24808,10 +23978,7 @@ impl IterableOpGetruleDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetruleDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetruleDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -24882,11 +24049,7 @@ impl<Prev: Rec> PushOpGetruleDoReply<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -24899,11 +24062,7 @@ impl<Prev: Rec> PushOpGetruleDoReply<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -25084,11 +24243,7 @@ pub struct IterableOpGetruleDoReply<'a> {
 }
 impl<'a> IterableOpGetruleDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -25188,10 +24343,7 @@ impl IterableOpGetruleDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetruleDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetruleDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetruleDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -25286,9 +24438,7 @@ impl NetlinkRequest for RequestOpGetruleDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetruleDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetruleDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump rules and reset stateful expressions."]
@@ -25324,11 +24474,7 @@ impl<Prev: Rec> PushOpGetruleResetDumpRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -25341,11 +24487,7 @@ impl<Prev: Rec> PushOpGetruleResetDumpRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -25452,11 +24594,7 @@ pub struct IterableOpGetruleResetDumpRequest<'a> {
 }
 impl<'a> IterableOpGetruleResetDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -25612,11 +24750,7 @@ impl<Prev: Rec> PushOpGetruleResetDumpReply<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -25629,11 +24763,7 @@ impl<Prev: Rec> PushOpGetruleResetDumpReply<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -25814,11 +24944,7 @@ pub struct IterableOpGetruleResetDumpReply<'a> {
 }
 impl<'a> IterableOpGetruleResetDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -26018,9 +25144,7 @@ impl NetlinkRequest for RequestOpGetruleResetDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetruleResetDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetruleResetDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump rules and reset stateful expressions."]
@@ -26056,11 +25180,7 @@ impl<Prev: Rec> PushOpGetruleResetDoRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -26073,11 +25193,7 @@ impl<Prev: Rec> PushOpGetruleResetDoRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -26184,11 +25300,7 @@ pub struct IterableOpGetruleResetDoRequest<'a> {
 }
 impl<'a> IterableOpGetruleResetDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -26344,11 +25456,7 @@ impl<Prev: Rec> PushOpGetruleResetDoReply<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -26361,11 +25469,7 @@ impl<Prev: Rec> PushOpGetruleResetDoReply<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -26546,11 +25650,7 @@ pub struct IterableOpGetruleResetDoReply<'a> {
 }
 impl<'a> IterableOpGetruleResetDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -26748,9 +25848,7 @@ impl NetlinkRequest for RequestOpGetruleResetDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetruleResetDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetruleResetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing rule."]
@@ -26786,11 +25884,7 @@ impl<Prev: Rec> PushOpDelruleDoRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -26803,11 +25897,7 @@ impl<Prev: Rec> PushOpDelruleDoRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -26964,11 +26054,7 @@ pub struct IterableOpDelruleDoRequest<'a> {
 }
 impl<'a> IterableOpDelruleDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -27062,10 +26148,7 @@ impl IterableOpDelruleDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelruleDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelruleDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelruleDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -27181,11 +26264,7 @@ pub struct IterableOpDelruleDoReply<'a> {
 }
 impl<'a> IterableOpDelruleDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -27248,10 +26327,7 @@ impl IterableOpDelruleDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelruleDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelruleDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelruleDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -27294,9 +26370,7 @@ impl NetlinkRequest for RequestOpDelruleDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDelruleDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDelruleDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing rule with destroy semantics (ignoring ENOENT errors).\n"]
@@ -27332,11 +26406,7 @@ impl<Prev: Rec> PushOpDestroyruleDoRequest<Prev> {
     }
     #[doc = "name of the table containing the rule"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -27349,11 +26419,7 @@ impl<Prev: Rec> PushOpDestroyruleDoRequest<Prev> {
     }
     #[doc = "name of the chain containing the rule"]
     pub fn push_chain(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -27510,11 +26576,7 @@ pub struct IterableOpDestroyruleDoRequest<'a> {
 }
 impl<'a> IterableOpDestroyruleDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -27727,11 +26789,7 @@ pub struct IterableOpDestroyruleDoReply<'a> {
 }
 impl<'a> IterableOpDestroyruleDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -27840,9 +26898,7 @@ impl NetlinkRequest for RequestOpDestroyruleDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDestroyruleDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDestroyruleDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new set."]
@@ -27878,11 +26934,7 @@ impl<Prev: Rec> PushOpNewsetDoRequest<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -27895,11 +26947,7 @@ impl<Prev: Rec> PushOpNewsetDoRequest<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -28272,11 +27320,7 @@ pub struct IterableOpNewsetDoRequest<'a> {
 }
 impl<'a> IterableOpNewsetDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -28397,9 +27441,7 @@ impl<'a> std::fmt::Debug for IterableOpNewsetDoRequest<'_> {
             match attr {
                 OpNewsetDoRequest::Table(val) => fmt.field("Table", &val),
                 OpNewsetDoRequest::Name(val) => fmt.field("Name", &val),
-                OpNewsetDoRequest::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value))
-                }
+                OpNewsetDoRequest::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value)),
                 OpNewsetDoRequest::KeyType(val) => fmt.field("KeyType", &val),
                 OpNewsetDoRequest::KeyLen(val) => fmt.field("KeyLen", &val),
                 OpNewsetDoRequest::DataType(val) => fmt.field("DataType", &val),
@@ -28426,10 +27468,7 @@ impl IterableOpNewsetDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewsetDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewsetDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -28599,11 +27638,7 @@ pub struct IterableOpNewsetDoReply<'a> {
 }
 impl<'a> IterableOpNewsetDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -28666,10 +27701,7 @@ impl IterableOpNewsetDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewsetDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewsetDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -28712,9 +27744,7 @@ impl NetlinkRequest for RequestOpNewsetDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewsetDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewsetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump sets."]
@@ -28750,11 +27780,7 @@ impl<Prev: Rec> PushOpGetsetDumpRequest<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -28819,11 +27845,7 @@ pub struct IterableOpGetsetDumpRequest<'a> {
 }
 impl<'a> IterableOpGetsetDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -28893,10 +27915,7 @@ impl IterableOpGetsetDumpRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDumpRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetsetDumpRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetsetDumpRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -28955,11 +27974,7 @@ impl<Prev: Rec> PushOpGetsetDumpReply<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -28972,11 +27987,7 @@ impl<Prev: Rec> PushOpGetsetDumpReply<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -29325,9 +28336,7 @@ impl<'a> IterableOpGetsetDumpReply<'a> {
         ))
     }
     #[doc = "set expression\nAttribute may repeat multiple times (treat it as array)"]
-    pub fn get_expr(
-        &self,
-    ) -> MultiAttrIterable<Self, OpGetsetDumpReply<'a>, IterableExprAttrs<'a>> {
+    pub fn get_expr(&self) -> MultiAttrIterable<Self, OpGetsetDumpReply<'a>, IterableExprAttrs<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let OpGetsetDumpReply::Expr(val) = variant {
                 Some(val)
@@ -29373,11 +28382,7 @@ pub struct IterableOpGetsetDumpReply<'a> {
 }
 impl<'a> IterableOpGetsetDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -29503,9 +28508,7 @@ impl<'a> std::fmt::Debug for IterableOpGetsetDumpReply<'_> {
             match attr {
                 OpGetsetDumpReply::Table(val) => fmt.field("Table", &val),
                 OpGetsetDumpReply::Name(val) => fmt.field("Name", &val),
-                OpGetsetDumpReply::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value))
-                }
+                OpGetsetDumpReply::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value)),
                 OpGetsetDumpReply::KeyType(val) => fmt.field("KeyType", &val),
                 OpGetsetDumpReply::KeyLen(val) => fmt.field("KeyLen", &val),
                 OpGetsetDumpReply::DataType(val) => fmt.field("DataType", &val),
@@ -29533,10 +28536,7 @@ impl IterableOpGetsetDumpReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDumpReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetsetDumpReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetsetDumpReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -29687,9 +28687,7 @@ impl NetlinkRequest for RequestOpGetsetDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetsetDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetsetDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump sets."]
@@ -29725,11 +28723,7 @@ impl<Prev: Rec> PushOpGetsetDoRequest<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -29742,11 +28736,7 @@ impl<Prev: Rec> PushOpGetsetDoRequest<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -29829,11 +28819,7 @@ pub struct IterableOpGetsetDoRequest<'a> {
 }
 impl<'a> IterableOpGetsetDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -29909,10 +28895,7 @@ impl IterableOpGetsetDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetsetDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetsetDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -29977,11 +28960,7 @@ impl<Prev: Rec> PushOpGetsetDoReply<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -29994,11 +28973,7 @@ impl<Prev: Rec> PushOpGetsetDoReply<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -30393,11 +29368,7 @@ pub struct IterableOpGetsetDoReply<'a> {
 }
 impl<'a> IterableOpGetsetDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -30523,9 +29494,7 @@ impl<'a> std::fmt::Debug for IterableOpGetsetDoReply<'_> {
             match attr {
                 OpGetsetDoReply::Table(val) => fmt.field("Table", &val),
                 OpGetsetDoReply::Name(val) => fmt.field("Name", &val),
-                OpGetsetDoReply::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value))
-                }
+                OpGetsetDoReply::Flags(val) => fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value)),
                 OpGetsetDoReply::KeyType(val) => fmt.field("KeyType", &val),
                 OpGetsetDoReply::KeyLen(val) => fmt.field("KeyLen", &val),
                 OpGetsetDoReply::DataType(val) => fmt.field("DataType", &val),
@@ -30553,10 +29522,7 @@ impl IterableOpGetsetDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetsetDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetsetDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -30705,9 +29671,7 @@ impl NetlinkRequest for RequestOpGetsetDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetsetDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetsetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing set."]
@@ -30743,11 +29707,7 @@ impl<Prev: Rec> PushOpDelsetDoRequest<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -30760,11 +29720,7 @@ impl<Prev: Rec> PushOpDelsetDoRequest<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -30871,11 +29827,7 @@ pub struct IterableOpDelsetDoRequest<'a> {
 }
 impl<'a> IterableOpDelsetDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -30957,10 +29909,7 @@ impl IterableOpDelsetDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelsetDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelsetDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -31063,11 +30012,7 @@ pub struct IterableOpDelsetDoReply<'a> {
 }
 impl<'a> IterableOpDelsetDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -31130,10 +30075,7 @@ impl IterableOpDelsetDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelsetDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelsetDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -31176,9 +30118,7 @@ impl NetlinkRequest for RequestOpDelsetDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDelsetDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDelsetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing set with destroy semantics (ignoring ENOENT errors).\n"]
@@ -31214,11 +30154,7 @@ impl<Prev: Rec> PushOpDestroysetDoRequest<Prev> {
     }
     #[doc = "table name"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -31231,11 +30167,7 @@ impl<Prev: Rec> PushOpDestroysetDoRequest<Prev> {
     }
     #[doc = "set name"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -31342,11 +30274,7 @@ pub struct IterableOpDestroysetDoRequest<'a> {
 }
 impl<'a> IterableOpDestroysetDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -31534,11 +30462,7 @@ pub struct IterableOpDestroysetDoReply<'a> {
 }
 impl<'a> IterableOpDestroysetDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -31601,10 +30525,7 @@ impl IterableOpDestroysetDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroysetDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDestroysetDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDestroysetDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -31647,9 +30568,7 @@ impl NetlinkRequest for RequestOpDestroysetDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDestroysetDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDestroysetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new set element."]
@@ -31684,11 +30603,7 @@ impl<Prev: Rec> PushOpNewsetelemDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -31699,11 +30614,7 @@ impl<Prev: Rec> PushOpNewsetelemDoRequest<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -31825,11 +30736,7 @@ pub struct IterableOpNewsetelemDoRequest<'a> {
 }
 impl<'a> IterableOpNewsetelemDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -32030,11 +30937,7 @@ pub struct IterableOpNewsetelemDoReply<'a> {
 }
 impl<'a> IterableOpNewsetelemDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -32097,10 +31000,7 @@ impl IterableOpNewsetelemDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewsetelemDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewsetelemDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewsetelemDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -32143,9 +31043,7 @@ impl NetlinkRequest for RequestOpNewsetelemDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewsetelemDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewsetelemDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump set elements."]
@@ -32180,11 +31078,7 @@ impl<Prev: Rec> PushOpGetsetelemDumpRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -32195,11 +31089,7 @@ impl<Prev: Rec> PushOpGetsetelemDumpRequest<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -32277,11 +31167,7 @@ pub struct IterableOpGetsetelemDumpRequest<'a> {
 }
 impl<'a> IterableOpGetsetelemDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -32424,11 +31310,7 @@ impl<Prev: Rec> PushOpGetsetelemDumpReply<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -32439,11 +31321,7 @@ impl<Prev: Rec> PushOpGetsetelemDumpReply<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -32544,11 +31422,7 @@ pub struct IterableOpGetsetelemDumpReply<'a> {
 }
 impl<'a> IterableOpGetsetelemDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -32712,9 +31586,7 @@ impl NetlinkRequest for RequestOpGetsetelemDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetsetelemDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetsetelemDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump set elements."]
@@ -32749,11 +31621,7 @@ impl<Prev: Rec> PushOpGetsetelemDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -32764,11 +31632,7 @@ impl<Prev: Rec> PushOpGetsetelemDoRequest<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -32869,11 +31733,7 @@ pub struct IterableOpGetsetelemDoRequest<'a> {
 }
 impl<'a> IterableOpGetsetelemDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -33087,11 +31947,7 @@ pub struct IterableOpGetsetelemDoReply<'a> {
 }
 impl<'a> IterableOpGetsetelemDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -33161,10 +32017,7 @@ impl IterableOpGetsetelemDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetsetelemDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetsetelemDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetsetelemDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -33229,9 +32082,7 @@ impl NetlinkRequest for RequestOpGetsetelemDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetsetelemDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetsetelemDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump set elements and reset stateful expressions."]
@@ -33266,11 +32117,7 @@ impl<Prev: Rec> PushOpGetsetelemResetDumpRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -33281,11 +32128,7 @@ impl<Prev: Rec> PushOpGetsetelemResetDumpRequest<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -33363,11 +32206,7 @@ pub struct IterableOpGetsetelemResetDumpRequest<'a> {
 }
 impl<'a> IterableOpGetsetelemResetDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -33510,11 +32349,7 @@ impl<Prev: Rec> PushOpGetsetelemResetDumpReply<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -33525,11 +32360,7 @@ impl<Prev: Rec> PushOpGetsetelemResetDumpReply<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -33630,11 +32461,7 @@ pub struct IterableOpGetsetelemResetDumpReply<'a> {
 }
 impl<'a> IterableOpGetsetelemResetDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -33893,11 +32720,7 @@ pub struct IterableOpGetsetelemResetDoRequest<'a> {
 }
 impl<'a> IterableOpGetsetelemResetDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -34029,11 +32852,7 @@ impl<Prev: Rec> PushOpGetsetelemResetDoReply<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -34044,11 +32863,7 @@ impl<Prev: Rec> PushOpGetsetelemResetDoReply<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -34149,11 +32964,7 @@ pub struct IterableOpGetsetelemResetDoReply<'a> {
 }
 impl<'a> IterableOpGetsetelemResetDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -34315,9 +33126,7 @@ impl NetlinkRequest for RequestOpGetsetelemResetDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetsetelemResetDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetsetelemResetDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing set element."]
@@ -34352,11 +33161,7 @@ impl<Prev: Rec> PushOpDelsetelemDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -34367,11 +33172,7 @@ impl<Prev: Rec> PushOpDelsetelemDoRequest<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -34472,11 +33273,7 @@ pub struct IterableOpDelsetelemDoRequest<'a> {
 }
 impl<'a> IterableOpDelsetelemDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -34665,11 +33462,7 @@ pub struct IterableOpDelsetelemDoReply<'a> {
 }
 impl<'a> IterableOpDelsetelemDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -34732,10 +33525,7 @@ impl IterableOpDelsetelemDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelsetelemDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelsetelemDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelsetelemDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -34778,9 +33568,7 @@ impl NetlinkRequest for RequestOpDelsetelemDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDelsetelemDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDelsetelemDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing set element with destroy semantics."]
@@ -34815,11 +33603,7 @@ impl<Prev: Rec> PushOpDestroysetelemDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -34830,11 +33614,7 @@ impl<Prev: Rec> PushOpDestroysetelemDoRequest<Prev> {
         self
     }
     pub fn push_set(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -34935,11 +33715,7 @@ pub struct IterableOpDestroysetelemDoRequest<'a> {
 }
 impl<'a> IterableOpDestroysetelemDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -35128,11 +33904,7 @@ pub struct IterableOpDestroysetelemDoReply<'a> {
 }
 impl<'a> IterableOpDestroysetelemDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -35241,9 +34013,7 @@ impl NetlinkRequest for RequestOpDestroysetelemDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDestroysetelemDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDestroysetelemDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump rule-set generation."]
@@ -35311,11 +34081,7 @@ pub struct IterableOpGetgenDumpRequest<'a> {
 }
 impl<'a> IterableOpGetgenDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -35378,10 +34144,7 @@ impl IterableOpGetgenDumpRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDumpRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetgenDumpRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetgenDumpRequest::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -35429,11 +34192,7 @@ impl<Prev: Rec> PushOpGetgenDumpReply<Prev> {
         self
     }
     pub fn push_proc_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -35529,11 +34288,7 @@ pub struct IterableOpGetgenDumpReply<'a> {
 }
 impl<'a> IterableOpGetgenDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -35615,10 +34370,7 @@ impl IterableOpGetgenDumpReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDumpReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetgenDumpReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetgenDumpReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -35696,9 +34448,7 @@ impl NetlinkRequest for RequestOpGetgenDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetgenDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetgenDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump rule-set generation."]
@@ -35766,11 +34516,7 @@ pub struct IterableOpGetgenDoRequest<'a> {
 }
 impl<'a> IterableOpGetgenDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -35833,10 +34579,7 @@ impl IterableOpGetgenDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetgenDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetgenDoRequest::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -35884,11 +34627,7 @@ impl<Prev: Rec> PushOpGetgenDoReply<Prev> {
         self
     }
     pub fn push_proc_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            3u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 3u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -35984,11 +34723,7 @@ pub struct IterableOpGetgenDoReply<'a> {
 }
 impl<'a> IterableOpGetgenDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -36070,10 +34805,7 @@ impl IterableOpGetgenDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetgenDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetgenDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetgenDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -36149,9 +34881,7 @@ impl NetlinkRequest for RequestOpGetgenDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetgenDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetgenDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new stateful object."]
@@ -36187,11 +34917,7 @@ impl<Prev: Rec> PushOpNewobjDoRequest<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -36204,11 +34930,7 @@ impl<Prev: Rec> PushOpNewobjDoRequest<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -36386,11 +35108,7 @@ pub struct IterableOpNewobjDoRequest<'a> {
 }
 impl<'a> IterableOpNewobjDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -36469,9 +35187,7 @@ impl<'a> std::fmt::Debug for IterableOpNewobjDoRequest<'_> {
             match attr {
                 OpNewobjDoRequest::Table(val) => fmt.field("Table", &val),
                 OpNewobjDoRequest::Name(val) => fmt.field("Name", &val),
-                OpNewobjDoRequest::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpNewobjDoRequest::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
                 OpNewobjDoRequest::Data(val) => fmt.field("Data", &val),
                 OpNewobjDoRequest::Userdata(val) => fmt.field("Userdata", &val),
             };
@@ -36489,10 +35205,7 @@ impl IterableOpNewobjDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewobjDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewobjDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewobjDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -36607,11 +35320,7 @@ pub struct IterableOpNewobjDoReply<'a> {
 }
 impl<'a> IterableOpNewobjDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -36674,10 +35383,7 @@ impl IterableOpNewobjDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpNewobjDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpNewobjDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpNewobjDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -36720,9 +35426,7 @@ impl NetlinkRequest for RequestOpNewobjDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewobjDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewobjDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump stateful objects."]
@@ -36758,11 +35462,7 @@ impl<Prev: Rec> PushOpGetobjDumpRequest<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -36851,11 +35551,7 @@ pub struct IterableOpGetobjDumpRequest<'a> {
 }
 impl<'a> IterableOpGetobjDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -36915,9 +35611,7 @@ impl<'a> std::fmt::Debug for IterableOpGetobjDumpRequest<'_> {
             };
             match attr {
                 OpGetobjDumpRequest::Table(val) => fmt.field("Table", &val),
-                OpGetobjDumpRequest::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpGetobjDumpRequest::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
             };
         }
         fmt.finish()
@@ -36933,10 +35627,7 @@ impl IterableOpGetobjDumpRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDumpRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetobjDumpRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetobjDumpRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -37001,11 +35692,7 @@ impl<Prev: Rec> PushOpGetobjDumpReply<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -37018,11 +35705,7 @@ impl<Prev: Rec> PushOpGetobjDumpReply<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -37248,11 +35931,7 @@ pub struct IterableOpGetobjDumpReply<'a> {
 }
 impl<'a> IterableOpGetobjDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -37341,9 +36020,7 @@ impl<'a> std::fmt::Debug for IterableOpGetobjDumpReply<'_> {
             match attr {
                 OpGetobjDumpReply::Table(val) => fmt.field("Table", &val),
                 OpGetobjDumpReply::Name(val) => fmt.field("Name", &val),
-                OpGetobjDumpReply::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpGetobjDumpReply::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
                 OpGetobjDumpReply::Data(val) => fmt.field("Data", &val),
                 OpGetobjDumpReply::Use(val) => fmt.field("Use", &val),
                 OpGetobjDumpReply::Handle(val) => fmt.field("Handle", &val),
@@ -37363,10 +36040,7 @@ impl IterableOpGetobjDumpReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDumpReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetobjDumpReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetobjDumpReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -37468,9 +36142,7 @@ impl NetlinkRequest for RequestOpGetobjDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetobjDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetobjDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump stateful objects."]
@@ -37506,11 +36178,7 @@ impl<Prev: Rec> PushOpGetobjDoRequest<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -37523,11 +36191,7 @@ impl<Prev: Rec> PushOpGetobjDoRequest<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -37634,11 +36298,7 @@ pub struct IterableOpGetobjDoRequest<'a> {
 }
 impl<'a> IterableOpGetobjDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -37704,9 +36364,7 @@ impl<'a> std::fmt::Debug for IterableOpGetobjDoRequest<'_> {
             match attr {
                 OpGetobjDoRequest::Table(val) => fmt.field("Table", &val),
                 OpGetobjDoRequest::Name(val) => fmt.field("Name", &val),
-                OpGetobjDoRequest::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpGetobjDoRequest::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
             };
         }
         fmt.finish()
@@ -37722,10 +36380,7 @@ impl IterableOpGetobjDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetobjDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetobjDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -37796,11 +36451,7 @@ impl<Prev: Rec> PushOpGetobjDoReply<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -37813,11 +36464,7 @@ impl<Prev: Rec> PushOpGetobjDoReply<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -38043,11 +36690,7 @@ pub struct IterableOpGetobjDoReply<'a> {
 }
 impl<'a> IterableOpGetobjDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -38136,9 +36779,7 @@ impl<'a> std::fmt::Debug for IterableOpGetobjDoReply<'_> {
             match attr {
                 OpGetobjDoReply::Table(val) => fmt.field("Table", &val),
                 OpGetobjDoReply::Name(val) => fmt.field("Name", &val),
-                OpGetobjDoReply::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpGetobjDoReply::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
                 OpGetobjDoReply::Data(val) => fmt.field("Data", &val),
                 OpGetobjDoReply::Use(val) => fmt.field("Use", &val),
                 OpGetobjDoReply::Handle(val) => fmt.field("Handle", &val),
@@ -38158,10 +36799,7 @@ impl IterableOpGetobjDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpGetobjDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpGetobjDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpGetobjDoReply::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -38261,9 +36899,7 @@ impl NetlinkRequest for RequestOpGetobjDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetobjDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetobjDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing stateful object."]
@@ -38299,11 +36935,7 @@ impl<Prev: Rec> PushOpDelobjDoRequest<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -38316,11 +36948,7 @@ impl<Prev: Rec> PushOpDelobjDoRequest<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -38451,11 +37079,7 @@ pub struct IterableOpDelobjDoRequest<'a> {
 }
 impl<'a> IterableOpDelobjDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -38526,9 +37150,7 @@ impl<'a> std::fmt::Debug for IterableOpDelobjDoRequest<'_> {
             match attr {
                 OpDelobjDoRequest::Table(val) => fmt.field("Table", &val),
                 OpDelobjDoRequest::Name(val) => fmt.field("Name", &val),
-                OpDelobjDoRequest::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpDelobjDoRequest::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
                 OpDelobjDoRequest::Handle(val) => fmt.field("Handle", &val),
             };
         }
@@ -38545,10 +37167,7 @@ impl IterableOpDelobjDoRequest<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelobjDoRequest", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelobjDoRequest::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelobjDoRequest::attr_from_type(t)));
         }
         if cur > offset || cur + self.buf.len() < offset {
             return (stack, None);
@@ -38657,11 +37276,7 @@ pub struct IterableOpDelobjDoReply<'a> {
 }
 impl<'a> IterableOpDelobjDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -38724,10 +37339,7 @@ impl IterableOpDelobjDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDelobjDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDelobjDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDelobjDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -38770,9 +37382,7 @@ impl NetlinkRequest for RequestOpDelobjDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDelobjDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDelobjDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing stateful object with destroy semantics."]
@@ -38808,11 +37418,7 @@ impl<Prev: Rec> PushOpDestroyobjDoRequest<Prev> {
     }
     #[doc = "name of the table containing the expression"]
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -38825,11 +37431,7 @@ impl<Prev: Rec> PushOpDestroyobjDoRequest<Prev> {
     }
     #[doc = "name of this expression type"]
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -38960,11 +37562,7 @@ pub struct IterableOpDestroyobjDoRequest<'a> {
 }
 impl<'a> IterableOpDestroyobjDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -39035,9 +37633,7 @@ impl<'a> std::fmt::Debug for IterableOpDestroyobjDoRequest<'_> {
             match attr {
                 OpDestroyobjDoRequest::Table(val) => fmt.field("Table", &val),
                 OpDestroyobjDoRequest::Name(val) => fmt.field("Name", &val),
-                OpDestroyobjDoRequest::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
-                }
+                OpDestroyobjDoRequest::Type(val) => fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value)),
                 OpDestroyobjDoRequest::Handle(val) => fmt.field("Handle", &val),
             };
         }
@@ -39166,11 +37762,7 @@ pub struct IterableOpDestroyobjDoReply<'a> {
 }
 impl<'a> IterableOpDestroyobjDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -39233,10 +37825,7 @@ impl IterableOpDestroyobjDoReply<'_> {
         let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
         if cur == offset + PushNfgenmsg::len() {
             stack.push(("OpDestroyobjDoReply", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| OpDestroyobjDoReply::attr_from_type(t)),
-            );
+            return (stack, missing_type.and_then(|t| OpDestroyobjDoReply::attr_from_type(t)));
         }
         (stack, None)
     }
@@ -39279,9 +37868,7 @@ impl NetlinkRequest for RequestOpDestroyobjDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDestroyobjDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDestroyobjDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Create a new flow table."]
@@ -39316,11 +37903,7 @@ impl<Prev: Rec> PushOpNewflowtableDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -39331,11 +37914,7 @@ impl<Prev: Rec> PushOpNewflowtableDoRequest<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -39457,11 +38036,7 @@ pub struct IterableOpNewflowtableDoRequest<'a> {
 }
 impl<'a> IterableOpNewflowtableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -39662,11 +38237,7 @@ pub struct IterableOpNewflowtableDoReply<'a> {
 }
 impl<'a> IterableOpNewflowtableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -39775,9 +38346,7 @@ impl NetlinkRequest for RequestOpNewflowtableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpNewflowtableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpNewflowtableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump flow tables."]
@@ -39845,11 +38414,7 @@ pub struct IterableOpGetflowtableDumpRequest<'a> {
 }
 impl<'a> IterableOpGetflowtableDumpRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -39952,11 +38517,7 @@ impl<Prev: Rec> PushOpGetflowtableDumpReply<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -39967,11 +38528,7 @@ impl<Prev: Rec> PushOpGetflowtableDumpReply<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -40135,11 +38692,7 @@ pub struct IterableOpGetflowtableDumpReply<'a> {
 }
 impl<'a> IterableOpGetflowtableDumpReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -40339,9 +38892,7 @@ impl NetlinkRequest for RequestOpGetflowtableDumpRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetflowtableDumpRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetflowtableDumpRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Get / dump flow tables."]
@@ -40376,11 +38927,7 @@ impl<Prev: Rec> PushOpGetflowtableDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -40391,11 +38938,7 @@ impl<Prev: Rec> PushOpGetflowtableDoRequest<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -40473,11 +39016,7 @@ pub struct IterableOpGetflowtableDoRequest<'a> {
 }
 impl<'a> IterableOpGetflowtableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -40620,11 +39159,7 @@ impl<Prev: Rec> PushOpGetflowtableDoReply<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -40635,11 +39170,7 @@ impl<Prev: Rec> PushOpGetflowtableDoReply<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -40803,11 +39334,7 @@ pub struct IterableOpGetflowtableDoReply<'a> {
 }
 impl<'a> IterableOpGetflowtableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -41005,9 +39532,7 @@ impl NetlinkRequest for RequestOpGetflowtableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpGetflowtableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpGetflowtableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing flow table."]
@@ -41042,11 +39567,7 @@ impl<Prev: Rec> PushOpDelflowtableDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -41057,11 +39578,7 @@ impl<Prev: Rec> PushOpDelflowtableDoRequest<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -41183,11 +39700,7 @@ pub struct IterableOpDelflowtableDoRequest<'a> {
 }
 impl<'a> IterableOpDelflowtableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -41388,11 +39901,7 @@ pub struct IterableOpDelflowtableDoReply<'a> {
 }
 impl<'a> IterableOpDelflowtableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -41501,9 +40010,7 @@ impl NetlinkRequest for RequestOpDelflowtableDoRequest<'_> {
         offset: usize,
         missing_type: Option<u16>,
     ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        OpDelflowtableDoRequest::new(buf)
-            .1
-            .lookup_attr(offset, missing_type)
+        OpDelflowtableDoRequest::new(buf).1.lookup_attr(offset, missing_type)
     }
 }
 #[doc = "Delete an existing flow table with destroy semantics."]
@@ -41538,11 +40045,7 @@ impl<Prev: Rec> PushOpDestroyflowtableDoRequest<Prev> {
         prev
     }
     pub fn push_table(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            1u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 1u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -41553,11 +40056,7 @@ impl<Prev: Rec> PushOpDestroyflowtableDoRequest<Prev> {
         self
     }
     pub fn push_name(mut self, value: &CStr) -> Self {
-        push_header(
-            self.as_rec_mut(),
-            2u16,
-            value.to_bytes_with_nul().len() as u16,
-        );
+        push_header(self.as_rec_mut(), 2u16, value.to_bytes_with_nul().len() as u16);
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
@@ -41679,11 +40178,7 @@ pub struct IterableOpDestroyflowtableDoRequest<'a> {
 }
 impl<'a> IterableOpDestroyflowtableDoRequest<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -41884,11 +40379,7 @@ pub struct IterableOpDestroyflowtableDoReply<'a> {
 }
 impl<'a> IterableOpDestroyflowtableDoReply<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
+        Self { buf, pos: 0, orig_loc }
     }
     pub fn get_buf(&self) -> &'a [u8] {
         self.buf
@@ -42095,8 +40586,7 @@ impl<'a> Chained<'a> {
     pub fn request(&mut self) -> Request<'_> {
         self.update_header();
         self.last_header_offset = self.buf().len();
-        self.buf_mut()
-            .extend_from_slice(PushNlmsghdr::new().as_slice());
+        self.buf_mut().extend_from_slice(PushNlmsghdr::new().as_slice());
         let mut request = Request::new_extend(self.buf.buf_mut());
         self.last_kind = None;
         request.writeback = Some(&mut self.last_kind);
@@ -42117,10 +40607,7 @@ impl<'a> Chained<'a> {
         }) = self.last_kind
         else {
             if !self.buf().is_empty() {
-                assert_eq!(
-                    self.last_header_offset + PushNlmsghdr::len(),
-                    self.buf().len()
-                );
+                assert_eq!(self.last_header_offset + PushNlmsghdr::len(), self.buf().len());
                 self.buf.buf_mut().truncate(self.last_header_offset);
             }
             return;
@@ -42190,9 +40677,7 @@ impl<'buf> Request<'buf> {
         }
     }
     fn do_writeback(&mut self, protocol: Protocol, name: &'static str, lookup: LookupFn) {
-        let Some(writeback) = &mut self.writeback else {
-            return;
-        };
+        let Some(writeback) = &mut self.writeback else { return };
         **writeback = Some(RequestInfo {
             protocol,
             flags: self.flags,
@@ -42235,10 +40720,7 @@ impl<'buf> Request<'buf> {
         self.flags |= consts::NLM_F_DUMP as u16;
         self
     }
-    pub fn op_getcompat_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetcompatDumpRequest<'buf> {
+    pub fn op_getcompat_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetcompatDumpRequest<'buf> {
         let mut res = RequestOpGetcompatDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42247,10 +40729,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getcompat_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetcompatDoRequest<'buf> {
+    pub fn op_getcompat_do_request(self, header: &PushNfgenmsg) -> RequestOpGetcompatDoRequest<'buf> {
         let mut res = RequestOpGetcompatDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42259,10 +40738,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_batch_begin_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpBatchBeginDoRequest<'buf> {
+    pub fn op_batch_begin_do_request(self, header: &PushNfgenmsg) -> RequestOpBatchBeginDoRequest<'buf> {
         let mut res = RequestOpBatchBeginDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42271,10 +40747,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_batch_end_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpBatchEndDoRequest<'buf> {
+    pub fn op_batch_end_do_request(self, header: &PushNfgenmsg) -> RequestOpBatchEndDoRequest<'buf> {
         let mut res = RequestOpBatchEndDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42292,10 +40765,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_gettable_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGettableDumpRequest<'buf> {
+    pub fn op_gettable_dump_request(self, header: &PushNfgenmsg) -> RequestOpGettableDumpRequest<'buf> {
         let mut res = RequestOpGettableDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42322,10 +40792,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_destroytable_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroytableDoRequest<'buf> {
+    pub fn op_destroytable_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroytableDoRequest<'buf> {
         let mut res = RequestOpDestroytableDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42343,10 +40810,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getchain_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetchainDumpRequest<'buf> {
+    pub fn op_getchain_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetchainDumpRequest<'buf> {
         let mut res = RequestOpGetchainDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42373,10 +40837,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_destroychain_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroychainDoRequest<'buf> {
+    pub fn op_destroychain_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroychainDoRequest<'buf> {
         let mut res = RequestOpDestroychainDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42394,10 +40855,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getrule_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetruleDumpRequest<'buf> {
+    pub fn op_getrule_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetruleDumpRequest<'buf> {
         let mut res = RequestOpGetruleDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42415,10 +40873,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getrule_reset_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetruleResetDumpRequest<'buf> {
+    pub fn op_getrule_reset_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetruleResetDumpRequest<'buf> {
         let mut res = RequestOpGetruleResetDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42427,10 +40882,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getrule_reset_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetruleResetDoRequest<'buf> {
+    pub fn op_getrule_reset_do_request(self, header: &PushNfgenmsg) -> RequestOpGetruleResetDoRequest<'buf> {
         let mut res = RequestOpGetruleResetDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42448,10 +40900,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_destroyrule_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroyruleDoRequest<'buf> {
+    pub fn op_destroyrule_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroyruleDoRequest<'buf> {
         let mut res = RequestOpDestroyruleDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42462,11 +40911,8 @@ impl<'buf> Request<'buf> {
     }
     pub fn op_newset_do_request(self, header: &PushNfgenmsg) -> RequestOpNewsetDoRequest<'buf> {
         let mut res = RequestOpNewsetDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-newset-do-request",
-            RequestOpNewsetDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-newset-do-request", RequestOpNewsetDoRequest::lookup);
         res
     }
     pub fn op_getset_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetsetDumpRequest<'buf> {
@@ -42480,26 +40926,17 @@ impl<'buf> Request<'buf> {
     }
     pub fn op_getset_do_request(self, header: &PushNfgenmsg) -> RequestOpGetsetDoRequest<'buf> {
         let mut res = RequestOpGetsetDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-getset-do-request",
-            RequestOpGetsetDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-getset-do-request", RequestOpGetsetDoRequest::lookup);
         res
     }
     pub fn op_delset_do_request(self, header: &PushNfgenmsg) -> RequestOpDelsetDoRequest<'buf> {
         let mut res = RequestOpDelsetDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-delset-do-request",
-            RequestOpDelsetDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-delset-do-request", RequestOpDelsetDoRequest::lookup);
         res
     }
-    pub fn op_destroyset_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroysetDoRequest<'buf> {
+    pub fn op_destroyset_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroysetDoRequest<'buf> {
         let mut res = RequestOpDestroysetDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42508,10 +40945,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_newsetelem_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpNewsetelemDoRequest<'buf> {
+    pub fn op_newsetelem_do_request(self, header: &PushNfgenmsg) -> RequestOpNewsetelemDoRequest<'buf> {
         let mut res = RequestOpNewsetelemDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42520,10 +40954,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getsetelem_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetsetelemDumpRequest<'buf> {
+    pub fn op_getsetelem_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetsetelemDumpRequest<'buf> {
         let mut res = RequestOpGetsetelemDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42532,10 +40963,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getsetelem_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetsetelemDoRequest<'buf> {
+    pub fn op_getsetelem_do_request(self, header: &PushNfgenmsg) -> RequestOpGetsetelemDoRequest<'buf> {
         let mut res = RequestOpGetsetelemDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42544,10 +40972,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getsetelem_reset_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetsetelemResetDumpRequest<'buf> {
+    pub fn op_getsetelem_reset_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetsetelemResetDumpRequest<'buf> {
         let mut res = RequestOpGetsetelemResetDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42556,10 +40981,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getsetelem_reset_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetsetelemResetDoRequest<'buf> {
+    pub fn op_getsetelem_reset_do_request(self, header: &PushNfgenmsg) -> RequestOpGetsetelemResetDoRequest<'buf> {
         let mut res = RequestOpGetsetelemResetDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42568,10 +40990,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_delsetelem_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDelsetelemDoRequest<'buf> {
+    pub fn op_delsetelem_do_request(self, header: &PushNfgenmsg) -> RequestOpDelsetelemDoRequest<'buf> {
         let mut res = RequestOpDelsetelemDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42580,10 +40999,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_destroysetelem_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroysetelemDoRequest<'buf> {
+    pub fn op_destroysetelem_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroysetelemDoRequest<'buf> {
         let mut res = RequestOpDestroysetelemDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42603,20 +41019,14 @@ impl<'buf> Request<'buf> {
     }
     pub fn op_getgen_do_request(self, header: &PushNfgenmsg) -> RequestOpGetgenDoRequest<'buf> {
         let mut res = RequestOpGetgenDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-getgen-do-request",
-            RequestOpGetgenDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-getgen-do-request", RequestOpGetgenDoRequest::lookup);
         res
     }
     pub fn op_newobj_do_request(self, header: &PushNfgenmsg) -> RequestOpNewobjDoRequest<'buf> {
         let mut res = RequestOpNewobjDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-newobj-do-request",
-            RequestOpNewobjDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-newobj-do-request", RequestOpNewobjDoRequest::lookup);
         res
     }
     pub fn op_getobj_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetobjDumpRequest<'buf> {
@@ -42630,26 +41040,17 @@ impl<'buf> Request<'buf> {
     }
     pub fn op_getobj_do_request(self, header: &PushNfgenmsg) -> RequestOpGetobjDoRequest<'buf> {
         let mut res = RequestOpGetobjDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-getobj-do-request",
-            RequestOpGetobjDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-getobj-do-request", RequestOpGetobjDoRequest::lookup);
         res
     }
     pub fn op_delobj_do_request(self, header: &PushNfgenmsg) -> RequestOpDelobjDoRequest<'buf> {
         let mut res = RequestOpDelobjDoRequest::new(self, header);
-        res.request.do_writeback(
-            res.protocol(),
-            "op-delobj-do-request",
-            RequestOpDelobjDoRequest::lookup,
-        );
+        res.request
+            .do_writeback(res.protocol(), "op-delobj-do-request", RequestOpDelobjDoRequest::lookup);
         res
     }
-    pub fn op_destroyobj_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroyobjDoRequest<'buf> {
+    pub fn op_destroyobj_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroyobjDoRequest<'buf> {
         let mut res = RequestOpDestroyobjDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42658,10 +41059,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_newflowtable_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpNewflowtableDoRequest<'buf> {
+    pub fn op_newflowtable_do_request(self, header: &PushNfgenmsg) -> RequestOpNewflowtableDoRequest<'buf> {
         let mut res = RequestOpNewflowtableDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42670,10 +41068,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getflowtable_dump_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetflowtableDumpRequest<'buf> {
+    pub fn op_getflowtable_dump_request(self, header: &PushNfgenmsg) -> RequestOpGetflowtableDumpRequest<'buf> {
         let mut res = RequestOpGetflowtableDumpRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42682,10 +41077,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_getflowtable_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpGetflowtableDoRequest<'buf> {
+    pub fn op_getflowtable_do_request(self, header: &PushNfgenmsg) -> RequestOpGetflowtableDoRequest<'buf> {
         let mut res = RequestOpGetflowtableDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42694,10 +41086,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_delflowtable_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDelflowtableDoRequest<'buf> {
+    pub fn op_delflowtable_do_request(self, header: &PushNfgenmsg) -> RequestOpDelflowtableDoRequest<'buf> {
         let mut res = RequestOpDelflowtableDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -42706,10 +41095,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    pub fn op_destroyflowtable_do_request(
-        self,
-        header: &PushNfgenmsg,
-    ) -> RequestOpDestroyflowtableDoRequest<'buf> {
+    pub fn op_destroyflowtable_do_request(self, header: &PushNfgenmsg) -> RequestOpDestroyflowtableDoRequest<'buf> {
         let mut res = RequestOpDestroyflowtableDoRequest::new(self, header);
         res.request.do_writeback(
             res.protocol(),

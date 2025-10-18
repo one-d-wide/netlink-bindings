@@ -1605,6 +1605,8 @@ operations:
             - name
             - counters
             - userdata
+            # Mentioned in nft_chain_parse_hook()
+            - type
     -
       name: getchain
       doc: Get / dump chains.
