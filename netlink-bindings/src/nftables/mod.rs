@@ -19912,6 +19912,23 @@ impl<Prev: Rec> PushOpNewchainDoRequest<Prev> {
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "type name of the chain"]
+    pub fn push_type(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_rec_mut(),
+            7u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_rec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "type name of the chain"]
+    pub fn push_type_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_rec_mut(), 7u16, (value.len() + 1) as u16);
+        self.as_rec_mut().extend(value);
+        self.as_rec_mut().push(0);
+        self
+    }
     #[doc = "counter specification of the chain"]
     pub fn nested_counters(mut self) -> PushNftCounterAttrs<Self> {
         let header_offset = push_nested_header(self.as_rec_mut(), 8u16);
@@ -19955,6 +19972,8 @@ pub enum OpNewchainDoRequest<'a> {
     Hook(IterableNftHookAttrs<'a>),
     #[doc = "numeric policy of the chain"]
     Policy(u32),
+    #[doc = "type name of the chain"]
+    Type(&'a CStr),
     #[doc = "counter specification of the chain"]
     Counters(IterableNftCounterAttrs<'a>),
     #[doc = "chain flags\nAssociated type: \"ChainFlags\" (1 bit per enumeration)"]
@@ -20039,6 +20058,22 @@ impl<'a> IterableOpNewchainDoRequest<'a> {
         Err(ErrorContext::new_missing(
             "OpNewchainDoRequest",
             "Policy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "type name of the chain"]
+    pub fn get_type(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let OpNewchainDoRequest::Type(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "OpNewchainDoRequest",
+            "Type",
             self.orig_loc,
             self.buf.as_ptr() as usize,
         ))
@@ -20158,6 +20193,11 @@ impl<'a> Iterator for IterableOpNewchainDoRequest<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                7u16 => OpNewchainDoRequest::Type({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
                 8u16 => OpNewchainDoRequest::Counters({
                     let res = Some(IterableNftCounterAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
@@ -20210,6 +20250,7 @@ impl<'a> std::fmt::Debug for IterableOpNewchainDoRequest<'_> {
                 OpNewchainDoRequest::Name(val) => fmt.field("Name", &val),
                 OpNewchainDoRequest::Hook(val) => fmt.field("Hook", &val),
                 OpNewchainDoRequest::Policy(val) => fmt.field("Policy", &val),
+                OpNewchainDoRequest::Type(val) => fmt.field("Type", &val),
                 OpNewchainDoRequest::Counters(val) => fmt.field("Counters", &val),
                 OpNewchainDoRequest::Flags(val) => {
                     fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value))
@@ -20271,6 +20312,12 @@ impl IterableOpNewchainDoRequest<'_> {
                 OpNewchainDoRequest::Policy(val) => {
                     if last_off == offset {
                         stack.push(("Policy", last_off));
+                        break;
+                    }
+                }
+                OpNewchainDoRequest::Type(val) => {
+                    if last_off == offset {
+                        stack.push(("Type", last_off));
                         break;
                     }
                 }
