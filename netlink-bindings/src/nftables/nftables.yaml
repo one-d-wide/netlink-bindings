@@ -1003,6 +1003,7 @@ attribute-sets:
         type: nest
         nested-attributes: hook-dev-attrs
   -
+    # Defined in include/uapi/linux/netfilter/nf_tables.h
     name: expr-bitwise-attrs
     attributes:
       -
@@ -1036,6 +1037,10 @@ attribute-sets:
         name: data
         type: nest
         nested-attributes: data-attrs
+      -
+        name: sreg2
+        type: u32
+        byte-order: big-endian
   -
     name: expr-cmp-attrs
     attributes:
