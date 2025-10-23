@@ -7585,6 +7585,7 @@ pub enum ExprBitwiseAttrs<'a> {
     #[doc = "Associated type: \"BitwiseOps\" (enum)"]
     Op(u32),
     Data(IterableDataAttrs<'a>),
+    Sreg2(u32),
 }
 impl<'a> IterableExprBitwiseAttrs<'a> {
     pub fn get_sreg(&self) -> Result<u32, ErrorContext> {
@@ -7693,6 +7694,21 @@ impl<'a> IterableExprBitwiseAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    pub fn get_sreg2(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let ExprBitwiseAttrs::Sreg2(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ExprBitwiseAttrs",
+            "Sreg2",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl<'a> ExprBitwiseAttrs<'a> {
     pub fn new(buf: &'a [u8]) -> IterableExprBitwiseAttrs<'a> {
@@ -7707,6 +7723,7 @@ impl<'a> ExprBitwiseAttrs<'a> {
             5u16 => "Xor",
             6u16 => "Op",
             7u16 => "Data",
+            8u16 => "Sreg2",
             _ => return None,
         };
         Some(res)
@@ -7776,6 +7793,11 @@ impl<'a> Iterator for IterableExprBitwiseAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                8u16 => ExprBitwiseAttrs::Sreg2({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n => {
                     if cfg!(any(test, feature = "deny-unknown-attrs")) {
                         break;
@@ -7817,6 +7839,7 @@ impl<'a> std::fmt::Debug for IterableExprBitwiseAttrs<'_> {
                     fmt.field("Op", &FormatEnum(val.into(), BitwiseOps::from_value))
                 }
                 ExprBitwiseAttrs::Data(val) => fmt.field("Data", &val),
+                ExprBitwiseAttrs::Sreg2(val) => fmt.field("Sreg2", &val),
             };
         }
         fmt.finish()
@@ -7885,6 +7908,12 @@ impl IterableExprBitwiseAttrs<'_> {
                 ExprBitwiseAttrs::Data(val) => {
                     (stack, missing) = val.lookup_attr(offset, missing_type);
                     if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ExprBitwiseAttrs::Sreg2(val) => {
+                    if last_off == offset {
+                        stack.push(("Sreg2", last_off));
                         break;
                     }
                 }
@@ -14315,6 +14344,11 @@ impl<Prev: Rec> PushExprBitwiseAttrs<Prev> {
             prev: Some(self),
             header_offset: Some(header_offset),
         }
+    }
+    pub fn push_sreg2(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 8u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
     }
 }
 impl<Prev: Rec> Drop for PushExprBitwiseAttrs<Prev> {

@@ -654,6 +654,7 @@ PushOpNewruleDoRequest::new(&mut vec)
             .push_chain_id(val) // u32
           .end_nested()
         .end_nested()
+        .push_sreg2(val) // u32
       .end_nested()
       .nested_data_cmp()
         .push_sreg(val) // u32
@@ -1260,6 +1261,7 @@ PushOpDelruleDoRequest::new(&mut vec)
             .push_chain_id(val) // u32
           .end_nested()
         .end_nested()
+        .push_sreg2(val) // u32
       .end_nested()
       .nested_data_cmp()
         .push_sreg(val) // u32
@@ -1628,6 +1630,7 @@ PushOpDestroyruleDoRequest::new(&mut vec)
             .push_chain_id(val) // u32
           .end_nested()
         .end_nested()
+        .push_sreg2(val) // u32
       .end_nested()
       .nested_data_cmp()
         .push_sreg(val) // u32
@@ -2389,6 +2392,7 @@ PushOpNewsetelemDoRequest::new(&mut vec)
               .push_chain_id(val) // u32
             .end_nested()
           .end_nested()
+          .push_sreg2(val) // u32
         .end_nested()
         .nested_data_cmp()
           .push_sreg(val) // u32
@@ -2747,6 +2751,7 @@ PushOpNewsetelemDoRequest::new(&mut vec)
                 .push_chain_id(val) // u32
               .end_nested()
             .end_nested()
+            .push_sreg2(val) // u32
           .end_nested()
           .nested_data_cmp()
             .push_sreg(val) // u32
@@ -3156,6 +3161,7 @@ PushOpGetsetelemDoRequest::new(&mut vec)
               .push_chain_id(val) // u32
             .end_nested()
           .end_nested()
+          .push_sreg2(val) // u32
         .end_nested()
         .nested_data_cmp()
           .push_sreg(val) // u32
@@ -3514,6 +3520,7 @@ PushOpGetsetelemDoRequest::new(&mut vec)
                 .push_chain_id(val) // u32
               .end_nested()
             .end_nested()
+            .push_sreg2(val) // u32
           .end_nested()
           .nested_data_cmp()
             .push_sreg(val) // u32
@@ -4156,6 +4163,7 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
               .push_chain_id(val) // u32
             .end_nested()
           .end_nested()
+          .push_sreg2(val) // u32
         .end_nested()
         .nested_data_cmp()
           .push_sreg(val) // u32
@@ -4514,6 +4522,7 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
                 .push_chain_id(val) // u32
               .end_nested()
             .end_nested()
+            .push_sreg2(val) // u32
           .end_nested()
           .nested_data_cmp()
             .push_sreg(val) // u32
@@ -5162,6 +5171,7 @@ PushOpDelsetelemDoRequest::new(&mut vec)
               .push_chain_id(val) // u32
             .end_nested()
           .end_nested()
+          .push_sreg2(val) // u32
         .end_nested()
         .nested_data_cmp()
           .push_sreg(val) // u32
@@ -5520,6 +5530,7 @@ PushOpDelsetelemDoRequest::new(&mut vec)
                 .push_chain_id(val) // u32
               .end_nested()
             .end_nested()
+            .push_sreg2(val) // u32
           .end_nested()
           .nested_data_cmp()
             .push_sreg(val) // u32
@@ -5929,6 +5940,7 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
               .push_chain_id(val) // u32
             .end_nested()
           .end_nested()
+          .push_sreg2(val) // u32
         .end_nested()
         .nested_data_cmp()
           .push_sreg(val) // u32
@@ -6287,6 +6299,7 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
                 .push_chain_id(val) // u32
               .end_nested()
             .end_nested()
+            .push_sreg2(val) // u32
           .end_nested()
           .nested_data_cmp()
             .push_sreg(val) // u32
