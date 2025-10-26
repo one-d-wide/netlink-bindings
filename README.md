@@ -318,7 +318,7 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | net-shaper | ? | |
 | netdev | ? | |
 | nfsd | ? | |
-| nl80211 | ? | |
+| [nl80211](./netlink-bindings/src/nl80211/nl80211.md) | • | |
 | ovpn | ? | |
 | ovs_datapath | ? | |
 | ovs_flow | ? | |

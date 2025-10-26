@@ -62,8 +62,9 @@ pub mod conntrack;
 #[cfg_attr(docsrs, doc(cfg(feature = "nftables")))]
 pub mod nftables;
 
-// #[cfg(feature = "nl80211")]
-// pub mod nl80211;
+#[cfg(feature = "nl80211")]
+#[cfg_attr(docsrs, doc(cfg(feature = "nl80211")))]
+pub mod nl80211;
 
 #[cfg(feature = "nlctrl")]
 #[cfg_attr(docsrs, doc(cfg(feature = "nlctrl")))]
