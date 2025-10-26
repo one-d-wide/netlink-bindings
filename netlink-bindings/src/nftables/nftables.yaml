@@ -146,6 +146,13 @@ definitions:
       - concat
       - expr
   -
+    # Defined in include/uapi/linux/netfilter/nf_tables.h as nft_set_elem_flags 
+    name: set-elem-flags
+    type: flags
+    entries:
+      - interval-end
+      - catchall
+  -
     name: lookup-flags
     type: flags
     entries:
@@ -828,7 +835,9 @@ attribute-sets:
         doc: data value of mapping
       -
         name: flags
-        type: binary
+        type: u32
+        enum: set-elem-flags
+        byte-order: big-endian
         doc: bitmask of nft_set_elem_flags
       -
         name: timeout
