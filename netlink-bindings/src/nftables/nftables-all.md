@@ -7580,7 +7580,8 @@ PushOpNewsetelemDoRequest::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -8379,7 +8380,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -8522,7 +8524,8 @@ PushOpGetsetelemDoRequest::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -9280,7 +9283,8 @@ let attrs = OpGetsetelemDoReply::new(buf);
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -9391,7 +9395,8 @@ PushOpGetsetelemDoReply::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -10149,7 +10154,8 @@ let attrs = OpGetsetelemDoReply::new(buf);
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -10284,7 +10290,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -10434,7 +10441,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -10580,7 +10588,8 @@ attrs.get_set(); // &CStr
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -10695,7 +10704,8 @@ PushOpGetsetelemDumpReply::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -11455,7 +11465,8 @@ attrs.get_set(); // &CStr
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -11602,7 +11613,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -11734,7 +11746,8 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -12494,7 +12507,8 @@ attrs.get_set(); // &CStr
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -12609,7 +12623,8 @@ PushOpGetsetelemResetDoReply::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -13369,7 +13384,8 @@ attrs.get_set(); // &CStr
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -13502,7 +13518,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -13654,7 +13671,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -13800,7 +13818,8 @@ attrs.get_set(); // &CStr
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -13915,7 +13934,8 @@ PushOpGetsetelemResetDumpReply::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -14675,7 +14695,8 @@ attrs.get_set(); // &CStr
       }
 
       // bitmask of nft_set_elem_flags
-      entry.get_flags(); // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      entry.get_flags(); // u32
 
       // timeout value
       entry.get_timeout(); // u64
@@ -14822,7 +14843,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -14958,7 +14980,8 @@ PushOpDelsetelemDoRequest::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -15756,7 +15779,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64
@@ -15899,7 +15923,8 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
       .end_nested()
 
       // bitmask of nft_set_elem_flags
-      .push_flags(val) // &[u8]
+      // Associated type: "SetElemFlags" (enum)
+      .push_flags(val) // u32
 
       // timeout value
       .push_timeout(val) // u64
@@ -16697,7 +16722,8 @@ for attr in iter {
                 },
 
                 // bitmask of nft_set_elem_flags
-                Flags(val) => {}, // &[u8]
+                // Associated type: "SetElemFlags" (enum)
+                Flags(val) => {}, // u32
 
                 // timeout value
                 Timeout(val) => {}, // u64

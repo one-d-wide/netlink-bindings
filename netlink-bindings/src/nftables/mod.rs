@@ -268,6 +268,21 @@ impl SetFlags {
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
+pub enum SetElemFlags {
+    IntervalEnd = 1 << 0,
+    Catchall = 1 << 1,
+}
+impl SetElemFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::IntervalEnd,
+            n if n == 1 << 1 => Self::Catchall,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Debug, Clone, Copy)]
 pub enum LookupFlags {
     Invert = 1 << 0,
 }
@@ -5435,8 +5450,8 @@ pub enum SetelemAttrs<'a> {
     Key(IterableDataAttrs<'a>),
     #[doc = "data value of mapping"]
     Data(IterableDataAttrs<'a>),
-    #[doc = "bitmask of nft_set_elem_flags"]
-    Flags(&'a [u8]),
+    #[doc = "bitmask of nft_set_elem_flags\nAssociated type: \"SetElemFlags\" (enum)"]
+    Flags(u32),
     #[doc = "timeout value"]
     Timeout(u64),
     #[doc = "expiration time"]
@@ -5485,8 +5500,8 @@ impl<'a> IterableSetelemAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "bitmask of nft_set_elem_flags"]
-    pub fn get_flags(&self) -> Result<&'a [u8], ErrorContext> {
+    #[doc = "bitmask of nft_set_elem_flags\nAssociated type: \"SetElemFlags\" (enum)"]
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -5675,7 +5690,7 @@ impl<'a> Iterator for IterableSetelemAttrs<'a> {
                     val
                 }),
                 3u16 => SetelemAttrs::Flags({
-                    let res = Some(next);
+                    let res = parse_be_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5748,7 +5763,9 @@ impl<'a> std::fmt::Debug for IterableSetelemAttrs<'_> {
             match attr {
                 SetelemAttrs::Key(val) => fmt.field("Key", &val),
                 SetelemAttrs::Data(val) => fmt.field("Data", &val),
-                SetelemAttrs::Flags(val) => fmt.field("Flags", &val),
+                SetelemAttrs::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), SetElemFlags::from_value))
+                }
                 SetelemAttrs::Timeout(val) => fmt.field("Timeout", &val),
                 SetelemAttrs::Expiration(val) => fmt.field("Expiration", &val),
                 SetelemAttrs::Userdata(val) => fmt.field("Userdata", &val),
@@ -13711,10 +13728,10 @@ impl<Prev: Rec> PushSetelemAttrs<Prev> {
             header_offset: Some(header_offset),
         }
     }
-    #[doc = "bitmask of nft_set_elem_flags"]
-    pub fn push_flags(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 3u16, value.len() as u16);
-        self.as_rec_mut().extend(value);
+    #[doc = "bitmask of nft_set_elem_flags\nAssociated type: \"SetElemFlags\" (enum)"]
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     #[doc = "timeout value"]
