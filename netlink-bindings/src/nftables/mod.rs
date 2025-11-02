@@ -3756,6 +3756,7 @@ pub enum ExprOps<'a> {
     Range(IterableRangeAttrs<'a>),
     Numgen(IterableNumgenAttrs<'a>),
     Log(IterableLogAttrs<'a>),
+    Masq(IterableExprMasqAttrs<'a>),
 }
 impl<'a> ExprOps<'a> {
     fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
@@ -3790,6 +3791,7 @@ impl<'a> ExprOps<'a> {
             b"range" => Some(ExprOps::Range(IterableRangeAttrs::with_loc(buf, loc))),
             b"numgen" => Some(ExprOps::Numgen(IterableNumgenAttrs::with_loc(buf, loc))),
             b"log" => Some(ExprOps::Log(IterableLogAttrs::with_loc(buf, loc))),
+            b"masq" => Some(ExprOps::Masq(IterableExprMasqAttrs::with_loc(buf, loc))),
             _ => None,
         }
     }
@@ -9780,6 +9782,212 @@ impl IterableExprLookupAttrs<'_> {
     }
 }
 #[derive(Clone)]
+pub enum ExprMasqAttrs {
+    #[doc = "Associated type: \"NatRangeFlags\" (1 bit per enumeration)"]
+    Flags(u32),
+    RegProtoMin(u32),
+    RegProtoMax(u32),
+}
+impl<'a> IterableExprMasqAttrs<'a> {
+    #[doc = "Associated type: \"NatRangeFlags\" (1 bit per enumeration)"]
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let ExprMasqAttrs::Flags(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ExprMasqAttrs",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_reg_proto_min(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let ExprMasqAttrs::RegProtoMin(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ExprMasqAttrs",
+            "RegProtoMin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_reg_proto_max(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let ExprMasqAttrs::RegProtoMax(val) = attr? {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ExprMasqAttrs",
+            "RegProtoMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl ExprMasqAttrs {
+    pub fn new(buf: &'_ [u8]) -> IterableExprMasqAttrs<'_> {
+        IterableExprMasqAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Flags",
+            2u16 => "RegProtoMin",
+            3u16 => "RegProtoMax",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableExprMasqAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableExprMasqAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableExprMasqAttrs<'a> {
+    type Item = Result<ExprMasqAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() == self.pos {
+            return None;
+        }
+        let pos = self.pos;
+        let mut r#type = None;
+        while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => ExprMasqAttrs::Flags({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => ExprMasqAttrs::RegProtoMin({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => ExprMasqAttrs::RegProtoMax({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n => {
+                    if cfg!(any(test, feature = "deny-unknown-attrs")) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "ExprMasqAttrs",
+            r#type.and_then(|t| ExprMasqAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableExprMasqAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("ExprMasqAttrs");
+        for attr in self.clone() {
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                ExprMasqAttrs::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), NatRangeFlags::from_value))
+                }
+                ExprMasqAttrs::RegProtoMin(val) => fmt.field("RegProtoMin", &val),
+                ExprMasqAttrs::RegProtoMax(val) => fmt.field("RegProtoMax", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableExprMasqAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if cur == offset {
+            stack.push(("ExprMasqAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ExprMasqAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ExprMasqAttrs::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                ExprMasqAttrs::RegProtoMin(val) => {
+                    if last_off == offset {
+                        stack.push(("RegProtoMin", last_off));
+                        break;
+                    }
+                }
+                ExprMasqAttrs::RegProtoMax(val) => {
+                    if last_off == offset {
+                        stack.push(("RegProtoMax", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ExprMasqAttrs", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
 pub enum ExprMetaAttrs {
     Dreg(u32),
     #[doc = "Associated type: \"MetaKeys\" (enum)"]
@@ -13277,6 +13485,20 @@ impl<Prev: Rec> PushExprAttrs<Prev> {
             header_offset: Some(new_header_offset),
         }
     }
+    #[doc = "Selector attribute is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn nested_data_masq(mut self) -> PushExprMasqAttrs<PushDummy<Prev>> {
+        self = self.push_name(c"masq");
+        let new_header_offset = push_nested_header(self.as_rec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
+        PushExprMasqAttrs {
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
+        }
+    }
 }
 impl<Prev: Rec> Drop for PushExprAttrs<Prev> {
     fn drop(&mut self) {
@@ -14849,6 +15071,55 @@ impl<Prev: Rec> PushExprLookupAttrs<Prev> {
     }
 }
 impl<Prev: Rec> Drop for PushExprLookupAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_rec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushExprMasqAttrs<Prev: Rec> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Rec> Rec for PushExprMasqAttrs<Prev> {
+    fn as_rec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_rec_mut()
+    }
+}
+impl<Prev: Rec> PushExprMasqAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_rec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "Associated type: \"NatRangeFlags\" (1 bit per enumeration)"]
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 1u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_reg_proto_min(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 2u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_reg_proto_max(mut self, value: u32) -> Self {
+        push_header(self.as_rec_mut(), 3u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
+        self
+    }
+}
+impl<Prev: Rec> Drop for PushExprMasqAttrs<Prev> {
     fn drop(&mut self) {
         if let Some(prev) = &mut self.prev {
             if let Some(header_offset) = &self.header_offset {
