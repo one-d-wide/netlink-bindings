@@ -473,6 +473,25 @@ impl RejectTypes {
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
+pub enum RejectInetCode {
+    IcmpxNoRoute = 0,
+    IcmpxPortUnreach = 1,
+    IcmpxHostUnreach = 2,
+    IcmpxAdminProhibited = 3,
+}
+impl RejectInetCode {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::IcmpxNoRoute,
+            1 => Self::IcmpxPortUnreach,
+            2 => Self::IcmpxHostUnreach,
+            3 => Self::IcmpxAdminProhibited,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy)]
 pub enum PayloadBase {
     LinkLayerHeader = 0,
     NetworkHeader = 1,

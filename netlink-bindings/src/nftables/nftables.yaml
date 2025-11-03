@@ -247,6 +247,15 @@ definitions:
       - icmpx-unreach
   -
     # Defined in include/linux/netfilter/nf_tables.h
+    name: reject-inet-code
+    type: enum
+    entries:
+      - icmpx-no-route
+      - icmpx-port-unreach
+      - icmpx-host-unreach
+      - icmpx-admin-prohibited
+  -
+    # Defined in include/linux/netfilter/nf_tables.h
     name: payload-base
     type: enum
     entries:
@@ -1300,6 +1309,7 @@ attribute-sets:
       -
         name: icmp-code
         type: u8
+        enum: reject-inet-code
   -
     name: expr-target-attrs
     attributes:
