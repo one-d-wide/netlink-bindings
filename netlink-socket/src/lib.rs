@@ -416,3 +416,12 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[allow(unused)]
+    trait SpawnCompatible: Send {}
+    impl<'a> SpawnCompatible for NetlinkSocket {}
+}

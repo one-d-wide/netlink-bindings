@@ -1,6 +1,7 @@
 use std::{
     fmt,
     io::{self, IoSlice},
+    marker::{Send, Sync},
     sync::Arc,
 };
 
@@ -22,7 +23,7 @@ impl NetlinkSocket {
         request: &'a Chained,
     ) -> io::Result<NetlinkReplyChained<'a>>
     where
-        Chained: NetlinkChained,
+        Chained: NetlinkChained + Send + Sync,
     {
         let sock = Self::get_socket_cached(&mut self.sock, request.protonum())?;
 
@@ -43,7 +44,7 @@ impl NetlinkSocket {
 
 pub struct NetlinkReplyChained<'sock> {
     inner: NetlinkReplyInner,
-    request: &'sock dyn NetlinkChained,
+    request: &'sock (dyn NetlinkChained + Send + Sync),
     sock: &'sock mut Socket,
     buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
     done: Bits,
@@ -150,4 +151,13 @@ impl Bits {
             Self::Vec(bits) => bits.iter().map(|s| s.count_zeros() as usize).sum(),
         }
     }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[allow(unused)]
+    trait SpawnCompatible: Send {}
+    impl<'a> SpawnCompatible for NetlinkReplyChained<'a> {}
 }

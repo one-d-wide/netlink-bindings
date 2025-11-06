@@ -18,6 +18,11 @@ matches() {
   fi
 }
 
+if ! ip link show wg0 >/dev/null; then
+  # Create "wg0" interface for readme doctests
+  ip link add dev wg0 type wireguard
+fi
+
 cargo test
 
 for runtime in "" --features={tokio,smol}; do
