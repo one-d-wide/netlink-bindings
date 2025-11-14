@@ -1930,6 +1930,13 @@ PushOpNewruleDoRequest::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -2464,6 +2471,13 @@ PushOpGetruleDoReply::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -2992,6 +3006,13 @@ PushOpGetruleDumpReply::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -3522,6 +3543,13 @@ PushOpGetruleResetDoReply::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -4053,6 +4081,13 @@ PushOpGetruleResetDumpReply::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -4532,6 +4567,13 @@ PushOpDelruleDoRequest::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -4976,6 +5018,13 @@ PushOpDestroyruleDoRequest::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -5754,6 +5803,13 @@ PushOpGetsetDoReply::new(&mut vec)
 
       // Associated type: "RejectTypes" (enum)
       .push_type(val) // u32
+
+      // Meaning of this attribute depends on the value of `type`:
+      //   - icmp-unreach  => raw icmp code
+      //   - tcp-rst       => ignored
+      //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+      // 
+      // Associated type: "RejectInetCode" (enum)
       .push_icmp_code(val) // u8
     .end_nested()
     .nested_data_target()
@@ -6102,6 +6158,13 @@ PushOpGetsetDoReply::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -6830,6 +6893,13 @@ PushOpGetsetDumpReply::new(&mut vec)
 
       // Associated type: "RejectTypes" (enum)
       .push_type(val) // u32
+
+      // Meaning of this attribute depends on the value of `type`:
+      //   - icmp-unreach  => raw icmp code
+      //   - tcp-rst       => ignored
+      //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+      // 
+      // Associated type: "RejectInetCode" (enum)
       .push_icmp_code(val) // u8
     .end_nested()
     .nested_data_target()
@@ -7178,6 +7248,13 @@ PushOpGetsetDumpReply::new(&mut vec)
 
         // Associated type: "RejectTypes" (enum)
         .push_type(val) // u32
+
+        // Meaning of this attribute depends on the value of `type`:
+        //   - icmp-unreach  => raw icmp code
+        //   - tcp-rst       => ignored
+        //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+        // 
+        // Associated type: "RejectInetCode" (enum)
         .push_icmp_code(val) // u8
       .end_nested()
       .nested_data_target()
@@ -7941,6 +8018,13 @@ PushOpNewsetelemDoRequest::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -8311,6 +8395,13 @@ PushOpNewsetelemDoRequest::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -8907,6 +8998,13 @@ PushOpGetsetelemDoRequest::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -9277,6 +9375,13 @@ PushOpGetsetelemDoRequest::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -9800,6 +9905,13 @@ PushOpGetsetelemDoReply::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -10170,6 +10282,13 @@ PushOpGetsetelemDoReply::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -11131,6 +11250,13 @@ PushOpGetsetelemDumpReply::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -11501,6 +11627,13 @@ PushOpGetsetelemDumpReply::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -12195,6 +12328,13 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -12565,6 +12705,13 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -13094,6 +13241,13 @@ PushOpGetsetelemResetDoReply::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -13464,6 +13618,13 @@ PushOpGetsetelemResetDoReply::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -14427,6 +14588,13 @@ PushOpGetsetelemResetDumpReply::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -14797,6 +14965,13 @@ PushOpGetsetelemResetDumpReply::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -15495,6 +15670,13 @@ PushOpDelsetelemDoRequest::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -15865,6 +16047,13 @@ PushOpDelsetelemDoRequest::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()
@@ -16460,6 +16649,13 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
 
           // Associated type: "RejectTypes" (enum)
           .push_type(val) // u32
+
+          // Meaning of this attribute depends on the value of `type`:
+          //   - icmp-unreach  => raw icmp code
+          //   - tcp-rst       => ignored
+          //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+          // 
+          // Associated type: "RejectInetCode" (enum)
           .push_icmp_code(val) // u8
         .end_nested()
         .nested_data_target()
@@ -16830,6 +17026,13 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
 
             // Associated type: "RejectTypes" (enum)
             .push_type(val) // u32
+
+            // Meaning of this attribute depends on the value of `type`:
+            //   - icmp-unreach  => raw icmp code
+            //   - tcp-rst       => ignored
+            //   - icmpx-unreach => mapped icmp code, see reject-inet-code enum
+            // 
+            // Associated type: "RejectInetCode" (enum)
             .push_icmp_code(val) // u8
           .end_nested()
           .nested_data_target()

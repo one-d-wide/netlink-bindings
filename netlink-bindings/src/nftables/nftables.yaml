@@ -247,6 +247,16 @@ definitions:
       - icmpx-unreach
   -
     # Defined in include/linux/netfilter/nf_tables.h
+    name: reject-inet-code
+    doc: These codes are mapped to real ICMP and ICMPv6 codes.
+    type: enum
+    entries:
+      - icmpx-no-route
+      - icmpx-port-unreach
+      - icmpx-host-unreach
+      - icmpx-admin-prohibited
+  -
+    # Defined in include/linux/netfilter/nf_tables.h
     name: payload-base
     type: enum
     entries:
@@ -1319,7 +1329,13 @@ attribute-sets:
         enum: reject-types
       -
         name: icmp-code
+        doc: |
+          Meaning of this attribute depends on the value of `type`:
+            - icmp-unreach  => raw icmp code
+            - tcp-rst       => ignored
+            - icmpx-unreach => mapped icmp code, see reject-inet-code enum
         type: u8
+        enum: reject-inet-code
   -
     name: expr-target-attrs
     attributes:
