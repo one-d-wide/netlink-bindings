@@ -471,6 +471,7 @@ impl RejectTypes {
         })
     }
 }
+#[doc = "These codes are mapped to real ICMP and ICMPv6 codes."]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum RejectInetCode {
@@ -10699,6 +10700,7 @@ impl IterableExprPayloadAttrs<'_> {
 pub enum ExprRejectAttrs {
     #[doc = "Associated type: \"RejectTypes\" (enum)"]
     Type(u32),
+    #[doc = "Meaning of this attribute depends on the value of `type`:\n  - icmp-unreach  => raw icmp code\n  - tcp-rst       => ignored\n  - icmpx-unreach => mapped icmp code, see reject-inet-code enum\n\nAssociated type: \"RejectInetCode\" (enum)"]
     IcmpCode(u8),
 }
 impl<'a> IterableExprRejectAttrs<'a> {
@@ -10718,6 +10720,7 @@ impl<'a> IterableExprRejectAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Meaning of this attribute depends on the value of `type`:\n  - icmp-unreach  => raw icmp code\n  - tcp-rst       => ignored\n  - icmpx-unreach => mapped icmp code, see reject-inet-code enum\n\nAssociated type: \"RejectInetCode\" (enum)"]
     pub fn get_icmp_code(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -10821,7 +10824,10 @@ impl std::fmt::Debug for IterableExprRejectAttrs<'_> {
                 ExprRejectAttrs::Type(val) => {
                     fmt.field("Type", &FormatEnum(val.into(), RejectTypes::from_value))
                 }
-                ExprRejectAttrs::IcmpCode(val) => fmt.field("IcmpCode", &val),
+                ExprRejectAttrs::IcmpCode(val) => fmt.field(
+                    "IcmpCode",
+                    &FormatEnum(val.into(), RejectInetCode::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -15104,6 +15110,7 @@ impl<Prev: Rec> PushExprRejectAttrs<Prev> {
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "Meaning of this attribute depends on the value of `type`:\n  - icmp-unreach  => raw icmp code\n  - tcp-rst       => ignored\n  - icmpx-unreach => mapped icmp code, see reject-inet-code enum\n\nAssociated type: \"RejectInetCode\" (enum)"]
     pub fn push_icmp_code(mut self, value: u8) -> Self {
         push_header(self.as_rec_mut(), 2u16, 1 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
