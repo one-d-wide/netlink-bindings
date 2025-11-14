@@ -927,7 +927,11 @@ PushOpNewruleDoRequest::new(&mut vec)
 
         // Associated type: "NatRangeFlags" (1 bit per enumeration)
         .push_flags(val) // u32
+
+        // Associated type: "Registers" (enum)
         .push_reg_proto_min(val) // u32
+
+        // Associated type: "Registers" (enum)
         .push_reg_proto_max(val) // u32
       .end_nested()
     .end_nested()
@@ -1541,7 +1545,11 @@ PushOpDelruleDoRequest::new(&mut vec)
 
         // Associated type: "NatRangeFlags" (1 bit per enumeration)
         .push_flags(val) // u32
+
+        // Associated type: "Registers" (enum)
         .push_reg_proto_min(val) // u32
+
+        // Associated type: "Registers" (enum)
         .push_reg_proto_max(val) // u32
       .end_nested()
     .end_nested()
@@ -1917,7 +1925,11 @@ PushOpDestroyruleDoRequest::new(&mut vec)
 
         // Associated type: "NatRangeFlags" (1 bit per enumeration)
         .push_flags(val) // u32
+
+        // Associated type: "Registers" (enum)
         .push_reg_proto_min(val) // u32
+
+        // Associated type: "Registers" (enum)
         .push_reg_proto_max(val) // u32
       .end_nested()
     .end_nested()
@@ -2687,7 +2699,11 @@ PushOpNewsetelemDoRequest::new(&mut vec)
 
           // Associated type: "NatRangeFlags" (1 bit per enumeration)
           .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_max(val) // u32
         .end_nested()
       .end_nested()
@@ -3053,7 +3069,11 @@ PushOpNewsetelemDoRequest::new(&mut vec)
 
             // Associated type: "NatRangeFlags" (1 bit per enumeration)
             .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
@@ -3471,7 +3491,11 @@ PushOpGetsetelemDoRequest::new(&mut vec)
 
           // Associated type: "NatRangeFlags" (1 bit per enumeration)
           .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_max(val) // u32
         .end_nested()
       .end_nested()
@@ -3837,7 +3861,11 @@ PushOpGetsetelemDoRequest::new(&mut vec)
 
             // Associated type: "NatRangeFlags" (1 bit per enumeration)
             .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
@@ -4490,7 +4518,11 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
 
           // Associated type: "NatRangeFlags" (1 bit per enumeration)
           .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_max(val) // u32
         .end_nested()
       .end_nested()
@@ -4856,7 +4888,11 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
 
             // Associated type: "NatRangeFlags" (1 bit per enumeration)
             .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
@@ -5515,7 +5551,11 @@ PushOpDelsetelemDoRequest::new(&mut vec)
 
           // Associated type: "NatRangeFlags" (1 bit per enumeration)
           .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_max(val) // u32
         .end_nested()
       .end_nested()
@@ -5881,7 +5921,11 @@ PushOpDelsetelemDoRequest::new(&mut vec)
 
             // Associated type: "NatRangeFlags" (1 bit per enumeration)
             .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
@@ -6299,7 +6343,11 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
 
           // Associated type: "NatRangeFlags" (1 bit per enumeration)
           .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
           .push_reg_proto_max(val) // u32
         .end_nested()
       .end_nested()
@@ -6665,7 +6713,11 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
 
             // Associated type: "NatRangeFlags" (1 bit per enumeration)
             .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
             .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()

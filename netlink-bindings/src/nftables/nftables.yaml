@@ -146,7 +146,7 @@ definitions:
       - concat
       - expr
   -
-    # Defined in include/uapi/linux/netfilter/nf_tables.h as nft_set_elem_flags 
+    # Defined in include/uapi/linux/netfilter/nf_tables.h as nft_set_elem_flags
     name: set-elem-flags
     type: flags
     entries:
@@ -1193,6 +1193,7 @@ attribute-sets:
         byte-order: big-endian
         enum: lookup-flags
   -
+    # Defined as nft_masq_attributes in include/uapi/linux/netfilter/nf_tables.h
     name: expr-masq-attrs
     attributes:
       -
@@ -1205,10 +1206,12 @@ attribute-sets:
         name: reg-proto-min
         type: u32
         byte-order: big-endian
+        enum: registers
       -
         name: reg-proto-max
         type: u32
         byte-order: big-endian
+        enum: registers
   -
     name: expr-meta-attrs
     attributes:

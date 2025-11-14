@@ -9785,7 +9785,9 @@ impl IterableExprLookupAttrs<'_> {
 pub enum ExprMasqAttrs {
     #[doc = "Associated type: \"NatRangeFlags\" (1 bit per enumeration)"]
     Flags(u32),
+    #[doc = "Associated type: \"Registers\" (enum)"]
     RegProtoMin(u32),
+    #[doc = "Associated type: \"Registers\" (enum)"]
     RegProtoMax(u32),
 }
 impl<'a> IterableExprMasqAttrs<'a> {
@@ -9805,6 +9807,7 @@ impl<'a> IterableExprMasqAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Associated type: \"Registers\" (enum)"]
     pub fn get_reg_proto_min(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9820,6 +9823,7 @@ impl<'a> IterableExprMasqAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Associated type: \"Registers\" (enum)"]
     pub fn get_reg_proto_max(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -9929,8 +9933,14 @@ impl std::fmt::Debug for IterableExprMasqAttrs<'_> {
                 ExprMasqAttrs::Flags(val) => {
                     fmt.field("Flags", &FormatFlags(val.into(), NatRangeFlags::from_value))
                 }
-                ExprMasqAttrs::RegProtoMin(val) => fmt.field("RegProtoMin", &val),
-                ExprMasqAttrs::RegProtoMax(val) => fmt.field("RegProtoMax", &val),
+                ExprMasqAttrs::RegProtoMin(val) => fmt.field(
+                    "RegProtoMin",
+                    &FormatEnum(val.into(), Registers::from_value),
+                ),
+                ExprMasqAttrs::RegProtoMax(val) => fmt.field(
+                    "RegProtoMax",
+                    &FormatEnum(val.into(), Registers::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -15108,11 +15118,13 @@ impl<Prev: Rec> PushExprMasqAttrs<Prev> {
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "Associated type: \"Registers\" (enum)"]
     pub fn push_reg_proto_min(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 2u16, 4 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "Associated type: \"Registers\" (enum)"]
     pub fn push_reg_proto_max(mut self, value: u32) -> Self {
         push_header(self.as_rec_mut(), 3u16, 4 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
