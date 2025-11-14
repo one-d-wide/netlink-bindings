@@ -923,6 +923,17 @@ PushOpNewruleDoRequest::new(&mut vec)
         // Associated type: "LogFlags" (enum)
         .push_flags(val) // u32
       .end_nested()
+      .nested_data_masq()
+
+        // Associated type: "NatRangeFlags" (1 bit per enumeration)
+        .push_flags(val) // u32
+
+        // Associated type: "Registers" (enum)
+        .push_reg_proto_min(val) // u32
+
+        // Associated type: "Registers" (enum)
+        .push_reg_proto_max(val) // u32
+      .end_nested()
     .end_nested()
   .end_nested()
 
@@ -1530,6 +1541,17 @@ PushOpDelruleDoRequest::new(&mut vec)
         // Associated type: "LogFlags" (enum)
         .push_flags(val) // u32
       .end_nested()
+      .nested_data_masq()
+
+        // Associated type: "NatRangeFlags" (1 bit per enumeration)
+        .push_flags(val) // u32
+
+        // Associated type: "Registers" (enum)
+        .push_reg_proto_min(val) // u32
+
+        // Associated type: "Registers" (enum)
+        .push_reg_proto_max(val) // u32
+      .end_nested()
     .end_nested()
   .end_nested()
   ;
@@ -1898,6 +1920,17 @@ PushOpDestroyruleDoRequest::new(&mut vec)
         // logging flags
         // Associated type: "LogFlags" (enum)
         .push_flags(val) // u32
+      .end_nested()
+      .nested_data_masq()
+
+        // Associated type: "NatRangeFlags" (1 bit per enumeration)
+        .push_flags(val) // u32
+
+        // Associated type: "Registers" (enum)
+        .push_reg_proto_min(val) // u32
+
+        // Associated type: "Registers" (enum)
+        .push_reg_proto_max(val) // u32
       .end_nested()
     .end_nested()
   .end_nested()
@@ -2662,6 +2695,17 @@ PushOpNewsetelemDoRequest::new(&mut vec)
           // Associated type: "LogFlags" (enum)
           .push_flags(val) // u32
         .end_nested()
+        .nested_data_masq()
+
+          // Associated type: "NatRangeFlags" (1 bit per enumeration)
+          .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_max(val) // u32
+        .end_nested()
       .end_nested()
 
       // stateful object reference
@@ -3020,6 +3064,17 @@ PushOpNewsetelemDoRequest::new(&mut vec)
             // logging flags
             // Associated type: "LogFlags" (enum)
             .push_flags(val) // u32
+          .end_nested()
+          .nested_data_masq()
+
+            // Associated type: "NatRangeFlags" (1 bit per enumeration)
+            .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
       .end_nested()
@@ -3432,6 +3487,17 @@ PushOpGetsetelemDoRequest::new(&mut vec)
           // Associated type: "LogFlags" (enum)
           .push_flags(val) // u32
         .end_nested()
+        .nested_data_masq()
+
+          // Associated type: "NatRangeFlags" (1 bit per enumeration)
+          .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_max(val) // u32
+        .end_nested()
       .end_nested()
 
       // stateful object reference
@@ -3790,6 +3856,17 @@ PushOpGetsetelemDoRequest::new(&mut vec)
             // logging flags
             // Associated type: "LogFlags" (enum)
             .push_flags(val) // u32
+          .end_nested()
+          .nested_data_masq()
+
+            // Associated type: "NatRangeFlags" (1 bit per enumeration)
+            .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
       .end_nested()
@@ -4437,6 +4514,17 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
           // Associated type: "LogFlags" (enum)
           .push_flags(val) // u32
         .end_nested()
+        .nested_data_masq()
+
+          // Associated type: "NatRangeFlags" (1 bit per enumeration)
+          .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_max(val) // u32
+        .end_nested()
       .end_nested()
 
       // stateful object reference
@@ -4795,6 +4883,17 @@ PushOpGetsetelemResetDoRequest::new(&mut vec)
             // logging flags
             // Associated type: "LogFlags" (enum)
             .push_flags(val) // u32
+          .end_nested()
+          .nested_data_masq()
+
+            // Associated type: "NatRangeFlags" (1 bit per enumeration)
+            .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
       .end_nested()
@@ -5448,6 +5547,17 @@ PushOpDelsetelemDoRequest::new(&mut vec)
           // Associated type: "LogFlags" (enum)
           .push_flags(val) // u32
         .end_nested()
+        .nested_data_masq()
+
+          // Associated type: "NatRangeFlags" (1 bit per enumeration)
+          .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_max(val) // u32
+        .end_nested()
       .end_nested()
 
       // stateful object reference
@@ -5806,6 +5916,17 @@ PushOpDelsetelemDoRequest::new(&mut vec)
             // logging flags
             // Associated type: "LogFlags" (enum)
             .push_flags(val) // u32
+          .end_nested()
+          .nested_data_masq()
+
+            // Associated type: "NatRangeFlags" (1 bit per enumeration)
+            .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
       .end_nested()
@@ -6218,6 +6339,17 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
           // Associated type: "LogFlags" (enum)
           .push_flags(val) // u32
         .end_nested()
+        .nested_data_masq()
+
+          // Associated type: "NatRangeFlags" (1 bit per enumeration)
+          .push_flags(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_min(val) // u32
+
+          // Associated type: "Registers" (enum)
+          .push_reg_proto_max(val) // u32
+        .end_nested()
       .end_nested()
 
       // stateful object reference
@@ -6576,6 +6708,17 @@ PushOpDestroysetelemDoRequest::new(&mut vec)
             // logging flags
             // Associated type: "LogFlags" (enum)
             .push_flags(val) // u32
+          .end_nested()
+          .nested_data_masq()
+
+            // Associated type: "NatRangeFlags" (1 bit per enumeration)
+            .push_flags(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_min(val) // u32
+
+            // Associated type: "Registers" (enum)
+            .push_reg_proto_max(val) // u32
           .end_nested()
         .end_nested()
       .end_nested()

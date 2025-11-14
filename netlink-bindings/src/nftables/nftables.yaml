@@ -146,7 +146,7 @@ definitions:
       - concat
       - expr
   -
-    # Defined in include/uapi/linux/netfilter/nf_tables.h as nft_set_elem_flags 
+    # Defined in include/uapi/linux/netfilter/nf_tables.h as nft_set_elem_flags
     name: set-elem-flags
     type: flags
     entries:
@@ -1193,6 +1193,26 @@ attribute-sets:
         byte-order: big-endian
         enum: lookup-flags
   -
+    # Defined as nft_masq_attributes in include/uapi/linux/netfilter/nf_tables.h
+    name: expr-masq-attrs
+    attributes:
+      -
+        name: flags
+        type: u32
+        byte-order: big-endian
+        enum: nat-range-flags
+        enum-as-flags: true
+      -
+        name: reg-proto-min
+        type: u32
+        byte-order: big-endian
+        enum: registers
+      -
+        name: reg-proto-max
+        type: u32
+        byte-order: big-endian
+        enum: registers
+  -
     name: expr-meta-attrs
     attributes:
       -
@@ -1470,6 +1490,9 @@ sub-messages:
       -
         value: log
         attribute-set: log-attrs
+      -
+        value: masq
+        attribute-set: expr-masq-attrs
         # There're more sub-messages to go:
         #   grep -A10 nft_expr_type
         # and look for .name\s*=\s*"..."
