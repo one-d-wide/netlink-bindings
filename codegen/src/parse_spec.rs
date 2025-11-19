@@ -575,17 +575,24 @@ impl Spec {
         // Substitute undefined attributes of attrsets with "subset-of"
         let mut attr_sets = self.attribute_sets.clone();
         for attrs in &mut attr_sets {
-            if let Some(superset) = &attrs.subset_of {
-                let superset = self.find_attr(superset);
-                for attr in &mut attrs.attributes {
-                    if let AttrType::Undefined = attr.r#type {
-                        *attr = superset
-                            .attributes
-                            .iter()
-                            .find(|a| a.name == attr.name)
-                            .unwrap()
-                            .clone();
-                    }
+            let Some(superset) = &attrs.subset_of else {
+                continue;
+            };
+
+            let subset = attrs.clone();
+            *attrs = self.find_attr(superset).clone();
+            attrs.name = subset.name.clone();
+            assert!(attrs.subset_of.is_none());
+
+            for attr in &subset.attributes {
+                if !matches!(attr.r#type, AttrType::Undefined) {
+                    panic!("Attrset {:?} is declared as subset, but has attr {:?} with a type. Likely an error", subset.name, attr.name);
+                }
+            }
+
+            for attr in &mut attrs.attributes {
+                if !subset.attributes.iter().any(|a| a.name == attr.name) {
+                    attr.r#type = AttrType::Unused;
                 }
             }
         }
