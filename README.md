@@ -292,7 +292,6 @@ pattern-like interface for encoding, and an iterator interface for decoding
 
 - ✅ - supported, has tests.
 - ✔️ - compiles, testing needed.
-- • - compiles.
 - ? - not attempted.
 - ❌ - doesn't compile (needs adaptations in codegen).
 
@@ -309,7 +308,7 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | [rt-rule](./netlink-bindings/src/rt-rule/rt-rule.md) | ✔️ | |
 | [tc](./netlink-bindings/src/tc/tc.md) | ✔️ | |
 | devlink | • | |
-| ethtool | • | |
+| ethtool | ? | |
 | dpll | ? | |
 | fou | ? | |
 | handshake | ? | |
@@ -358,7 +357,7 @@ Dumping all "netlink-bindings/src/wireguard/wireguard-all.md"
 ```
 
 Generate protocol bindings for a new family, copying yaml specification from
-somewhere else. 
+somewhere else.
 
 ```sh
 $ cargo run --bin codegen -- -d ./netlink-bindings/src/ linux/Documentation/netlink/specs/wireguard.yaml
@@ -366,6 +365,27 @@ Writing "netlink-bindings/src/wireguard/mod.rs"
 Dumping "netlink-bindings/src/wireguard/wireguard.md"
 Dumping all "netlink-bindings/src/wireguard/wireguard-all.md"
 ```
+
+## Codegen specific options
+
+Yaml attributes specific to our codegen that may be helpful when dealing with
+incomplete netlink specifications:
+
+- `operations.fallback-attrs: <attrset>` - create a placeholder request type
+with an operation type provided at runtime. Also, the provided attribute set is
+used as a fallback in reverse lookup if operation type wasn't recognized.
+- `operations.transparent: true` or `operations.[].transparent: true` - make
+request types use common encoding/decoding types, instead of generating new
+ones that are narrowed down. Reduces generated code size.
+- `operations.[].request_type_at_runtime: true` - allow operation type to be
+provided at runtime.
+- `operations.all-attrs: true` or `operations.[].all-attrs: true` - don't
+narrow down attributes in generated request types.
+
+Feature flags:
+
+- `--features=netlink-bindings/deny-unknown-attrs` - treat unknown attributes
+as errors.
 
 ## To-do
 
@@ -386,6 +406,6 @@ correctly. See wireguard [tests](./netlink-bindings/src/wireguard/tests.rs) as
 an example. Additional [examples](./netlink-socket/examples) are also very
 welcome.
 - Implement yet unsupported netlink functionality.
-- Improve compilation time, reduce the size of generated bindings. 
+- Improve compilation time, reduce the size of generated bindings.
 - Experiment with a better Rust interface (for encoding/decoding and the sockets).
 - Sponsor the project (contact the author for options).
