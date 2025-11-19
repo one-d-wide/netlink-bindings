@@ -1,7 +1,7 @@
 [package]
 name = "netlink-bindings"
 description = "Type-safe Rust bindings for Netlink generated from YAML specifications"
-version = "0.2.2"
+version = "0.2.3"
 authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
 categories = [ "network-programming", "os", "api-bindings" ]
 repository = "https://github.com/one-d-wide/netlink-bindings"
