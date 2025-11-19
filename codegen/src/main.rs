@@ -120,8 +120,8 @@ fn main() {
         }
 
         args.output = Some(dir.join("mod.rs"));
-        args.dump = Some(dir.join(format!("{prot}.md")));
-        args.dump_all = Some(dir.join(format!("{prot}-all.md")));
+        // args.dump = Some(dir.join(format!("{prot}.md")));
+        // args.dump_all = Some(dir.join(format!("{prot}-all.md")));
         let new_spec = dir.join(format!("{prot}.yaml"));
         if let Some(spec) = &args.spec {
             std::fs::create_dir_all(&dir).unwrap();

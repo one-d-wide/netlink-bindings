@@ -186,7 +186,7 @@ pub fn gen_sub_attr(
                     let (header, attrs) = #buf_name.split_at(#buf_name.len().min(#h::len()));
                     Some(#type_name::#select_ident(
                         #h::new_from_slice(header)?,
-                        #iter::with_loc(attrs),
+                        #iter::with_loc(attrs, #loc_name),
                     ))
                 },
             });

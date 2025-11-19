@@ -28,7 +28,6 @@ pub fn gen_iterable_attrs(
     m: &mut GenImplStruct,
     set: &AttrSet,
     fixed_header: Option<&OpHeader>,
-    superset: Option<&AttrSet>,
 ) {
     let mut variants = TokenStream::new();
 
@@ -100,50 +99,14 @@ pub fn gen_iterable_attrs(
         }
     }
 
-    let (impl_lifetime, iterable_lifetime, lifetime) = if lifetime_needed_attrs(set) {
-        let l = quote!('a);
-        (quote!(<#l>), l.clone(), quote!(<#l>))
-    } else {
-        (quote!(), quote!('_), quote!())
-    };
-
-    let iter = iterable_name(&set.name);
-    let new_impl = if let Some(fixed_header) = fixed_header {
-        let header = writable_type(&fixed_header.name);
-        // TODO: verify fixed header length and contents
-        if fixed_header.construct_header.is_some() {
-            quote! {
-                pub fn new(buf: &#iterable_lifetime [u8]) -> #iter <#iterable_lifetime> {
-                    let (_header, attrs) = buf.split_at(buf.len().min(#header::len()));
-                    #iter::with_loc(attrs, buf.as_ptr() as usize)
-                }
-            }
-        } else {
-            quote! {
-                pub fn new(buf: &#iterable_lifetime [u8]) -> (#header, #iter <#iterable_lifetime>) {
-                    let (header, attrs) = buf.split_at(buf.len().min(#header::len()));
-                    (
-                        #header::new_from_slice(header).unwrap_or_default(),
-                        #iter::with_loc(attrs, buf.as_ptr() as usize),
-                    )
-                }
-            }
-        }
-    } else {
-        quote! {
-            pub fn new(buf: &#iterable_lifetime [u8]) -> #iter <#iterable_lifetime> {
-                #iter::with_loc(buf, buf.as_ptr() as usize)
-            }
-        }
-    };
-
     let attr_from_type = if type_to_str.is_empty() {
         quote! {
             fn attr_from_type(r#type: u16) -> Option<&'static str> {
                 None
             }
         }
-    } else if let Some(superset) = superset {
+    } else if let Some(superset) = &set.subset_of {
+        let superset = spec.find_attr(superset);
         let rust_type = format_ident!("{}", kebab_to_type(&superset.name));
         quote! {
             fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -162,8 +125,20 @@ pub fn gen_iterable_attrs(
         }
     };
 
+    let mut lifetime = quote!();
+    if lifetime_needed_attrs(set) {
+        lifetime = quote!(<'a>)
+    };
+
+    let new_impl = gen_decoder_new_impl(set, fixed_header).full;
+
+    let mut impl_lifetime = quote!();
+    if lifetime_needed_attrs(set) {
+        impl_lifetime = quote!(<'_>)
+    };
+
     tokens.extend(quote! {
-        impl #impl_lifetime #type_name #lifetime {
+        impl #type_name #impl_lifetime {
             #new_impl
             #attr_from_type
         }
@@ -409,4 +384,53 @@ pub fn gen_iterable_array(
             }
         }
     });
+}
+
+pub struct DecoderNewImpl {
+    pub return_type: TokenStream,
+    pub body: TokenStream,
+    pub full: TokenStream,
+}
+
+pub fn gen_decoder_new_impl(set: &AttrSet, fixed_header: Option<&OpHeader>) -> DecoderNewImpl {
+    let return_type;
+    let body;
+    let iter = iterable_name(&set.name);
+    if let Some(fixed_header) = fixed_header {
+        let header = writable_type(&fixed_header.name);
+        // TODO: verify fixed header length and contents
+        if fixed_header.construct_header.is_some() {
+            return_type = quote!(#iter<'a>);
+            body = quote! {
+                let (_header, attrs) = buf.split_at(buf.len().min(#header::len()));
+                #iter::with_loc(attrs, buf.as_ptr() as usize)
+            };
+        } else {
+            return_type = quote!((#header, #iter<'a>));
+            body = quote! {
+                let (header, attrs) = buf.split_at(buf.len().min(#header::len()));
+                (
+                    #header::new_from_slice(header).unwrap_or_default(),
+                    #iter::with_loc(attrs, buf.as_ptr() as usize),
+                )
+            };
+        }
+    } else {
+        return_type = quote!(#iter<'a>);
+        body = quote! {
+            #iter::with_loc(buf, buf.as_ptr() as usize)
+        };
+    }
+
+    let full = quote! {
+        pub fn new<'a>(buf: &'a [u8]) -> #return_type {
+            #body
+        }
+    };
+
+    DecoderNewImpl {
+        return_type,
+        body,
+        full,
+    }
 }

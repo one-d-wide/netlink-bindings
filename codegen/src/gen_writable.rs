@@ -38,7 +38,7 @@ pub fn gen_writable(spec: &Spec, ctx: &mut Context) -> TokenStream {
     let mut tokens = TokenStream::new();
 
     for set in &spec.attribute_sets {
-        gen_writable_attrset(&mut tokens, ctx, spec, set, None);
+        gen_writable_attrset(&mut tokens, ctx, spec, set, None, false);
     }
 
     for def in &spec.definitions {
@@ -57,6 +57,7 @@ pub fn gen_writable_attrset(
     spec: &Spec,
     set: &AttrSet,
     fixed_header: Option<&OpHeader>,
+    needs_value: bool,
 ) {
     let type_name = writable_type(&set.name);
 
@@ -77,20 +78,29 @@ pub fn gen_writable_attrset(
         }
     });
 
+    let mut new_args = quote!();
+    let mut header_args = quote!();
+    let mut request_type_ident = None;
+    if needs_value && spec.is_genetlink() {
+        new_args = quote!(, request_type: u8);
+        header_args = quote!(, request_type);
+        request_type_ident = Some(format_ident!("request_type").into_token_stream());
+    }
+
     let new_impl = if let Some(fixed_header) = fixed_header {
         let header = writable_type(&fixed_header.name);
         let header_var = format_ident!("header");
         if let Some(fill) = &fixed_header.construct_header {
-            let fill = fill(&header_var);
+            let fill = fill(&header_var, request_type_ident.as_ref());
             quote! {
-                pub fn new(mut prev: Prev) -> Self {
-                    Self::write_header(&mut prev);
+                pub fn new(mut prev: Prev #new_args) -> Self {
+                    Self::write_header(&mut prev #header_args);
                     Self::new_without_header(prev)
                 }
                 fn new_without_header(prev: Prev) -> Self {
                     Self { prev: Some(prev), header_offset: None }
                 }
-                fn write_header(prev: &mut Prev) {
+                fn write_header(prev: &mut Prev #new_args) {
                     let mut #header_var = #header::new();
                     #fill
                     prev.as_rec_mut().extend(#header_var.as_slice());

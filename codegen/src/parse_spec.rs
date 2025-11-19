@@ -3,7 +3,7 @@
 use serde::Deserialize;
 use serde_aux::field_attributes::deserialize_default_from_empty_object;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
 pub enum ByteOrder {
@@ -17,6 +17,12 @@ pub enum ByteOrder {
 
 impl ByteOrder {
     pub fn host() -> Self {
+        Self::Host
+    }
+}
+
+impl Default for ByteOrder {
+    fn default() -> Self {
         Self::Host
     }
 }
@@ -78,7 +84,7 @@ pub enum DefType {
     },
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, PartialEq)]
 #[serde(tag = "type")]
 #[serde(rename_all = "kebab-case")]
 pub enum AttrType {
@@ -163,7 +169,7 @@ impl Default for AttrType {
 }
 
 /// Same as [`AttrType`], but can be used inside [`AttrType::IndexedArray`]
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, PartialEq)]
 #[serde(tag = "sub-type")]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
@@ -183,7 +189,7 @@ pub enum IndexedArrayType {
     },
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default, PartialEq)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
 #[allow(unused)]
@@ -196,7 +202,7 @@ pub struct AttrCheck {
     pub flags_mask: Option<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default, PartialEq)]
 #[serde(rename_all = "kebab-case")]
 pub struct AttrProp {
     /// Identifies the attribute, unique within the set.
@@ -328,11 +334,11 @@ pub struct Request {
     /// Numerical message ID, used in serialized Netlink messages. The same
     /// enumeration rules are applied as to attribute values.
     pub value: Option<String>,
-    #[serde(default = "Default::default")]
+    #[serde(default)]
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
 pub struct Operation {
@@ -364,7 +370,7 @@ pub struct NotifyEvent {
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
 pub struct OperationSpec {
@@ -392,6 +398,13 @@ pub struct OperationSpec {
     pub r#dump: Option<Operation>,
     pub doc: Option<String>,
 
+    /// Make operation reuse common encoding/decoding types
+    #[serde(default)]
+    pub transparent: bool,
+    /// Allow request type to be provided at runtime
+    #[serde(default)]
+    pub request_type_at_runtime: bool,
+
     /// Name of the command sharing the reply type with this notification.
     #[allow(unused)]
     pub notify: Option<String>,
@@ -400,13 +413,17 @@ pub struct OperationSpec {
     pub event: Option<NotifyEvent>,
     /// Name of the multicast group generating given notification.
     #[allow(unused)]
-    mcgrp: Option<String>,
+    pub mcgrp: Option<String>,
 
     #[allow(unused)]
     pub flags: Option<Vec<String>>,
     /// Kernel attribute validation flags.
     #[allow(unused)]
     pub dont_validate: Option<Vec<KernelValidationFlag>>,
+    /// Name of the kernel config option gating the presence of the operation,
+    /// without the 'CONFIG_' prefix.
+    #[allow(unused)]
+    pub config_cond: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -429,7 +446,13 @@ pub struct Operations {
     /// operations, notifications etc.
     pub list: Vec<OperationSpec>,
     pub fixed_header: Option<String>,
-    /// Assume operation uses all known attributes (debug only)
+
+    /// Fallback to this attribute set in reverse-lookup
+    pub fallback_attrs: Option<String>,
+    /// Make operation reuse common encoding/decoding types
+    #[serde(default)]
+    pub transparent: bool,
+    /// Don't narrow down operation type attributes
     #[serde(default)]
     pub all_attrs: bool,
 }
@@ -490,11 +513,22 @@ pub struct SubMessage {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub struct KernelFamily {
+    // We don't use this
+}
+
+fn default_protocol() -> Option<String> {
+    Some("genetlink".to_string())
+}
+
+#[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
 pub struct Spec {
     #[allow(unused)]
     pub name: String,
+    #[serde(default = "default_protocol")]
     pub protocol: Option<String>,
     #[allow(unused)]
     pub protonum: Option<u16>,
@@ -505,10 +539,14 @@ pub struct Spec {
     /// Name of the define for the family name.
     #[allow(unused)]
     pub c_family_name: Option<String>,
+    /// Additional global attributes used for kernel C code generation.
+    #[allow(unused)]
+    pub kernel_family: Option<KernelFamily>,
     /// Name of the define for the version of the family.
     #[allow(unused)]
     pub c_version_name: Option<String>,
-    /// Makes the number of attributes and commands be specified by a define, not an enum value.
+    /// Makes the number of attributes and commands be specified by a define,
+    /// not an enum value.
     #[allow(unused)]
     pub max_by_define: Option<bool>,
 
@@ -539,6 +577,12 @@ impl Spec {
         spec.check();
         spec.fixup();
         spec
+    }
+
+    pub fn is_genetlink(&self) -> bool {
+        self.protocol
+            .as_ref()
+            .is_some_and(|p| p.starts_with("genetlink"))
     }
 
     fn check(&self) {
@@ -579,15 +623,40 @@ impl Spec {
                 continue;
             };
 
+            let superset = self.find_attr(superset);
             let subset = attrs.clone();
-            *attrs = self.find_attr(superset).clone();
-            attrs.name = subset.name.clone();
-            assert!(attrs.subset_of.is_none());
+
+            attrs.attributes = superset.attributes.clone();
 
             for attr in &subset.attributes {
-                if !matches!(attr.r#type, AttrType::Undefined) {
-                    panic!("Attrset {:?} is declared as subset, but has attr {:?} with a type. Likely an error", subset.name, attr.name);
+                let new_attr = attrs
+                    .attributes
+                    .iter_mut()
+                    .find(|a| a.name == attr.name)
+                    .unwrap();
+
+                macro_rules! update_non_default {
+                    (from: $right:ident, to: $left:ident, fields: [$( $attr:ident $(,)? )*]) => {
+                        $(
+                        if &$right.$attr != &Default::default() {
+                            $left.$attr = $right.$attr.clone();
+                        }
+                        )*
+
+                        let stub = AttrProp {
+                            name: $right.name.clone(),
+                            $(
+                            $attr: $right.$attr.clone(),
+                            )*
+                            ..Default::default()
+                        };
+                        assert_eq!(attr, &stub, "Attset {:?} is declared as subset, but has attribute {:?} with non-default parameter not marked for updating", subset.name, attr.name);
+                    }
                 }
+
+                update_non_default!(from: attr, to: new_attr, fields: [
+                    r#type, multi_attr, display_hint,
+                ]);
             }
 
             for attr in &mut attrs.attributes {
@@ -633,12 +702,15 @@ impl Spec {
         // Move copy fixed-header definitions to each operation
         if let Some(fixed_header) = &self.operations.fixed_header.clone() {
             for ops in &mut self.operations.list {
-                if let Some(other) = &ops.fixed_header {
-                    if fixed_header == other {
-                        continue;
-                    }
-                    panic!("Operation {:?} already defines fixed header", ops.name);
+                if ops.fixed_header.is_some() {
+                    continue;
                 }
+                // if let Some(other) = &ops.fixed_header {
+                //     if fixed_header == other {
+                //         continue;
+                //     }
+                //     panic!("Operation {:?} already defines fixed header", ops.name);
+                // }
                 ops.fixed_header = Some(fixed_header.clone());
             }
         }
@@ -664,6 +736,50 @@ impl Spec {
                     }
                 }
             }
+        }
+
+        // Assign operation type values, if needed
+        let mut assign_values = !self.operations.list.is_empty();
+        for ops in &self.operations.list {
+            let req_has_val = |r: &Request| r.value.is_some();
+            let op_has_val = |op: Option<&Operation>| {
+                op.is_some_and(|op| req_has_val(&op.request) || req_has_val(&op.reply))
+            };
+
+            if ops.value.is_some() || op_has_val(ops.r#do.as_ref()) || op_has_val(ops.dump.as_ref())
+            {
+                assign_values = false;
+                break;
+            }
+        }
+        if assign_values {
+            let mut val = 1;
+            for ops in &mut self.operations.list {
+                ops.value = Some(format!("{val}"));
+                val += 1;
+            }
+        }
+
+        // Substitute placeholder operations
+        for ops in &mut self.operations.list {
+            if !ops.request_type_at_runtime {
+                continue;
+            }
+            if ops.r#do.is_some() || ops.dump.is_some() {
+                continue;
+            }
+            let req = Request {
+                value: Some("0xfefe".into()),
+                ..Default::default()
+            };
+            let op = Operation {
+                request: req.clone(),
+                reply: req.clone(),
+                ..Default::default()
+            };
+            ops.transparent = true;
+            ops.r#do = Some(op.clone());
+            ops.dump = Some(op.clone());
         }
     }
 

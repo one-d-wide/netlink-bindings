@@ -23,7 +23,7 @@ pub fn gen_attrsets(spec: &Spec, ctx: &mut Context) -> TokenStream {
     let mut tokens = proc_macro2::TokenStream::new();
 
     for set in &spec.attribute_sets {
-        gen_attrset(&mut tokens, spec, ctx, set, None, None);
+        gen_attrset(&mut tokens, spec, ctx, set, None);
     }
 
     tokens
@@ -35,7 +35,6 @@ pub fn gen_attrset(
     ctx: &mut Context,
     set: &AttrSet,
     fixed_header: Option<&OpHeader>,
-    superset: Option<&AttrSet>,
 ) {
     let type_name = format_ident!("{}", kebab_to_type(&set.name));
 
@@ -79,7 +78,7 @@ pub fn gen_attrset(
         }
     });
 
-    gen_iterable_attrs(tokens, spec, ctx, &mut m, set, fixed_header, superset);
+    gen_iterable_attrs(tokens, spec, ctx, &mut m, set, fixed_header);
     gen_introspect_attrs(tokens, spec, ctx, &m, set);
     crate::gen_lookup::gen_lookup(tokens, spec, ctx, &m, set, fixed_header);
 }

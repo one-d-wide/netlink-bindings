@@ -71,18 +71,28 @@ pub fn gen_introspect_attrs(
 
                 let as_flags = next.enum_as_flags.is_some_and(|val| val);
                 let def_flags = matches!(enum_def.def, DefType::Flags { .. });
-                let (formatter, from_val) = if def_flags {
-                    (quote!(FormatFlags), quote!(#enum_type::from_value))
+                let (formatter, from_val);
+                if def_flags {
+                    formatter = quote!(FormatFlags);
+                    from_val = quote!(#enum_type::from_value);
                 } else if as_flags {
-                    (quote!(FormatFlags), quote!(|val| #enum_type::from_value(val.trailing_zeros())))
+                    formatter = quote!(FormatFlags);
+                    from_val = quote!(|val| #enum_type::from_value(val.trailing_zeros().into()));
                 } else {
-                    (quote!(FormatEnum), quote!(#enum_type::from_value))
-                };
+                    formatter = quote!(FormatEnum);
+                    from_val = quote!(#enum_type::from_value);
+                }
 
-                let debug = if matches!(next.r#type, AttrType::IndexedArray { .. }) {
-                    quote! { &MapFormatArray(#val_name, |v| #formatter(v.into(), #from_val)) }
-                } else {
-                    quote! { &#formatter(#val_name.into(), #from_val) }
+                let debug = match &next.r#type {
+                    AttrType::IndexedArray { .. } => {
+                        quote! { &MapFormatArray(#val_name, |v| #formatter(v.into(), #from_val)) }
+                    },
+                    AttrType::Binary { r#struct: Some(s), .. }
+                        if s == "builtin-bitfield32" =>
+                    {
+                        quote! { &#formatter(#val_name.value().into(), #from_val) }
+                    },
+                    _ => quote! { &#formatter(#val_name.into(), #from_val) },
                 };
 
                 variants.extend(quote! {

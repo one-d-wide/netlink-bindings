@@ -1,8 +1,8 @@
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
 
 use crate::{
-    gen_iterable::iterable_name,
+    gen_iterable::{gen_decoder_new_impl, iterable_name, DecoderNewImpl},
     gen_ops::OpHeader,
     gen_utils::{kebab_to_rust, kebab_to_type},
     gen_writable::writable_type,
@@ -10,13 +10,14 @@ use crate::{
     Context,
 };
 
-pub fn gen_request(
-    tokens: &mut TokenStream,
-    _ctx: &mut Context,
-    spec: &Spec,
-    requests: &[(String, Option<OpHeader>)],
-) {
-    if spec.operations.list.is_empty() {
+pub struct OpInfo {
+    pub name: String,
+    pub header: Option<OpHeader>,
+    pub needs_value: bool,
+}
+
+pub fn gen_request(tokens: &mut TokenStream, _ctx: &mut Context, spec: &Spec, requests: &[OpInfo]) {
+    if spec.operations.list.is_empty() && spec.operations.fallback_attrs.is_none() {
         return;
     }
 
@@ -26,28 +27,41 @@ pub fn gen_request(
 
     let name = format_ident!("Request");
     let mut op_funcs = TokenStream::new();
-    for (op_name, header) in requests {
-        let req = format_ident!("Request{}", kebab_to_type(op_name));
-        let op = format_ident!("{}", kebab_to_rust(op_name));
+    for OpInfo {
+        name,
+        header,
+        needs_value,
+    } in requests
+    {
+        let req = format_ident!("Request{}", kebab_to_type(name));
+        let op = format_ident!("{}", kebab_to_rust(name));
+
+        let mut op_args = quote!();
+        let mut new_args = quote!();
+
+        if *needs_value {
+            let request_value_type = if spec.is_genetlink() {
+                quote!(u8)
+            } else {
+                quote!(u16)
+            };
+            op_args = quote!(, request_type: #request_value_type);
+            new_args = quote!(, request_type);
+        }
 
         if let Some(header) = header.as_ref().filter(|h| h.construct_header.is_none()) {
             let header = writable_type(&header.name);
-            op_funcs.extend(quote! {
-                pub fn #op(self, header: &#header) -> #req<'buf> {
-                    let mut res = #req::new(self, header);
-                    res.request.do_writeback(res.protocol(), #op_name, #req::lookup);
-                    res
-                }
-            });
-        } else {
-            op_funcs.extend(quote! {
-                pub fn #op(self) -> #req<'buf> {
-                    let mut res = #req::new(self);
-                    res.request.do_writeback(res.protocol(), #op_name, #req::lookup);
-                    res
-                }
-            });
+            op_args = quote!(#op_args, header: &#header);
+            new_args = quote!(#new_args, header);
         };
+
+        op_funcs.extend(quote! {
+            pub fn #op(self #op_args) -> #req<'buf> {
+                let mut res = #req::new(self #new_args);
+                res.request.do_writeback(res.protocol(), #name, #req::lookup);
+                res
+            }
+        });
     }
 
     tokens.extend(quote! {
@@ -176,68 +190,136 @@ pub fn gen_request_wrapper(
     reply_name: &str,
     request_header: Option<&OpHeader>,
     reply_header: Option<&OpHeader>,
+    needs_value: bool,
+    transparent_attrs: Option<&str>,
 ) {
-    if spec.operations.list.is_empty() {
+    if spec.operations.list.is_empty() && spec.operations.fallback_attrs.is_none() {
         return;
     }
 
-    let encoder = writable_type(request_name);
-    let request_decoder = format_ident!("{}", kebab_to_type(request_name));
-    let decoder = format_ident!("{}", kebab_to_type(reply_name));
     let name = format_ident!("Request{}", kebab_to_type(request_name));
-
-    let (new_encoder, write_header) = if request_header.is_some() {
-        (
-            quote!(new_without_header),
-            quote!(#encoder::write_header(&mut request.buf_mut());),
-        )
+    let (decoder, decoder_new);
+    let (request_name, reply_name) = if let Some(attrs) = transparent_attrs {
+        decoder = quote!(Self);
+        decoder_new = quote!(decode);
+        (attrs, attrs)
     } else {
-        (quote!(new), quote!())
+        decoder = format_ident!("{}", kebab_to_type(reply_name)).into_token_stream();
+        decoder_new = quote!(new);
+        (request_name, reply_name)
     };
-
-    let request = if is_dump {
-        quote!(request.set_dump())
-    } else {
-        quote!(request)
-    };
-
+    let encoder = writable_type(request_name);
     let decoder_iter = iterable_name(reply_name);
-    let (reply_type, map_decoder, new) = if let Some(fixed_header) = reply_header {
+    let request_decoder = format_ident!("{}", kebab_to_type(request_name));
+
+    let mut new_args = quote!();
+    let mut header_args = quote!();
+    let mut store_request_type = quote!();
+    let mut request_type_field = quote!();
+    let mut request_value = quote!(#request_value);
+    if needs_value {
+        let request_value_type = if spec.is_genetlink() {
+            quote!(u8)
+        } else {
+            quote!(u16)
+        };
+        new_args = quote!(#new_args, request_type: #request_value_type);
+        header_args = quote!(#header_args, request_type);
+
+        if !spec.is_genetlink() {
+            request_type_field = quote!(request_type: #request_value_type,);
+            store_request_type = quote!(, request_type);
+            request_value = quote!(self.request_type);
+        }
+    }
+
+    let mut encoder_new = quote!(new);
+    if request_header.is_some() {
+        encoder_new = quote!(new_without_header);
+    };
+
+    let mut header_encoder = quote!(#encoder);
+    let mut request = quote!(request);
+    if is_dump {
+        request = quote!(request.set_dump());
+    };
+
+    let mut write_header_impl = quote!();
+    let mut decode_impl = quote!();
+    let mut decode_reply = quote!(#decoder::#decoder_new);
+    let mut decode_request = quote!(#request_decoder::#decoder_new);
+
+    if transparent_attrs.is_some() {
+        header_encoder = quote!(Self);
+        encoder_new = quote!(new);
+        if let Some(fixed_header) = request_header {
+            let request_type_ident = format_ident!("request_type").to_token_stream();
+            let header = writable_type(&fixed_header.name);
+            let header_var = format_ident!("header");
+            if let Some(fill) = &fixed_header.construct_header {
+                let fill = fill(&header_var, needs_value.then_some(&request_type_ident));
+                write_header_impl = quote! {
+                    fn write_header<Prev: Rec>(prev: &mut Prev #new_args) {
+                        let mut #header_var = #header::new();
+                        #fill
+                        prev.as_rec_mut().extend(#header_var.as_slice());
+                    }
+                };
+            } else {
+                write_header_impl = quote! {
+                    fn write_header<Prev: Rec>(prev: &mut Prev, #header_var: &#header) {
+                        prev.as_rec_mut().extend(#header_var.as_slice());
+                    }
+                };
+            }
+        };
+
+        let attrs = transparent_attrs.unwrap();
+        let attrs = spec.find_attr(attrs);
+        let DecoderNewImpl {
+            return_type, body, ..
+        } = gen_decoder_new_impl(attrs, reply_header);
+
+        decode_impl = quote! {
+            fn decode<'a>(buf: &'a [u8]) -> #return_type {
+                #body
+            }
+        };
+
+        decode_reply = quote!(Self::decode);
+        decode_request = quote!(Self::decode);
+    }
+
+    let (reply_type, map_decoder, new);
+    if let Some(fixed_header) = request_header {
         let header = writable_type(&fixed_header.name);
         if fixed_header.construct_header.is_some() {
-            (
-                quote!(#decoder_iter<'buf>),
-                quote!(),
-                quote! {
-                    pub fn new(mut request: Request<'r>) -> Self {
-                        #encoder::write_header(&mut request.buf_mut());
-                        Self { request: #request }
-                    }
-                },
-            )
+            reply_type = quote!(#decoder_iter<'buf>);
+            map_decoder = quote!();
+            new = quote! {
+                pub fn new(mut request: Request<'r> #new_args) -> Self {
+                    #header_encoder::write_header(&mut request.buf_mut() #header_args);
+                    Self { request: #request #store_request_type }
+                }
+            };
         } else {
-            (
-                quote!((#header, #decoder_iter<'buf>)),
-                quote!(.1),
-                quote! {
-                    pub fn new(mut request: Request<'r>, header: &#header) -> Self {
-                        #encoder::write_header(&mut request.buf_mut(), header);
-                        Self { request: #request }
-                    }
-                },
-            )
+            reply_type = quote!((#header, #decoder_iter<'buf>));
+            map_decoder = quote!(.1);
+            new = quote! {
+                pub fn new(mut request: Request<'r> #new_args, header: &#header) -> Self {
+                    #header_encoder::write_header(&mut request.buf_mut(), header);
+                    Self { request: #request #store_request_type }
+                }
+            };
         }
     } else {
-        (
-            quote!(#decoder_iter<'buf>),
-            quote!(),
-            quote! {
-                pub fn new(mut request: Request<'r>) -> Self {
-                    #write_header
-                    Self { request: #request }
-                }
-            },
-        )
+        reply_type = quote!(#decoder_iter<'buf>);
+        map_decoder = quote!();
+        new = quote! {
+            pub fn new(request: Request<'r> #new_args) -> Self {
+                Self { request: #request #store_request_type }
+            }
+        };
     };
 
     let proto = if let Some(protonum) = spec.protonum {
@@ -259,16 +341,19 @@ pub fn gen_request_wrapper(
         #[derive(Debug)]
         pub struct #name<'r> {
             request: Request<'r>,
+            #request_type_field
         }
 
         impl<'r> #name<'r> {
             #new
             pub fn encode(&mut self) -> #encoder<&mut Vec<u8>> {
-                #encoder::#new_encoder(self.request.buf_mut())
+                #encoder::#encoder_new(self.request.buf_mut())
             }
             pub fn into_encoder(self) -> #encoder<RequestBuf<'r>> {
-                #encoder::#new_encoder(self.request.buf)
+                #encoder::#encoder_new(self.request.buf)
             }
+            #write_header_impl
+            #decode_impl
         }
 
         impl NetlinkRequest for #name<'_> {
@@ -285,7 +370,7 @@ pub fn gen_request_wrapper(
             }
 
             fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
-                #decoder::new(buf)
+                #decode_reply(buf)
             }
 
             fn lookup(
@@ -293,7 +378,7 @@ pub fn gen_request_wrapper(
                 offset: usize,
                 missing_type: Option<u16>,
             ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-                #request_decoder::new(buf)#map_decoder.lookup_attr(offset, missing_type)
+                #decode_request(buf)#map_decoder.lookup_attr(offset, missing_type)
             }
         }
     });
