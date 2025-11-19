@@ -240,8 +240,8 @@ impl<'a> IterableCounterAttrs<'a> {
         ))
     }
 }
-impl<'a> CounterAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableCounterAttrs<'a> {
+impl CounterAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableCounterAttrs<'a> {
         IterableCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -575,7 +575,7 @@ impl<'a> IterableTupleProtoAttrs<'a> {
     }
 }
 impl TupleProtoAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableTupleProtoAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableTupleProtoAttrs<'a> {
         IterableTupleProtoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -879,7 +879,7 @@ impl<'a> IterableTupleIpAttrs<'a> {
     }
 }
 impl TupleIpAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableTupleIpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableTupleIpAttrs<'a> {
         IterableTupleIpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1099,8 +1099,8 @@ impl<'a> IterableTupleAttrs<'a> {
         ))
     }
 }
-impl<'a> TupleAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableTupleAttrs<'a> {
+impl TupleAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableTupleAttrs<'a> {
         IterableTupleAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1341,7 +1341,7 @@ impl<'a> IterableProtoinfoTcpAttrs<'a> {
     }
 }
 impl ProtoinfoTcpAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableProtoinfoTcpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableProtoinfoTcpAttrs<'a> {
         IterableProtoinfoTcpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1589,8 +1589,8 @@ impl<'a> IterableProtoinfoDccpAttrs<'a> {
         ))
     }
 }
-impl<'a> ProtoinfoDccpAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableProtoinfoDccpAttrs<'a> {
+impl ProtoinfoDccpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableProtoinfoDccpAttrs<'a> {
         IterableProtoinfoDccpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1807,7 +1807,7 @@ impl<'a> IterableProtoinfoSctpAttrs<'a> {
     }
 }
 impl ProtoinfoSctpAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableProtoinfoSctpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableProtoinfoSctpAttrs<'a> {
         IterableProtoinfoSctpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2017,8 +2017,8 @@ impl<'a> IterableProtoinfoAttrs<'a> {
         ))
     }
 }
-impl<'a> ProtoinfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableProtoinfoAttrs<'a> {
+impl ProtoinfoAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableProtoinfoAttrs<'a> {
         IterableProtoinfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2190,8 +2190,8 @@ impl<'a> IterableHelpAttrs<'a> {
         ))
     }
 }
-impl<'a> HelpAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableHelpAttrs<'a> {
+impl HelpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableHelpAttrs<'a> {
         IterableHelpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2351,7 +2351,7 @@ impl<'a> IterableNatProtoAttrs<'a> {
     }
 }
 impl NatProtoAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableNatProtoAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNatProtoAttrs<'a> {
         IterableNatProtoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2571,8 +2571,8 @@ impl<'a> IterableNatAttrs<'a> {
         ))
     }
 }
-impl<'a> NatAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableNatAttrs<'a> {
+impl NatAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNatAttrs<'a> {
         IterableNatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2801,7 +2801,7 @@ impl<'a> IterableSeqadjAttrs<'a> {
     }
 }
 impl SeqadjAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableSeqadjAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSeqadjAttrs<'a> {
         IterableSeqadjAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2970,8 +2970,8 @@ impl<'a> IterableSecctxAttrs<'a> {
         ))
     }
 }
-impl<'a> SecctxAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSecctxAttrs<'a> {
+impl SecctxAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSecctxAttrs<'a> {
         IterableSecctxAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3147,7 +3147,7 @@ impl<'a> IterableSynproxyAttrs<'a> {
     }
 }
 impl SynproxyAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableSynproxyAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSynproxyAttrs<'a> {
         IterableSynproxyAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3744,8 +3744,8 @@ impl<'a> IterableConntrackAttrs<'a> {
         ))
     }
 }
-impl<'a> ConntrackAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableConntrackAttrs<'a> {
+impl ConntrackAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableConntrackAttrs<'a> {
         IterableConntrackAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -4469,7 +4469,7 @@ impl<'a> IterableConntrackStatsAttrs<'a> {
     }
 }
 impl ConntrackStatsAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableConntrackStatsAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableConntrackStatsAttrs<'a> {
         IterableConntrackStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -6118,8 +6118,8 @@ impl<'a> IterableOpGetDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDumpRequest<'a>) {
+impl OpGetDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -6785,8 +6785,8 @@ impl<'a> IterableOpGetDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDumpReply<'a>) {
+impl OpGetDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -7307,8 +7307,8 @@ impl<'a> IterableOpGetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDoRequest<'a>) {
+impl OpGetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -7960,8 +7960,8 @@ impl<'a> IterableOpGetDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDoReply<'a>) {
+impl OpGetDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -8401,7 +8401,7 @@ impl<Prev: Rec> Drop for PushOpGetStatsDumpRequest<Prev> {
 pub enum OpGetStatsDumpRequest {}
 impl<'a> IterableOpGetStatsDumpRequest<'a> {}
 impl OpGetStatsDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetStatsDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetStatsDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -8756,7 +8756,7 @@ impl<'a> IterableOpGetStatsDumpReply<'a> {
     }
 }
 impl OpGetStatsDumpReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetStatsDumpReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetStatsDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),

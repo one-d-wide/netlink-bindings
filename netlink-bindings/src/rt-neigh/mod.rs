@@ -416,8 +416,8 @@ impl<'a> IterableNeighbourAttrs<'a> {
         ))
     }
 }
-impl<'a> NeighbourAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableNeighbourAttrs<'a> {
+impl NeighbourAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNeighbourAttrs<'a> {
         IterableNeighbourAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -912,8 +912,8 @@ impl<'a> IterableNdtAttrs<'a> {
         ))
     }
 }
-impl<'a> NdtAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableNdtAttrs<'a> {
+impl NdtAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNdtAttrs<'a> {
         IterableNdtAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1449,8 +1449,8 @@ impl<'a> IterableNdtpaAttrs<'a> {
         ))
     }
 }
-impl<'a> NdtpaAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableNdtpaAttrs<'a> {
+impl NdtpaAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNdtpaAttrs<'a> {
         IterableNdtpaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2874,8 +2874,8 @@ impl<'a> IterableOpNewneighDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewneighDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdmsg, IterableOpNewneighDoRequest<'a>) {
+impl OpNewneighDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpNewneighDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -3178,7 +3178,7 @@ impl<Prev: Rec> Drop for PushOpNewneighDoReply<Prev> {
 pub enum OpNewneighDoReply {}
 impl<'a> IterableOpNewneighDoReply<'a> {}
 impl OpNewneighDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNdmsg, IterableOpNewneighDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpNewneighDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -3404,8 +3404,8 @@ impl<'a> IterableOpDelneighDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelneighDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdmsg, IterableOpDelneighDoRequest<'a>) {
+impl OpDelneighDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpDelneighDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -3585,7 +3585,7 @@ impl<Prev: Rec> Drop for PushOpDelneighDoReply<Prev> {
 pub enum OpDelneighDoReply {}
 impl<'a> IterableOpDelneighDoReply<'a> {}
 impl OpDelneighDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNdmsg, IterableOpDelneighDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpDelneighDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -3812,7 +3812,7 @@ impl<'a> IterableOpGetneighDumpRequest<'a> {
     }
 }
 impl OpGetneighDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNdmsg, IterableOpGetneighDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -4248,8 +4248,8 @@ impl<'a> IterableOpGetneighDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetneighDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDumpReply<'a>) {
+impl OpGetneighDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -4619,8 +4619,8 @@ impl<'a> IterableOpGetneighDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetneighDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDoRequest<'a>) {
+impl OpGetneighDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -5044,8 +5044,8 @@ impl<'a> IterableOpGetneighDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetneighDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDoReply<'a>) {
+impl OpGetneighDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdmsg, IterableOpGetneighDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdmsg::len()));
         (
             PushNdmsg::new_from_slice(header).unwrap_or_default(),
@@ -5391,7 +5391,7 @@ impl<Prev: Rec> Drop for PushOpGetneightblDumpRequest<Prev> {
 pub enum OpGetneightblDumpRequest {}
 impl<'a> IterableOpGetneightblDumpRequest<'a> {}
 impl OpGetneightblDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNdtmsg, IterableOpGetneightblDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdtmsg, IterableOpGetneightblDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdtmsg::len()));
         (
             PushNdtmsg::new_from_slice(header).unwrap_or_default(),
@@ -5712,8 +5712,8 @@ impl<'a> IterableOpGetneightblDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetneightblDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdtmsg, IterableOpGetneightblDumpReply<'a>) {
+impl OpGetneightblDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdtmsg, IterableOpGetneightblDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdtmsg::len()));
         (
             PushNdtmsg::new_from_slice(header).unwrap_or_default(),
@@ -6150,8 +6150,8 @@ impl<'a> IterableOpSetneightblDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpSetneightblDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNdtmsg, IterableOpSetneightblDoRequest<'a>) {
+impl OpSetneightblDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdtmsg, IterableOpSetneightblDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdtmsg::len()));
         (
             PushNdtmsg::new_from_slice(header).unwrap_or_default(),
@@ -6380,7 +6380,7 @@ impl<Prev: Rec> Drop for PushOpSetneightblDoReply<Prev> {
 pub enum OpSetneightblDoReply {}
 impl<'a> IterableOpSetneightblDoReply<'a> {}
 impl OpSetneightblDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNdtmsg, IterableOpSetneightblDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNdtmsg, IterableOpSetneightblDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNdtmsg::len()));
         (
             PushNdtmsg::new_from_slice(header).unwrap_or_default(),

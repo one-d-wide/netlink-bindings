@@ -551,8 +551,8 @@ impl<'a> IterableRouteAttrs<'a> {
         ))
     }
 }
-impl<'a> RouteAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableRouteAttrs<'a> {
+impl RouteAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableRouteAttrs<'a> {
         IterableRouteAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1342,8 +1342,8 @@ impl<'a> IterableMetrics<'a> {
         ))
     }
 }
-impl<'a> Metrics<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableMetrics<'a> {
+impl Metrics<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableMetrics<'a> {
         IterableMetrics::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2219,7 +2219,7 @@ impl<Prev: Rec> Drop for PushOpGetrouteDumpRequest<Prev> {
 pub enum OpGetrouteDumpRequest {}
 impl<'a> IterableOpGetrouteDumpRequest<'a> {}
 impl OpGetrouteDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, IterableOpGetrouteDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -2950,8 +2950,8 @@ impl<'a> IterableOpGetrouteDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetrouteDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDumpReply<'a>) {
+impl OpGetrouteDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -3700,8 +3700,8 @@ impl<'a> IterableOpGetrouteDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetrouteDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDoRequest<'a>) {
+impl OpGetrouteDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -4568,8 +4568,8 @@ impl<'a> IterableOpGetrouteDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetrouteDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDoReply<'a>) {
+impl OpGetrouteDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpGetrouteDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -5696,8 +5696,8 @@ impl<'a> IterableOpNewrouteDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewrouteDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpNewrouteDoRequest<'a>) {
+impl OpNewrouteDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpNewrouteDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -6190,7 +6190,7 @@ impl<Prev: Rec> Drop for PushOpNewrouteDoReply<Prev> {
 pub enum OpNewrouteDoReply {}
 impl<'a> IterableOpNewrouteDoReply<'a> {}
 impl OpNewrouteDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, IterableOpNewrouteDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpNewrouteDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -6964,8 +6964,8 @@ impl<'a> IterableOpDelrouteDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelrouteDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushRtmsg, IterableOpDelrouteDoRequest<'a>) {
+impl OpDelrouteDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpDelrouteDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),
@@ -7458,7 +7458,7 @@ impl<Prev: Rec> Drop for PushOpDelrouteDoReply<Prev> {
 pub enum OpDelrouteDoReply {}
 impl<'a> IterableOpDelrouteDoReply<'a> {}
 impl OpDelrouteDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushRtmsg, IterableOpDelrouteDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushRtmsg, IterableOpDelrouteDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushRtmsg::len()));
         (
             PushRtmsg::new_from_slice(header).unwrap_or_default(),

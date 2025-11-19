@@ -233,8 +233,8 @@ impl<'a> IterableAddrAttrs<'a> {
         ))
     }
 }
-impl<'a> AddrAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableAddrAttrs<'a> {
+impl AddrAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableAddrAttrs<'a> {
         IterableAddrAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -924,8 +924,8 @@ impl<'a> IterableOpNewaddrDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewaddrDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpNewaddrDoRequest<'a>) {
+impl OpNewaddrDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpNewaddrDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -1143,7 +1143,7 @@ impl<Prev: Rec> Drop for PushOpNewaddrDoReply<Prev> {
 pub enum OpNewaddrDoReply {}
 impl<'a> IterableOpNewaddrDoReply<'a> {}
 impl OpNewaddrDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpNewaddrDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpNewaddrDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -1380,7 +1380,7 @@ impl<'a> IterableOpDeladdrDoRequest<'a> {
     }
 }
 impl OpDeladdrDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpDeladdrDoRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpDeladdrDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -1560,7 +1560,7 @@ impl<Prev: Rec> Drop for PushOpDeladdrDoReply<Prev> {
 pub enum OpDeladdrDoReply {}
 impl<'a> IterableOpDeladdrDoReply<'a> {}
 impl OpDeladdrDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpDeladdrDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpDeladdrDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -1743,7 +1743,7 @@ impl<Prev: Rec> Drop for PushOpGetaddrDumpRequest<Prev> {
 pub enum OpGetaddrDumpRequest {}
 impl<'a> IterableOpGetaddrDumpRequest<'a> {}
 impl OpGetaddrDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpGetaddrDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetaddrDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -2012,8 +2012,8 @@ impl<'a> IterableOpGetaddrDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetaddrDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetaddrDumpReply<'a>) {
+impl OpGetaddrDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetaddrDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -2276,7 +2276,7 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDumpRequest<Prev> {
 pub enum OpGetmulticastDumpRequest {}
 impl<'a> IterableOpGetmulticastDumpRequest<'a> {}
 impl OpGetmulticastDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -2459,8 +2459,8 @@ impl<'a> IterableOpGetmulticastDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetmulticastDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDumpReply<'a>) {
+impl OpGetmulticastDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -2685,7 +2685,7 @@ impl<Prev: Rec> Drop for PushOpGetmulticastDoRequest<Prev> {
 pub enum OpGetmulticastDoRequest {}
 impl<'a> IterableOpGetmulticastDoRequest<'a> {}
 impl OpGetmulticastDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDoRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),
@@ -2868,8 +2868,8 @@ impl<'a> IterableOpGetmulticastDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetmulticastDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDoReply<'a>) {
+impl OpGetmulticastDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfaddrmsg, IterableOpGetmulticastDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfaddrmsg::len()));
         (
             PushIfaddrmsg::new_from_slice(header).unwrap_or_default(),

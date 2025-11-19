@@ -334,8 +334,8 @@ impl<'a> Iterator for IterableArrayMcastGroupAttrs<'a> {
         )))
     }
 }
-impl<'a> CtrlAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableCtrlAttrs<'a> {
+impl CtrlAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableCtrlAttrs<'a> {
         IterableCtrlAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -640,8 +640,8 @@ impl<'a> IterableMcastGroupAttrs<'a> {
         ))
     }
 }
-impl<'a> McastGroupAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableMcastGroupAttrs<'a> {
+impl McastGroupAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableMcastGroupAttrs<'a> {
         IterableMcastGroupAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -816,7 +816,7 @@ impl<'a> IterableOpAttrs<'a> {
     }
 }
 impl OpAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableOpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpAttrs<'a> {
         IterableOpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1149,8 +1149,8 @@ impl<'a> IterablePolicyAttrs<'a> {
         ))
     }
 }
-impl<'a> PolicyAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterablePolicyAttrs<'a> {
+impl PolicyAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterablePolicyAttrs<'a> {
         IterablePolicyAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1455,7 +1455,7 @@ impl<'a> IterableOpPolicyAttrs<'a> {
     }
 }
 impl OpPolicyAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableOpPolicyAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpPolicyAttrs<'a> {
         IterableOpPolicyAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2064,7 +2064,7 @@ impl<Prev: Rec> Drop for PushOpGetfamilyDumpRequest<Prev> {
 pub enum OpGetfamilyDumpRequest {}
 impl<'a> IterableOpGetfamilyDumpRequest<'a> {}
 impl OpGetfamilyDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> IterableOpGetfamilyDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetfamilyDumpRequest<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetfamilyDumpRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -2371,8 +2371,8 @@ impl<'a> IterableOpGetfamilyDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetfamilyDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetfamilyDumpReply<'a> {
+impl OpGetfamilyDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetfamilyDumpReply<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetfamilyDumpReply::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -2702,8 +2702,8 @@ impl<'a> IterableOpGetfamilyDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetfamilyDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetfamilyDoRequest<'a> {
+impl OpGetfamilyDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetfamilyDoRequest<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetfamilyDoRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -3038,8 +3038,8 @@ impl<'a> IterableOpGetfamilyDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetfamilyDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetfamilyDoReply<'a> {
+impl OpGetfamilyDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetfamilyDoReply<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetfamilyDoReply::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -3409,8 +3409,8 @@ impl<'a> IterableOpGetpolicyDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetpolicyDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetpolicyDumpRequest<'a> {
+impl OpGetpolicyDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetpolicyDumpRequest<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetpolicyDumpRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -3670,8 +3670,8 @@ impl<'a> IterableOpGetpolicyDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetpolicyDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetpolicyDumpReply<'a> {
+impl OpGetpolicyDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetpolicyDumpReply<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetpolicyDumpReply::with_loc(attrs, buf.as_ptr() as usize)
     }

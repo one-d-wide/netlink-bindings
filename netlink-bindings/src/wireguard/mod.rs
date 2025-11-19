@@ -243,8 +243,8 @@ impl<'a> Iterator for IterableArrayWgpeer<'a> {
         )))
     }
 }
-impl<'a> Wgdevice<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableWgdevice<'a> {
+impl Wgdevice<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableWgdevice<'a> {
         IterableWgdevice::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -693,8 +693,8 @@ impl<'a> Iterator for IterableArrayWgallowedip<'a> {
         )))
     }
 }
-impl<'a> Wgpeer<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableWgpeer<'a> {
+impl Wgpeer<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableWgpeer<'a> {
         IterableWgpeer::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1024,7 +1024,7 @@ impl<'a> IterableWgallowedip<'a> {
     }
 }
 impl Wgallowedip {
-    pub fn new(buf: &'_ [u8]) -> IterableWgallowedip<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableWgallowedip<'a> {
         IterableWgallowedip::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1826,8 +1826,8 @@ impl<'a> IterableOpGetDeviceDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetDeviceDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetDeviceDumpRequest<'a> {
+impl OpGetDeviceDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetDeviceDumpRequest<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetDeviceDumpRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -2283,8 +2283,8 @@ impl<'a> IterableOpGetDeviceDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetDeviceDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpGetDeviceDumpReply<'a> {
+impl OpGetDeviceDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpGetDeviceDumpReply<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpGetDeviceDumpReply::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -2780,8 +2780,8 @@ impl<'a> IterableOpSetDeviceDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpSetDeviceDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableOpSetDeviceDoRequest<'a> {
+impl OpSetDeviceDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpSetDeviceDoRequest<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpSetDeviceDoRequest::with_loc(attrs, buf.as_ptr() as usize)
     }
@@ -3043,7 +3043,7 @@ impl<Prev: Rec> Drop for PushOpSetDeviceDoReply<Prev> {
 pub enum OpSetDeviceDoReply {}
 impl<'a> IterableOpSetDeviceDoReply<'a> {}
 impl OpSetDeviceDoReply {
-    pub fn new(buf: &'_ [u8]) -> IterableOpSetDeviceDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableOpSetDeviceDoReply<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(PushBuiltinNfgenmsg::len()));
         IterableOpSetDeviceDoReply::with_loc(attrs, buf.as_ptr() as usize)
     }

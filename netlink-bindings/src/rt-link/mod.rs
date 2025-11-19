@@ -1599,8 +1599,8 @@ impl<'a> IterableLinkAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkAttrs<'a> {
+impl LinkAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkAttrs<'a> {
         IterableLinkAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2587,35 +2587,27 @@ impl IterableLinkAttrs<'_> {
 }
 #[derive(Clone)]
 pub enum PropListLinkAttrs<'a> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     AltIfname(&'a CStr),
 }
 impl<'a> IterablePropListLinkAttrs<'a> {
-    pub fn get_alt_ifname(&self) -> Result<&'a CStr, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let PropListLinkAttrs::AltIfname(val) = attr? {
-                return Ok(val);
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_alt_ifname(&self) -> MultiAttrIterable<Self, PropListLinkAttrs<'a>, &'a CStr> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let PropListLinkAttrs::AltIfname(val) = variant {
+                Some(val)
+            } else {
+                None
             }
-        }
-        Err(ErrorContext::new_missing(
-            "PropListLinkAttrs",
-            "AltIfname",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
+        })
     }
 }
-impl<'a> PropListLinkAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterablePropListLinkAttrs<'a> {
+impl PropListLinkAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterablePropListLinkAttrs<'a> {
         IterablePropListLinkAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "AltIfname",
-            _ => return None,
-        };
-        Some(res)
+        LinkAttrs::attr_from_type(r#type)
     }
 }
 #[derive(Clone, Copy, Default)]
@@ -2647,7 +2639,7 @@ impl<'a> Iterator for IterablePropListLinkAttrs<'a> {
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             r#type = Some(header.r#type);
             let res = match header.r#type {
-                1u16 => PropListLinkAttrs::AltIfname({
+                53u16 => PropListLinkAttrs::AltIfname({
                     let res = CStr::from_bytes_with_nul(next).ok();
                     let Some(val) = res else { break };
                     val
@@ -2782,8 +2774,8 @@ impl<'a> IterableAfSpecAttrs<'a> {
         ))
     }
 }
-impl<'a> AfSpecAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableAfSpecAttrs<'a> {
+impl AfSpecAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableAfSpecAttrs<'a> {
         IterableAfSpecAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2951,8 +2943,8 @@ impl<'a> IterableVfinfoListAttrs<'a> {
         })
     }
 }
-impl<'a> VfinfoListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableVfinfoListAttrs<'a> {
+impl VfinfoListAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableVfinfoListAttrs<'a> {
         IterableVfinfoListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3288,8 +3280,8 @@ impl<'a> IterableVfinfoAttrs<'a> {
         ))
     }
 }
-impl<'a> VfinfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableVfinfoAttrs<'a> {
+impl VfinfoAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableVfinfoAttrs<'a> {
         IterableVfinfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3717,8 +3709,8 @@ impl<'a> IterableVfStatsAttrs<'a> {
         ))
     }
 }
-impl<'a> VfStatsAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableVfStatsAttrs<'a> {
+impl VfStatsAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableVfStatsAttrs<'a> {
         IterableVfStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3962,7 +3954,7 @@ impl<'a> IterableVfVlanAttrs<'a> {
     }
 }
 impl VfVlanAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableVfVlanAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableVfVlanAttrs<'a> {
         IterableVfVlanAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -4088,7 +4080,7 @@ impl IterableVfVlanAttrs<'_> {
 pub enum VfPortsAttrs {}
 impl<'a> IterableVfPortsAttrs<'a> {}
 impl VfPortsAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableVfPortsAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableVfPortsAttrs<'a> {
         IterableVfPortsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -4182,7 +4174,7 @@ impl IterableVfPortsAttrs<'_> {
 pub enum PortSelfAttrs {}
 impl<'a> IterablePortSelfAttrs<'a> {}
 impl PortSelfAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterablePortSelfAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterablePortSelfAttrs<'a> {
         IterablePortSelfAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -4453,8 +4445,8 @@ impl<'a> LinkinfoMemberDataMsg<'a> {
         }
     }
 }
-impl<'a> LinkinfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoAttrs<'a> {
+impl LinkinfoAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoAttrs<'a> {
         IterableLinkinfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5231,8 +5223,8 @@ impl<'a> Iterator for IterableArrayBinary<'a> {
         )))
     }
 }
-impl<'a> LinkinfoBondAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoBondAttrs<'a> {
+impl LinkinfoBondAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoBondAttrs<'a> {
         IterableLinkinfoBondAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5483,12 +5475,16 @@ impl<'a> Iterator for IterableLinkinfoBondAttrs<'a> {
 }
 impl std::fmt::Debug for IterableArrayIpv4Addr<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fmt.debug_list().entries(self.clone()).finish()
+        fmt.debug_list()
+            .entries(self.clone().map(FlattenErrorContext))
+            .finish()
     }
 }
 impl std::fmt::Debug for IterableArrayBinary<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fmt.debug_list().entries(self.clone()).finish()
+        fmt.debug_list()
+            .entries(self.clone().map(FlattenErrorContext))
+            .finish()
     }
 }
 impl<'a> std::fmt::Debug for IterableLinkinfoBondAttrs<'_> {
@@ -5853,8 +5849,8 @@ impl<'a> IterableBondAdInfoAttrs<'a> {
         ))
     }
 }
-impl<'a> BondAdInfoAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableBondAdInfoAttrs<'a> {
+impl BondAdInfoAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableBondAdInfoAttrs<'a> {
         IterableBondAdInfoAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -6177,8 +6173,8 @@ impl<'a> IterableBondSlaveAttrs<'a> {
         ))
     }
 }
-impl<'a> BondSlaveAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableBondSlaveAttrs<'a> {
+impl BondSlaveAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableBondSlaveAttrs<'a> {
         IterableBondSlaveAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -7197,8 +7193,8 @@ impl<'a> IterableLinkinfoBridgeAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoBridgeAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoBridgeAttrs<'a> {
+impl LinkinfoBridgeAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoBridgeAttrs<'a> {
         IterableLinkinfoBridgeAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -8673,8 +8669,8 @@ impl<'a> IterableLinkinfoBrportAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoBrportAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoBrportAttrs<'a> {
+impl LinkinfoBrportAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoBrportAttrs<'a> {
         IterableLinkinfoBrportAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -9662,8 +9658,8 @@ impl<'a> IterableLinkinfoGreAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoGreAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoGreAttrs<'a> {
+impl LinkinfoGreAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGreAttrs<'a> {
         IterableLinkinfoGreAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -10421,36 +10417,12 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoGre6Attrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoGre6Attrs<'a> {
+impl LinkinfoGre6Attrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGre6Attrs<'a> {
         IterableLinkinfoGre6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Link",
-            2u16 => "Iflags",
-            3u16 => "Oflags",
-            4u16 => "Ikey",
-            5u16 => "Okey",
-            6u16 => "Local",
-            7u16 => "Remote",
-            8u16 => "Ttl",
-            9u16 => "EncapLimit",
-            10u16 => "Flowinfo",
-            11u16 => "Flags",
-            12u16 => "EncapType",
-            13u16 => "EncapFlags",
-            14u16 => "EncapSport",
-            15u16 => "EncapDport",
-            16u16 => "CollectMetadata",
-            17u16 => "Fwmark",
-            18u16 => "ErspanIndex",
-            19u16 => "ErspanVer",
-            20u16 => "ErspanDir",
-            21u16 => "ErspanHwid",
-            _ => return None,
-        };
-        Some(res)
+        LinkinfoGreAttrs::attr_from_type(r#type)
     }
 }
 #[derive(Clone, Copy, Default)]
@@ -10522,63 +10494,63 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
-                9u16 => LinkinfoGre6Attrs::EncapLimit({
+                11u16 => LinkinfoGre6Attrs::EncapLimit({
                     let res = parse_u8(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                10u16 => LinkinfoGre6Attrs::Flowinfo({
+                12u16 => LinkinfoGre6Attrs::Flowinfo({
                     let res = parse_be_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                11u16 => LinkinfoGre6Attrs::Flags({
+                13u16 => LinkinfoGre6Attrs::Flags({
                     let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                12u16 => LinkinfoGre6Attrs::EncapType({
+                14u16 => LinkinfoGre6Attrs::EncapType({
                     let res = parse_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                13u16 => LinkinfoGre6Attrs::EncapFlags({
+                15u16 => LinkinfoGre6Attrs::EncapFlags({
                     let res = parse_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                14u16 => LinkinfoGre6Attrs::EncapSport({
+                16u16 => LinkinfoGre6Attrs::EncapSport({
                     let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                15u16 => LinkinfoGre6Attrs::EncapDport({
+                17u16 => LinkinfoGre6Attrs::EncapDport({
                     let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                16u16 => LinkinfoGre6Attrs::CollectMetadata(()),
-                17u16 => LinkinfoGre6Attrs::Fwmark({
+                18u16 => LinkinfoGre6Attrs::CollectMetadata(()),
+                20u16 => LinkinfoGre6Attrs::Fwmark({
                     let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                18u16 => LinkinfoGre6Attrs::ErspanIndex({
+                21u16 => LinkinfoGre6Attrs::ErspanIndex({
                     let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                19u16 => LinkinfoGre6Attrs::ErspanVer({
+                22u16 => LinkinfoGre6Attrs::ErspanVer({
                     let res = parse_u8(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                20u16 => LinkinfoGre6Attrs::ErspanDir({
+                23u16 => LinkinfoGre6Attrs::ErspanDir({
                     let res = parse_u8(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                21u16 => LinkinfoGre6Attrs::ErspanHwid({
+                24u16 => LinkinfoGre6Attrs::ErspanHwid({
                     let res = parse_u16(next);
                     let Some(val) = res else { break };
                     val
@@ -10901,8 +10873,8 @@ impl<'a> IterableLinkinfoVtiAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoVtiAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoVtiAttrs<'a> {
+impl LinkinfoVtiAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVtiAttrs<'a> {
         IterableLinkinfoVtiAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -11190,21 +11162,12 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoVti6Attrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoVti6Attrs<'a> {
+impl LinkinfoVti6Attrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVti6Attrs<'a> {
         IterableLinkinfoVti6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Link",
-            2u16 => "Ikey",
-            3u16 => "Okey",
-            4u16 => "Local",
-            5u16 => "Remote",
-            6u16 => "Fwmark",
-            _ => return None,
-        };
-        Some(res)
+        LinkinfoVtiAttrs::attr_from_type(r#type)
     }
 }
 #[derive(Clone, Copy, Default)]
@@ -11623,8 +11586,8 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoGeneveAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoGeneveAttrs<'a> {
+impl LinkinfoGeneveAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGeneveAttrs<'a> {
         IterableLinkinfoGeneveAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -12245,8 +12208,8 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoIptunAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoIptunAttrs<'a> {
+impl LinkinfoIptunAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoIptunAttrs<'a> {
         IterableLinkinfoIptunAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -12842,29 +12805,12 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoIp6tnlAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoIp6tnlAttrs<'a> {
+impl LinkinfoIp6tnlAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoIp6tnlAttrs<'a> {
         IterableLinkinfoIp6tnlAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Link",
-            2u16 => "Local",
-            3u16 => "Remote",
-            4u16 => "Ttl",
-            5u16 => "EncapLimit",
-            6u16 => "Flowinfo",
-            7u16 => "Flags",
-            8u16 => "Proto",
-            9u16 => "EncapType",
-            10u16 => "EncapFlags",
-            11u16 => "EncapSport",
-            12u16 => "EncapDport",
-            13u16 => "CollectMetadata",
-            14u16 => "Fwmark",
-            _ => return None,
-        };
-        Some(res)
+        LinkinfoIptunAttrs::attr_from_type(r#type)
     }
 }
 #[derive(Clone, Copy, Default)]
@@ -12916,48 +12862,48 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
-                5u16 => LinkinfoIp6tnlAttrs::EncapLimit({
+                6u16 => LinkinfoIp6tnlAttrs::EncapLimit({
                     let res = parse_u8(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                6u16 => LinkinfoIp6tnlAttrs::Flowinfo({
+                7u16 => LinkinfoIp6tnlAttrs::Flowinfo({
                     let res = parse_be_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                7u16 => LinkinfoIp6tnlAttrs::Flags({
-                    let res = parse_u32(next);
+                8u16 => LinkinfoIp6tnlAttrs::Flags({
+                    let res = parse_be_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                8u16 => LinkinfoIp6tnlAttrs::Proto({
+                9u16 => LinkinfoIp6tnlAttrs::Proto({
                     let res = parse_u8(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                9u16 => LinkinfoIp6tnlAttrs::EncapType({
+                15u16 => LinkinfoIp6tnlAttrs::EncapType({
                     let res = parse_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                10u16 => LinkinfoIp6tnlAttrs::EncapFlags({
+                16u16 => LinkinfoIp6tnlAttrs::EncapFlags({
                     let res = parse_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                11u16 => LinkinfoIp6tnlAttrs::EncapSport({
+                17u16 => LinkinfoIp6tnlAttrs::EncapSport({
                     let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                12u16 => LinkinfoIp6tnlAttrs::EncapDport({
+                18u16 => LinkinfoIp6tnlAttrs::EncapDport({
                     let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                13u16 => LinkinfoIp6tnlAttrs::CollectMetadata(()),
-                14u16 => LinkinfoIp6tnlAttrs::Fwmark({
+                19u16 => LinkinfoIp6tnlAttrs::CollectMetadata(()),
+                20u16 => LinkinfoIp6tnlAttrs::Fwmark({
                     let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
@@ -13280,7 +13226,7 @@ impl<'a> IterableLinkinfoTunAttrs<'a> {
     }
 }
 impl LinkinfoTunAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableLinkinfoTunAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoTunAttrs<'a> {
         IterableLinkinfoTunAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -13593,8 +13539,8 @@ impl<'a> IterableLinkinfoVlanAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoVlanAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoVlanAttrs<'a> {
+impl LinkinfoVlanAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVlanAttrs<'a> {
         IterableLinkinfoVlanAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -13790,7 +13736,7 @@ impl<'a> IterableIflaVlanQos<'a> {
     }
 }
 impl IflaVlanQos {
-    pub fn new(buf: &'_ [u8]) -> IterableIflaVlanQos<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableIflaVlanQos<'a> {
         IterableIflaVlanQos::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -13934,7 +13880,7 @@ impl<'a> IterableLinkinfoVrfAttrs<'a> {
     }
 }
 impl LinkinfoVrfAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableLinkinfoVrfAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVrfAttrs<'a> {
         IterableLinkinfoVrfAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -14190,7 +14136,7 @@ impl<'a> IterableXdpAttrs<'a> {
     }
 }
 impl XdpAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableXdpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableXdpAttrs<'a> {
         IterableXdpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -14426,8 +14372,8 @@ impl<'a> IterableIflaAttrs<'a> {
         ))
     }
 }
-impl<'a> IflaAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableIflaAttrs<'a> {
+impl IflaAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableIflaAttrs<'a> {
         IterableIflaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -14700,8 +14646,8 @@ impl<'a> IterableIfla6Attrs<'a> {
         ))
     }
 }
-impl<'a> Ifla6Attrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableIfla6Attrs<'a> {
+impl Ifla6Attrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableIfla6Attrs<'a> {
         IterableIfla6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -14965,7 +14911,7 @@ impl<'a> IterableMctpAttrs<'a> {
     }
 }
 impl MctpAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableMctpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableMctpAttrs<'a> {
         IterableMctpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -15185,8 +15131,8 @@ impl<'a> IterableStatsAttrs<'a> {
         ))
     }
 }
-impl<'a> StatsAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableStatsAttrs<'a> {
+impl StatsAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableStatsAttrs<'a> {
         IterableStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -15457,8 +15403,8 @@ impl<'a> Iterator for IterableArrayHwSInfoOne<'a> {
         )))
     }
 }
-impl<'a> LinkOffloadXstats<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkOffloadXstats<'a> {
+impl LinkOffloadXstats<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkOffloadXstats<'a> {
         IterableLinkOffloadXstats::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -15659,7 +15605,7 @@ impl<'a> IterableHwSInfoOne<'a> {
     }
 }
 impl HwSInfoOne {
-    pub fn new(buf: &'_ [u8]) -> IterableHwSInfoOne<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableHwSInfoOne<'a> {
         IterableHwSInfoOne::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -15816,7 +15762,7 @@ impl<'a> IterableLinkDpllPinAttrs<'a> {
     }
 }
 impl LinkDpllPinAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableLinkDpllPinAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkDpllPinAttrs<'a> {
         IterableLinkDpllPinAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -16097,8 +16043,8 @@ impl<'a> IterableLinkinfoNetkitAttrs<'a> {
         ))
     }
 }
-impl<'a> LinkinfoNetkitAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLinkinfoNetkitAttrs<'a> {
+impl LinkinfoNetkitAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoNetkitAttrs<'a> {
         IterableLinkinfoNetkitAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -16360,7 +16306,7 @@ impl<'a> IterableLinkinfoOvpnAttrs<'a> {
     }
 }
 impl LinkinfoOvpnAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableLinkinfoOvpnAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoOvpnAttrs<'a> {
         IterableLinkinfoOvpnAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -17013,17 +16959,19 @@ impl<Prev: Rec> PushPropListLinkAttrs<Prev> {
         }
         prev
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn push_alt_ifname(mut self, value: &CStr) -> Self {
         push_header(
             self.as_rec_mut(),
-            1u16,
+            53u16,
             value.to_bytes_with_nul().len() as u16,
         );
         self.as_rec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn push_alt_ifname_bytes(mut self, value: &[u8]) -> Self {
-        push_header(self.as_rec_mut(), 1u16, (value.len() + 1) as u16);
+        push_header(self.as_rec_mut(), 53u16, (value.len() + 1) as u16);
         self.as_rec_mut().extend(value);
         self.as_rec_mut().push(0);
         self
@@ -18899,66 +18847,66 @@ impl<Prev: Rec> PushLinkinfoGre6Attrs<Prev> {
         self
     }
     pub fn push_encap_limit(mut self, value: u8) -> Self {
-        push_header(self.as_rec_mut(), 9u16, 1 as u16);
+        push_header(self.as_rec_mut(), 11u16, 1 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_flowinfo(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 10u16, 4 as u16);
+        push_header(self.as_rec_mut(), 12u16, 4 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_flags(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 11u16, 4 as u16);
+        push_header(self.as_rec_mut(), 13u16, 4 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_encap_type(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 12u16, 2 as u16);
+        push_header(self.as_rec_mut(), 14u16, 2 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_encap_flags(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 13u16, 2 as u16);
+        push_header(self.as_rec_mut(), 15u16, 2 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_encap_sport(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 14u16, 2 as u16);
+        push_header(self.as_rec_mut(), 16u16, 2 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_encap_dport(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 15u16, 2 as u16);
+        push_header(self.as_rec_mut(), 17u16, 2 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_collect_metadata(mut self, value: ()) -> Self {
-        push_header(self.as_rec_mut(), 16u16, 0 as u16);
+        push_header(self.as_rec_mut(), 18u16, 0 as u16);
         self
     }
     pub fn push_fwmark(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 17u16, 4 as u16);
+        push_header(self.as_rec_mut(), 20u16, 4 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_erspan_index(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 18u16, 4 as u16);
+        push_header(self.as_rec_mut(), 21u16, 4 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_erspan_ver(mut self, value: u8) -> Self {
-        push_header(self.as_rec_mut(), 19u16, 1 as u16);
+        push_header(self.as_rec_mut(), 22u16, 1 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_erspan_dir(mut self, value: u8) -> Self {
-        push_header(self.as_rec_mut(), 20u16, 1 as u16);
+        push_header(self.as_rec_mut(), 23u16, 1 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_erspan_hwid(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 21u16, 2 as u16);
+        push_header(self.as_rec_mut(), 24u16, 2 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
@@ -19380,51 +19328,51 @@ impl<Prev: Rec> PushLinkinfoIp6tnlAttrs<Prev> {
         self
     }
     pub fn push_encap_limit(mut self, value: u8) -> Self {
-        push_header(self.as_rec_mut(), 5u16, 1 as u16);
+        push_header(self.as_rec_mut(), 6u16, 1 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_flowinfo(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 6u16, 4 as u16);
+        push_header(self.as_rec_mut(), 7u16, 4 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_flags(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 7u16, 4 as u16);
-        self.as_rec_mut().extend(value.to_ne_bytes());
+        push_header(self.as_rec_mut(), 8u16, 4 as u16);
+        self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_proto(mut self, value: u8) -> Self {
-        push_header(self.as_rec_mut(), 8u16, 1 as u16);
+        push_header(self.as_rec_mut(), 9u16, 1 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_encap_type(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 9u16, 2 as u16);
+        push_header(self.as_rec_mut(), 15u16, 2 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_encap_flags(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 10u16, 2 as u16);
+        push_header(self.as_rec_mut(), 16u16, 2 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_encap_sport(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 11u16, 2 as u16);
+        push_header(self.as_rec_mut(), 17u16, 2 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_encap_dport(mut self, value: u16) -> Self {
-        push_header(self.as_rec_mut(), 12u16, 2 as u16);
+        push_header(self.as_rec_mut(), 18u16, 2 as u16);
         self.as_rec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_collect_metadata(mut self, value: ()) -> Self {
-        push_header(self.as_rec_mut(), 13u16, 0 as u16);
+        push_header(self.as_rec_mut(), 19u16, 0 as u16);
         self
     }
     pub fn push_fwmark(mut self, value: u32) -> Self {
-        push_header(self.as_rec_mut(), 14u16, 4 as u16);
+        push_header(self.as_rec_mut(), 20u16, 4 as u16);
         self.as_rec_mut().extend(value.to_ne_bytes());
         self
     }
@@ -22370,8 +22318,8 @@ impl<'a> IterableOpNewlinkDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewlinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpNewlinkDoRequest<'a>) {
+impl OpNewlinkDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpNewlinkDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -22780,7 +22728,7 @@ impl<Prev: Rec> Drop for PushOpNewlinkDoReply<Prev> {
 pub enum OpNewlinkDoReply {}
 impl<'a> IterableOpNewlinkDoReply<'a> {}
 impl OpNewlinkDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, IterableOpNewlinkDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpNewlinkDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -22995,8 +22943,8 @@ impl<'a> IterableOpDellinkDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDellinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpDellinkDoRequest<'a>) {
+impl OpDellinkDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpDellinkDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -23164,7 +23112,7 @@ impl<Prev: Rec> Drop for PushOpDellinkDoReply<Prev> {
 pub enum OpDellinkDoReply {}
 impl<'a> IterableOpDellinkDoReply<'a> {}
 impl OpDellinkDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, IterableOpDellinkDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpDellinkDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -23437,8 +23385,8 @@ impl<'a> IterableOpGetlinkDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetlinkDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDumpRequest<'a>) {
+impl OpGetlinkDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -25164,8 +25112,8 @@ impl<'a> IterableOpGetlinkDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetlinkDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDumpReply<'a>) {
+impl OpGetlinkDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -26271,8 +26219,8 @@ impl<'a> IterableOpGetlinkDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetlinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDoRequest<'a>) {
+impl OpGetlinkDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -27997,8 +27945,8 @@ impl<'a> IterableOpGetlinkDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetlinkDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDoReply<'a>) {
+impl OpGetlinkDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpGetlinkDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -30513,8 +30461,8 @@ impl<'a> IterableOpSetlinkDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpSetlinkDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpSetlinkDoRequest<'a>) {
+impl OpSetlinkDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpSetlinkDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -31467,7 +31415,7 @@ impl<Prev: Rec> Drop for PushOpSetlinkDoReply<Prev> {
 pub enum OpSetlinkDoReply {}
 impl<'a> IterableOpSetlinkDoReply<'a> {}
 impl OpSetlinkDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushIfinfomsg, IterableOpSetlinkDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfinfomsg, IterableOpSetlinkDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfinfomsg::len()));
         (
             PushIfinfomsg::new_from_slice(header).unwrap_or_default(),
@@ -31650,7 +31598,7 @@ impl<Prev: Rec> Drop for PushOpGetstatsDumpRequest<Prev> {
 pub enum OpGetstatsDumpRequest {}
 impl<'a> IterableOpGetstatsDumpRequest<'a> {}
 impl OpGetstatsDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
             PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
@@ -31898,8 +31846,8 @@ impl<'a> IterableOpGetstatsDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetstatsDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDumpReply<'a>) {
+impl OpGetstatsDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
             PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
@@ -32161,7 +32109,7 @@ impl<Prev: Rec> Drop for PushOpGetstatsDoRequest<Prev> {
 pub enum OpGetstatsDoRequest {}
 impl<'a> IterableOpGetstatsDoRequest<'a> {}
 impl OpGetstatsDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDoRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
             PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),
@@ -32409,8 +32357,8 @@ impl<'a> IterableOpGetstatsDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetstatsDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDoReply<'a>) {
+impl OpGetstatsDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushIfStatsMsg, IterableOpGetstatsDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushIfStatsMsg::len()));
         (
             PushIfStatsMsg::new_from_slice(header).unwrap_or_default(),

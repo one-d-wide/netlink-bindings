@@ -22,7 +22,7 @@ pub const PROTONAME: &CStr = c"builtin";
 pub enum Dummy {}
 impl<'a> IterableDummy<'a> {}
 impl Dummy {
-    pub fn new(buf: &'_ [u8]) -> IterableDummy<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableDummy<'a> {
         IterableDummy::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -222,8 +222,8 @@ impl<'a> IterableNlmsgerrAttrs<'a> {
         ))
     }
 }
-impl<'a> NlmsgerrAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableNlmsgerrAttrs<'a> {
+impl NlmsgerrAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNlmsgerrAttrs<'a> {
         IterableNlmsgerrAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -633,8 +633,8 @@ impl<'a> IterablePolicyTypeAttrs<'a> {
         ))
     }
 }
-impl<'a> PolicyTypeAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterablePolicyTypeAttrs<'a> {
+impl PolicyTypeAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterablePolicyTypeAttrs<'a> {
         IterablePolicyTypeAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {

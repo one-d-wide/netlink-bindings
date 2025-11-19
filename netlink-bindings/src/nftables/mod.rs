@@ -779,8 +779,8 @@ impl<'a> IterableLogAttrs<'a> {
         ))
     }
 }
-impl<'a> LogAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableLogAttrs<'a> {
+impl LogAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLogAttrs<'a> {
         IterableLogAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1049,7 +1049,7 @@ impl<'a> IterableNumgenAttrs<'a> {
     }
 }
 impl NumgenAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableNumgenAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNumgenAttrs<'a> {
         IterableNumgenAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1291,8 +1291,8 @@ impl<'a> IterableRangeAttrs<'a> {
         ))
     }
 }
-impl<'a> RangeAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableRangeAttrs<'a> {
+impl RangeAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableRangeAttrs<'a> {
         IterableRangeAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1482,7 +1482,7 @@ impl<'a> IterableBatchAttrs<'a> {
     }
 }
 impl BatchAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableBatchAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableBatchAttrs<'a> {
         IterableBatchAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -1733,8 +1733,8 @@ impl<'a> IterableTableAttrs<'a> {
         ))
     }
 }
-impl<'a> TableAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableTableAttrs<'a> {
+impl TableAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableTableAttrs<'a> {
         IterableTableAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2139,8 +2139,8 @@ impl<'a> IterableChainAttrs<'a> {
         ))
     }
 }
-impl<'a> ChainAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableChainAttrs<'a> {
+impl ChainAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableChainAttrs<'a> {
         IterableChainAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2448,8 +2448,8 @@ impl<'a> IterableCounterAttrs<'a> {
         ))
     }
 }
-impl<'a> CounterAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableCounterAttrs<'a> {
+impl CounterAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableCounterAttrs<'a> {
         IterableCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2670,8 +2670,8 @@ impl<'a> IterableNftHookAttrs<'a> {
         ))
     }
 }
-impl<'a> NftHookAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableNftHookAttrs<'a> {
+impl NftHookAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNftHookAttrs<'a> {
         IterableNftHookAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2850,8 +2850,8 @@ impl<'a> IterableHookDevAttrs<'a> {
         })
     }
 }
-impl<'a> HookDevAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableHookDevAttrs<'a> {
+impl HookDevAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableHookDevAttrs<'a> {
         IterableHookDevAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3011,7 +3011,7 @@ impl<'a> IterableNftCounterAttrs<'a> {
     }
 }
 impl NftCounterAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableNftCounterAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableNftCounterAttrs<'a> {
         IterableNftCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3331,8 +3331,8 @@ impl<'a> IterableRuleAttrs<'a> {
         ))
     }
 }
-impl<'a> RuleAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableRuleAttrs<'a> {
+impl RuleAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableRuleAttrs<'a> {
         IterableRuleAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3589,8 +3589,8 @@ impl<'a> IterableExprListAttrs<'a> {
         })
     }
 }
-impl<'a> ExprListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprListAttrs<'a> {
+impl ExprListAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprListAttrs<'a> {
         IterableExprListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3816,8 +3816,8 @@ impl<'a> ExprOps<'a> {
         }
     }
 }
-impl<'a> ExprAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprAttrs<'a> {
+impl ExprAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprAttrs<'a> {
         IterableExprAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -3997,7 +3997,7 @@ impl<'a> IterableRuleCompatAttrs<'a> {
     }
 }
 impl RuleCompatAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableRuleCompatAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableRuleCompatAttrs<'a> {
         IterableRuleCompatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -4489,8 +4489,8 @@ impl<'a> IterableSetAttrs<'a> {
         ))
     }
 }
-impl<'a> SetAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetAttrs<'a> {
+impl SetAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetAttrs<'a> {
         IterableSetAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -4899,8 +4899,8 @@ impl<'a> IterableSetDescAttrs<'a> {
         })
     }
 }
-impl<'a> SetDescAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetDescAttrs<'a> {
+impl SetDescAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetDescAttrs<'a> {
         IterableSetDescAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5057,8 +5057,8 @@ impl<'a> IterableSetDescConcatAttrs<'a> {
         ))
     }
 }
-impl<'a> SetDescConcatAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetDescConcatAttrs<'a> {
+impl SetDescConcatAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetDescConcatAttrs<'a> {
         IterableSetDescConcatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5203,7 +5203,7 @@ impl<'a> IterableSetFieldAttrs<'a> {
     }
 }
 impl SetFieldAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableSetFieldAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetFieldAttrs<'a> {
         IterableSetFieldAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5342,8 +5342,8 @@ impl<'a> IterableSetListAttrs<'a> {
         })
     }
 }
-impl<'a> SetListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetListAttrs<'a> {
+impl SetListAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetListAttrs<'a> {
         IterableSetListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5651,8 +5651,8 @@ impl<'a> IterableSetelemAttrs<'a> {
         ))
     }
 }
-impl<'a> SetelemAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetelemAttrs<'a> {
+impl SetelemAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetelemAttrs<'a> {
         IterableSetelemAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -5913,8 +5913,8 @@ impl<'a> IterableSetelemListElemAttrs<'a> {
         })
     }
 }
-impl<'a> SetelemListElemAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetelemListElemAttrs<'a> {
+impl SetelemListElemAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetelemListElemAttrs<'a> {
         IterableSetelemListElemAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -6106,8 +6106,8 @@ impl<'a> IterableSetelemListAttrs<'a> {
         ))
     }
 }
-impl<'a> SetelemListAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableSetelemListAttrs<'a> {
+impl SetelemListAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSetelemListAttrs<'a> {
         IterableSetelemListAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -6324,8 +6324,8 @@ impl<'a> IterableGenAttrs<'a> {
         ))
     }
 }
-impl<'a> GenAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableGenAttrs<'a> {
+impl GenAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableGenAttrs<'a> {
         IterableGenAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -6638,8 +6638,8 @@ impl<'a> ObjData<'a> {
         }
     }
 }
-impl<'a> ObjAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableObjAttrs<'a> {
+impl ObjAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableObjAttrs<'a> {
         IterableObjAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -6928,8 +6928,8 @@ impl<'a> IterableQuotaAttrs<'a> {
         ))
     }
 }
-impl<'a> QuotaAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableQuotaAttrs<'a> {
+impl QuotaAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableQuotaAttrs<'a> {
         IterableQuotaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -7209,8 +7209,8 @@ impl<'a> IterableFlowtableAttrs<'a> {
         ))
     }
 }
-impl<'a> FlowtableAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableFlowtableAttrs<'a> {
+impl FlowtableAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableFlowtableAttrs<'a> {
         IterableFlowtableAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -7464,8 +7464,8 @@ impl<'a> IterableFlowtableHookAttrs<'a> {
         ))
     }
 }
-impl<'a> FlowtableHookAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableFlowtableHookAttrs<'a> {
+impl FlowtableHookAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableFlowtableHookAttrs<'a> {
         IterableFlowtableHookAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -7749,8 +7749,8 @@ impl<'a> IterableExprBitwiseAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprBitwiseAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprBitwiseAttrs<'a> {
+impl ExprBitwiseAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprBitwiseAttrs<'a> {
         IterableExprBitwiseAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -8021,8 +8021,8 @@ impl<'a> IterableExprCmpAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprCmpAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprCmpAttrs<'a> {
+impl ExprCmpAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprCmpAttrs<'a> {
         IterableExprCmpAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -8210,8 +8210,8 @@ impl<'a> IterableDataAttrs<'a> {
         ))
     }
 }
-impl<'a> DataAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableDataAttrs<'a> {
+impl DataAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableDataAttrs<'a> {
         IterableDataAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -8406,8 +8406,8 @@ impl<'a> IterableVerdictAttrs<'a> {
         ))
     }
 }
-impl<'a> VerdictAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableVerdictAttrs<'a> {
+impl VerdictAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableVerdictAttrs<'a> {
         IterableVerdictAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -8614,8 +8614,8 @@ impl<'a> IterableExprCounterAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprCounterAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprCounterAttrs<'a> {
+impl ExprCounterAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprCounterAttrs<'a> {
         IterableExprCounterAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -8821,7 +8821,7 @@ impl<'a> IterableExprFibAttrs<'a> {
     }
 }
 impl ExprFibAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprFibAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprFibAttrs<'a> {
         IterableExprFibAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -9047,7 +9047,7 @@ impl<'a> IterableExprCtAttrs<'a> {
     }
 }
 impl ExprCtAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprCtAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprCtAttrs<'a> {
         IterableExprCtAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -9236,8 +9236,8 @@ impl<'a> IterableExprFlowOffloadAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprFlowOffloadAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprFlowOffloadAttrs<'a> {
+impl ExprFlowOffloadAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprFlowOffloadAttrs<'a> {
         IterableExprFlowOffloadAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -9396,8 +9396,8 @@ impl<'a> IterableExprImmediateAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprImmediateAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprImmediateAttrs<'a> {
+impl ExprImmediateAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprImmediateAttrs<'a> {
         IterableExprImmediateAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -9624,8 +9624,8 @@ impl<'a> IterableExprLookupAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprLookupAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprLookupAttrs<'a> {
+impl ExprLookupAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprLookupAttrs<'a> {
         IterableExprLookupAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -9861,7 +9861,7 @@ impl<'a> IterableExprMasqAttrs<'a> {
     }
 }
 impl ExprMasqAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprMasqAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprMasqAttrs<'a> {
         IterableExprMasqAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -10073,7 +10073,7 @@ impl<'a> IterableExprMetaAttrs<'a> {
     }
 }
 impl ExprMetaAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprMetaAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprMetaAttrs<'a> {
         IterableExprMetaAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -10343,7 +10343,7 @@ impl<'a> IterableExprNatAttrs<'a> {
     }
 }
 impl ExprNatAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprNatAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprNatAttrs<'a> {
         IterableExprNatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -10695,7 +10695,7 @@ impl<'a> IterableExprPayloadAttrs<'a> {
     }
 }
 impl ExprPayloadAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprPayloadAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprPayloadAttrs<'a> {
         IterableExprPayloadAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -10956,7 +10956,7 @@ impl<'a> IterableExprRejectAttrs<'a> {
     }
 }
 impl ExprRejectAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprRejectAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprRejectAttrs<'a> {
         IterableExprRejectAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -11149,8 +11149,8 @@ impl<'a> IterableExprTargetAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprTargetAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprTargetAttrs<'a> {
+impl ExprTargetAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprTargetAttrs<'a> {
         IterableExprTargetAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -11352,7 +11352,7 @@ impl<'a> IterableExprTproxyAttrs<'a> {
     }
 }
 impl ExprTproxyAttrs {
-    pub fn new(buf: &'_ [u8]) -> IterableExprTproxyAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprTproxyAttrs<'a> {
         IterableExprTproxyAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -11591,8 +11591,8 @@ impl<'a> IterableExprObjrefAttrs<'a> {
         ))
     }
 }
-impl<'a> ExprObjrefAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableExprObjrefAttrs<'a> {
+impl ExprObjrefAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableExprObjrefAttrs<'a> {
         IterableExprObjrefAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -11819,8 +11819,8 @@ impl<'a> IterableCompatTargetAttrs<'a> {
         ))
     }
 }
-impl<'a> CompatTargetAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableCompatTargetAttrs<'a> {
+impl CompatTargetAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableCompatTargetAttrs<'a> {
         IterableCompatTargetAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -12021,8 +12021,8 @@ impl<'a> IterableCompatMatchAttrs<'a> {
         ))
     }
 }
-impl<'a> CompatMatchAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableCompatMatchAttrs<'a> {
+impl CompatMatchAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableCompatMatchAttrs<'a> {
         IterableCompatMatchAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -12223,8 +12223,8 @@ impl<'a> IterableCompatAttrs<'a> {
         ))
     }
 }
-impl<'a> CompatAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableCompatAttrs<'a> {
+impl CompatAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableCompatAttrs<'a> {
         IterableCompatAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -15879,7 +15879,7 @@ impl<Prev: Rec> Drop for PushOpGetcompatDumpRequest<Prev> {
 pub enum OpGetcompatDumpRequest {}
 impl<'a> IterableOpGetcompatDumpRequest<'a> {}
 impl OpGetcompatDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetcompatDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -16093,8 +16093,8 @@ impl<'a> IterableOpGetcompatDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetcompatDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDumpReply<'a>) {
+impl OpGetcompatDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -16405,8 +16405,8 @@ impl<'a> IterableOpGetcompatDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetcompatDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDoRequest<'a>) {
+impl OpGetcompatDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -16672,8 +16672,8 @@ impl<'a> IterableOpGetcompatDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetcompatDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDoReply<'a>) {
+impl OpGetcompatDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetcompatDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -16934,7 +16934,7 @@ impl<'a> IterableOpBatchBeginDoRequest<'a> {
     }
 }
 impl OpBatchBeginDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchBeginDoRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpBatchBeginDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -17128,7 +17128,7 @@ impl<'a> IterableOpBatchBeginDoReply<'a> {
     }
 }
 impl OpBatchBeginDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchBeginDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpBatchBeginDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -17365,7 +17365,7 @@ impl<'a> IterableOpBatchEndDoRequest<'a> {
     }
 }
 impl OpBatchEndDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchEndDoRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpBatchEndDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -17533,7 +17533,7 @@ impl<Prev: Rec> Drop for PushOpBatchEndDoReply<Prev> {
 pub enum OpBatchEndDoReply {}
 impl<'a> IterableOpBatchEndDoReply<'a> {}
 impl OpBatchEndDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpBatchEndDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpBatchEndDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -17800,8 +17800,8 @@ impl<'a> IterableOpNewtableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewtableDoRequest<'a>) {
+impl OpNewtableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewtableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -17995,7 +17995,7 @@ impl<Prev: Rec> Drop for PushOpNewtableDoReply<Prev> {
 pub enum OpNewtableDoReply {}
 impl<'a> IterableOpNewtableDoReply<'a> {}
 impl OpNewtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewtableDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewtableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -18178,7 +18178,7 @@ impl<Prev: Rec> Drop for PushOpGettableDumpRequest<Prev> {
 pub enum OpGettableDumpRequest {}
 impl<'a> IterableOpGettableDumpRequest<'a> {}
 impl OpGettableDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGettableDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -18474,8 +18474,8 @@ impl<'a> IterableOpGettableDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGettableDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDumpReply<'a>) {
+impl OpGettableDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -18786,8 +18786,8 @@ impl<'a> IterableOpGettableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGettableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDoRequest<'a>) {
+impl OpGettableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -19111,8 +19111,8 @@ impl<'a> IterableOpGettableDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGettableDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDoReply<'a>) {
+impl OpGettableDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGettableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -19445,8 +19445,8 @@ impl<'a> IterableOpDeltableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDeltableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDeltableDoRequest<'a>) {
+impl OpDeltableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDeltableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -19626,7 +19626,7 @@ impl<Prev: Rec> Drop for PushOpDeltableDoReply<Prev> {
 pub enum OpDeltableDoReply {}
 impl<'a> IterableOpDeltableDoReply<'a> {}
 impl OpDeltableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDeltableDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDeltableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -19869,8 +19869,8 @@ impl<'a> IterableOpDestroytableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroytableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroytableDoRequest<'a>) {
+impl OpDestroytableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroytableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -20050,7 +20050,7 @@ impl<Prev: Rec> Drop for PushOpDestroytableDoReply<Prev> {
 pub enum OpDestroytableDoReply {}
 impl<'a> IterableOpDestroytableDoReply<'a> {}
 impl OpDestroytableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroytableDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroytableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -20487,8 +20487,8 @@ impl<'a> IterableOpNewchainDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewchainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewchainDoRequest<'a>) {
+impl OpNewchainDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewchainDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -20755,7 +20755,7 @@ impl<Prev: Rec> Drop for PushOpNewchainDoReply<Prev> {
 pub enum OpNewchainDoReply {}
 impl<'a> IterableOpNewchainDoReply<'a> {}
 impl OpNewchainDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewchainDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewchainDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -20938,7 +20938,7 @@ impl<Prev: Rec> Drop for PushOpGetchainDumpRequest<Prev> {
 pub enum OpGetchainDumpRequest {}
 impl<'a> IterableOpGetchainDumpRequest<'a> {}
 impl OpGetchainDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetchainDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -21380,8 +21380,8 @@ impl<'a> IterableOpGetchainDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetchainDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDumpReply<'a>) {
+impl OpGetchainDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -21788,8 +21788,8 @@ impl<'a> IterableOpGetchainDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetchainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDoRequest<'a>) {
+impl OpGetchainDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -22271,8 +22271,8 @@ impl<'a> IterableOpGetchainDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetchainDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDoReply<'a>) {
+impl OpGetchainDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetchainDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -22727,8 +22727,8 @@ impl<'a> IterableOpDelchainDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelchainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelchainDoRequest<'a>) {
+impl OpDelchainDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelchainDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -22933,7 +22933,7 @@ impl<Prev: Rec> Drop for PushOpDelchainDoReply<Prev> {
 pub enum OpDelchainDoReply {}
 impl<'a> IterableOpDelchainDoReply<'a> {}
 impl OpDelchainDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelchainDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelchainDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -23237,8 +23237,8 @@ impl<'a> IterableOpDestroychainDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroychainDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroychainDoRequest<'a>) {
+impl OpDestroychainDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroychainDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -23443,7 +23443,7 @@ impl<Prev: Rec> Drop for PushOpDestroychainDoReply<Prev> {
 pub enum OpDestroychainDoReply {}
 impl<'a> IterableOpDestroychainDoReply<'a> {}
 impl OpDestroychainDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroychainDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroychainDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -23869,8 +23869,8 @@ impl<'a> IterableOpNewruleDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewruleDoRequest<'a>) {
+impl OpNewruleDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewruleDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -24135,7 +24135,7 @@ impl<Prev: Rec> Drop for PushOpNewruleDoReply<Prev> {
 pub enum OpNewruleDoReply {}
 impl<'a> IterableOpNewruleDoReply<'a> {}
 impl OpNewruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewruleDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewruleDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -24389,8 +24389,8 @@ impl<'a> IterableOpGetruleDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetruleDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDumpRequest<'a>) {
+impl OpGetruleDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -24739,8 +24739,8 @@ impl<'a> IterableOpGetruleDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetruleDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDumpReply<'a>) {
+impl OpGetruleDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -25109,8 +25109,8 @@ impl<'a> IterableOpGetruleDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDoRequest<'a>) {
+impl OpGetruleDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -25471,8 +25471,8 @@ impl<'a> IterableOpGetruleDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetruleDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDoReply<'a>) {
+impl OpGetruleDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -25839,8 +25839,8 @@ impl<'a> IterableOpGetruleResetDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetruleResetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDumpRequest<'a>) {
+impl OpGetruleResetDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -26201,8 +26201,8 @@ impl<'a> IterableOpGetruleResetDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetruleResetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDumpReply<'a>) {
+impl OpGetruleResetDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -26571,8 +26571,8 @@ impl<'a> IterableOpGetruleResetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetruleResetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDoRequest<'a>) {
+impl OpGetruleResetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -26933,8 +26933,8 @@ impl<'a> IterableOpGetruleResetDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetruleResetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDoReply<'a>) {
+impl OpGetruleResetDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetruleResetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -27351,8 +27351,8 @@ impl<'a> IterableOpDelruleDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelruleDoRequest<'a>) {
+impl OpDelruleDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelruleDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -27569,7 +27569,7 @@ impl<Prev: Rec> Drop for PushOpDelruleDoReply<Prev> {
 pub enum OpDelruleDoReply {}
 impl<'a> IterableOpDelruleDoReply<'a> {}
 impl OpDelruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelruleDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelruleDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -27897,8 +27897,8 @@ impl<'a> IterableOpDestroyruleDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroyruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyruleDoRequest<'a>) {
+impl OpDestroyruleDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyruleDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -28115,7 +28115,7 @@ impl<Prev: Rec> Drop for PushOpDestroyruleDoReply<Prev> {
 pub enum OpDestroyruleDoReply {}
 impl<'a> IterableOpDestroyruleDoReply<'a> {}
 impl OpDestroyruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroyruleDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyruleDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -28659,8 +28659,8 @@ impl<'a> IterableOpNewsetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewsetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetDoRequest<'a>) {
+impl OpNewsetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -28987,7 +28987,7 @@ impl<Prev: Rec> Drop for PushOpNewsetDoReply<Prev> {
 pub enum OpNewsetDoReply {}
 impl<'a> IterableOpNewsetDoReply<'a> {}
 impl OpNewsetDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewsetDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -29206,8 +29206,8 @@ impl<'a> IterableOpGetsetDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetsetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDumpRequest<'a>) {
+impl OpGetsetDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -29760,8 +29760,8 @@ impl<'a> IterableOpGetsetDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetsetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDumpReply<'a>) {
+impl OpGetsetDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -30216,8 +30216,8 @@ impl<'a> IterableOpGetsetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetsetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDoRequest<'a>) {
+impl OpGetsetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -30780,8 +30780,8 @@ impl<'a> IterableOpGetsetDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetsetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDoReply<'a>) {
+impl OpGetsetDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -31258,8 +31258,8 @@ impl<'a> IterableOpDelsetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelsetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetDoRequest<'a>) {
+impl OpDelsetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -31451,7 +31451,7 @@ impl<Prev: Rec> Drop for PushOpDelsetDoReply<Prev> {
 pub enum OpDelsetDoReply {}
 impl<'a> IterableOpDelsetDoReply<'a> {}
 impl OpDelsetDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelsetDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -31729,8 +31729,8 @@ impl<'a> IterableOpDestroysetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroysetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetDoRequest<'a>) {
+impl OpDestroysetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -31922,7 +31922,7 @@ impl<Prev: Rec> Drop for PushOpDestroysetDoReply<Prev> {
 pub enum OpDestroysetDoReply {}
 impl<'a> IterableOpDestroysetDoReply<'a> {}
 impl OpDestroysetDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroysetDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -32212,8 +32212,8 @@ impl<'a> IterableOpNewsetelemDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewsetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetelemDoRequest<'a>) {
+impl OpNewsetelemDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetelemDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -32418,7 +32418,7 @@ impl<Prev: Rec> Drop for PushOpNewsetelemDoReply<Prev> {
 pub enum OpNewsetelemDoReply {}
 impl<'a> IterableOpNewsetelemDoReply<'a> {}
 impl OpNewsetelemDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewsetelemDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewsetelemDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -32664,8 +32664,8 @@ impl<'a> IterableOpGetsetelemDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDumpRequest<'a>) {
+impl OpGetsetelemDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -32931,8 +32931,8 @@ impl<'a> IterableOpGetsetelemDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDumpReply<'a>) {
+impl OpGetsetelemDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -33256,8 +33256,8 @@ impl<'a> IterableOpGetsetelemDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDoRequest<'a>) {
+impl OpGetsetelemDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -33474,8 +33474,8 @@ impl<'a> IterableOpGetsetelemDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDoReply<'a>) {
+impl OpGetsetelemDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -33750,8 +33750,8 @@ impl<'a> IterableOpGetsetelemResetDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemResetDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDumpRequest<'a>) {
+impl OpGetsetelemResetDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -34017,8 +34017,8 @@ impl<'a> IterableOpGetsetelemResetDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemResetDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDumpReply<'a>) {
+impl OpGetsetelemResetDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -34280,8 +34280,8 @@ impl<'a> IterableOpGetsetelemResetDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemResetDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDoRequest<'a>) {
+impl OpGetsetelemResetDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -34536,8 +34536,8 @@ impl<'a> IterableOpGetsetelemResetDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetsetelemResetDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDoReply<'a>) {
+impl OpGetsetelemResetDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetsetelemResetDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -34859,8 +34859,8 @@ impl<'a> IterableOpDelsetelemDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelsetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetelemDoRequest<'a>) {
+impl OpDelsetelemDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetelemDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -35053,7 +35053,7 @@ impl<Prev: Rec> Drop for PushOpDelsetelemDoReply<Prev> {
 pub enum OpDelsetelemDoReply {}
 impl<'a> IterableOpDelsetelemDoReply<'a> {}
 impl OpDelsetelemDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelsetelemDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelsetelemDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -35322,8 +35322,8 @@ impl<'a> IterableOpDestroysetelemDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroysetelemDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetelemDoRequest<'a>) {
+impl OpDestroysetelemDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetelemDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -35516,7 +35516,7 @@ impl<Prev: Rec> Drop for PushOpDestroysetelemDoReply<Prev> {
 pub enum OpDestroysetelemDoReply {}
 impl<'a> IterableOpDestroysetelemDoReply<'a> {}
 impl OpDestroysetelemDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroysetelemDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroysetelemDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -35699,7 +35699,7 @@ impl<Prev: Rec> Drop for PushOpGetgenDumpRequest<Prev> {
 pub enum OpGetgenDumpRequest {}
 impl<'a> IterableOpGetgenDumpRequest<'a> {}
 impl OpGetgenDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetgenDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -35916,8 +35916,8 @@ impl<'a> IterableOpGetgenDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetgenDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDumpReply<'a>) {
+impl OpGetgenDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -36154,7 +36154,7 @@ impl<Prev: Rec> Drop for PushOpGetgenDoRequest<Prev> {
 pub enum OpGetgenDoRequest {}
 impl<'a> IterableOpGetgenDoRequest<'a> {}
 impl OpGetgenDoRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetgenDoRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -36371,8 +36371,8 @@ impl<'a> IterableOpGetgenDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetgenDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDoReply<'a>) {
+impl OpGetgenDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetgenDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -36773,8 +36773,8 @@ impl<'a> IterableOpNewobjDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewobjDoRequest<'a>) {
+impl OpNewobjDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewobjDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -36995,7 +36995,7 @@ impl<Prev: Rec> Drop for PushOpNewobjDoReply<Prev> {
 pub enum OpNewobjDoReply {}
 impl<'a> IterableOpNewobjDoReply<'a> {}
 impl OpNewobjDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewobjDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewobjDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -37238,8 +37238,8 @@ impl<'a> IterableOpGetobjDumpRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetobjDumpRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDumpRequest<'a>) {
+impl OpGetobjDumpRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -37635,8 +37635,8 @@ impl<'a> IterableOpGetobjDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetobjDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDumpReply<'a>) {
+impl OpGetobjDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -38021,8 +38021,8 @@ impl<'a> IterableOpGetobjDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDoRequest<'a>) {
+impl OpGetobjDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -38430,8 +38430,8 @@ impl<'a> IterableOpGetobjDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetobjDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDoReply<'a>) {
+impl OpGetobjDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetobjDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -38838,8 +38838,8 @@ impl<'a> IterableOpDelobjDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelobjDoRequest<'a>) {
+impl OpDelobjDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelobjDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -39045,7 +39045,7 @@ impl<Prev: Rec> Drop for PushOpDelobjDoReply<Prev> {
 pub enum OpDelobjDoReply {}
 impl<'a> IterableOpDelobjDoReply<'a> {}
 impl OpDelobjDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelobjDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelobjDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -39347,8 +39347,8 @@ impl<'a> IterableOpDestroyobjDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroyobjDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyobjDoRequest<'a>) {
+impl OpDestroyobjDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyobjDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -39554,7 +39554,7 @@ impl<Prev: Rec> Drop for PushOpDestroyobjDoReply<Prev> {
 pub enum OpDestroyobjDoReply {}
 impl<'a> IterableOpDestroyobjDoReply<'a> {}
 impl OpDestroyobjDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroyobjDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyobjDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -39844,8 +39844,8 @@ impl<'a> IterableOpNewflowtableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewflowtableDoRequest<'a>) {
+impl OpNewflowtableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewflowtableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -40050,7 +40050,7 @@ impl<Prev: Rec> Drop for PushOpNewflowtableDoReply<Prev> {
 pub enum OpNewflowtableDoReply {}
 impl<'a> IterableOpNewflowtableDoReply<'a> {}
 impl OpNewflowtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpNewflowtableDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpNewflowtableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -40233,7 +40233,7 @@ impl<Prev: Rec> Drop for PushOpGetflowtableDumpRequest<Prev> {
 pub enum OpGetflowtableDumpRequest {}
 impl<'a> IterableOpGetflowtableDumpRequest<'a> {}
 impl OpGetflowtableDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -40522,8 +40522,8 @@ impl<'a> IterableOpGetflowtableDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetflowtableDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDumpReply<'a>) {
+impl OpGetflowtableDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -40860,8 +40860,8 @@ impl<'a> IterableOpGetflowtableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpGetflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDoRequest<'a>) {
+impl OpGetflowtableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -41190,8 +41190,8 @@ impl<'a> IterableOpGetflowtableDoReply<'a> {
         ))
     }
 }
-impl<'a> OpGetflowtableDoReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDoReply<'a>) {
+impl OpGetflowtableDoReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpGetflowtableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -41570,8 +41570,8 @@ impl<'a> IterableOpDelflowtableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelflowtableDoRequest<'a>) {
+impl OpDelflowtableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelflowtableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -41776,7 +41776,7 @@ impl<Prev: Rec> Drop for PushOpDelflowtableDoReply<Prev> {
 pub enum OpDelflowtableDoReply {}
 impl<'a> IterableOpDelflowtableDoReply<'a> {}
 impl OpDelflowtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDelflowtableDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDelflowtableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -42066,8 +42066,8 @@ impl<'a> IterableOpDestroyflowtableDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDestroyflowtableDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyflowtableDoRequest<'a>) {
+impl OpDestroyflowtableDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyflowtableDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),
@@ -42272,7 +42272,7 @@ impl<Prev: Rec> Drop for PushOpDestroyflowtableDoReply<Prev> {
 pub enum OpDestroyflowtableDoReply {}
 impl<'a> IterableOpDestroyflowtableDoReply<'a> {}
 impl OpDestroyflowtableDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushNfgenmsg, IterableOpDestroyflowtableDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushNfgenmsg, IterableOpDestroyflowtableDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushNfgenmsg::len()));
         (
             PushNfgenmsg::new_from_slice(header).unwrap_or_default(),

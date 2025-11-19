@@ -529,8 +529,8 @@ impl<'a> IterableFibRuleAttrs<'a> {
         ))
     }
 }
-impl<'a> FibRuleAttrs<'a> {
-    pub fn new(buf: &'a [u8]) -> IterableFibRuleAttrs<'a> {
+impl FibRuleAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableFibRuleAttrs<'a> {
         IterableFibRuleAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
@@ -2030,8 +2030,8 @@ impl<'a> IterableOpNewruleDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpNewruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpNewruleDoRequest<'a>) {
+impl OpNewruleDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpNewruleDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
             PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
@@ -2463,7 +2463,7 @@ impl<Prev: Rec> Drop for PushOpNewruleDoReply<Prev> {
 pub enum OpNewruleDoReply {}
 impl<'a> IterableOpNewruleDoReply<'a> {}
 impl OpNewruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, IterableOpNewruleDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpNewruleDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
             PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
@@ -3150,8 +3150,8 @@ impl<'a> IterableOpDelruleDoRequest<'a> {
         ))
     }
 }
-impl<'a> OpDelruleDoRequest<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpDelruleDoRequest<'a>) {
+impl OpDelruleDoRequest<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpDelruleDoRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
             PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
@@ -3583,7 +3583,7 @@ impl<Prev: Rec> Drop for PushOpDelruleDoReply<Prev> {
 pub enum OpDelruleDoReply {}
 impl<'a> IterableOpDelruleDoReply<'a> {}
 impl OpDelruleDoReply {
-    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, IterableOpDelruleDoReply<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpDelruleDoReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
             PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
@@ -3766,7 +3766,7 @@ impl<Prev: Rec> Drop for PushOpGetruleDumpRequest<Prev> {
 pub enum OpGetruleDumpRequest {}
 impl<'a> IterableOpGetruleDumpRequest<'a> {}
 impl OpGetruleDumpRequest {
-    pub fn new(buf: &'_ [u8]) -> (PushFibRuleHdr, IterableOpGetruleDumpRequest<'_>) {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpGetruleDumpRequest<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
             PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
@@ -4410,8 +4410,8 @@ impl<'a> IterableOpGetruleDumpReply<'a> {
         ))
     }
 }
-impl<'a> OpGetruleDumpReply<'a> {
-    pub fn new(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpGetruleDumpReply<'a>) {
+impl OpGetruleDumpReply<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> (PushFibRuleHdr, IterableOpGetruleDumpReply<'a>) {
         let (header, attrs) = buf.split_at(buf.len().min(PushFibRuleHdr::len()));
         (
             PushFibRuleHdr::new_from_slice(header).unwrap_or_default(),
