@@ -28,6 +28,14 @@ required-features = [ "netlink-bindings/nftables" ]
 name = "nftables-api"
 required-features = [ "netlink-bindings/nftables" ]
 
+[[example]]
+name = "nl80211"
+required-features = [ "netlink-bindings/nl80211", "netlink-bindings/rt-link" ]
+
+[[example]]
+name = "nl80211-raw"
+required-features = [ "netlink-bindings/nl80211", "netlink-bindings/rt-link" ]
+
 [features]
 async = []
 tokio = [ "async", "dep:tokio"]

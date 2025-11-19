@@ -298,11 +298,12 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | subsystem | ? | comment |
 | --- | --- | --- |
 | [nlctrl](./netlink-bindings/src/nlctrl/nlctrl.md) | ✅ | |
+| [conntrack](./netlink-bindings/src/conntrack/conntrack.md) | ✅ | |
+| [nftables](./netlink-bindings/src/nftables/nftables.md) | ✅ | |
+| [nl80211](./netlink-bindings/src/nl80211/nl80211.md) | ✅ | |
 | [rt-addr](./netlink-bindings/src/rt-addr/rt-addr.md) | ✅ | |
 | [rt-link](./netlink-bindings/src/rt-link/rt-link.md) | ✅ | |
 | [wireguard](./netlink-bindings/src/wireguard/wireguard.md) | ✅ | |
-| [nftables](./netlink-bindings/src/nftables/nftables.md) | ✅ | |
-| [conntrack](./netlink-bindings/src/conntrack/conntrack.md) | ✔️ | |
 | [rt-neigh](./netlink-bindings/src/rt-neigh/rt-neigh.md) | ✔️ | |
 | [rt-route](./netlink-bindings/src/rt-route/rt-route.md) | ✔️ | |
 | [rt-rule](./netlink-bindings/src/rt-rule/rt-rule.md) | ✔️ | |
@@ -317,7 +318,6 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | net-shaper | ? | |
 | netdev | ? | |
 | nfsd | ? | |
-| nl80211 | ? | |
 | ovpn | ? | |
 | ovs_datapath | ? | |
 | ovs_flow | ? | |
