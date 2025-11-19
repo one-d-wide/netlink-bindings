@@ -174,6 +174,9 @@ ack attributes in error reporting.
 - [nftables](./netlink-socket/examples/nftables.rs) - Create nftables rules.
 - [nftables-api](./netlink-socket/examples/nftables-api.rs) - A high-level
 wrapper for creating nftables rules.
+- [nl80211](./netlink-socket/examples/nl80211.rs) - Basic interactions with nl80211.
+- [nl80211-raw](./netlink-socket/examples/nl80211-raw.rs) - Same as nl80211,
+but manually encoding/decoding netlink messages.
 
 ## Attribute encoding
 
@@ -298,18 +301,18 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | subsystem | ? | comment |
 | --- | --- | --- |
 | [nlctrl](./netlink-bindings/src/nlctrl/nlctrl.md) | ✅ | |
-| [conntrack](./netlink-bindings/src/conntrack/conntrack.md) | ✅ | |
-| [nftables](./netlink-bindings/src/nftables/nftables.md) | ✅ | |
-| [nl80211](./netlink-bindings/src/nl80211/nl80211.md) | ✅ | |
-| [rt-addr](./netlink-bindings/src/rt-addr/rt-addr.md) | ✅ | |
-| [rt-link](./netlink-bindings/src/rt-link/rt-link.md) | ✅ | |
-| [wireguard](./netlink-bindings/src/wireguard/wireguard.md) | ✅ | |
-| [devlink](./netlink-bindings/src/devlink/devlink.md) | ✔️ | |
-| [netdev](./netlink-bindings/src/netdev/netdev.md) | ✔️ | |
-| [rt-neigh](./netlink-bindings/src/rt-neigh/rt-neigh.md) | ✔️ | |
-| [rt-route](./netlink-bindings/src/rt-route/rt-route.md) | ✔️ | |
-| [rt-rule](./netlink-bindings/src/rt-rule/rt-rule.md) | ✔️ | |
-| [tc](./netlink-bindings/src/tc/tc.md) | ✔️ | |
+| [conntrack](./netlink-socket/examples/conntrack.rs) | ✅ | |
+| [nftables](./netlink-socket/examples/nftables.rs) | ✅ | |
+| [nl80211](./netlink-socket/examples/nl80211.rs) | ✅ | |
+| [rt-addr](./netlink-socket/examples/wireguard-setup.rs) | ✅ | |
+| [rt-link](./netlink-socket/examples/wireguard-setup.rs) | ✅ | |
+| [wireguard](./netlink-socket/examples/wireguard-setup.rs) | ✅ | |
+| devlink | ✔️ | |
+| netdev | ✔️ | |
+| rt-neigh | ✔️ | |
+| rt-route | ✔️ | |
+| rt-rule | ✔️ | |
+| tc | ✔️ | |
 | ethtool | ? | |
 | dpll | ? | |
 | fou | ? | |
