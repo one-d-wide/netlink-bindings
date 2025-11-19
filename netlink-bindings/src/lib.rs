@@ -51,10 +51,11 @@ pub mod conntrack;
 // #[cfg(feature = "net-shaper")]
 // #[path = "net-shaper/mod.rs"]
 // pub mod net_shaper;
-//
-// #[cfg(feature = "netdev")]
-// pub mod netdev;
-//
+
+#[cfg(feature = "netdev")]
+#[cfg_attr(docsrs, doc(cfg(feature = "netdev")))]
+pub mod netdev;
+
 // #[cfg(feature = "nfsd")]
 // pub mod nfsd;
 
