@@ -27,9 +27,10 @@ pub mod utils;
 #[cfg_attr(docsrs, doc(cfg(feature = "conntrack")))]
 pub mod conntrack;
 
-// #[cfg(feature = "devlink")]
-// pub mod devlink;
-//
+#[cfg(feature = "devlink")]
+#[cfg_attr(docsrs, doc(cfg(feature = "devlink")))]
+pub mod devlink;
+
 // #[cfg(feature = "dpll")]
 // pub mod dpll;
 //

@@ -304,12 +304,12 @@ pattern-like interface for encoding, and an iterator interface for decoding
 | [rt-addr](./netlink-bindings/src/rt-addr/rt-addr.md) | ✅ | |
 | [rt-link](./netlink-bindings/src/rt-link/rt-link.md) | ✅ | |
 | [wireguard](./netlink-bindings/src/wireguard/wireguard.md) | ✅ | |
+| [devlink](./netlink-bindings/src/devlink/devlink.md) | ✔️ | |
 | [netdev](./netlink-bindings/src/netdev/netdev.md) | ✔️ | |
 | [rt-neigh](./netlink-bindings/src/rt-neigh/rt-neigh.md) | ✔️ | |
 | [rt-route](./netlink-bindings/src/rt-route/rt-route.md) | ✔️ | |
 | [rt-rule](./netlink-bindings/src/rt-rule/rt-rule.md) | ✔️ | |
 | [tc](./netlink-bindings/src/tc/tc.md) | ✔️ | |
-| devlink | • | |
 | ethtool | ? | |
 | dpll | ? | |
 | fou | ? | |
