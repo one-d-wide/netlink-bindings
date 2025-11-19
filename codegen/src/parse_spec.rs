@@ -3,6 +3,8 @@
 use serde::Deserialize;
 use serde_aux::field_attributes::deserialize_default_from_empty_object;
 
+use crate::gen_ops;
+
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "kebab-case")]
@@ -579,6 +581,7 @@ impl Spec {
         spec
     }
 
+    /// Matches genetlink and genetlink-legacy specifications
     pub fn is_genetlink(&self) -> bool {
         self.protocol
             .as_ref()
@@ -738,25 +741,21 @@ impl Spec {
             }
         }
 
-        // Assign operation type values, if needed
-        let mut assign_values = !self.operations.list.is_empty();
-        for ops in &self.operations.list {
-            let req_has_val = |r: &Request| r.value.is_some();
-            let op_has_val = |op: Option<&Operation>| {
-                op.is_some_and(|op| req_has_val(&op.request) || req_has_val(&op.reply))
-            };
-
-            if ops.value.is_some() || op_has_val(ops.r#do.as_ref()) || op_has_val(ops.dump.as_ref())
-            {
-                assign_values = false;
-                break;
-            }
-        }
-        if assign_values {
-            let mut val = 1;
+        // Assign operation type values
+        if self.is_genetlink() {
+            let mut request_type = 1;
             for ops in &mut self.operations.list {
-                ops.value = Some(format!("{val}"));
-                val += 1;
+                let value = None
+                    .or(ops.value.as_ref())
+                    .or(ops.r#do.as_ref().and_then(|op| op.request.value.as_ref()))
+                    .or(ops.dump.as_ref().and_then(|op| op.request.value.as_ref()));
+
+                if let Some(value) = value {
+                    request_type = gen_ops::parse_value(value);
+                } else {
+                    ops.value = Some(format!("{request_type}"));
+                }
+                request_type += 1;
             }
         }
 
