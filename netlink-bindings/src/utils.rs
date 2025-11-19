@@ -15,7 +15,7 @@ pub fn dump_hex(buf: &[u8]) {
                 print!(".");
             }
         }
-        println!(".");
+        println!();
         len += chunk.len();
     }
 }
