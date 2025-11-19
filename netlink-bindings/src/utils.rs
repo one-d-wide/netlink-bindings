@@ -129,6 +129,27 @@ impl<T: Debug> fmt::Debug for FlattenErrorContext<T> {
     }
 }
 
+pub struct MapFormatArray<I, T, M, D>(pub T, pub M)
+where
+    T: Clone + Iterator<Item = Result<I, ErrorContext>>,
+    M: Clone + FnMut(I) -> D,
+    D: fmt::Debug;
+
+impl<I, T, M, D> fmt::Debug for MapFormatArray<I, T, M, D>
+where
+    T: Clone + Iterator<Item = Result<I, ErrorContext>>,
+    M: Clone + FnMut(I) -> D,
+    D: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_list();
+        for item in self.0.clone() {
+            f.entry(&FlattenErrorContext(item.map(self.1.clone())));
+        }
+        f.finish()
+    }
+}
+
 pub const NLA_F_NESTED: u16 = 1 << 15;
 pub const NLA_F_NET_BYTEORDER: u16 = 1 << 14;
 

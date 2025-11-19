@@ -18,21 +18,14 @@ pub fn gen_introspect_array(
 ) {
     let fmt_name = format_ident!("fmt");
 
-    let arr;
-    let map;
-
-    match sub_type {
+    let arr = match sub_type {
         IndexedArrayType::Plain { attr } => {
             let name_str = gen_attr_type_name(attr);
-            arr = array_iterable_name(&name_str);
-            map = quote!();
+            array_iterable_name(&name_str)
         }
-        IndexedArrayType::Nest { nested_attributes } => {
-            arr = array_iterable_name(nested_attributes);
-            map = quote!(.map(FlattenErrorContext));
-        }
+        IndexedArrayType::Nest { nested_attributes } => array_iterable_name(nested_attributes),
         sub_type => unreachable!("{sub_type:?}"),
-    }
+    };
 
     if ctx.generated_array_introspect.contains(&arr.to_string()) {
         return;
@@ -42,7 +35,7 @@ pub fn gen_introspect_array(
     tokens.extend(quote! {
         impl std::fmt::Debug for #arr<'_> {
             fn fmt(&self, #fmt_name: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                #fmt_name.debug_list().entries(self.clone()#map).finish()
+                #fmt_name.debug_list().entries(self.clone().map(FlattenErrorContext)).finish()
             }
         }
     });
@@ -71,12 +64,12 @@ pub fn gen_introspect_attrs(
 
         match &next.r#type {
             AttrType::Unused => continue,
-            _ if next.r#enum.is_some() && !matches!(next.r#type, AttrType::IndexedArray { .. }) => {
+            _ if next.r#enum.is_some() => {
                 let Some(r#enum) = &next.r#enum else {unreachable!()};
                 let enum_def = spec.find_def(r#enum);
                 let enum_type = format_ident!("{}", kebab_to_type(r#enum));
 
-                let as_flags=next.enum_as_flags.is_some_and(|val| val);
+                let as_flags = next.enum_as_flags.is_some_and(|val| val);
                 let def_flags = matches!(enum_def.def, DefType::Flags { .. });
                 let (formatter, from_val) = if def_flags {
                     (quote!(FormatFlags), quote!(#enum_type::from_value))
@@ -86,9 +79,15 @@ pub fn gen_introspect_attrs(
                     (quote!(FormatEnum), quote!(#enum_type::from_value))
                 };
 
+                let debug = if matches!(next.r#type, AttrType::IndexedArray { .. }) {
+                    quote! { &MapFormatArray(#val_name, |v| #formatter(v.into(), #from_val)) }
+                } else {
+                    quote! { &#formatter(#val_name.into(), #from_val) }
+                };
+
                 variants.extend(quote! {
-                    #type_name::#name(#val_name) => #fmt_name.field(#field_name, &#formatter(#val_name.into(), #from_val)),
-                })
+                    #type_name::#name(#val_name) => #fmt_name.field(#field_name, #debug),
+                });
             }
             AttrType::Binary { r#struct: None, .. }
                 if next.display_hint.as_ref().is_some_and(|h| h == "hex") =>
