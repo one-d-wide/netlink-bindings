@@ -656,19 +656,12 @@ pub struct Spec {
 pub struct Experimental {
     #[serde(default)]
     pub struct_prefix: Option<bool>,
-    #[serde(default)]
-    pub struct_explicit_padding: bool,
-    /// TODO: deprecate. `Pusher` trait can be used instead.
-    #[serde(default)]
-    pub attr_binary_write: bool,
 }
 
 impl Default for Experimental {
     fn default() -> Self {
         Self {
             struct_prefix: Some(false),
-            struct_explicit_padding: true,
-            attr_binary_write: false,
         }
     }
 }

@@ -17,10 +17,6 @@ pub fn writable_type(name: &str) -> Ident {
     format_ident!("Push{}", kebab_to_type(name))
 }
 
-pub fn writable_writer_attr(name: &str) -> Ident {
-    format_ident!("write_{}", kebab_to_rust(&name))
-}
-
 pub fn writable_val_attr(name: &str) -> Ident {
     format_ident!("push_{}", kebab_to_rust(&name))
 }
@@ -370,20 +366,6 @@ pub fn gen_writable_attrset(
                 self
             }
         });
-
-        if spec.experimental.attr_binary_write
-            && matches!(&next.r#type, AttrType::Binary { .. } | AttrType::String)
-        {
-            let write_func = writable_writer_attr(&next.name);
-            doc_attr(ctx, next, |doc| impls.extend(quote!(#[doc = #doc])));
-            impls.extend(quote! {
-                pub fn #write_func(mut self) -> PushWriter<Self> {
-                    #do_align
-                    let header_offset = write_header(self.as_vec_mut(), #id);
-                    PushWriter { prev: Some(self), header_offset: Some(header_offset) }
-                }
-            });
-        }
 
         if let AttrType::String = &next.r#type {
             // Convince method to use allow &[u8] instead of &CStr

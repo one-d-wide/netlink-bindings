@@ -158,10 +158,6 @@ Needs `sub-type: {u8,u16,u32}` and `bits: <n>`.
 Experimental options:
 
 - `experimental.struct-prefix: false` - disable "Push" prefix for structs.
-- `experimental.struct-explicit-padding: true` - always add padding fields,
-even if it would otherwise be silently inserted due to alignment.
-- `experimental.attr-binary-write: true` - generate `.write_*() -> impl Write`
-methods for attributes of binary type.
 
 Feature flags:
 

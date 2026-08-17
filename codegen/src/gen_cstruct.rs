@@ -519,7 +519,7 @@ fn insert_padding(
     alignment: usize,
 ) {
     let pad = align_up(m.off, alignment) - m.off;
-    if pad != 0 && (alignment > 4 || spec.experimental.struct_explicit_padding) {
+    if pad != 0 {
         assert!(alignment <= 8);
         m.derive_debug = false;
         let pad_name = format_ident!("_pad_{}", m.off);
