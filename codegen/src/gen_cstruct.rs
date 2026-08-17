@@ -133,6 +133,8 @@ pub fn gen_cstruct(
         bit_off: 0,
         last_bit_type: None,
         alignment: 1,
+        final_alignment: 1,
+        has_struct_field: false,
         derive_debug: true,
     };
 
@@ -151,14 +153,9 @@ pub fn gen_cstruct(
     let fmt_name = format_ident!("fmt");
 
     let alignment = m.alignment;
-    insert_padding(spec, &mut cinner, &mut m, 0, alignment);
+    let expected_alignment = m.alignment.min(4);
+    insert_padding(spec, &mut cinner, &mut m, 0, alignment, false);
     let len = m.off;
-
-    if m.derive_debug {
-        tokens.extend(quote! {
-            #[derive(Debug)]
-        });
-    }
 
     if let Some(doc) = &def.doc {
         let doc = escape_md(ctx, doc);
@@ -168,18 +165,35 @@ pub fn gen_cstruct(
     }
 
     tokens.extend(quote! {
+        #[derive(Clone)]
+    });
+
+    if m.derive_debug {
+        tokens.extend(quote! {
+            #[derive(Debug)]
+        });
+    }
+
+    if m.final_alignment <= 4 || !m.has_struct_field {
+        // Deriving these fails on packed(4) structs if they contains another struct as a field.
+        tokens.extend(quote! {
+            #[derive(PartialEq, Eq, PartialOrd, Ord, Hash)]
+        });
+    }
+
+    if m.final_alignment > 4 {
         // Generally, we can't rely on struct being aligned >4 bytes (default netlink alignment)
         // Kernel usually does consistently insert padding, but other programs may not.
         // This has the downside of being unable to take &u64 directly (compiler will complain).
-        #[repr(C, packed(4))]
+        tokens.extend(quote! {
+            #[repr(packed(4))]
+        });
+    }
+
+    tokens.extend(quote! {
+        #[repr(C)]
         pub struct #type_name {
             #cinner
-        }
-
-        impl Clone for #type_name {
-            fn clone(&self) -> Self {
-                Self::new_from_array(*self.as_array())
-            }
         }
 
         #[doc = "Create zero-initialized struct"]
@@ -239,6 +253,7 @@ pub fn gen_cstruct(
             // }
             pub const fn len() -> usize {
                 const _: () = assert!(std::mem::size_of::<#type_name>() == #len);
+                const _: () = assert!(std::mem::align_of::<#type_name>() == #expected_alignment);
                 #len
             }
             // pub const fn alignment() -> usize {
@@ -447,7 +462,8 @@ pub fn gen_cstruct_field(
 
             let (len, alignment) = gen_struct_len(spec, r#struct);
 
-            insert_padding(spec, members, m, len, alignment);
+            m.has_struct_field = true;
+            insert_padding(spec, members, m, len, alignment, true);
 
             members.extend(quote! {
                 #docs
@@ -485,7 +501,7 @@ pub fn gen_cstruct_field(
     let rust_type = format_ident!("{}", rust_type);
 
     let alignment = len;
-    insert_padding(spec, members, m, len, alignment);
+    insert_padding(spec, members, m, len, alignment, false);
 
     if matches!(attr.byte_order, ByteOrder::Host) {
         members.extend(quote! {
@@ -512,11 +528,12 @@ pub fn gen_cstruct_field(
 }
 
 fn insert_padding(
-    spec: &Spec,
+    _spec: &Spec,
     members: &mut TokenStream,
     m: &mut GenImplStruct,
     len: usize,
     alignment: usize,
+    is_struct: bool,
 ) {
     let pad = align_up(m.off, alignment) - m.off;
     if pad != 0 {
@@ -530,5 +547,10 @@ fn insert_padding(
 
     m.off = align_up(m.off, alignment);
     m.alignment = m.alignment.max(alignment);
+    if is_struct {
+        m.final_alignment = m.final_alignment.max(alignment.min(4));
+    } else {
+        m.final_alignment = m.final_alignment.max(alignment);
+    }
     m.off += len;
 }

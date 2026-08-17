@@ -16,6 +16,9 @@ pub struct GenImplStruct {
     pub bit_off: usize,
     pub last_bit_type: Option<(CBitFieldType, usize, Ident)>,
     pub alignment: usize,
+    /// Alignment, considering that structs will be packed(4)
+    pub final_alignment: usize,
+    pub has_struct_field: bool,
     pub derive_debug: bool,
 }
 
