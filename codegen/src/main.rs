@@ -153,7 +153,7 @@ fn main() {
         std::process::exit(1);
     };
 
-    let spec = Spec::parse_with_override(spec);
+    let spec = Spec::parse_with_overrides(spec);
 
     let mut ctx = Context {
         args: args.clone(),

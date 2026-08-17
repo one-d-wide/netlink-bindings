@@ -3,7 +3,10 @@
 use serde::{Deserialize, Serialize};
 use serde_aux::field_attributes::deserialize_default_from_empty_object;
 use serde_yaml::Value;
-use std::path::Path;
+use std::{
+    os::unix::ffi::{OsStrExt, OsStringExt},
+    path::Path,
+};
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -719,26 +722,37 @@ fn merge_yaml(dst: &mut Value, src: &Value) {
 }
 
 impl Spec {
-    pub fn parse_with_override(path: &Path) -> Self {
-        let over = path.with_extension("overrides.yaml");
-        let mut parse_over = true;
-        let mut path = path;
+    pub fn parse_with_overrides(path: &Path) -> Self {
+        let over_prefix = path.with_extension("override");
+        let over_prefix = over_prefix.file_name().unwrap().as_bytes();
 
-        if !path.exists() {
-            if !over.exists() {
-                println!("Spec file doesn't exist: {path:?}");
-                std::process::exit(1);
-            } else {
-                path = &over;
-                parse_over = false;
+        let mut overs = Vec::new();
+        if let Some(dir) = path.parent() {
+            for file in std::fs::read_dir(dir).unwrap() {
+                let file = file.unwrap();
+                let file_name = file.file_name().into_vec();
+                if file_name.starts_with(over_prefix) && file_name.ends_with(b".yaml") {
+                    overs.push(file.path());
+                }
             }
         }
+        overs.sort();
+        overs.reverse();
+
+        if path.exists() {
+            overs.push(path.into());
+        }
+
+        let Some(path) = overs.pop() else {
+            println!("Spec file doesn't exist: {path:?}");
+            std::process::exit(1);
+        };
 
         println!("Parsing spec: {path:?}");
         let spec = std::fs::read_to_string(path).unwrap();
         let mut spec = Self::parse_to_value(&spec);
 
-        if parse_over && over.exists() {
+        for over in overs {
             println!("Parsing spec override: {over:?}");
             let over = std::fs::read_to_string(&over).unwrap();
             let over: Value = serde_yaml::from_str(&over).unwrap();

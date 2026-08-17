@@ -33,7 +33,7 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
             .path()
             .join(format!("{}.yaml", dir.file_name().to_str().unwrap()));
 
-        let spec = Rc::new(Spec::parse_with_override(&spec));
+        let spec = Rc::new(Spec::parse_with_overrides(&spec));
 
         println!("Spec name: {:?}", spec.name);
 
