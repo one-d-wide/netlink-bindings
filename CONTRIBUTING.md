@@ -170,3 +170,11 @@ as errors.
 
 Additional attributes can specified in .override.yaml file located alongside
 the main specification file.
+
+The override files follow the structure of the spec, in maps matching
+attributes are traversed (or inserted if new), in lists attributes with
+matching "name" are traversed (or appended otherwise).
+
+Overrides have special attributes:
+
+- `_override_entirely: true` - replaces the contents of an attrset entirely.

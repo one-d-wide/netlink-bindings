@@ -674,6 +674,22 @@ fn merge_yaml(dst: &mut Value, src: &Value) {
     match (dst, src) {
         (Value::Mapping(dst), Value::Mapping(src)) => {
             for (key, src_val) in src {
+                if let Some(key) = key.as_str().filter(|k| k.starts_with("_override")) {
+                    let Some(src_val) = src_val.as_bool() else {
+                        panic!("Value of {key:?} is not a bool: {src_val:?}");
+                    };
+
+                    match key {
+                        "_override_entirely" => {
+                            if src_val {
+                                dst.clear();
+                            }
+                        }
+                        _ => panic!("Unknown {:?} key: {key:?}", "_override"),
+                    }
+                    continue;
+                }
+
                 match dst.get_mut(key) {
                     Some(dst_val) => merge_yaml(dst_val, src_val),
                     None => _ = dst.insert(key.clone(), src_val.clone()),
