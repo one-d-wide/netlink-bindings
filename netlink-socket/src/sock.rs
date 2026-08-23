@@ -370,6 +370,7 @@ impl NetlinkReplyInner {
     }
 }
 
+#[must_use = "The request is sent, but not acknowledged. Consider .recv_ack(), .recv_one() or .recv()"]
 pub struct NetlinkReply<'sock, Request: NetlinkRequest> {
     inner: NetlinkReplyInner,
     sock: &'sock mut Socket,
