@@ -377,6 +377,9 @@ pub fn gen_cstruct_field(
         {
             quote!(&self.#getter)
         }
+        None if matches!(attr.r#type, AttrType::Binary { .. }) => {
+            quote!(&FormatHexdump(self.#getter.as_slice()))
+        }
         _ => {
             can_derive_debug = true;
             quote!(&self.#getter)

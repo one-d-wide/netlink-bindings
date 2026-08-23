@@ -5,7 +5,7 @@ use syn::Ident;
 use crate::{
     gen_cstruct::struct_type,
     gen_iterable::iterable_name,
-    gen_utils::{self, kebab_to_rust, kebab_to_type, lifetime_needed_sub_message},
+    gen_utils::{kebab_to_rust, kebab_to_type, lifetime_needed_sub_message},
     parse_spec::{AttrProp, AttrSet, Spec, SubMessage, SubMessageFormat},
     Context, WARNING,
 };
@@ -114,16 +114,16 @@ pub fn gen_sub(
         }
     });
 
-    let (sel_type, sel) = match &sub_ctx.selector_type {
-        SelectorType::U32 { .. } => (quote!(u32), quote!()),
-        SelectorType::CStr => (quote!(&'_ CStr), quote!(.to_bytes())),
+    let sel_type = match &sub_ctx.selector_type {
+        SelectorType::U32 { .. } => quote!(u32),
+        SelectorType::CStr => quote!(&'_ [u8]),
     };
 
     tokens.extend(quote! {
         impl #type_lt #type_name #type_lt {
             fn select_with_loc (selector: #sel_type, buf: & #buf_lt [u8], loc: usize) -> Option<Self> {
                 // Null character not included
-                match selector #sel {
+                match selector {
                     #selects
                     _ => None,
                 }

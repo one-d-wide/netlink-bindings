@@ -133,6 +133,13 @@ pub fn gen_debug_attrs(
                     #type_name::#name(#val_name) => #fmt_name.field(#field_name, &FormatBinStr(#val_name)),
                 })
             }
+            AttrType::Binary { r#struct: None, .. }
+                if next.display_hint.as_ref().is_none() =>
+            {
+                variants.extend(quote! {
+                    #type_name::#name(#val_name) => #fmt_name.field(#field_name, &FormatHexdump(#val_name)),
+                })
+            }
             _ => {
                 variants.extend(quote! {
                     #type_name::#name(#val_name) => #fmt_name.field(#field_name, &#val_name),
@@ -153,7 +160,17 @@ pub fn gen_debug_attrs(
         impl #impl_lifetime std::fmt::Debug for #iter<'_> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 let mut #fmt_name = f.debug_struct(#name_str);
-                for attr in self.clone() {
+                let mut iter = #iter::with_loc(&[], self.orig_loc);
+
+                // This pretty horrible looking hack spots the unrecognized
+                // attributes using the iterator interface.
+                for attr in IterateAttrs::new(self.get_buf()) {
+                    iter.buf = attr;
+                    iter.pos = 0;
+                    let Some(attr) = iter.next() else {
+                        #fmt_name.field("Err", &FormatUnrecognized(attr));
+                        continue;
+                    };
                     let attr = match attr {
                         Ok(a) => a,
                         Err(err) => {

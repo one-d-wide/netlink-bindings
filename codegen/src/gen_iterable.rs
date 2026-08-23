@@ -1,5 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
+use std::collections::HashSet;
 use syn::Ident;
 
 use crate::{
@@ -36,6 +37,11 @@ pub fn gen_iterable_attrs(
     let mut type_to_str = TokenStream::new();
 
     let type_name = &m.type_name;
+
+    let mut selectors_seen = HashSet::new();
+    let mut selectors_def = quote!();
+    let mut selectors_init = quote!();
+    let mut selectors_save = quote!();
 
     let mut id: u16 = 0;
     for next in &set.attributes {
@@ -77,15 +83,47 @@ pub fn gen_iterable_attrs(
                     continue;
                 }
 
-                // TODO: how to handle multiple definitions of selector attribute
-                let get_selector = format_ident!("get_{}", kebab_to_rust(selector));
+                // // TODO: how to handle multiple definitions of selector attribute
+                // let get_selector = format_ident!("get_{}", kebab_to_rust(selector));
 
                 let (sub, selector_type) =
                     gen_sub_message::sub_message(spec, set, sub_message, selector);
-                let name = gen_sub_message::gen_sub(tokens, spec, ctx, sub, selector_type);
+                let name = gen_sub_message::gen_sub(tokens, spec, ctx, sub, selector_type.clone());
+
+                let sel_type;
+                let sel_cast;
+                match &selector_type {
+                    gen_sub_message::SelectorType::U32 { .. } => {
+                        sel_type = quote!(u32);
+                        sel_cast = quote!(*sel);
+                    }
+                    gen_sub_message::SelectorType::CStr => {
+                        sel_type = quote!(&'a [u8]);
+                        sel_cast = quote!(sel.to_bytes());
+                    }
+                }
+                let selector_var = format_ident!("selector_{}", kebab_to_rust(selector));
+                let selector_name = sanitize_ident(&kebab_to_type(selector));
+
+                if selectors_seen.insert(selector.clone()) {
+                    selectors_def = quote! {
+                        #selectors_def
+                        #selector_var: Option<#sel_type>,
+                    };
+                    selectors_init = quote! {
+                        #selectors_init
+                        , #selector_var: None
+                    };
+                    selectors_save = quote! {
+                        if let #type_name::#selector_name(sel) = &res {
+                            self.#selector_var = Some(#sel_cast);
+                        }
+                    };
+                }
 
                 push(quote! {{
-                    let Ok(selector) = self.#get_selector() else { break };
+                    // let Ok(selector) = self.#get_selector() else { break };
+                    let Some(selector) = self.#selector_var else { break };
                     match #name::select_with_loc(selector, #buf_name, self.orig_loc) {
                         Some(sub) => Some(sub),
                         None if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
@@ -162,11 +200,12 @@ pub fn gen_iterable_attrs(
             // Pointer to the beginning of the first slice in the chain.
             // Only used in calculating byte offset for error context.
             orig_loc: usize,
+            #selectors_def
         }
 
         impl<'a> #iter<'a> {
             fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-                Self { buf, pos: 0, orig_loc }
+                Self { buf, pos: 0, orig_loc #selectors_init }
             }
 
             pub fn get_buf(&self) -> &'a [u8] {
@@ -201,6 +240,8 @@ pub fn gen_iterable_attrs(
                         n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                         n => continue,
                     };
+
+                    #selectors_save
 
                     return Some(Ok(res));
                 }
