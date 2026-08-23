@@ -17,7 +17,7 @@ pub struct ReplyError {
     pub(crate) ext_ack_bounds: (u32, u32),
     pub(crate) request_bounds: (u32, u32),
     pub(crate) lookup: Option<LookupFn>,
-    pub(crate) chained_name: Option<&'static str>,
+    pub(crate) chained_name_pos: Option<(&'static str, u32)>,
 }
 
 impl From<ErrorContext> for ReplyError {
@@ -28,7 +28,7 @@ impl From<ErrorContext> for ReplyError {
             request_bounds: (0, 0),
             ext_ack_bounds: (0, 0),
             lookup: None,
-            chained_name: None,
+            chained_name_pos: None,
         }
     }
 }
@@ -41,7 +41,7 @@ impl From<io::Error> for ReplyError {
             request_bounds: (0, 0),
             ext_ack_bounds: (0, 0),
             lookup: None,
-            chained_name: None,
+            chained_name_pos: None,
         }
     }
 }
@@ -109,8 +109,8 @@ impl fmt::Display for ReplyError {
             }
         }
 
-        if let Some(chained) = self.chained_name {
-            write!(f, " in {chained:?}")?;
+        if let Some((name, pos)) = self.chained_name_pos {
+            write!(f, " in {name:?} (position={pos})")?;
         }
 
         if let Ok(missing_offset) = ext_ack.get_missing_nest() {
