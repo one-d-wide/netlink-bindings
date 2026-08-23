@@ -1,0 +1,167 @@
+// This example queries the AmneziaWG network interface named `awg0` and
+// reports its info, including the AmneziaWG-specific obfuscation parameters
+// (Jc/Jmin/Jmax, S1-S4, H1-H4). Similar to what `awg` command does (without
+// arguments). Make sure a device named `awg0` exists, and the process has
+// CAP_NET_ADMIN capability.
+//
+// Run with: `cargo run --example amneziawg --features=amneziawg,nlctrl`
+
+use netlink_bindings::{amneziawg, builtin::Nlmsghdr, nlctrl, utils};
+
+fn main() {
+    let fd = unsafe { libc::socket(libc::AF_NETLINK, libc::SOCK_RAW, libc::NETLINK_GENERIC) };
+    assert!(fd >= 0);
+
+    let sock: std::net::UdpSocket = unsafe { std::os::fd::FromRawFd::from_raw_fd(fd) };
+
+    let mut buf = Vec::new();
+
+    // Genetlink protocols have their family_id allocated at run-time.
+    let family_id = resolve_family_id(&sock, "amneziawg");
+
+    push_netlink_message_header(&mut buf, family_id);
+
+    // Dump (request)
+    amneziawg::OpGetDeviceDump::encode_request(&mut buf).push_ifname(c"awg0");
+
+    println!("Sending:");
+    println!(
+        "{:#?}",
+        amneziawg::OpGetDeviceDump::decode_request(&buf[Nlmsghdr::len()..])
+    );
+
+    update_netlink_message_lenth(&mut buf);
+    sock.send(&buf).unwrap();
+
+    let mut buf = Box::new([0u8; 8192]);
+    loop {
+        let read = sock.recv(&mut buf[..]).unwrap();
+
+        let mut buf = &buf[..read];
+        while !buf.is_empty() {
+            let reply = Nlmsghdr::new_from_slice(&buf[..Nlmsghdr::len()]).unwrap();
+            let frame = &buf[Nlmsghdr::len()..reply.len as usize];
+
+            match reply.r#type as i32 {
+                libc::NLMSG_DONE => {
+                    println!("NLMSG_DONE");
+                    println!("DUMP operation succeeded");
+                    return;
+                }
+                libc::NLMSG_ERROR => {
+                    let raw_err = utils::parse_i32(&buf[16..20]).unwrap();
+                    if raw_err == 0 {
+                        println!("DO operation succeeded");
+                        return;
+                    }
+
+                    println!("NLMSG_ERROR");
+                    println!("Error: {}", std::io::Error::from_raw_os_error(-raw_err));
+                    println!("Does an amneziawg device named `awg0` exist?");
+                    println!("Did you obtain CAP_NET_ADMIN?");
+                    std::process::exit(1);
+                }
+                _ => {}
+            }
+
+            let attrs = amneziawg::OpGetDeviceDump::decode_request(frame);
+
+            println!("Received:");
+            println!("{:#?}", attrs);
+
+            println!("Ifname: {:?}", attrs.get_ifname().unwrap()); // &CStr
+            println!(
+                "Jc/Jmin/Jmax: {:?}/{:?}/{:?}",
+                attrs.get_jc(),
+                attrs.get_jmin(),
+                attrs.get_jmax()
+            );
+
+            for peer in attrs.get_peers().unwrap_or_default() {
+                if let Ok(endpoint) = peer.get_endpoint() {
+                    println!("Endpoint: {endpoint}"); // SockAddr
+                } else {
+                    println!("Endpoint: (not set)");
+                }
+
+                for addr in peer.get_allowedips().unwrap() {
+                    let ip = addr.get_ipaddr().unwrap(); // IpAddr
+                    let mask = addr.get_cidr_mask().unwrap(); // u8
+                    println!("Allowed ip: {ip}/{mask}");
+                }
+            }
+
+            buf = &buf[reply.len as usize..];
+        }
+    }
+}
+
+fn push_netlink_message_header(buf: &mut Vec<u8>, family_id: u16) {
+    let header = Nlmsghdr {
+        len: 0,
+        r#type: family_id,
+        flags: libc::NLM_F_DUMP as u16 | libc::NLM_F_REQUEST as u16 | libc::NLM_F_ACK as u16,
+        seq: 42,
+        pid: 0,
+    };
+
+    buf.extend(header.as_slice());
+}
+
+fn update_netlink_message_lenth(buf: &mut Vec<u8>) {
+    let len = buf.len() as u32;
+    buf[0..4].copy_from_slice(&len.to_le_bytes());
+}
+
+fn resolve_family_id(sock: &std::net::UdpSocket, name: &str) -> u16 {
+    let mut buf = Vec::new();
+
+    let header = Nlmsghdr {
+        len: 0,
+        r#type: libc::GENL_ID_CTRL as u16,
+        flags: libc::NLM_F_REQUEST as u16 | libc::NLM_F_ACK as u16,
+        seq: 1,
+        pid: 0,
+    };
+
+    buf.extend(header.as_slice());
+
+    nlctrl::OpGetfamilyDo::encode_request(&mut buf).push_family_name_bytes(name.as_bytes());
+
+    let len = buf.len() as u32;
+    buf[0..4].copy_from_slice(&len.to_le_bytes());
+
+    sock.send(&buf[..]).unwrap();
+
+    let mut buf = Box::new([0u8; 8192]);
+    let mut family_id = None;
+    loop {
+        let read = sock.recv(&mut buf[..]).unwrap();
+
+        let mut buf = &buf[..read];
+        while !buf.is_empty() {
+            let reply = Nlmsghdr::new_from_slice(&buf[..Nlmsghdr::len()]).unwrap();
+
+            match reply.r#type as i32 {
+                libc::NLMSG_ERROR => {
+                    let raw_err = utils::parse_i32(&buf[16..20]).unwrap();
+                    if raw_err == 0 {
+                        return family_id.unwrap();
+                    }
+
+                    println!("NLMSG_ERROR");
+                    println!("Error: {}", std::io::Error::from_raw_os_error(-raw_err));
+                    println!("Can't resolve amneziawg in genl(7)");
+                    println!("Is the amneziawg kernel module loaded?");
+                    std::process::exit(1);
+                }
+                _ => {}
+            }
+
+            let attrs = nlctrl::OpGetfamilyDo::decode_request(&buf[Nlmsghdr::len()..]);
+            family_id = attrs.get_family_id().ok();
+
+            buf = &buf[reply.len as usize..];
+        }
+    }
+}
