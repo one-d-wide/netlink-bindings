@@ -1,0 +1,10 @@
+attribute-sets:
+  -
+    name: addr-attrs
+    attributes:
+      -
+        name: anycast
+        display-hint: ipv4-or-v6
+      -
+        name: multicast
+        display-hint: ipv4-or-v6

@@ -1,0 +1,37 @@
+definitions:
+  - name: br-boolopt-multi
+    members:
+      -
+        name: optval
+        enum: br-boolopt-id
+      -
+        name: optmask
+        enum: br-boolopt-id
+
+  - name: br-boolopt-id
+    type: flags
+    header: linux/if_bridge.h
+    entries:
+      -
+        name: no-ll-learn
+        doc: disable learning from link-local packets
+      -
+        name: mcast-vlan-snooping
+        doc: control vlan multicast snooping
+      -
+        name: mst-enable
+      -
+        name: mdb-offload-fail-notification
+      -
+        name: fdb-local-vlan-0
+        doc: >-
+          local FDB entries installed by the bridge driver itself should only
+          be added on VLAN 0
+
+attribute-sets:
+  -
+    name: linkinfo-bridge-attrs
+    attributes:
+      -
+        name: vlan-protocol
+        byte-order: big-endian

@@ -1,0 +1,61 @@
+definitions:
+  -
+    name: rtmsg
+    members:
+      -
+        name: rtm-flags
+        enum: rtm-flag
+  -
+    name: rtm-flag
+    type: flags
+    entries:
+      -
+        name: notify
+        doc: Notify user of route change
+        value: 8
+      -
+        name: cloned
+        doc: This route is cloned
+      -
+        name: equalize
+        doc: >-
+          Multipath equalizer: NI
+      -
+        name: prefix
+        doc: Prefix addresses
+      -
+        name: lookup-table
+        doc: Set rtm_table to FIB lookup result
+      -
+        name: fib-match
+        doc: Return full fib lookup match
+      -
+        name: offload
+        doc: route is offloaded
+      -
+        name: trap
+        doc: route is trapping packets
+      -
+        name: offload-failed
+        value: 29
+        doc: >-
+          route is offloaded route offload failed, this value is chosen to
+          avoid conflicts with other flags defined in include/uapi/linux/ipv6_route.h
+
+
+attribute-sets:
+  -
+    name: route-attrs
+    attributes:
+      -
+        name: via
+        display-hint: ipv4-or-v6
+      -
+        name: newdst
+        display-hint: ipv4-or-v6
+      -
+        name: sport
+        byte-order: big-endian
+      -
+        name: dport
+        byte-order: big-endian
