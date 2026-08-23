@@ -1,6 +1,6 @@
 ## To-do
 
-- Reverse-lookup should report operation names instead of just their codes.
+- A codegen proc-macro to quickly load on yaml specifications out-of-tree.
 - `.get_<attr>()` methods don't have to internally use the iterator, instead
 simply skipping attributes based only on their type number.
 - Repeating `Op*` types could probably be de-duplicated using `type A = B;`.

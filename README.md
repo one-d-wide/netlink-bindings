@@ -93,7 +93,7 @@ and decoding as you type.
 Let's say you have a network interface and you want to assign it an ip address.
 This is domain of "rt-addr" family. It was one of the first subsystems created,
 inheriting some now-discouraged quirks like a fixed-header - a struct that's
-always present in a message. It's use depends on the request type, with unused
+always present in a message. Its use depends on the request type, with unused
 fields usually zeroed-out.
 
 The relevant operation is "newaddr" of kind "do" (only returning an
@@ -136,8 +136,9 @@ See full code in the [example](./netlink-socket/examples/wireguard-setup.rs).
 
 ## Async sockets
 
-Generally, Netlink requests resolve immediately, which is to say it's safe to
-use the "blocking" `NetlinkSocket` in the async context, which is recommended.
+Generally, Netlink requests resolve immediately, so you can safely use the
+default `NetlinkSocket` issuing "blocking" syscalls in the async context, which
+is what recommended.
 
 The only exceptions are a multicast socket, receiving notification
 asynchronously, or a hypothetical subsystem, choosing to deliberately delay
@@ -145,7 +146,7 @@ replies.
 
 Netlink-socket crate allows the facilities for different runtimes to coexist
 under different paths, i.e. `netlink_socket2::tokio::{NetlinkSocket,
-MulticastSocketRaw}`, with async functionality available with the exactly same
+MulticastSocketRaw}`, with async functionality available with the same exact
 structure as the "blocking" one.
 
 ```toml
@@ -189,7 +190,7 @@ for multicast notifications on legacy rtnetlink subsystem.
 ### Working off of existing tools
 
 If there's an existing tool using Netlink, you can use `reverse-lookup` tool to
-decipher it's Netlink communications and work off of that.
+decipher its Netlink communications and work off of that.
 
 Let's say you want to see what `wg` command does:
 
@@ -258,7 +259,7 @@ documentation.
 
 Similarly, under the hood, receiving a reply yields an attribute decoder. The
 decoder itself is just a wrapper on a slice, therefore it can be cheaply
-cloned, copying it's frame. The low-level interface is based on iterators, with
+cloned, copying its frame. The low-level interface is based on iterators, with
 nicer helper functions on top.
 
 ```rust,should_panic
