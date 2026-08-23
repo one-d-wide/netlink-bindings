@@ -113,6 +113,7 @@ pub fn gen_request(tokens: &mut TokenStream, _ctx: &mut Context, spec: &Spec, re
         #[derive(Debug)]
         pub struct #name<'buf> {
             buf: RequestBuf<'buf>,
+            pos: usize,
             flags: u16,
             writeback: Option<&'buf mut Option<RequestInfo>>
         }
@@ -136,6 +137,7 @@ pub fn gen_request(tokens: &mut TokenStream, _ctx: &mut Context, spec: &Spec, re
                 Self {
                     flags: 0,
                     buf: RequestBuf::Own(buf),
+                    pos: 0,
                     writeback: None,
                 }
             }
@@ -155,9 +157,12 @@ pub fn gen_request(tokens: &mut TokenStream, _ctx: &mut Context, spec: &Spec, re
             }
 
             pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+                align(buf);
+                let pos = buf.len();
                 Self {
                     flags: 0,
                     buf: RequestBuf::Ref(buf),
+                    pos,
                     writeback: None,
                 }
             }
@@ -336,6 +341,17 @@ pub fn gen_request_wrapper(
                     }
                 };
             }
+            write_header_impl = quote! {
+                #write_header_impl
+                pub fn header(&self) -> &#header {
+                    let pos = self.request.pos;
+                    #header::from_slice(&self.request.buf()[pos..])
+                }
+                pub fn header_mut(&mut self) -> &mut #header {
+                    let pos = self.request.pos;
+                    #header::from_slice_mut(&mut self.request.buf_mut()[pos..])
+                }
+            };
         };
 
         let reply_attrs = spec.find_attr(transparent_reply_attrs);
