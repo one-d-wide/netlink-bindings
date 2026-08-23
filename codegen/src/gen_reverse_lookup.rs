@@ -326,18 +326,19 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
         use std::fmt::Debug;
         use std::cell::Cell;
         use netlink_bindings::{
-            builtin::BuiltinNfgenmsg,
+            builtin::{BuiltinNfgenmsg, Nlmsghdr},
             traits::{NetlinkRequest, Protocol},
         };
 
         #[derive(Clone)]
-        pub struct ReverseLookup<'a> {
+        pub struct ReverseLookup {
+            pub header: Nlmsghdr,
             pub proto: Protocol,
             pub value: u16,
             pub request_value: Option<u16>,
             pub is_dump: bool,
-            pub last_filter: &'a Cell<Option<usize>>,
-            pub buf: &'a [u8],
+            pub buf: Vec<u8>,
+            pub last_filter: Cell<Option<usize>>,
         }
 
         #[allow(unused)]
@@ -345,9 +346,10 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
             write!(fmt, "Protocol {0:?} not enabled, consider --features={0}", proto)
         }
 
-        impl Debug for ReverseLookup<'_> {
+        impl Debug for ReverseLookup {
             fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                let Self { proto, value, request_value, is_dump, buf, last_filter } = self.clone();
+                let Self { proto, value, request_value, is_dump, buf, last_filter, .. } = self;
+                let (proto, value, request_value, is_dump) = (proto.clone(), value.clone(), request_value.clone(), is_dump.clone());
                 let last_filter_val = last_filter.take();
                 match proto {
                     Protocol::Raw { protonum, .. } => {
