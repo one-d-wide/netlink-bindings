@@ -109,8 +109,10 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
     };
 
     let mut netlink_raw = TokenStream::new();
+    let mut netlink_raw_op_val = TokenStream::new();
     for (protonum, (spec, ops)) in &raw {
         let mut variants = TokenStream::new();
+        let mut variants_op_val = TokenStream::new();
         for (
             i,
             (ops, proto, request_value, reply_value, request, reply, is_dump, is_transparent),
@@ -207,6 +209,12 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
             }
 
             variants.extend(tokens);
+
+            variants_op_val.extend(quote! {
+                if request_value == #request_value {
+                    res.push(stringify!(#prefix::#request));
+                }
+            });
         }
 
         let fallback = if let Some((attrs, fallback)) = gen_fallback(spec.as_ref()) {
@@ -228,11 +236,19 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
                 return Ok(());
             }
         });
+
+        netlink_raw_op_val.extend(quote! {
+            if protonum == #protonum {
+                #variants_op_val
+            }
+        });
     }
 
     let mut generic = TokenStream::new();
+    let mut generic_op_val = TokenStream::new();
     for (proto, (spec, ops)) in &genl {
         let mut variants = TokenStream::new();
+        let mut variants_op_val = TokenStream::new();
         for (_, _, request_value, reply_value, request, reply, is_dump, is_transparent) in ops {
             let prefix = format_ident!("{}", kebab_to_rust(proto));
             let request_value = *request_value as u8;
@@ -253,6 +269,12 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
                 }
                 if let (#reply_value, Some(#request_value), #is_dump) = pat {
                     return Debug::fmt(&#b::#prefix::#reply::#decoder(buf), fmt);
+                }
+            });
+
+            variants_op_val.extend(quote! {
+                if cmd == #reply_value {
+                    res.push(stringify!(#prefix::#request));
                 }
             });
         }
@@ -280,6 +302,12 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
                 }
                 #[cfg(not(feature = #proto))]
                 return consider(fmt, #proto);
+            }
+        });
+
+        generic_op_val.extend(quote! {
+            if proto == #proto_bytes {
+                #variants_op_val
             }
         });
     }
@@ -334,6 +362,18 @@ pub fn gen_reverse_lookup(args: &CliArgs, output: &Path) {
                     }
                 }
             }
+        }
+
+        pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str> {
+            let mut res = Vec::new();
+            #netlink_raw_op_val
+            res
+        }
+
+        pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
+            let mut res = Vec::new();
+            #generic_op_val
+            res
         }
     });
 
