@@ -131,7 +131,8 @@ pub fn gen_request(tokens: &mut TokenStream, _ctx: &mut Context, spec: &Spec, re
                 Self::new_from_buf(Vec::new())
             }
 
-            pub fn new_from_buf(buf: Vec<u8>) -> Self {
+            pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+                buf.clear();
                 Self {
                     flags: 0,
                     buf: RequestBuf::Own(buf),
@@ -601,7 +602,8 @@ pub fn gen_request_chained(tokens: &mut TokenStream, requests: &[OpInfo]) {
                 Self::new_from_buf(Vec::new(), first_seq)
             }
 
-            pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+            pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+                buf.clear();
                 Self {
                     buf: RequestBuf::Own(buf),
                     first_seq,
@@ -621,6 +623,7 @@ pub fn gen_request_chained(tokens: &mut TokenStream, requests: &[OpInfo]) {
 
         impl<'a> Chained<'a> {
             pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+                buf.clear();
                 Self {
                     buf: RequestBuf::Ref(buf),
                     first_seq,

@@ -5,7 +5,7 @@ use syn::Ident;
 use crate::{
     gen_cstruct::struct_type,
     gen_iterable::iterable_name,
-    gen_utils::{kebab_to_rust, kebab_to_type},
+    gen_utils::{self, kebab_to_rust, kebab_to_type, lifetime_needed_sub_message},
     parse_spec::{AttrProp, AttrSet, Spec, SubMessage, SubMessageFormat},
     Context, WARNING,
 };
@@ -100,21 +100,28 @@ pub fn gen_sub(
         );
     }
 
+    let mut type_lt = quote!();
+    let mut buf_lt = quote!('_);
+    if lifetime_needed_sub_message(spec, sub) {
+        type_lt = quote!(<'a>);
+        buf_lt = quote!('a);
+    }
+
     tokens.extend(quote! {
         #[derive(Debug, Clone)]
-        pub enum #type_name<'a> {
+        pub enum #type_name #type_lt {
             #variants
         }
     });
 
     let (sel_type, sel) = match &sub_ctx.selector_type {
         SelectorType::U32 { .. } => (quote!(u32), quote!()),
-        SelectorType::CStr => (quote!(&'a CStr), quote!(.to_bytes())),
+        SelectorType::CStr => (quote!(&'_ CStr), quote!(.to_bytes())),
     };
 
     tokens.extend(quote! {
-        impl<'a> #type_name<'a> {
-            fn select_with_loc(selector: #sel_type, buf: &'a [u8], loc: usize) -> Option<Self> {
+        impl #type_lt #type_name #type_lt {
+            fn select_with_loc (selector: #sel_type, buf: & #buf_lt [u8], loc: usize) -> Option<Self> {
                 // Null character not included
                 match selector #sel {
                     #selects

@@ -9,7 +9,7 @@ use quote::format_ident;
 use syn::Ident;
 
 use crate::{
-    parse_spec::{AttrProp, AttrSet, AttrType},
+    parse_spec::{AttrProp, AttrSet, AttrType, Spec, SubMessage},
     Context, WARNING,
 };
 
@@ -244,6 +244,17 @@ pub fn lifetime_needed_attrs(attrs: &AttrSet) -> bool {
     for m in &attrs.attributes {
         if lifetime_needed_attr(m) {
             return true;
+        }
+    }
+    false
+}
+
+pub fn lifetime_needed_sub_message(spec: &Spec, sub: &SubMessage) -> bool {
+    for m in &sub.formats {
+        if let Some(attrs) = &m.attribute_set {
+            if lifetime_needed_attrs(spec.find_attr(attrs)) {
+                return true;
+            }
         }
     }
     false

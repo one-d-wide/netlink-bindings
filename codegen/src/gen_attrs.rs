@@ -9,7 +9,9 @@ use crate::{
     gen_iterable::{array_iterable_name, gen_iterable_attrs, iterable_name},
     gen_ops::OpHeader,
     gen_sub_message::sub_message_name,
-    gen_utils::{doc_attr, kebab_to_rust, kebab_to_type, sanitize_ident},
+    gen_utils::{
+        doc_attr, kebab_to_rust, kebab_to_type, lifetime_needed_sub_message, sanitize_ident,
+    },
     parse_spec::{AttrProp, AttrSet, AttrType, IndexedArrayType, Spec},
     Context,
 };
@@ -280,9 +282,13 @@ pub fn gen_attr_type(spec: &Spec, attr: &AttrProp) -> (TokenStream, bool) {
             quote!(#iter<'a>)
         }
         AttrType::SubMessage { sub_message, .. } => {
-            lifetime_needed = true;
+            let mut lt = quote!();
+            if lifetime_needed_sub_message(spec, spec.find_sub_message(sub_message)) {
+                lifetime_needed = true;
+                lt = quote!(<'a>);
+            }
             let name = sub_message_name(sub_message);
-            quote!(#name <'a>)
+            quote!(#name #lt)
         }
         r#type => unreachable!("{:?} at {:?}", r#type, attr),
     };
