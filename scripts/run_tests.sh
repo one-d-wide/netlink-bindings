@@ -2,6 +2,11 @@
 
 set -e
 
+if test -z "${UNSHARE:-}"; then
+  export UNSHARE=1
+  exec unshare --user --net --keep-caps -- bash -c "$0" -- "$@"
+fi
+
 export TESTING=1
 
 features="
@@ -74,7 +79,12 @@ matches() {
   fi
 }
 
-if ! ip link show wg0 >/dev/null; then
+if ip link show dev lo up | cmp /dev/null; then
+  ip link add dev lo type lo || true
+  ip link set dev lo up
+fi
+
+if ! ip link show wg0 &>/dev/null; then
   # Create "wg0" interface for doctests in readme
   ip link add dev wg0 type wireguard
 fi
@@ -88,7 +98,7 @@ for target in $targets; do
   cargo test
 
   for runtime in std tokio smol; do
-    cargo run --example=extack |
+    cargo run --example=extack 2>&1 |
       matches 'Attribute failed policy validation: attribute "Ifname" in "LinkAttrs": PolicyTypeAttrs \{ MaxLength: 15, Type: 11 \}'
 
     for example in $examples; do
