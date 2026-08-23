@@ -313,40 +313,44 @@ impl NetlinkReplyInner {
                 };
                 let code = utils::parse_i32(code).unwrap();
 
-                let (echo_start, echo_end) =
-                    if code == 0 || header.r#type == libc::NLMSG_DONE as u16 {
-                        (20, 20)
-                    } else {
-                        let Some(echo_header) = packet.get(20..(20 + Nlmsghdr::len())) else {
-                            return Err(too_short_err());
-                        };
-                        let echo_header = Nlmsghdr::from_slice(echo_header);
-
-                        if echo_header.flags & libc::NLM_F_CAPPED as u16 == 0 {
-                            let start = echo_header.len;
-                            if packet.len() < start as usize + 20 {
-                                return Err(too_short_err());
-                            }
-
-                            (20 + 16, 20 + start as usize)
-                        } else {
-                            let ext_ack_start = 20 + Nlmsghdr::len();
-                            (ext_ack_start, ext_ack_start)
-                        }
+                let mut request_bounds = (0, 0);
+                if code != 0 && header.r#type & libc::NLMSG_ERROR as u16 != 0 {
+                    let Some(echo_header) = packet.get(20..(20 + Nlmsghdr::len())) else {
+                        return Err(too_short_err());
                     };
 
-                let ext_ack_start =
-                    utils::align_up(echo_end, utils::NLA_ALIGNTO).min(self.buf_offset);
+                    if header.flags & libc::NLM_F_CAPPED as u16 == 0 {
+                        let start = Nlmsghdr::from_slice(echo_header).len;
+                        if packet.len() < 20 + start as usize {
+                            return Err(too_short_err());
+                        }
+
+                        request_bounds.0 += 20 + Nlmsghdr::len() as u32;
+                        request_bounds.1 += 20 + start;
+                    } else {
+                        request_bounds.0 += 20 + Nlmsghdr::len() as u32;
+                        request_bounds.1 += 20 + Nlmsghdr::len() as u32;
+                    }
+                };
+
+                let mut ext_ack_bounds = (0, 0);
+                if header.flags & libc::NLM_F_ACK_TLVS as u16 != 0 {
+                    ext_ack_bounds = (
+                        utils::align_up(request_bounds.1 as usize, utils::NLA_ALIGNTO)
+                            .min(self.buf_offset) as u32,
+                        self.buf_offset as u32,
+                    );
+                }
 
                 Ok((
                     header.seq,
                     header.r#type,
                     Err(ReplyError {
                         code: io::Error::from_raw_os_error(-code),
-                        request_bounds: (echo_start as u32, echo_end as u32),
-                        ext_ack_bounds: (ext_ack_start as u32, self.buf_offset as u32),
+                        request_bounds,
+                        ext_ack_bounds,
                         reply_buf: None,
-                        chained_name: None,
+                        chained_name_pos: None,
                         lookup: None,
                     }),
                 ))
