@@ -1,3 +1,20 @@
 [workspace]
 resolver = "3"
-members = [ "netlink-bindings", "netlink-socket", "reverse-lookup", "codegen" ]
+members = [
+  "netlink-bindings",
+  "netlink-socket",
+  "reverse-lookup",
+  "codegen",
+  "ip-route",
+  "ip-route/syntax",
+  "ip-route/proc-macro",
+]
+
+[workspace.dependencies]
+netlink-bindings = { path = "./netlink-bindings" }
+netlink-socket2 = { path = "./netlink-socket" }
+reverse-lookup = { path = "./reverse-lookup" }
+
+ip-route = { path = "./ip-route" }
+ip-route-syntax = { path = "./ip-route/syntax" }
+ip-route-proc-macro = { path = "./ip-route/proc-macro" }

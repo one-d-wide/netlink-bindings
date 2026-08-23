@@ -1,0 +1,38 @@
+[package]
+name = "ip-route"
+description = "Embed iproute2-like commands into your program"
+version = "0.1.0"
+authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
+categories = [ "network-programming", "os", "api-bindings" ]
+repository = "https://github.com/one-d-wide/netlink-bindings"
+license = "MIT OR Apache-2.0"
+edition = "2024"
+
+[features]
+coverage = [ "ip-route-proc-macro/coverage" ]
+
+[dependencies]
+ip-route-proc-macro.workspace = true
+
+libc = "*"
+ipnet = "2"
+netlink-socket2 = {
+  workspace = true,
+  features = [ "std" ],
+}
+netlink-bindings = {
+  workspace = true,
+  features = [ "rt-link", "rt-route", "rt-rule", "rt-addr", "nftables" ],
+}
+
+quote = "1"
+proc-macro2 = "1"
+scopeguard = "1"
+
+[dev-dependencies]
+ip-route-syntax.workspace = true
+
+reverse-lookup = {
+  workspace = true,
+  features = [ "rt-link", "rt-route", "rt-rule", "rt-addr", "nftables" ],
+}

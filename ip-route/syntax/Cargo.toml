@@ -1,0 +1,22 @@
+[package]
+name = "ip-route-syntax"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "interp-poc"
+path = "interp-poc.rs"
+
+[lib]
+path = "lib.rs"
+
+[features]
+coverage = [ ]
+
+[dependencies]
+libc = "*"
+ipnet = "2"
+
+quote = "1"
+proc-macro2 = "1"
+scopeguard = "1"

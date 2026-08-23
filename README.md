@@ -23,6 +23,7 @@ fast and supporting all properties of all sensible Netlink families.
 - Support for all documented netlink subsystems, see [Support status](#support-status).
 - Netlink messages can be Debug-printed, with enum variants and flags annotated.
 - Examine netlink messages of existing programs using [reverse-lookup](#working-off-of-existing-tools).
+- Embed iproute2-like commands into your program using [ip-route](./ip-route/README.md).
 
 ## Support status
 
@@ -133,6 +134,25 @@ fixed-header, these flags may trigger additional behavior in certain
 operations, or do nothing in others.
 
 See full code in the [example](./netlink-socket/examples/wireguard-setup.rs).
+
+There's also ip-route. It can encode the message according to the provided
+iproute2-like command, simplifying the entire encoding step above to just a
+single line:
+
+```rust
+use std::net::IpAddr;
+use netlink_socket2::NetlinkSocket;
+use ip_route::ip;
+
+let mut sock = NetlinkSocket::new();
+
+let addr = "10.0.0.2/32".parse().unwrap();
+let ifname = "wg0";
+
+ip!(sock, "ip addr add {addr} dev {ifname}").unwrap();
+```
+
+See [./ip-route/README.md](./ip-route/README.md).
 
 ## Async sockets
 

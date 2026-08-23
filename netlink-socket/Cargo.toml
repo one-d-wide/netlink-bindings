@@ -73,6 +73,9 @@ std = []
 tokio = [ "async", "dep:tokio"]
 smol = [ "async", "dep:smol", "dep:smol-macros", "dep:macro_rules_attribute" ]
 
+[dev-dependencies]
+ip-route.workspace = true
+
 [dependencies]
 libc = "0.2"
 netlink-bindings = { path = "../netlink-bindings", features = [ "nlctrl" ] }

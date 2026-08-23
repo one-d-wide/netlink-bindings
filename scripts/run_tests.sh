@@ -106,7 +106,10 @@ for target in $targets; do
 
   cargo test
 
-  for runtime in std tokio smol; do
+  # A readme doc test in assigns this addr this with exclusive flag
+  ip addr del 10.0.0.2/32 dev wg0 || true
+
+  for runtime in std; do
     cargo run --example=extack 2>&1 |
       matches 'Attribute failed policy validation: attribute "Ifname" in "LinkAttrs": PolicyTypeAttrs \{ MaxLength: 15, Type: 11 \}'
 

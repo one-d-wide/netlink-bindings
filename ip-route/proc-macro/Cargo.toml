@@ -1,0 +1,22 @@
+[package]
+name = "ip-route-proc-macro"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+path = "lib.rs"
+proc-macro = true
+
+[features]
+coverage = [ "ip-route-syntax/coverage" ]
+
+[dependencies]
+ip-route-syntax.workspace = true
+
+ipnet = "2"
+
+quote = "1"
+proc-macro2 = "1"
+scopeguard = "1"
+
+syn = { version = "2.0", features = [ "derive", "parsing", "visit-mut" ] }
