@@ -10,11 +10,19 @@ members = [
   "ip-route/proc-macro",
 ]
 
+[workspace.package]
+version = "0.3.4"
+
 [workspace.dependencies]
 netlink-bindings = { path = "./netlink-bindings" }
 netlink-socket2 = { path = "./netlink-socket" }
-reverse-lookup = { path = "./reverse-lookup" }
+# netlink-bindings = "0.3"
+# netlink-socket2 = "0.3"
 
 ip-route = { path = "./ip-route" }
 ip-route-syntax = { path = "./ip-route/syntax" }
 ip-route-proc-macro = { path = "./ip-route/proc-macro" }
+# ip-route-syntax = "0.3"
+# ip-route-proc-macro = "0.3"
+
+reverse-lookup = { path = "./reverse-lookup" }

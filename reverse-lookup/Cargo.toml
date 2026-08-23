@@ -1,6 +1,6 @@
 [package]
 name = "reverse-lookup"
-version = "0.1.0"
+version.workspace = true
 authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
 categories = [ "network-programming", "os", "api-bindings" ]
 repository = "https://github.com/one-d-wide/netlink-bindings"
@@ -12,8 +12,8 @@ name = "reverse-lookup"
 
 [dependencies]
 libc = "0.2"
-netlink-bindings = { path = "../netlink-bindings", features = [ "nlctrl" ] }
-netlink-socket2 = { path = "../netlink-socket" }
+netlink-bindings = { workspace = true, features = [ "nlctrl" ] }
+netlink-socket2 = { workspace = true }
 
 argh = { version = "0", default-features = false, features = [ "help" ] }
 

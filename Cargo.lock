@@ -388,7 +388,7 @@ dependencies = [
 
 [[package]]
 name = "ip-route"
-version = "0.1.0"
+version = "0.3.4"
 dependencies = [
  "ip-route-proc-macro",
  "ip-route-syntax",
@@ -404,19 +404,19 @@ dependencies = [
 
 [[package]]
 name = "ip-route-proc-macro"
-version = "0.1.0"
+version = "0.3.4"
 dependencies = [
  "ip-route-syntax",
  "ipnet",
  "proc-macro2",
  "quote",
  "scopeguard",
- "syn 2.0.119",
+ "syn 3.0.3",
 ]
 
 [[package]]
 name = "ip-route-syntax"
-version = "0.1.0"
+version = "0.3.4"
 dependencies = [
  "ipnet",
  "libc",
@@ -512,7 +512,7 @@ dependencies = [
 
 [[package]]
 name = "netlink-bindings"
-version = "0.3.3"
+version = "0.3.4"
 dependencies = [
  "libc",
 ]
@@ -533,7 +533,7 @@ dependencies = [
 
 [[package]]
 name = "netlink-socket2"
-version = "0.3.3"
+version = "0.3.4"
 dependencies = [
  "ip-route",
  "libc",
@@ -632,7 +632,7 @@ dependencies = [
 
 [[package]]
 name = "reverse-lookup"
-version = "0.1.0"
+version = "0.3.4"
 dependencies = [
  "argh",
  "libc",

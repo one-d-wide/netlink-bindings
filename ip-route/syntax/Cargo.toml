@@ -1,6 +1,11 @@
 [package]
 name = "ip-route-syntax"
-version = "0.1.0"
+description = "Embed iproute2-like commands into your program"
+version.workspace = true
+authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
+categories = [ "network-programming", "os", "api-bindings" ]
+repository = "https://github.com/one-d-wide/netlink-bindings"
+license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [[bin]]
@@ -14,7 +19,7 @@ path = "lib.rs"
 coverage = [ ]
 
 [dependencies]
-libc = "*"
+libc = "0"
 ipnet = "2"
 
 quote = "1"

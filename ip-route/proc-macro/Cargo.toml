@@ -1,6 +1,11 @@
 [package]
 name = "ip-route-proc-macro"
-version = "0.1.0"
+description = "Embed iproute2-like commands into your program"
+version.workspace = true
+authors = [ "Remy D. Farley <one-d-wide@protonmail.com>" ]
+categories = [ "network-programming", "os", "api-bindings" ]
+repository = "https://github.com/one-d-wide/netlink-bindings"
+license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [lib]
@@ -19,4 +24,4 @@ quote = "1"
 proc-macro2 = "1"
 scopeguard = "1"
 
-syn = { version = "2.0", features = [ "derive", "parsing", "visit-mut" ] }
+syn = { version = "3.0", features = [ "full", "derive", "parsing", "visit-mut" ] }
