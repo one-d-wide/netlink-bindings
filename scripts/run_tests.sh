@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-set -e
+set -euo pipefail
 
 if test -z "${UNSHARE:-}"; then
   export UNSHARE=1
