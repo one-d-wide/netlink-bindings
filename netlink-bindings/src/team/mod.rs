@@ -152,7 +152,14 @@ impl<'a> Iterator for IterableTeam<'a> {
 impl<'a> std::fmt::Debug for IterableTeam<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Team");
-        for attr in self.clone() {
+        let mut iter = IterableTeam::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -310,7 +317,14 @@ impl<'a> Iterator for IterableItemOption<'a> {
 impl<'a> std::fmt::Debug for IterableItemOption<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ItemOption");
-        for attr in self.clone() {
+        let mut iter = IterableItemOption::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -585,7 +599,14 @@ impl<'a> Iterator for IterableAttrOption<'a> {
 impl<'a> std::fmt::Debug for IterableAttrOption<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AttrOption");
-        for attr in self.clone() {
+        let mut iter = IterableAttrOption::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -599,7 +620,7 @@ impl<'a> std::fmt::Debug for IterableAttrOption<'_> {
                 AttrOption::Name(val) => fmt.field("Name", &val),
                 AttrOption::Changed(val) => fmt.field("Changed", &val),
                 AttrOption::Type(val) => fmt.field("Type", &val),
-                AttrOption::Data(val) => fmt.field("Data", &val),
+                AttrOption::Data(val) => fmt.field("Data", &FormatHexdump(val)),
                 AttrOption::Removed(val) => fmt.field("Removed", &val),
                 AttrOption::PortIfindex(val) => fmt.field("PortIfindex", &val),
                 AttrOption::ArrayIndex(val) => fmt.field("ArrayIndex", &val),
@@ -773,7 +794,14 @@ impl<'a> Iterator for IterableItemPort<'a> {
 impl<'a> std::fmt::Debug for IterableItemPort<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ItemPort");
-        for attr in self.clone() {
+        let mut iter = IterableItemPort::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1018,7 +1046,14 @@ impl<'a> Iterator for IterableAttrPort<'a> {
 impl std::fmt::Debug for IterableAttrPort<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AttrPort");
-        for attr in self.clone() {
+        let mut iter = IterableAttrPort::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1424,6 +1459,14 @@ impl<'r> OpNoopDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNoopDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1476,6 +1519,14 @@ impl<'r> OpOptionsSetDo<'r> {
         header.cmd = 1u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpOptionsSetDo<'_> {
@@ -1530,6 +1581,14 @@ impl<'r> OpOptionsGetDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpOptionsGetDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1583,6 +1642,14 @@ impl<'r> OpPortListGetDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpPortListGetDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1611,6 +1678,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1626,10 +1694,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1646,9 +1716,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

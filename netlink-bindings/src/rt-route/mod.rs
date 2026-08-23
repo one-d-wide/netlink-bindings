@@ -51,7 +51,46 @@ impl RtmType {
         })
     }
 }
-#[repr(C, packed(4))]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Debug, Clone, Copy)]
+pub enum RtmFlag {
+    #[doc = "Notify user of route change\n"]
+    Notify = 1 << 8,
+    #[doc = "This route is cloned\n"]
+    Cloned = 1 << 9,
+    #[doc = "Multipath equalizer: NI\n"]
+    Equalize = 1 << 10,
+    #[doc = "Prefix addresses\n"]
+    Prefix = 1 << 11,
+    #[doc = "Set rtm_table to FIB lookup result\n"]
+    LookupTable = 1 << 12,
+    #[doc = "Return full fib lookup match\n"]
+    FibMatch = 1 << 13,
+    #[doc = "route is offloaded\n"]
+    Offload = 1 << 14,
+    #[doc = "route is trapping packets\n"]
+    Trap = 1 << 15,
+    #[doc = "route is offloaded route offload failed, this value is chosen to avoid\nconflicts with other flags defined in include/uapi/linux/ipv6_route.h\n"]
+    OffloadFailed = 1 << 29,
+}
+impl RtmFlag {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 8 => Self::Notify,
+            n if n == 1 << 9 => Self::Cloned,
+            n if n == 1 << 10 => Self::Equalize,
+            n if n == 1 << 11 => Self::Prefix,
+            n if n == 1 << 12 => Self::LookupTable,
+            n if n == 1 << 13 => Self::FibMatch,
+            n if n == 1 << 14 => Self::Offload,
+            n if n == 1 << 15 => Self::Trap,
+            n if n == 1 << 29 => Self::OffloadFailed,
+            _ => return None,
+        })
+    }
+}
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Rtmsg {
     pub rtm_family: u8,
     pub rtm_dst_len: u8,
@@ -62,12 +101,8 @@ pub struct Rtmsg {
     pub rtm_scope: u8,
     #[doc = "Associated type: [`RtmType`] (enum)"]
     pub rtm_type: u8,
+    #[doc = "Associated type: [`RtmFlag`] (enum)"]
     pub rtm_flags: u32,
-}
-impl Clone for Rtmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Rtmsg {
@@ -110,6 +145,11 @@ impl Rtmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -122,6 +162,7 @@ impl Rtmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Rtmsg>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<Rtmsg>() == 4usize);
         12usize
     }
 }
@@ -139,23 +180,21 @@ impl std::fmt::Debug for Rtmsg {
                 "rtm_type",
                 &FormatEnum(self.rtm_type.into(), RtmType::from_value),
             )
-            .field("rtm_flags", &self.rtm_flags)
+            .field(
+                "rtm_flags",
+                &FormatFlags(self.rtm_flags.into(), RtmFlag::from_value),
+            )
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct RtaCacheinfo {
     pub rta_clntref: u32,
     pub rta_lastuse: u32,
     pub rta_expires: u32,
     pub rta_error: u32,
     pub rta_used: u32,
-}
-impl Clone for RtaCacheinfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for RtaCacheinfo {
@@ -198,6 +237,11 @@ impl RtaCacheinfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -210,6 +254,7 @@ impl RtaCacheinfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<RtaCacheinfo>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<RtaCacheinfo>() == 4usize);
         20usize
     }
 }
@@ -232,8 +277,8 @@ pub enum RouteAttrs<'a> {
     Table(u32),
     Mark(u32),
     MfcStats(&'a [u8]),
-    Via(&'a [u8]),
-    Newdst(&'a [u8]),
+    Via(std::net::IpAddr),
+    Newdst(std::net::IpAddr),
     Pref(u8),
     EncapType(u16),
     Encap(&'a [u8]),
@@ -503,7 +548,7 @@ impl<'a> IterableRouteAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_via(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_via(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -518,7 +563,7 @@ impl<'a> IterableRouteAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_newdst(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_newdst(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -877,12 +922,12 @@ impl<'a> Iterator for IterableRouteAttrs<'a> {
                     val
                 }),
                 18u16 => RouteAttrs::Via({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 19u16 => RouteAttrs::Newdst({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -927,12 +972,12 @@ impl<'a> Iterator for IterableRouteAttrs<'a> {
                     val
                 }),
                 28u16 => RouteAttrs::Sport({
-                    let res = parse_u16(next);
+                    let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 29u16 => RouteAttrs::Dport({
-                    let res = parse_u16(next);
+                    let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -962,7 +1007,14 @@ impl<'a> Iterator for IterableRouteAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableRouteAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RouteAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableRouteAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -981,22 +1033,22 @@ impl<'a> std::fmt::Debug for IterableRouteAttrs<'_> {
                 RouteAttrs::Priority(val) => fmt.field("Priority", &val),
                 RouteAttrs::Prefsrc(val) => fmt.field("Prefsrc", &val),
                 RouteAttrs::Metrics(val) => fmt.field("Metrics", &val),
-                RouteAttrs::Multipath(val) => fmt.field("Multipath", &val),
-                RouteAttrs::Protoinfo(val) => fmt.field("Protoinfo", &val),
+                RouteAttrs::Multipath(val) => fmt.field("Multipath", &FormatHexdump(val)),
+                RouteAttrs::Protoinfo(val) => fmt.field("Protoinfo", &FormatHexdump(val)),
                 RouteAttrs::Flow(val) => fmt.field("Flow", &val),
                 RouteAttrs::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
-                RouteAttrs::Session(val) => fmt.field("Session", &val),
-                RouteAttrs::MpAlgo(val) => fmt.field("MpAlgo", &val),
+                RouteAttrs::Session(val) => fmt.field("Session", &FormatHexdump(val)),
+                RouteAttrs::MpAlgo(val) => fmt.field("MpAlgo", &FormatHexdump(val)),
                 RouteAttrs::Table(val) => fmt.field("Table", &val),
                 RouteAttrs::Mark(val) => fmt.field("Mark", &val),
-                RouteAttrs::MfcStats(val) => fmt.field("MfcStats", &val),
+                RouteAttrs::MfcStats(val) => fmt.field("MfcStats", &FormatHexdump(val)),
                 RouteAttrs::Via(val) => fmt.field("Via", &val),
                 RouteAttrs::Newdst(val) => fmt.field("Newdst", &val),
                 RouteAttrs::Pref(val) => fmt.field("Pref", &val),
                 RouteAttrs::EncapType(val) => fmt.field("EncapType", &val),
-                RouteAttrs::Encap(val) => fmt.field("Encap", &val),
+                RouteAttrs::Encap(val) => fmt.field("Encap", &FormatHexdump(val)),
                 RouteAttrs::Expires(val) => fmt.field("Expires", &val),
-                RouteAttrs::Pad(val) => fmt.field("Pad", &val),
+                RouteAttrs::Pad(val) => fmt.field("Pad", &FormatHexdump(val)),
                 RouteAttrs::Uid(val) => fmt.field("Uid", &val),
                 RouteAttrs::TtlPropagate(val) => fmt.field("TtlPropagate", &val),
                 RouteAttrs::IpProto(val) => fmt.field("IpProto", &val),
@@ -1671,7 +1723,14 @@ impl<'a> Iterator for IterableMetrics<'a> {
 impl<'a> std::fmt::Debug for IterableMetrics<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Metrics");
-        for attr in self.clone() {
+        let mut iter = IterableMetrics::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1969,14 +2028,24 @@ impl<Prev: Pusher> PushRouteAttrs<Prev> {
         self.as_vec_mut().extend(value);
         self
     }
-    pub fn push_via(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 18u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_via(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_vec_mut(), 18u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_vec_mut(), value);
         self
     }
-    pub fn push_newdst(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 19u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_newdst(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_vec_mut(), 19u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_vec_mut(), value);
         self
     }
     pub fn push_pref(mut self, value: u8) -> Self {
@@ -2021,12 +2090,12 @@ impl<Prev: Pusher> PushRouteAttrs<Prev> {
     }
     pub fn push_sport(mut self, value: u16) -> Self {
         push_header(self.as_vec_mut(), 28u16, 2 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
+        self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_dport(mut self, value: u16) -> Self {
         push_header(self.as_vec_mut(), 29u16, 2 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
+        self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_nh_id(mut self, value: u32) -> Self {
@@ -2215,6 +2284,14 @@ impl<'r> OpGetrouteDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Rtmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetrouteDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -2275,6 +2352,14 @@ impl<'r> OpGetrouteDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Rtmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetrouteDo<'_> {
@@ -2337,6 +2422,14 @@ impl<'r> OpNewrouteDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Rtmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewrouteDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2397,6 +2490,14 @@ impl<'r> OpDelrouteDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Rtmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Rtmsg {
+        let pos = self.request.pos;
+        Rtmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDelrouteDo<'_> {
@@ -2486,7 +2587,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -2504,6 +2606,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -2570,6 +2673,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -2585,10 +2689,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -2605,9 +2711,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

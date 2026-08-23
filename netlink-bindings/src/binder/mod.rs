@@ -318,7 +318,14 @@ impl<'a> Iterator for IterableReport<'a> {
 impl<'a> std::fmt::Debug for IterableReport<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Report");
-        for attr in self.clone() {
+        let mut iter = IterableReport::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {

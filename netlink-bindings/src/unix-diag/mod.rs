@@ -48,7 +48,8 @@ impl ShowFlags {
         })
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Req {
     pub sdiag_family: u8,
     pub sdiag_protocol: u8,
@@ -59,11 +60,6 @@ pub struct Req {
     #[doc = "Show flags\n"]
     pub udiag_show: u32,
     pub udiag_cookie: [u8; 8usize],
-}
-impl Clone for Req {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Req {
@@ -106,6 +102,11 @@ impl Req {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -118,6 +119,7 @@ impl Req {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Req>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<Req>() == 4usize);
         24usize
     }
 }
@@ -134,7 +136,8 @@ impl std::fmt::Debug for Req {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Msg {
     pub udiag_family: u8,
     pub udiag_type: u8,
@@ -142,11 +145,6 @@ pub struct Msg {
     pub pad: u8,
     pub udiag_ino: u32,
     pub udiag_cookie: [u8; 8usize],
-}
-impl Clone for Msg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Msg {
@@ -189,6 +187,11 @@ impl Msg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -201,6 +204,7 @@ impl Msg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Msg>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<Msg>() == 4usize);
         16usize
     }
 }
@@ -216,17 +220,12 @@ impl std::fmt::Debug for Msg {
             .finish()
     }
 }
-#[derive(Debug)]
 #[doc = "VFS inode info\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Vfs {
     pub udiag_vfs_ino: u32,
     pub udiag_vfs_dev: u32,
-}
-impl Clone for Vfs {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Vfs {
@@ -269,6 +268,11 @@ impl Vfs {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -281,20 +285,16 @@ impl Vfs {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Vfs>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<Vfs>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
 #[doc = "Receive queue length info\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Rqlen {
     pub udiag_rqueue: u32,
     pub udiag_wqueue: u32,
-}
-impl Clone for Rqlen {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Rqlen {
@@ -337,6 +337,11 @@ impl Rqlen {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -349,6 +354,7 @@ impl Rqlen {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Rqlen>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<Rqlen>() == 4usize);
         8usize
     }
 }
@@ -597,7 +603,14 @@ impl<'a> Iterator for IterableUnixDiagAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableUnixDiagAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("UnixDiagAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableUnixDiagAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -611,9 +624,9 @@ impl<'a> std::fmt::Debug for IterableUnixDiagAttrs<'_> {
                 UnixDiagAttrs::Name(val) => fmt.field("Name", &FormatBinStr(val)),
                 UnixDiagAttrs::Vfs(val) => fmt.field("Vfs", &val),
                 UnixDiagAttrs::Peer(val) => fmt.field("Peer", &val),
-                UnixDiagAttrs::Icons(val) => fmt.field("Icons", &val),
+                UnixDiagAttrs::Icons(val) => fmt.field("Icons", &FormatHexdump(val)),
                 UnixDiagAttrs::Rqlen(val) => fmt.field("Rqlen", &val),
-                UnixDiagAttrs::Meminfo(val) => fmt.field("Meminfo", &val),
+                UnixDiagAttrs::Meminfo(val) => fmt.field("Meminfo", &FormatHexdump(val)),
                 UnixDiagAttrs::Shutdown(val) => fmt.field("Shutdown", &val),
                 UnixDiagAttrs::Uid(val) => fmt.field("Uid", &val),
             };
@@ -821,6 +834,14 @@ impl<'r> OpUnixDiagDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Req) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Req {
+        let pos = self.request.pos;
+        Req::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Req {
+        let pos = self.request.pos;
+        Req::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpUnixDiagDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -909,7 +930,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -927,6 +949,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -993,6 +1016,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1008,10 +1032,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1028,9 +1054,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

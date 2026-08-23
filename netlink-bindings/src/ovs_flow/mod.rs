@@ -103,17 +103,12 @@ impl CtStateFlags {
         })
     }
 }
-#[derive(Debug)]
 #[doc = "Header for OVS Generic Netlink messages.\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsHeader {
     #[doc = "ifindex of local port for datapath (0 to make a request not specific to\na datapath).\n"]
     pub dp_ifindex: u32,
-}
-impl Clone for OvsHeader {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsHeader {
@@ -156,6 +151,11 @@ impl OvsHeader {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -168,20 +168,18 @@ impl OvsHeader {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsHeader>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsHeader>() == 4usize);
         4usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct OvsFlowStats {
     #[doc = "Number of matched packets.\n"]
     pub n_packets: u64,
     #[doc = "Number of matched bytes.\n"]
     pub n_bytes: u64,
-}
-impl Clone for OvsFlowStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsFlowStats {
@@ -224,6 +222,11 @@ impl OvsFlowStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -236,6 +239,7 @@ impl OvsFlowStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsFlowStats>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<OvsFlowStats>() == 4usize);
         16usize
     }
 }
@@ -247,16 +251,11 @@ impl std::fmt::Debug for OvsFlowStats {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyEthernet {
     pub eth_src: [u8; 6usize],
     pub eth_dst: [u8; 6usize],
-}
-impl Clone for OvsKeyEthernet {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyEthernet {
@@ -299,6 +298,11 @@ impl OvsKeyEthernet {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -311,17 +315,14 @@ impl OvsKeyEthernet {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyEthernet>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyEthernet>() == 1usize);
         12usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyMpls {
     pub _mpls_lse_be: u32,
-}
-impl Clone for OvsKeyMpls {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyMpls {
@@ -364,6 +365,11 @@ impl OvsKeyMpls {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -376,6 +382,7 @@ impl OvsKeyMpls {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyMpls>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyMpls>() == 4usize);
         4usize
     }
     pub fn mpls_lse(&self) -> u32 {
@@ -392,7 +399,8 @@ impl std::fmt::Debug for OvsKeyMpls {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyIpv4 {
     pub _ipv4_src_be: u32,
     pub _ipv4_dst_be: u32,
@@ -401,11 +409,6 @@ pub struct OvsKeyIpv4 {
     pub ipv4_ttl: u8,
     #[doc = "Associated type: [`OvsFragType`] (enum)"]
     pub ipv4_frag: u8,
-}
-impl Clone for OvsKeyIpv4 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyIpv4 {
@@ -448,6 +451,11 @@ impl OvsKeyIpv4 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -460,6 +468,7 @@ impl OvsKeyIpv4 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyIpv4>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyIpv4>() == 4usize);
         12usize
     }
     pub fn ipv4_src(&self) -> u32 {
@@ -490,7 +499,8 @@ impl std::fmt::Debug for OvsKeyIpv4 {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyIpv6 {
     pub ipv6_src: [u8; 16usize],
     pub ipv6_dst: [u8; 16usize],
@@ -499,11 +509,6 @@ pub struct OvsKeyIpv6 {
     pub ipv6_tclass: u8,
     pub ipv6_hlimit: u8,
     pub ipv6_frag: u8,
-}
-impl Clone for OvsKeyIpv6 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyIpv6 {
@@ -546,6 +551,11 @@ impl OvsKeyIpv6 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 40usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -558,6 +568,7 @@ impl OvsKeyIpv6 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyIpv6>() == 40usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyIpv6>() == 4usize);
         40usize
     }
     pub fn ipv6_label(&self) -> u32 {
@@ -580,15 +591,10 @@ impl std::fmt::Debug for OvsKeyIpv6 {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyIpv6Exthdrs {
     pub hdrs: u16,
-}
-impl Clone for OvsKeyIpv6Exthdrs {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyIpv6Exthdrs {
@@ -631,6 +637,11 @@ impl OvsKeyIpv6Exthdrs {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 2usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -643,18 +654,15 @@ impl OvsKeyIpv6Exthdrs {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyIpv6Exthdrs>() == 2usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyIpv6Exthdrs>() == 2usize);
         2usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyTcp {
     pub _tcp_src_be: u16,
     pub _tcp_dst_be: u16,
-}
-impl Clone for OvsKeyTcp {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyTcp {
@@ -697,6 +705,11 @@ impl OvsKeyTcp {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -709,6 +722,7 @@ impl OvsKeyTcp {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyTcp>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyTcp>() == 2usize);
         4usize
     }
     pub fn tcp_src(&self) -> u16 {
@@ -732,15 +746,11 @@ impl std::fmt::Debug for OvsKeyTcp {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyUdp {
     pub _udp_src_be: u16,
     pub _udp_dst_be: u16,
-}
-impl Clone for OvsKeyUdp {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyUdp {
@@ -783,6 +793,11 @@ impl OvsKeyUdp {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -795,6 +810,7 @@ impl OvsKeyUdp {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyUdp>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyUdp>() == 2usize);
         4usize
     }
     pub fn udp_src(&self) -> u16 {
@@ -818,15 +834,11 @@ impl std::fmt::Debug for OvsKeyUdp {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeySctp {
     pub _sctp_src_be: u16,
     pub _sctp_dst_be: u16,
-}
-impl Clone for OvsKeySctp {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeySctp {
@@ -869,6 +881,11 @@ impl OvsKeySctp {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -881,6 +898,7 @@ impl OvsKeySctp {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeySctp>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeySctp>() == 2usize);
         4usize
     }
     pub fn sctp_src(&self) -> u16 {
@@ -904,16 +922,11 @@ impl std::fmt::Debug for OvsKeySctp {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyIcmp {
     pub icmp_type: u8,
     pub icmp_code: u8,
-}
-impl Clone for OvsKeyIcmp {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyIcmp {
@@ -956,6 +969,11 @@ impl OvsKeyIcmp {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 2usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -968,10 +986,12 @@ impl OvsKeyIcmp {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyIcmp>() == 2usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyIcmp>() == 1usize);
         2usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyArp {
     pub _arp_sip_be: u32,
     pub _arp_tip_be: u32,
@@ -979,11 +999,6 @@ pub struct OvsKeyArp {
     pub arp_sha: [u8; 6usize],
     pub arp_tha: [u8; 6usize],
     pub _pad_22: [u8; 2usize],
-}
-impl Clone for OvsKeyArp {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyArp {
@@ -1026,6 +1041,11 @@ impl OvsKeyArp {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1038,6 +1058,7 @@ impl OvsKeyArp {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyArp>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyArp>() == 4usize);
         24usize
     }
     pub fn arp_sip(&self) -> u32 {
@@ -1070,17 +1091,12 @@ impl std::fmt::Debug for OvsKeyArp {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyNd {
     pub nd_target: [u8; 16usize],
     pub nd_sll: [u8; 6usize],
     pub nd_tll: [u8; 6usize],
-}
-impl Clone for OvsKeyNd {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyNd {
@@ -1123,6 +1139,11 @@ impl OvsKeyNd {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 28usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1135,10 +1156,21 @@ impl OvsKeyNd {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyNd>() == 28usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyNd>() == 1usize);
         28usize
     }
 }
-#[repr(C, packed(4))]
+impl std::fmt::Debug for OvsKeyNd {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("OvsKeyNd")
+            .field("nd_target", &FormatHexdump(self.nd_target.as_slice()))
+            .field("nd_sll", &self.nd_sll)
+            .field("nd_tll", &self.nd_tll)
+            .finish()
+    }
+}
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsKeyCtTupleIpv4 {
     pub _ipv4_src_be: u32,
     pub _ipv4_dst_be: u32,
@@ -1146,11 +1178,6 @@ pub struct OvsKeyCtTupleIpv4 {
     pub _dst_port_be: u16,
     pub ipv4_proto: u8,
     pub _pad_13: [u8; 3usize],
-}
-impl Clone for OvsKeyCtTupleIpv4 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsKeyCtTupleIpv4 {
@@ -1193,6 +1220,11 @@ impl OvsKeyCtTupleIpv4 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1205,6 +1237,7 @@ impl OvsKeyCtTupleIpv4 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsKeyCtTupleIpv4>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<OvsKeyCtTupleIpv4>() == 4usize);
         16usize
     }
     pub fn ipv4_src(&self) -> u32 {
@@ -1243,17 +1276,13 @@ impl std::fmt::Debug for OvsKeyCtTupleIpv4 {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsActionPushVlan {
     #[doc = "Tag protocol identifier (TPID) to push.\n"]
     pub _vlan_tpid_be: u16,
     #[doc = "Tag control identifier (TCI) to push.\n"]
     pub _vlan_tci_be: u16,
-}
-impl Clone for OvsActionPushVlan {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsActionPushVlan {
@@ -1296,6 +1325,11 @@ impl OvsActionPushVlan {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1308,6 +1342,7 @@ impl OvsActionPushVlan {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsActionPushVlan>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsActionPushVlan>() == 2usize);
         4usize
     }
     #[doc = "Tag protocol identifier (TPID) to push.\n"]
@@ -1335,18 +1370,13 @@ impl std::fmt::Debug for OvsActionPushVlan {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsActionHash {
     #[doc = "Algorithm used to compute hash prior to recirculation.\n"]
     pub hash_alg: u32,
     #[doc = "Basis used for computing hash.\n"]
     pub hash_basis: u32,
-}
-impl Clone for OvsActionHash {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsActionHash {
@@ -1389,6 +1419,11 @@ impl OvsActionHash {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1401,20 +1436,17 @@ impl OvsActionHash {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsActionHash>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<OvsActionHash>() == 4usize);
         8usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsActionPushMpls {
     #[doc = "MPLS label stack entry to push\n"]
     pub _mpls_lse_be: u32,
     #[doc = "Ethertype to set in the encapsulating ethernet frame. The only values\nethertype should ever be given are ETH_P_MPLS_UC and ETH_P_MPLS_MC,\nindicating MPLS unicast or multicast. Other are rejected.\n"]
     pub _mpls_ethertype_be: u32,
-}
-impl Clone for OvsActionPushMpls {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsActionPushMpls {
@@ -1457,6 +1489,11 @@ impl OvsActionPushMpls {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1469,6 +1506,7 @@ impl OvsActionPushMpls {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsActionPushMpls>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<OvsActionPushMpls>() == 4usize);
         8usize
     }
     #[doc = "MPLS label stack entry to push\n"]
@@ -1496,7 +1534,8 @@ impl std::fmt::Debug for OvsActionPushMpls {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsActionAddMpls {
     #[doc = "MPLS label stack entry to push\n"]
     pub _mpls_lse_be: u32,
@@ -1505,11 +1544,6 @@ pub struct OvsActionAddMpls {
     #[doc = "MPLS tunnel attributes.\n"]
     pub tun_flags: u16,
     pub _pad_10: [u8; 2usize],
-}
-impl Clone for OvsActionAddMpls {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsActionAddMpls {
@@ -1552,6 +1586,11 @@ impl OvsActionAddMpls {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1564,6 +1603,7 @@ impl OvsActionAddMpls {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsActionAddMpls>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<OvsActionAddMpls>() == 4usize);
         12usize
     }
     #[doc = "MPLS label stack entry to push\n"]
@@ -1917,7 +1957,14 @@ impl<'a> Iterator for IterableFlowAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFlowAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1935,13 +1982,13 @@ impl<'a> std::fmt::Debug for IterableFlowAttrs<'_> {
                 FlowAttrs::Used(val) => fmt.field("Used", &val),
                 FlowAttrs::Clear(val) => fmt.field("Clear", &val),
                 FlowAttrs::Mask(val) => fmt.field("Mask", &val),
-                FlowAttrs::Probe(val) => fmt.field("Probe", &val),
+                FlowAttrs::Probe(val) => fmt.field("Probe", &FormatHexdump(val)),
                 FlowAttrs::Ufid(val) => fmt.field("Ufid", &val),
                 FlowAttrs::UfidFlags(val) => fmt.field(
                     "UfidFlags",
                     &FormatFlags(val.into(), OvsUfidFlags::from_value),
                 ),
-                FlowAttrs::Pad(val) => fmt.field("Pad", &val),
+                FlowAttrs::Pad(val) => fmt.field("Pad", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -2846,7 +2893,14 @@ impl<'a> Iterator for IterableKeyAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableKeyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("KeyAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableKeyAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2886,11 +2940,11 @@ impl<'a> std::fmt::Debug for IterableKeyAttrs<'_> {
                 KeyAttrs::CtMark(val) => fmt.field("CtMark", &val),
                 KeyAttrs::CtLabels(val) => fmt.field("CtLabels", &FormatHex(val)),
                 KeyAttrs::CtOrigTupleIpv4(val) => fmt.field("CtOrigTupleIpv4", &val),
-                KeyAttrs::CtOrigTupleIpv6(val) => fmt.field("CtOrigTupleIpv6", &val),
+                KeyAttrs::CtOrigTupleIpv6(val) => fmt.field("CtOrigTupleIpv6", &FormatHexdump(val)),
                 KeyAttrs::Nsh(val) => fmt.field("Nsh", &val),
                 KeyAttrs::PacketType(val) => fmt.field("PacketType", &val),
-                KeyAttrs::NdExtensions(val) => fmt.field("NdExtensions", &val),
-                KeyAttrs::TunnelInfo(val) => fmt.field("TunnelInfo", &val),
+                KeyAttrs::NdExtensions(val) => fmt.field("NdExtensions", &FormatHexdump(val)),
+                KeyAttrs::TunnelInfo(val) => fmt.field("TunnelInfo", &FormatHexdump(val)),
                 KeyAttrs::Ipv6Exthdrs(val) => fmt.field("Ipv6Exthdrs", &val),
             };
         }
@@ -3740,7 +3794,14 @@ impl<'a> Iterator for IterableActionAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActionAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActionAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActionAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3764,7 +3825,7 @@ impl<'a> std::fmt::Debug for IterableActionAttrs<'_> {
                 ActionAttrs::SetMasked(val) => fmt.field("SetMasked", &val),
                 ActionAttrs::Ct(val) => fmt.field("Ct", &val),
                 ActionAttrs::Trunc(val) => fmt.field("Trunc", &val),
-                ActionAttrs::PushEth(val) => fmt.field("PushEth", &val),
+                ActionAttrs::PushEth(val) => fmt.field("PushEth", &FormatHexdump(val)),
                 ActionAttrs::PopEth(val) => fmt.field("PopEth", &val),
                 ActionAttrs::CtClear(val) => fmt.field("CtClear", &val),
                 ActionAttrs::PushNsh(val) => fmt.field("PushNsh", &val),
@@ -4389,7 +4450,14 @@ impl<'a> Iterator for IterableTunnelKeyAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTunnelKeyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TunnelKeyAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTunnelKeyAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -4408,14 +4476,14 @@ impl<'a> std::fmt::Debug for IterableTunnelKeyAttrs<'_> {
                 TunnelKeyAttrs::DontFragment(val) => fmt.field("DontFragment", &val),
                 TunnelKeyAttrs::Csum(val) => fmt.field("Csum", &val),
                 TunnelKeyAttrs::Oam(val) => fmt.field("Oam", &val),
-                TunnelKeyAttrs::GeneveOpts(val) => fmt.field("GeneveOpts", &val),
+                TunnelKeyAttrs::GeneveOpts(val) => fmt.field("GeneveOpts", &FormatHexdump(val)),
                 TunnelKeyAttrs::TpSrc(val) => fmt.field("TpSrc", &val),
                 TunnelKeyAttrs::TpDst(val) => fmt.field("TpDst", &val),
                 TunnelKeyAttrs::VxlanOpts(val) => fmt.field("VxlanOpts", &val),
-                TunnelKeyAttrs::Ipv6Src(val) => fmt.field("Ipv6Src", &val),
-                TunnelKeyAttrs::Ipv6Dst(val) => fmt.field("Ipv6Dst", &val),
-                TunnelKeyAttrs::Pad(val) => fmt.field("Pad", &val),
-                TunnelKeyAttrs::ErspanOpts(val) => fmt.field("ErspanOpts", &val),
+                TunnelKeyAttrs::Ipv6Src(val) => fmt.field("Ipv6Src", &FormatHexdump(val)),
+                TunnelKeyAttrs::Ipv6Dst(val) => fmt.field("Ipv6Dst", &FormatHexdump(val)),
+                TunnelKeyAttrs::Pad(val) => fmt.field("Pad", &FormatHexdump(val)),
+                TunnelKeyAttrs::ErspanOpts(val) => fmt.field("ErspanOpts", &FormatHexdump(val)),
                 TunnelKeyAttrs::Ipv4InfoBridge(val) => fmt.field("Ipv4InfoBridge", &val),
             };
         }
@@ -4691,7 +4759,14 @@ impl<'a> Iterator for IterableCheckPktLenAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableCheckPktLenAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CheckPktLenAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCheckPktLenAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -4873,7 +4948,14 @@ impl<'a> Iterator for IterableSampleAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableSampleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SampleAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableSampleAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5088,7 +5170,14 @@ impl<'a> Iterator for IterableUserspaceAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableUserspaceAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("UserspaceAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableUserspaceAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5100,7 +5189,7 @@ impl<'a> std::fmt::Debug for IterableUserspaceAttrs<'_> {
             };
             match attr {
                 UserspaceAttrs::Pid(val) => fmt.field("Pid", &val),
-                UserspaceAttrs::Userdata(val) => fmt.field("Userdata", &val),
+                UserspaceAttrs::Userdata(val) => fmt.field("Userdata", &FormatHexdump(val)),
                 UserspaceAttrs::EgressTunPort(val) => fmt.field("EgressTunPort", &val),
                 UserspaceAttrs::Actions(val) => fmt.field("Actions", &val),
             };
@@ -5298,7 +5387,14 @@ impl<'a> Iterator for IterableOvsNshKeyAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableOvsNshKeyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("OvsNshKeyAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableOvsNshKeyAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5309,9 +5405,9 @@ impl<'a> std::fmt::Debug for IterableOvsNshKeyAttrs<'_> {
                 }
             };
             match attr {
-                OvsNshKeyAttrs::Base(val) => fmt.field("Base", &val),
-                OvsNshKeyAttrs::Md1(val) => fmt.field("Md1", &val),
-                OvsNshKeyAttrs::Md2(val) => fmt.field("Md2", &val),
+                OvsNshKeyAttrs::Base(val) => fmt.field("Base", &FormatHexdump(val)),
+                OvsNshKeyAttrs::Md1(val) => fmt.field("Md1", &FormatHexdump(val)),
+                OvsNshKeyAttrs::Md2(val) => fmt.field("Md2", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -5625,7 +5721,14 @@ impl<'a> Iterator for IterableCtAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableCtAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CtAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCtAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5638,8 +5741,8 @@ impl<'a> std::fmt::Debug for IterableCtAttrs<'_> {
             match attr {
                 CtAttrs::Commit(val) => fmt.field("Commit", &val),
                 CtAttrs::Zone(val) => fmt.field("Zone", &val),
-                CtAttrs::Mark(val) => fmt.field("Mark", &val),
-                CtAttrs::Labels(val) => fmt.field("Labels", &val),
+                CtAttrs::Mark(val) => fmt.field("Mark", &FormatHexdump(val)),
+                CtAttrs::Labels(val) => fmt.field("Labels", &FormatHexdump(val)),
                 CtAttrs::Helper(val) => fmt.field("Helper", &val),
                 CtAttrs::Nat(val) => fmt.field("Nat", &val),
                 CtAttrs::ForceCommit(val) => fmt.field("ForceCommit", &val),
@@ -5980,7 +6083,14 @@ impl<'a> Iterator for IterableNatAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableNatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NatAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNatAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5993,8 +6103,8 @@ impl<'a> std::fmt::Debug for IterableNatAttrs<'_> {
             match attr {
                 NatAttrs::Src(val) => fmt.field("Src", &val),
                 NatAttrs::Dst(val) => fmt.field("Dst", &val),
-                NatAttrs::IpMin(val) => fmt.field("IpMin", &val),
-                NatAttrs::IpMax(val) => fmt.field("IpMax", &val),
+                NatAttrs::IpMin(val) => fmt.field("IpMin", &FormatHexdump(val)),
+                NatAttrs::IpMax(val) => fmt.field("IpMax", &FormatHexdump(val)),
                 NatAttrs::ProtoMin(val) => fmt.field("ProtoMin", &val),
                 NatAttrs::ProtoMax(val) => fmt.field("ProtoMax", &val),
                 NatAttrs::Persistent(val) => fmt.field("Persistent", &val),
@@ -6181,7 +6291,14 @@ impl<'a> Iterator for IterableDecTtlAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableDecTtlAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("DecTtlAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableDecTtlAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6327,7 +6444,14 @@ impl<'a> Iterator for IterableVxlanExtAttrs<'a> {
 impl std::fmt::Debug for IterableVxlanExtAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VxlanExtAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableVxlanExtAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6494,7 +6618,14 @@ impl<'a> Iterator for IterablePsampleAttrs<'a> {
 impl<'a> std::fmt::Debug for IterablePsampleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PsampleAttrs");
-        for attr in self.clone() {
+        let mut iter = IterablePsampleAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6506,7 +6637,7 @@ impl<'a> std::fmt::Debug for IterablePsampleAttrs<'_> {
             };
             match attr {
                 PsampleAttrs::Group(val) => fmt.field("Group", &val),
-                PsampleAttrs::Cookie(val) => fmt.field("Cookie", &val),
+                PsampleAttrs::Cookie(val) => fmt.field("Cookie", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -7748,6 +7879,14 @@ impl<'r> OpGetDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -7805,6 +7944,14 @@ impl<'r> OpGetDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetDo<'_> {
@@ -7864,6 +8011,14 @@ impl<'r> OpNewDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -7894,6 +8049,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -7909,10 +8065,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -7929,9 +8087,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

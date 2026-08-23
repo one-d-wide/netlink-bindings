@@ -149,7 +149,14 @@ impl<'a> Iterator for IterableAssocDevInfo<'a> {
 impl std::fmt::Debug for IterableAssocDevInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AssocDevInfo");
-        for attr in self.clone() {
+        let mut iter = IterableAssocDevInfo::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -437,7 +444,14 @@ impl<'a> Iterator for IterableDev<'a> {
 impl<'a> std::fmt::Debug for IterableDev<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Dev");
-        for attr in self.clone() {
+        let mut iter = IterableDev::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -726,7 +740,14 @@ impl<'a> Iterator for IterableAssoc<'a> {
 impl<'a> std::fmt::Debug for IterableAssoc<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Assoc");
-        for attr in self.clone() {
+        let mut iter = IterableAssoc::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -923,7 +944,14 @@ impl<'a> Iterator for IterableKeys<'a> {
 impl<'a> std::fmt::Debug for IterableKeys<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Keys");
-        for attr in self.clone() {
+        let mut iter = IterableKeys::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -934,7 +962,7 @@ impl<'a> std::fmt::Debug for IterableKeys<'_> {
                 }
             };
             match attr {
-                Keys::Key(val) => fmt.field("Key", &val),
+                Keys::Key(val) => fmt.field("Key", &FormatHexdump(val)),
                 Keys::Spi(val) => fmt.field("Spi", &val),
             };
         }
@@ -1314,7 +1342,14 @@ impl<'a> Iterator for IterableStats<'a> {
 impl std::fmt::Debug for IterableStats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Stats");
-        for attr in self.clone() {
+        let mut iter = IterableStats::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1864,6 +1899,14 @@ impl<'r> OpDevGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDevGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -1916,6 +1959,14 @@ impl<'r> OpDevGetDo<'r> {
         header.cmd = 1u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDevGetDo<'_> {
@@ -1970,6 +2021,14 @@ impl<'r> OpDevSetDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDevSetDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2022,6 +2081,14 @@ impl<'r> OpKeyRotateDo<'r> {
         header.cmd = 6u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpKeyRotateDo<'_> {
@@ -2076,6 +2143,14 @@ impl<'r> OpRxAssocDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpRxAssocDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2128,6 +2203,14 @@ impl<'r> OpTxAssocDo<'r> {
         header.cmd = 9u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpTxAssocDo<'_> {
@@ -2184,6 +2267,14 @@ impl<'r> OpGetStatsDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetStatsDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -2236,6 +2327,14 @@ impl<'r> OpGetStatsDo<'r> {
         header.cmd = 10u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetStatsDo<'_> {
@@ -2290,6 +2389,14 @@ impl<'r> OpDevAssocDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDevAssocDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2343,6 +2450,14 @@ impl<'r> OpDevDisassocDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDevDisassocDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2371,6 +2486,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -2386,10 +2502,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -2406,9 +2524,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

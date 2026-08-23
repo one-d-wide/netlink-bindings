@@ -145,7 +145,8 @@ impl TcpState {
     }
 }
 #[doc = "Socket identity\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Sockid {
     pub _sport_be: u16,
     pub _dport_be: u16,
@@ -153,11 +154,6 @@ pub struct Sockid {
     pub dst: [u8; 16usize],
     pub r#if: u32,
     pub cookie: [u8; 8usize],
-}
-impl Clone for Sockid {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Sockid {
@@ -200,6 +196,11 @@ impl Sockid {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 48usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -212,6 +213,7 @@ impl Sockid {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Sockid>() == 48usize);
+        const _: () = assert!(std::mem::align_of::<Sockid>() == 4usize);
         48usize
     }
     pub fn sport(&self) -> u16 {
@@ -239,7 +241,8 @@ impl std::fmt::Debug for Sockid {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Req {
     #[doc = "Family of addresses\n"]
     pub family: u8,
@@ -252,11 +255,6 @@ pub struct Req {
     pub states: u32,
     #[doc = "Tables to dump (NI)\n"]
     pub dbs: u32,
-}
-impl Clone for Req {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Req {
@@ -299,6 +297,11 @@ impl Req {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 60usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -311,6 +314,7 @@ impl Req {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Req>() == 60usize);
+        const _: () = assert!(std::mem::align_of::<Req>() == 4usize);
         60usize
     }
 }
@@ -332,7 +336,8 @@ impl std::fmt::Debug for Req {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct ReqV2 {
     pub family: u8,
     pub protocol: u8,
@@ -341,11 +346,6 @@ pub struct ReqV2 {
     #[doc = "Associated type: [`TcpState`] (1 bit per enumeration)"]
     pub states: u32,
     pub sockid: Sockid,
-}
-impl Clone for ReqV2 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for ReqV2 {
@@ -388,6 +388,11 @@ impl ReqV2 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 56usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -400,6 +405,7 @@ impl ReqV2 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<ReqV2>() == 56usize);
+        const _: () = assert!(std::mem::align_of::<ReqV2>() == 4usize);
         56usize
     }
 }
@@ -421,7 +427,8 @@ impl std::fmt::Debug for ReqV2 {
     }
 }
 #[doc = "SOCK_RAW sockets require the underlied protocol to be additionally\nspecified so we can use \\@pad member for this, but we can\\'t rename it\nbecause userspace programs still may depend on this name. Instead lets\nuse another structure definition as an alias for struct\n\\@inet_diag_req_v2.\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct ReqRaw {
     pub family: u8,
     pub protocol: u8,
@@ -430,11 +437,6 @@ pub struct ReqRaw {
     #[doc = "Associated type: [`TcpState`] (1 bit per enumeration)"]
     pub states: u32,
     pub sockid: Sockid,
-}
-impl Clone for ReqRaw {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for ReqRaw {
@@ -477,6 +479,11 @@ impl ReqRaw {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 56usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -489,6 +496,7 @@ impl ReqRaw {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<ReqRaw>() == 56usize);
+        const _: () = assert!(std::mem::align_of::<ReqRaw>() == 4usize);
         56usize
     }
 }
@@ -510,7 +518,8 @@ impl std::fmt::Debug for ReqRaw {
     }
 }
 #[doc = "Base info structure. It contains socket identity (addrs/ports/cookie)\nand, alas, the information shown by netstat.\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Msg {
     pub family: u8,
     #[doc = "Associated type: [`TcpState`] (enum)"]
@@ -523,11 +532,6 @@ pub struct Msg {
     pub wqueue: u32,
     pub uid: u32,
     pub inode: u32,
-}
-impl Clone for Msg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Msg {
@@ -570,6 +574,11 @@ impl Msg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 72usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -582,6 +591,7 @@ impl Msg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Msg>() == 72usize);
+        const _: () = assert!(std::mem::align_of::<Msg>() == 4usize);
         72usize
     }
 }
@@ -605,7 +615,8 @@ impl std::fmt::Debug for Msg {
     }
 }
 #[doc = "Bytecode is sequence of 4 byte commands followed by variable arguments.\nAll the commands identified by \\\"code\\\" are conditional jumps forward:\nto offset cc+\\\"yes\\\" (bytes) or to offset cc+\\\"no\\\" (bytes). \\\"yes\\\" is\nsupposed to be length of the command and its arguments (in bytes).\n\nTermination condition is to land excactly on a len\\'th instruction (on\naddress of one after the last one), overshooting means an unsucessfull\ntermination.\n\nIf you reading this, for your own sanity, I advice you to first try\nreverse-lookup on the `ss` command with filters you need, and copy\nbytecode from there.\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct BytecodeOp {
     #[doc = "Associated type: [`BytecodeOpCode`] (enum)"]
     pub code: u8,
@@ -613,11 +624,6 @@ pub struct BytecodeOp {
     pub yes: u8,
     #[doc = "offset to jump on non-match\n"]
     pub no: u16,
-}
-impl Clone for BytecodeOp {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for BytecodeOp {
@@ -660,6 +666,11 @@ impl BytecodeOp {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -672,6 +683,7 @@ impl BytecodeOp {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<BytecodeOp>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<BytecodeOp>() == 2usize);
         4usize
     }
 }
@@ -688,7 +700,8 @@ impl std::fmt::Debug for BytecodeOp {
     }
 }
 #[doc = "Host condition to be placed directly into bytecode. Socket address bytes\nshould be appended right after this struct.\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Hostcond {
     #[doc = "Socket address family\n"]
     pub family: u8,
@@ -696,11 +709,6 @@ pub struct Hostcond {
     pub prefix_len: u8,
     pub _pad_2: [u8; 2usize],
     pub port: i32,
-}
-impl Clone for Hostcond {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Hostcond {
@@ -743,6 +751,11 @@ impl Hostcond {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -755,6 +768,7 @@ impl Hostcond {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Hostcond>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<Hostcond>() == 4usize);
         8usize
     }
 }
@@ -767,16 +781,11 @@ impl std::fmt::Debug for Hostcond {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Markcond {
     pub mark: u32,
     pub mask: u32,
-}
-impl Clone for Markcond {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Markcond {
@@ -819,6 +828,11 @@ impl Markcond {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -831,21 +845,17 @@ impl Markcond {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Markcond>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<Markcond>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Meminfo {
     pub rmem: u32,
     pub wmem: u32,
     pub fmem: u32,
     pub tmem: u32,
-}
-impl Clone for Meminfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Meminfo {
@@ -888,6 +898,11 @@ impl Meminfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -900,21 +915,17 @@ impl Meminfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Meminfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<Meminfo>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcpvegasInfo {
     pub enabled: u32,
     pub rttcnt: u32,
     pub rtt: u32,
     pub minrtt: u32,
-}
-impl Clone for TcpvegasInfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcpvegasInfo {
@@ -957,6 +968,11 @@ impl TcpvegasInfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -969,22 +985,18 @@ impl TcpvegasInfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcpvegasInfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcpvegasInfo>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcpDctcpInfo {
     pub enabled: u16,
     pub ce_state: u16,
     pub alpha: u32,
     pub ab_ecn: u32,
     pub ab_tot: u32,
-}
-impl Clone for TcpDctcpInfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcpDctcpInfo {
@@ -1027,6 +1039,11 @@ impl TcpDctcpInfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1039,11 +1056,12 @@ impl TcpDctcpInfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcpDctcpInfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcpDctcpInfo>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcpBbrInfo {
     #[doc = "lower 32 bits of bw\n"]
     pub bw_lo: u32,
@@ -1055,11 +1073,6 @@ pub struct TcpBbrInfo {
     pub pacing_gain: u32,
     #[doc = "cwnd gain shifted left 8 bits\n"]
     pub cwnd_gain: u32,
-}
-impl Clone for TcpBbrInfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcpBbrInfo {
@@ -1102,6 +1115,11 @@ impl TcpBbrInfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1114,10 +1132,13 @@ impl TcpBbrInfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcpBbrInfo>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcpBbrInfo>() == 4usize);
         20usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcpInfo {
     #[doc = "TCP state\n\nAssociated type: [`TcpState`] (enum)"]
     pub state: u8,
@@ -1254,11 +1275,6 @@ pub struct TcpInfo {
     #[doc = "ACK ECN option seen\n"]
     pub accecn_opt_seen: u16,
 }
-impl Clone for TcpInfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
-}
 #[doc = "Create zero-initialized struct"]
 impl Default for TcpInfo {
     fn default() -> Self {
@@ -1300,6 +1316,11 @@ impl TcpInfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 280usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1312,6 +1333,7 @@ impl TcpInfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcpInfo>() == 280usize);
+        const _: () = assert!(std::mem::align_of::<TcpInfo>() == 4usize);
         280usize
     }
     #[doc = "Send window scale\n"]
@@ -1578,7 +1600,14 @@ impl<'a> Iterator for IterableUlpInfoAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableUlpInfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("UlpInfoAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableUlpInfoAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1590,8 +1619,8 @@ impl<'a> std::fmt::Debug for IterableUlpInfoAttrs<'_> {
             };
             match attr {
                 UlpInfoAttrs::Name(val) => fmt.field("Name", &val),
-                UlpInfoAttrs::Tls(val) => fmt.field("Tls", &val),
-                UlpInfoAttrs::Mptcp(val) => fmt.field("Mptcp", &val),
+                UlpInfoAttrs::Tls(val) => fmt.field("Tls", &FormatHexdump(val)),
+                UlpInfoAttrs::Mptcp(val) => fmt.field("Mptcp", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -1783,7 +1812,14 @@ impl<'a> Iterator for IterableRequestAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableRequestAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RequestAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableRequestAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2442,7 +2478,14 @@ impl<'a> Iterator for IterableReplyAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableReplyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ReplyAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableReplyAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2459,18 +2502,18 @@ impl<'a> std::fmt::Debug for IterableReplyAttrs<'_> {
                 ReplyAttrs::Cong(val) => fmt.field("Cong", &val),
                 ReplyAttrs::Tos(val) => fmt.field("Tos", &val),
                 ReplyAttrs::Tclass(val) => fmt.field("Tclass", &val),
-                ReplyAttrs::Skmeminfo(val) => fmt.field("Skmeminfo", &val),
+                ReplyAttrs::Skmeminfo(val) => fmt.field("Skmeminfo", &FormatHexdump(val)),
                 ReplyAttrs::Shutdown(val) => fmt.field("Shutdown", &val),
                 ReplyAttrs::Dctcpinfo(val) => fmt.field("Dctcpinfo", &val),
                 ReplyAttrs::Protocol(val) => fmt.field("Protocol", &val),
                 ReplyAttrs::Skv6only(val) => fmt.field("Skv6only", &val),
-                ReplyAttrs::Locals(val) => fmt.field("Locals", &val),
-                ReplyAttrs::Peers(val) => fmt.field("Peers", &val),
+                ReplyAttrs::Locals(val) => fmt.field("Locals", &FormatHexdump(val)),
+                ReplyAttrs::Peers(val) => fmt.field("Peers", &FormatHexdump(val)),
                 ReplyAttrs::Pad(val) => fmt.field("Pad", &val),
                 ReplyAttrs::Mark(val) => fmt.field("Mark", &val),
                 ReplyAttrs::Bbritfo(val) => fmt.field("Bbritfo", &val),
                 ReplyAttrs::ClassId(val) => fmt.field("ClassId", &val),
-                ReplyAttrs::Md5sig(val) => fmt.field("Md5sig", &val),
+                ReplyAttrs::Md5sig(val) => fmt.field("Md5sig", &FormatHexdump(val)),
                 ReplyAttrs::UlpInfo(val) => fmt.field("UlpInfo", &val),
                 ReplyAttrs::SkBpfStorages(val) => fmt.field("SkBpfStorages", &val),
                 ReplyAttrs::CgroupId(val) => fmt.field("CgroupId", &val),
@@ -2734,7 +2777,14 @@ impl<'a> Iterator for IterableBpfStorageReq<'a> {
 impl std::fmt::Debug for IterableBpfStorageReq<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BpfStorageReq");
-        for attr in self.clone() {
+        let mut iter = IterableBpfStorageReq::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2879,7 +2929,14 @@ impl<'a> Iterator for IterableBpfStorageReply<'a> {
 impl<'a> std::fmt::Debug for IterableBpfStorageReply<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BpfStorageReply");
-        for attr in self.clone() {
+        let mut iter = IterableBpfStorageReply::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3069,7 +3126,14 @@ impl<'a> Iterator for IterableBpfStorage<'a> {
 impl<'a> std::fmt::Debug for IterableBpfStorage<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BpfStorage");
-        for attr in self.clone() {
+        let mut iter = IterableBpfStorage::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3616,6 +3680,14 @@ impl<'r> OpTcpDiagDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &ReqV2) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &ReqV2 {
+        let pos = self.request.pos;
+        ReqV2::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut ReqV2 {
+        let pos = self.request.pos;
+        ReqV2::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpTcpDiagDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -3685,6 +3757,14 @@ impl<'r> OpUdpDiagDump<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &ReqV2) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &ReqV2 {
+        let pos = self.request.pos;
+        ReqV2::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut ReqV2 {
+        let pos = self.request.pos;
+        ReqV2::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpUdpDiagDump<'_> {
@@ -3774,7 +3854,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -3792,6 +3873,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -3858,6 +3940,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -3873,10 +3956,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -3893,9 +3978,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

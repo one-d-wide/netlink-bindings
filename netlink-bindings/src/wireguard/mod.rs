@@ -61,17 +61,14 @@ impl WgallowedipFlags {
         })
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct KernelTimespec {
     #[doc = "Number of seconds, since UNIX epoch.\n"]
     pub sec: u64,
     #[doc = "Number of nanoseconds, after the second began.\n"]
     pub nsec: u64,
-}
-impl Clone for KernelTimespec {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for KernelTimespec {
@@ -114,6 +111,11 @@ impl KernelTimespec {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -126,6 +128,7 @@ impl KernelTimespec {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<KernelTimespec>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<KernelTimespec>() == 4usize);
         16usize
     }
 }
@@ -442,7 +445,14 @@ impl std::fmt::Debug for IterableArrayWgpeer<'_> {
 impl<'a> std::fmt::Debug for IterableWgdevice<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Wgdevice");
-        for attr in self.clone() {
+        let mut iter = IterableWgdevice::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -909,7 +919,14 @@ impl std::fmt::Debug for IterableArrayWgallowedip<'_> {
 impl<'a> std::fmt::Debug for IterableWgpeer<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Wgpeer");
-        for attr in self.clone() {
+        let mut iter = IterableWgpeer::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1199,7 +1216,14 @@ impl<'a> Iterator for IterableWgallowedip<'a> {
 impl std::fmt::Debug for IterableWgallowedip<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Wgallowedip");
-        for attr in self.clone() {
+        let mut iter = IterableWgallowedip::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1663,6 +1687,14 @@ impl<'r> OpGetDeviceDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetDeviceDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -1716,6 +1748,14 @@ impl<'r> OpSetDeviceDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpSetDeviceDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1744,6 +1784,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1759,10 +1800,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1779,9 +1822,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

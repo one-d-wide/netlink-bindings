@@ -38,15 +38,10 @@ impl VportType {
         })
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsHeader {
     pub dp_ifindex: u32,
-}
-impl Clone for OvsHeader {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsHeader {
@@ -89,6 +84,11 @@ impl OvsHeader {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -101,10 +101,13 @@ impl OvsHeader {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsHeader>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsHeader>() == 4usize);
         4usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct OvsVportStats {
     pub rx_packets: u64,
     pub tx_packets: u64,
@@ -114,11 +117,6 @@ pub struct OvsVportStats {
     pub tx_errors: u64,
     pub rx_dropped: u64,
     pub tx_dropped: u64,
-}
-impl Clone for OvsVportStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsVportStats {
@@ -161,6 +159,11 @@ impl OvsVportStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 64usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -173,6 +176,7 @@ impl OvsVportStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsVportStats>() == 64usize);
+        const _: () = assert!(std::mem::align_of::<OvsVportStats>() == 4usize);
         64usize
     }
 }
@@ -301,7 +305,14 @@ impl<'a> Iterator for IterableVportOptions<'a> {
 impl std::fmt::Debug for IterableVportOptions<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VportOptions");
-        for attr in self.clone() {
+        let mut iter = IterableVportOptions::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -475,7 +486,14 @@ impl<'a> Iterator for IterableUpcallStats<'a> {
 impl std::fmt::Debug for IterableUpcallStats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("UpcallStats");
-        for attr in self.clone() {
+        let mut iter = IterableUpcallStats::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -807,7 +825,14 @@ impl<'a> Iterator for IterableVport<'a> {
 impl<'a> std::fmt::Debug for IterableVport<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Vport");
-        for attr in self.clone() {
+        let mut iter = IterableVport::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -824,7 +849,7 @@ impl<'a> std::fmt::Debug for IterableVport<'_> {
                 }
                 Vport::Name(val) => fmt.field("Name", &val),
                 Vport::Options(val) => fmt.field("Options", &val),
-                Vport::UpcallPid(val) => fmt.field("UpcallPid", &val),
+                Vport::UpcallPid(val) => fmt.field("UpcallPid", &FormatHexdump(val)),
                 Vport::Stats(val) => fmt.field("Stats", &val),
                 Vport::Ifindex(val) => fmt.field("Ifindex", &val),
                 Vport::Netnsid(val) => fmt.field("Netnsid", &val),
@@ -1145,6 +1170,14 @@ impl<'r> OpNewDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1202,6 +1235,14 @@ impl<'r> OpDelDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDelDo<'_> {
@@ -1263,6 +1304,14 @@ impl<'r> OpGetDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -1321,6 +1370,14 @@ impl<'r> OpGetDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1351,6 +1408,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1366,10 +1424,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1386,9 +1446,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

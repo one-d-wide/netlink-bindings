@@ -15,15 +15,10 @@ use crate::{
 };
 pub const PROTONAME: &str = "ovs_packet";
 pub const PROTONAME_CSTR: &CStr = c"ovs_packet";
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct OvsHeader {
     pub dp_ifindex: u32,
-}
-impl Clone for OvsHeader {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for OvsHeader {
@@ -66,6 +61,11 @@ impl OvsHeader {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -78,6 +78,7 @@ impl OvsHeader {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<OvsHeader>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<OvsHeader>() == 4usize);
         4usize
     }
 }
@@ -386,7 +387,14 @@ impl<'a> Iterator for IterablePacket<'a> {
 impl<'a> std::fmt::Debug for IterablePacket<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Packet");
-        for attr in self.clone() {
+        let mut iter = IterablePacket::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -397,11 +405,11 @@ impl<'a> std::fmt::Debug for IterablePacket<'_> {
                 }
             };
             match attr {
-                Packet::Packet(val) => fmt.field("Packet", &val),
-                Packet::Key(val) => fmt.field("Key", &val),
-                Packet::Actions(val) => fmt.field("Actions", &val),
-                Packet::Userdata(val) => fmt.field("Userdata", &val),
-                Packet::EgressTunKey(val) => fmt.field("EgressTunKey", &val),
+                Packet::Packet(val) => fmt.field("Packet", &FormatHexdump(val)),
+                Packet::Key(val) => fmt.field("Key", &FormatHexdump(val)),
+                Packet::Actions(val) => fmt.field("Actions", &FormatHexdump(val)),
+                Packet::Userdata(val) => fmt.field("Userdata", &FormatHexdump(val)),
+                Packet::EgressTunKey(val) => fmt.field("EgressTunKey", &FormatHexdump(val)),
                 Packet::Probe(val) => fmt.field("Probe", &val),
                 Packet::Mru(val) => fmt.field("Mru", &val),
                 Packet::Len(val) => fmt.field("Len", &val),
@@ -630,6 +638,14 @@ impl<'r> OpExecuteDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &OvsHeader) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut OvsHeader {
+        let pos = self.request.pos;
+        OvsHeader::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpExecuteDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -660,6 +676,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -675,10 +692,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -695,9 +714,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

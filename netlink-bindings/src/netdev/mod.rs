@@ -341,7 +341,14 @@ impl<'a> Iterator for IterableDev<'a> {
 impl<'a> std::fmt::Debug for IterableDev<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Dev");
-        for attr in self.clone() {
+        let mut iter = IterableDev::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -528,7 +535,14 @@ impl<'a> Iterator for IterableIoUringProviderInfo<'a> {
 impl std::fmt::Debug for IterableIoUringProviderInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IoUringProviderInfo");
-        for attr in self.clone() {
+        let mut iter = IterableIoUringProviderInfo::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -843,7 +857,14 @@ impl<'a> Iterator for IterablePagePool<'a> {
 impl<'a> std::fmt::Debug for IterablePagePool<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PagePool");
-        for attr in self.clone() {
+        let mut iter = IterablePagePool::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1059,7 +1080,14 @@ impl<'a> Iterator for IterablePagePoolInfo<'a> {
 impl std::fmt::Debug for IterablePagePoolInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PagePoolInfo");
-        for attr in self.clone() {
+        let mut iter = IterablePagePoolInfo::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1455,7 +1483,14 @@ impl<'a> Iterator for IterablePagePoolStats<'a> {
 impl<'a> std::fmt::Debug for IterablePagePoolStats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PagePoolStats");
-        for attr in self.clone() {
+        let mut iter = IterablePagePoolStats::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1850,7 +1885,14 @@ impl<'a> Iterator for IterableNapi<'a> {
 impl std::fmt::Debug for IterableNapi<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Napi");
-        for attr in self.clone() {
+        let mut iter = IterableNapi::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2017,7 +2059,14 @@ impl<'a> Iterator for IterableXskInfo<'a> {
 impl std::fmt::Debug for IterableXskInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("XskInfo");
-        for attr in self.clone() {
+        let mut iter = IterableXskInfo::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2306,7 +2355,14 @@ impl<'a> Iterator for IterableQueue<'a> {
 impl<'a> std::fmt::Debug for IterableQueue<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Queue");
-        for attr in self.clone() {
+        let mut iter = IterableQueue::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3222,7 +3278,14 @@ impl<'a> Iterator for IterableQstats<'a> {
 impl std::fmt::Debug for IterableQstats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Qstats");
-        for attr in self.clone() {
+        let mut iter = IterableQstats::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3599,7 +3662,14 @@ impl<'a> Iterator for IterableQueueId<'a> {
 impl std::fmt::Debug for IterableQueueId<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("QueueId");
-        for attr in self.clone() {
+        let mut iter = IterableQueueId::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3800,7 +3870,14 @@ impl<'a> Iterator for IterableLease<'a> {
 impl<'a> std::fmt::Debug for IterableLease<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Lease");
-        for attr in self.clone() {
+        let mut iter = IterableLease::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -4025,7 +4102,14 @@ impl<'a> Iterator for IterableDmabuf<'a> {
 impl<'a> std::fmt::Debug for IterableDmabuf<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Dmabuf");
-        for attr in self.clone() {
+        let mut iter = IterableDmabuf::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5147,6 +5231,14 @@ impl<'r> OpDevGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDevGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -5199,6 +5291,14 @@ impl<'r> OpDevGetDo<'r> {
         header.cmd = 1u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDevGetDo<'_> {
@@ -5255,6 +5355,14 @@ impl<'r> OpPagePoolGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpPagePoolGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -5307,6 +5415,14 @@ impl<'r> OpPagePoolGetDo<'r> {
         header.cmd = 5u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpPagePoolGetDo<'_> {
@@ -5363,6 +5479,14 @@ impl<'r> OpPagePoolStatsGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpPagePoolStatsGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -5415,6 +5539,14 @@ impl<'r> OpPagePoolStatsGetDo<'r> {
         header.cmd = 9u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpPagePoolStatsGetDo<'_> {
@@ -5471,6 +5603,14 @@ impl<'r> OpQueueGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpQueueGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -5523,6 +5663,14 @@ impl<'r> OpQueueGetDo<'r> {
         header.cmd = 10u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpQueueGetDo<'_> {
@@ -5579,6 +5727,14 @@ impl<'r> OpNapiGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNapiGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -5631,6 +5787,14 @@ impl<'r> OpNapiGetDo<'r> {
         header.cmd = 11u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpNapiGetDo<'_> {
@@ -5687,6 +5851,14 @@ impl<'r> OpQstatsGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpQstatsGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -5739,6 +5911,14 @@ impl<'r> OpBindRxDo<'r> {
         header.cmd = 13u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpBindRxDo<'_> {
@@ -5793,6 +5973,14 @@ impl<'r> OpNapiSetDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNapiSetDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -5845,6 +6033,14 @@ impl<'r> OpBindTxDo<'r> {
         header.cmd = 15u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpBindTxDo<'_> {
@@ -5899,6 +6095,14 @@ impl<'r> OpQueueCreateDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpQueueCreateDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -5927,6 +6131,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -5942,10 +6147,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -5962,9 +6169,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

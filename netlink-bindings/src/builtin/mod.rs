@@ -16,18 +16,13 @@ use crate::{
 };
 pub const PROTONAME: &str = "builtin";
 pub const PROTONAME_CSTR: &CStr = c"builtin";
-#[derive(Debug)]
 #[doc = "Generic family header\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct BuiltinNfgenmsg {
     pub cmd: u8,
     pub version: u8,
     pub reserved: u16,
-}
-impl Clone for BuiltinNfgenmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for BuiltinNfgenmsg {
@@ -70,6 +65,11 @@ impl BuiltinNfgenmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -82,20 +82,16 @@ impl BuiltinNfgenmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<BuiltinNfgenmsg>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<BuiltinNfgenmsg>() == 2usize);
         4usize
     }
 }
-#[derive(Debug)]
 #[doc = "Wrapper for bitfield32 type\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct BuiltinBitfield32 {
     pub value: u32,
     pub selector: u32,
-}
-impl Clone for BuiltinBitfield32 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for BuiltinBitfield32 {
@@ -138,6 +134,11 @@ impl BuiltinBitfield32 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -150,23 +151,19 @@ impl BuiltinBitfield32 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<BuiltinBitfield32>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<BuiltinBitfield32>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
 #[doc = "Header of a Netlink message\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Nlmsghdr {
     pub len: u32,
     pub r#type: u16,
     pub flags: u16,
     pub seq: u32,
     pub pid: u32,
-}
-impl Clone for Nlmsghdr {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Nlmsghdr {
@@ -209,6 +206,11 @@ impl Nlmsghdr {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -221,6 +223,7 @@ impl Nlmsghdr {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Nlmsghdr>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<Nlmsghdr>() == 4usize);
         16usize
     }
 }
@@ -286,7 +289,14 @@ impl<'a> Iterator for IterableDummy<'a> {
 impl std::fmt::Debug for IterableDummy<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Dummy");
-        for attr in self.clone() {
+        let mut iter = IterableDummy::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -528,7 +538,14 @@ impl<'a> Iterator for IterableNlmsgerrAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableNlmsgerrAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NlmsgerrAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNlmsgerrAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -541,7 +558,7 @@ impl<'a> std::fmt::Debug for IterableNlmsgerrAttrs<'_> {
             match attr {
                 NlmsgerrAttrs::Msg(val) => fmt.field("Msg", &val),
                 NlmsgerrAttrs::Offset(val) => fmt.field("Offset", &val),
-                NlmsgerrAttrs::Cookie(val) => fmt.field("Cookie", &val),
+                NlmsgerrAttrs::Cookie(val) => fmt.field("Cookie", &FormatHexdump(val)),
                 NlmsgerrAttrs::Policy(val) => fmt.field("Policy", &val),
                 NlmsgerrAttrs::MissingType(val) => fmt.field("MissingType", &val),
                 NlmsgerrAttrs::MissingNest(val) => fmt.field("MissingNest", &val),
@@ -976,7 +993,14 @@ impl<'a> Iterator for IterablePolicyTypeAttrs<'a> {
 impl<'a> std::fmt::Debug for IterablePolicyTypeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PolicyTypeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterablePolicyTypeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {

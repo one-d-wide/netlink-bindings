@@ -7,19 +7,20 @@
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
 use netlink_bindings::{
-    builtin::BuiltinNfgenmsg,
+    builtin::{BuiltinNfgenmsg, Nlmsghdr},
     traits::{NetlinkRequest, Protocol},
 };
 use std::cell::Cell;
 use std::fmt::Debug;
 #[derive(Clone)]
-pub struct ReverseLookup<'a> {
+pub struct ReverseLookup {
+    pub header: Nlmsghdr,
     pub proto: Protocol,
     pub value: u16,
     pub request_value: Option<u16>,
     pub is_dump: bool,
-    pub last_filter: &'a Cell<Option<usize>>,
-    pub buf: &'a [u8],
+    pub buf: Vec<u8>,
+    pub last_filter: Cell<Option<usize>>,
 }
 #[allow(unused)]
 fn consider(fmt: &mut std::fmt::Formatter<'_>, proto: &str) -> std::fmt::Result {
@@ -29,7 +30,7 @@ fn consider(fmt: &mut std::fmt::Formatter<'_>, proto: &str) -> std::fmt::Result 
         proto
     )
 }
-impl Debug for ReverseLookup<'_> {
+impl Debug for ReverseLookup {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let Self {
             proto,
@@ -38,7 +39,14 @@ impl Debug for ReverseLookup<'_> {
             is_dump,
             buf,
             last_filter,
-        } = self.clone();
+            ..
+        } = self;
+        let (proto, value, request_value, is_dump) = (
+            proto.clone(),
+            value.clone(),
+            request_value.clone(),
+            is_dump.clone(),
+        );
         let last_filter_val = last_filter.take();
         match proto {
             Protocol::Raw { protonum, .. } => {
@@ -5815,4 +5823,1180 @@ impl Debug for ReverseLookup<'_> {
             }
         }
     }
+}
+pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str> {
+    let mut res = Vec::new();
+    if protonum == 0u16 {
+        if request_value == 20u16 {
+            res.push(stringify!(rt_addr::OpNewaddrDo));
+        }
+        if request_value == 21u16 {
+            res.push(stringify!(rt_addr::OpDeladdrDo));
+        }
+        if request_value == 22u16 {
+            res.push(stringify!(rt_addr::OpGetaddrDump));
+        }
+        if request_value == 58u16 {
+            res.push(stringify!(rt_addr::OpGetmulticastDump));
+        }
+        if request_value == 58u16 {
+            res.push(stringify!(rt_addr::OpGetmulticastDo));
+        }
+        if request_value == 16u16 {
+            res.push(stringify!(rt_link::OpNewlinkDo));
+        }
+        if request_value == 17u16 {
+            res.push(stringify!(rt_link::OpDellinkDo));
+        }
+        if request_value == 18u16 {
+            res.push(stringify!(rt_link::OpGetlinkDump));
+        }
+        if request_value == 18u16 {
+            res.push(stringify!(rt_link::OpGetlinkDo));
+        }
+        if request_value == 19u16 {
+            res.push(stringify!(rt_link::OpSetlinkDo));
+        }
+        if request_value == 94u16 {
+            res.push(stringify!(rt_link::OpGetstatsDump));
+        }
+        if request_value == 94u16 {
+            res.push(stringify!(rt_link::OpGetstatsDo));
+        }
+        if request_value == 28u16 {
+            res.push(stringify!(rt_neigh::OpNewneighDo));
+        }
+        if request_value == 29u16 {
+            res.push(stringify!(rt_neigh::OpDelneighDo));
+        }
+        if request_value == 30u16 {
+            res.push(stringify!(rt_neigh::OpGetneighDump));
+        }
+        if request_value == 30u16 {
+            res.push(stringify!(rt_neigh::OpGetneighDo));
+        }
+        if request_value == 66u16 {
+            res.push(stringify!(rt_neigh::OpGetneightblDump));
+        }
+        if request_value == 67u16 {
+            res.push(stringify!(rt_neigh::OpSetneightblDo));
+        }
+        if request_value == 26u16 {
+            res.push(stringify!(rt_route::OpGetrouteDump));
+        }
+        if request_value == 26u16 {
+            res.push(stringify!(rt_route::OpGetrouteDo));
+        }
+        if request_value == 24u16 {
+            res.push(stringify!(rt_route::OpNewrouteDo));
+        }
+        if request_value == 25u16 {
+            res.push(stringify!(rt_route::OpDelrouteDo));
+        }
+        if request_value == 32u16 {
+            res.push(stringify!(rt_rule::OpNewruleDo));
+        }
+        if request_value == 33u16 {
+            res.push(stringify!(rt_rule::OpDelruleDo));
+        }
+        if request_value == 34u16 {
+            res.push(stringify!(rt_rule::OpGetruleDump));
+        }
+        if request_value == 36u16 {
+            res.push(stringify!(tc::OpNewqdiscDo));
+        }
+        if request_value == 37u16 {
+            res.push(stringify!(tc::OpDelqdiscDo));
+        }
+        if request_value == 38u16 {
+            res.push(stringify!(tc::OpGetqdiscDump));
+        }
+        if request_value == 38u16 {
+            res.push(stringify!(tc::OpGetqdiscDo));
+        }
+        if request_value == 40u16 {
+            res.push(stringify!(tc::OpNewtclassDo));
+        }
+        if request_value == 41u16 {
+            res.push(stringify!(tc::OpDeltclassDo));
+        }
+        if request_value == 42u16 {
+            res.push(stringify!(tc::OpGettclassDo));
+        }
+        if request_value == 44u16 {
+            res.push(stringify!(tc::OpNewtfilterDo));
+        }
+        if request_value == 45u16 {
+            res.push(stringify!(tc::OpDeltfilterDo));
+        }
+        if request_value == 46u16 {
+            res.push(stringify!(tc::OpGettfilterDump));
+        }
+        if request_value == 46u16 {
+            res.push(stringify!(tc::OpGettfilterDo));
+        }
+        if request_value == 100u16 {
+            res.push(stringify!(tc::OpNewchainDo));
+        }
+        if request_value == 101u16 {
+            res.push(stringify!(tc::OpDelchainDo));
+        }
+        if request_value == 102u16 {
+            res.push(stringify!(tc::OpGetchainDo));
+        }
+    }
+    if protonum == 4u16 {
+        if request_value == 20u16 {
+            res.push(stringify!(inet_diag::OpTcpDiagDump));
+        }
+        if request_value == 20u16 {
+            res.push(stringify!(inet_diag::OpUdpDiagDump));
+        }
+        if request_value == 20u16 {
+            res.push(stringify!(unix_diag::OpUnixDiagDump));
+        }
+    }
+    if protonum == 12u16 {
+        if request_value == 257u16 {
+            res.push(stringify!(conntrack::OpGetDump));
+        }
+        if request_value == 257u16 {
+            res.push(stringify!(conntrack::OpGetDo));
+        }
+        if request_value == 260u16 {
+            res.push(stringify!(conntrack::OpGetStatsDump));
+        }
+        if request_value == 16u16 {
+            res.push(stringify!(nftables::OpBatchBeginDo));
+        }
+        if request_value == 17u16 {
+            res.push(stringify!(nftables::OpBatchEndDo));
+        }
+        if request_value == 2560u16 {
+            res.push(stringify!(nftables::OpNewtableDo));
+        }
+        if request_value == 2561u16 {
+            res.push(stringify!(nftables::OpGettableDump));
+        }
+        if request_value == 2561u16 {
+            res.push(stringify!(nftables::OpGettableDo));
+        }
+        if request_value == 2562u16 {
+            res.push(stringify!(nftables::OpDeltableDo));
+        }
+        if request_value == 2586u16 {
+            res.push(stringify!(nftables::OpDestroytableDo));
+        }
+        if request_value == 2563u16 {
+            res.push(stringify!(nftables::OpNewchainDo));
+        }
+        if request_value == 2564u16 {
+            res.push(stringify!(nftables::OpGetchainDump));
+        }
+        if request_value == 2564u16 {
+            res.push(stringify!(nftables::OpGetchainDo));
+        }
+        if request_value == 2565u16 {
+            res.push(stringify!(nftables::OpDelchainDo));
+        }
+        if request_value == 2587u16 {
+            res.push(stringify!(nftables::OpDestroychainDo));
+        }
+        if request_value == 2566u16 {
+            res.push(stringify!(nftables::OpNewruleDo));
+        }
+        if request_value == 2567u16 {
+            res.push(stringify!(nftables::OpGetruleDump));
+        }
+        if request_value == 2567u16 {
+            res.push(stringify!(nftables::OpGetruleDo));
+        }
+        if request_value == 2585u16 {
+            res.push(stringify!(nftables::OpGetruleResetDump));
+        }
+        if request_value == 2585u16 {
+            res.push(stringify!(nftables::OpGetruleResetDo));
+        }
+        if request_value == 2568u16 {
+            res.push(stringify!(nftables::OpDelruleDo));
+        }
+        if request_value == 2588u16 {
+            res.push(stringify!(nftables::OpDestroyruleDo));
+        }
+        if request_value == 2569u16 {
+            res.push(stringify!(nftables::OpNewsetDo));
+        }
+        if request_value == 2570u16 {
+            res.push(stringify!(nftables::OpGetsetDump));
+        }
+        if request_value == 2570u16 {
+            res.push(stringify!(nftables::OpGetsetDo));
+        }
+        if request_value == 2571u16 {
+            res.push(stringify!(nftables::OpDelsetDo));
+        }
+        if request_value == 2589u16 {
+            res.push(stringify!(nftables::OpDestroysetDo));
+        }
+        if request_value == 2572u16 {
+            res.push(stringify!(nftables::OpNewsetelemDo));
+        }
+        if request_value == 2573u16 {
+            res.push(stringify!(nftables::OpGetsetelemDump));
+        }
+        if request_value == 2573u16 {
+            res.push(stringify!(nftables::OpGetsetelemDo));
+        }
+        if request_value == 2593u16 {
+            res.push(stringify!(nftables::OpGetsetelemResetDump));
+        }
+        if request_value == 2593u16 {
+            res.push(stringify!(nftables::OpGetsetelemResetDo));
+        }
+        if request_value == 2574u16 {
+            res.push(stringify!(nftables::OpDelsetelemDo));
+        }
+        if request_value == 2590u16 {
+            res.push(stringify!(nftables::OpDestroysetelemDo));
+        }
+        if request_value == 2576u16 {
+            res.push(stringify!(nftables::OpGetgenDump));
+        }
+        if request_value == 2576u16 {
+            res.push(stringify!(nftables::OpGetgenDo));
+        }
+        if request_value == 2578u16 {
+            res.push(stringify!(nftables::OpNewobjDo));
+        }
+        if request_value == 2579u16 {
+            res.push(stringify!(nftables::OpGetobjDump));
+        }
+        if request_value == 2579u16 {
+            res.push(stringify!(nftables::OpGetobjDo));
+        }
+        if request_value == 2580u16 {
+            res.push(stringify!(nftables::OpDelobjDo));
+        }
+        if request_value == 2591u16 {
+            res.push(stringify!(nftables::OpDestroyobjDo));
+        }
+        if request_value == 2582u16 {
+            res.push(stringify!(nftables::OpNewflowtableDo));
+        }
+        if request_value == 2583u16 {
+            res.push(stringify!(nftables::OpGetflowtableDump));
+        }
+        if request_value == 2583u16 {
+            res.push(stringify!(nftables::OpGetflowtableDo));
+        }
+        if request_value == 2584u16 {
+            res.push(stringify!(nftables::OpDelflowtableDo));
+        }
+        if request_value == 2592u16 {
+            res.push(stringify!(nftables::OpDestroyflowtableDo));
+        }
+        if request_value == 2816u16 {
+            res.push(stringify!(nftables::OpGetcompatDump));
+        }
+        if request_value == 2816u16 {
+            res.push(stringify!(nftables::OpGetcompatDo));
+        }
+    }
+    res
+}
+pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
+    let mut res = Vec::new();
+    if proto == b"binder" {}
+    if proto == b"dev-energymodel" {
+        if cmd == 1u8 {
+            res.push(stringify!(dev_energymodel::OpGetPerfDomainsDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(dev_energymodel::OpGetPerfDomainsDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(dev_energymodel::OpGetPerfTableDo));
+        }
+    }
+    if proto == b"devlink" {
+        if cmd == 3u8 {
+            res.push(stringify!(devlink::OpGetDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(devlink::OpGetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(devlink::OpPortGetDump));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(devlink::OpPortGetDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(devlink::OpPortSetDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(devlink::OpPortNewDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(devlink::OpPortDelDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(devlink::OpPortSplitDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(devlink::OpPortUnsplitDo));
+        }
+        if cmd == 13u8 {
+            res.push(stringify!(devlink::OpSbGetDump));
+        }
+        if cmd == 13u8 {
+            res.push(stringify!(devlink::OpSbGetDo));
+        }
+        if cmd == 17u8 {
+            res.push(stringify!(devlink::OpSbPoolGetDump));
+        }
+        if cmd == 17u8 {
+            res.push(stringify!(devlink::OpSbPoolGetDo));
+        }
+        if cmd == 16u8 {
+            res.push(stringify!(devlink::OpSbPoolSetDo));
+        }
+        if cmd == 21u8 {
+            res.push(stringify!(devlink::OpSbPortPoolGetDump));
+        }
+        if cmd == 21u8 {
+            res.push(stringify!(devlink::OpSbPortPoolGetDo));
+        }
+        if cmd == 20u8 {
+            res.push(stringify!(devlink::OpSbPortPoolSetDo));
+        }
+        if cmd == 25u8 {
+            res.push(stringify!(devlink::OpSbTcPoolBindGetDump));
+        }
+        if cmd == 25u8 {
+            res.push(stringify!(devlink::OpSbTcPoolBindGetDo));
+        }
+        if cmd == 24u8 {
+            res.push(stringify!(devlink::OpSbTcPoolBindSetDo));
+        }
+        if cmd == 27u8 {
+            res.push(stringify!(devlink::OpSbOccSnapshotDo));
+        }
+        if cmd == 28u8 {
+            res.push(stringify!(devlink::OpSbOccMaxClearDo));
+        }
+        if cmd == 29u8 {
+            res.push(stringify!(devlink::OpEswitchGetDo));
+        }
+        if cmd == 30u8 {
+            res.push(stringify!(devlink::OpEswitchSetDo));
+        }
+        if cmd == 31u8 {
+            res.push(stringify!(devlink::OpDpipeTableGetDo));
+        }
+        if cmd == 32u8 {
+            res.push(stringify!(devlink::OpDpipeEntriesGetDo));
+        }
+        if cmd == 33u8 {
+            res.push(stringify!(devlink::OpDpipeHeadersGetDo));
+        }
+        if cmd == 34u8 {
+            res.push(stringify!(devlink::OpDpipeTableCountersSetDo));
+        }
+        if cmd == 35u8 {
+            res.push(stringify!(devlink::OpResourceSetDo));
+        }
+        if cmd == 36u8 {
+            res.push(stringify!(devlink::OpResourceDumpDump));
+        }
+        if cmd == 36u8 {
+            res.push(stringify!(devlink::OpResourceDumpDo));
+        }
+        if cmd == 37u8 {
+            res.push(stringify!(devlink::OpReloadDo));
+        }
+        if cmd == 38u8 {
+            res.push(stringify!(devlink::OpParamGetDump));
+        }
+        if cmd == 38u8 {
+            res.push(stringify!(devlink::OpParamGetDo));
+        }
+        if cmd == 39u8 {
+            res.push(stringify!(devlink::OpParamSetDo));
+        }
+        if cmd == 42u8 {
+            res.push(stringify!(devlink::OpRegionGetDump));
+        }
+        if cmd == 42u8 {
+            res.push(stringify!(devlink::OpRegionGetDo));
+        }
+        if cmd == 44u8 {
+            res.push(stringify!(devlink::OpRegionNewDo));
+        }
+        if cmd == 45u8 {
+            res.push(stringify!(devlink::OpRegionDelDo));
+        }
+        if cmd == 46u8 {
+            res.push(stringify!(devlink::OpRegionReadDump));
+        }
+        if cmd == 47u8 {
+            res.push(stringify!(devlink::OpPortParamGetDump));
+        }
+        if cmd == 47u8 {
+            res.push(stringify!(devlink::OpPortParamGetDo));
+        }
+        if cmd == 48u8 {
+            res.push(stringify!(devlink::OpPortParamSetDo));
+        }
+        if cmd == 51u8 {
+            res.push(stringify!(devlink::OpInfoGetDump));
+        }
+        if cmd == 51u8 {
+            res.push(stringify!(devlink::OpInfoGetDo));
+        }
+        if cmd == 52u8 {
+            res.push(stringify!(devlink::OpHealthReporterGetDump));
+        }
+        if cmd == 52u8 {
+            res.push(stringify!(devlink::OpHealthReporterGetDo));
+        }
+        if cmd == 53u8 {
+            res.push(stringify!(devlink::OpHealthReporterSetDo));
+        }
+        if cmd == 54u8 {
+            res.push(stringify!(devlink::OpHealthReporterRecoverDo));
+        }
+        if cmd == 55u8 {
+            res.push(stringify!(devlink::OpHealthReporterDiagnoseDo));
+        }
+        if cmd == 56u8 {
+            res.push(stringify!(devlink::OpHealthReporterDumpGetDump));
+        }
+        if cmd == 57u8 {
+            res.push(stringify!(devlink::OpHealthReporterDumpClearDo));
+        }
+        if cmd == 58u8 {
+            res.push(stringify!(devlink::OpFlashUpdateDo));
+        }
+        if cmd == 63u8 {
+            res.push(stringify!(devlink::OpTrapGetDump));
+        }
+        if cmd == 63u8 {
+            res.push(stringify!(devlink::OpTrapGetDo));
+        }
+        if cmd == 62u8 {
+            res.push(stringify!(devlink::OpTrapSetDo));
+        }
+        if cmd == 67u8 {
+            res.push(stringify!(devlink::OpTrapGroupGetDump));
+        }
+        if cmd == 67u8 {
+            res.push(stringify!(devlink::OpTrapGroupGetDo));
+        }
+        if cmd == 66u8 {
+            res.push(stringify!(devlink::OpTrapGroupSetDo));
+        }
+        if cmd == 71u8 {
+            res.push(stringify!(devlink::OpTrapPolicerGetDump));
+        }
+        if cmd == 71u8 {
+            res.push(stringify!(devlink::OpTrapPolicerGetDo));
+        }
+        if cmd == 70u8 {
+            res.push(stringify!(devlink::OpTrapPolicerSetDo));
+        }
+        if cmd == 73u8 {
+            res.push(stringify!(devlink::OpHealthReporterTestDo));
+        }
+        if cmd == 76u8 {
+            res.push(stringify!(devlink::OpRateGetDump));
+        }
+        if cmd == 76u8 {
+            res.push(stringify!(devlink::OpRateGetDo));
+        }
+        if cmd == 75u8 {
+            res.push(stringify!(devlink::OpRateSetDo));
+        }
+        if cmd == 76u8 {
+            res.push(stringify!(devlink::OpRateNewDo));
+        }
+        if cmd == 77u8 {
+            res.push(stringify!(devlink::OpRateDelDo));
+        }
+        if cmd == 80u8 {
+            res.push(stringify!(devlink::OpLinecardGetDump));
+        }
+        if cmd == 80u8 {
+            res.push(stringify!(devlink::OpLinecardGetDo));
+        }
+        if cmd == 79u8 {
+            res.push(stringify!(devlink::OpLinecardSetDo));
+        }
+        if cmd == 82u8 {
+            res.push(stringify!(devlink::OpSelftestsGetDump));
+        }
+        if cmd == 82u8 {
+            res.push(stringify!(devlink::OpSelftestsGetDo));
+        }
+        if cmd == 83u8 {
+            res.push(stringify!(devlink::OpSelftestsRunDo));
+        }
+        if cmd == 84u8 {
+            res.push(stringify!(devlink::OpNotifyFilterSetDo));
+        }
+    }
+    if proto == b"dpll" {
+        if cmd == 1u8 {
+            res.push(stringify!(dpll::OpDeviceIdGetDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(dpll::OpDeviceGetDump));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(dpll::OpDeviceGetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(dpll::OpDeviceSetDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(dpll::OpPinIdGetDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(dpll::OpPinGetDump));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(dpll::OpPinGetDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(dpll::OpPinSetDo));
+        }
+    }
+    if proto == b"drm-ras" {
+        if cmd == 1u8 {
+            res.push(stringify!(drm_ras::OpListNodesDump));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(drm_ras::OpGetErrorCounterDump));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(drm_ras::OpGetErrorCounterDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(drm_ras::OpClearErrorCounterDo));
+        }
+    }
+    if proto == b"ethtool" {
+        if cmd == 1u8 {
+            res.push(stringify!(ethtool::OpStrsetGetDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(ethtool::OpStrsetGetDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(ethtool::OpLinkinfoGetDump));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(ethtool::OpLinkinfoGetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ethtool::OpLinkinfoSetDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(ethtool::OpLinkmodesGetDump));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(ethtool::OpLinkmodesGetDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(ethtool::OpLinkmodesSetDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(ethtool::OpLinkstateGetDump));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(ethtool::OpLinkstateGetDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(ethtool::OpDebugGetDump));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(ethtool::OpDebugGetDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(ethtool::OpDebugSetDo));
+        }
+        if cmd == 12u8 {
+            res.push(stringify!(ethtool::OpWolGetDump));
+        }
+        if cmd == 12u8 {
+            res.push(stringify!(ethtool::OpWolGetDo));
+        }
+        if cmd == 13u8 {
+            res.push(stringify!(ethtool::OpWolSetDo));
+        }
+        if cmd == 15u8 {
+            res.push(stringify!(ethtool::OpFeaturesGetDump));
+        }
+        if cmd == 15u8 {
+            res.push(stringify!(ethtool::OpFeaturesGetDo));
+        }
+        if cmd == 16u8 {
+            res.push(stringify!(ethtool::OpFeaturesSetDo));
+        }
+        if cmd == 18u8 {
+            res.push(stringify!(ethtool::OpPrivflagsGetDump));
+        }
+        if cmd == 18u8 {
+            res.push(stringify!(ethtool::OpPrivflagsGetDo));
+        }
+        if cmd == 19u8 {
+            res.push(stringify!(ethtool::OpPrivflagsSetDo));
+        }
+        if cmd == 21u8 {
+            res.push(stringify!(ethtool::OpRingsGetDump));
+        }
+        if cmd == 21u8 {
+            res.push(stringify!(ethtool::OpRingsGetDo));
+        }
+        if cmd == 22u8 {
+            res.push(stringify!(ethtool::OpRingsSetDo));
+        }
+        if cmd == 24u8 {
+            res.push(stringify!(ethtool::OpChannelsGetDump));
+        }
+        if cmd == 24u8 {
+            res.push(stringify!(ethtool::OpChannelsGetDo));
+        }
+        if cmd == 25u8 {
+            res.push(stringify!(ethtool::OpChannelsSetDo));
+        }
+        if cmd == 27u8 {
+            res.push(stringify!(ethtool::OpCoalesceGetDump));
+        }
+        if cmd == 27u8 {
+            res.push(stringify!(ethtool::OpCoalesceGetDo));
+        }
+        if cmd == 28u8 {
+            res.push(stringify!(ethtool::OpCoalesceSetDo));
+        }
+        if cmd == 30u8 {
+            res.push(stringify!(ethtool::OpPauseGetDump));
+        }
+        if cmd == 30u8 {
+            res.push(stringify!(ethtool::OpPauseGetDo));
+        }
+        if cmd == 31u8 {
+            res.push(stringify!(ethtool::OpPauseSetDo));
+        }
+        if cmd == 33u8 {
+            res.push(stringify!(ethtool::OpEeeGetDump));
+        }
+        if cmd == 33u8 {
+            res.push(stringify!(ethtool::OpEeeGetDo));
+        }
+        if cmd == 34u8 {
+            res.push(stringify!(ethtool::OpEeeSetDo));
+        }
+        if cmd == 36u8 {
+            res.push(stringify!(ethtool::OpTsinfoGetDump));
+        }
+        if cmd == 36u8 {
+            res.push(stringify!(ethtool::OpTsinfoGetDo));
+        }
+        if cmd == 37u8 {
+            res.push(stringify!(ethtool::OpCableTestActDo));
+        }
+        if cmd == 39u8 {
+            res.push(stringify!(ethtool::OpCableTestTdrActDo));
+        }
+        if cmd == 41u8 {
+            res.push(stringify!(ethtool::OpTunnelInfoGetDump));
+        }
+        if cmd == 41u8 {
+            res.push(stringify!(ethtool::OpTunnelInfoGetDo));
+        }
+        if cmd == 42u8 {
+            res.push(stringify!(ethtool::OpFecGetDump));
+        }
+        if cmd == 42u8 {
+            res.push(stringify!(ethtool::OpFecGetDo));
+        }
+        if cmd == 43u8 {
+            res.push(stringify!(ethtool::OpFecSetDo));
+        }
+        if cmd == 45u8 {
+            res.push(stringify!(ethtool::OpModuleEepromGetDump));
+        }
+        if cmd == 45u8 {
+            res.push(stringify!(ethtool::OpModuleEepromGetDo));
+        }
+        if cmd == 46u8 {
+            res.push(stringify!(ethtool::OpStatsGetDump));
+        }
+        if cmd == 46u8 {
+            res.push(stringify!(ethtool::OpStatsGetDo));
+        }
+        if cmd == 47u8 {
+            res.push(stringify!(ethtool::OpPhcVclocksGetDump));
+        }
+        if cmd == 47u8 {
+            res.push(stringify!(ethtool::OpPhcVclocksGetDo));
+        }
+        if cmd == 48u8 {
+            res.push(stringify!(ethtool::OpModuleGetDump));
+        }
+        if cmd == 48u8 {
+            res.push(stringify!(ethtool::OpModuleGetDo));
+        }
+        if cmd == 49u8 {
+            res.push(stringify!(ethtool::OpModuleSetDo));
+        }
+        if cmd == 51u8 {
+            res.push(stringify!(ethtool::OpPseGetDump));
+        }
+        if cmd == 51u8 {
+            res.push(stringify!(ethtool::OpPseGetDo));
+        }
+        if cmd == 52u8 {
+            res.push(stringify!(ethtool::OpPseSetDo));
+        }
+        if cmd == 53u8 {
+            res.push(stringify!(ethtool::OpRssGetDump));
+        }
+        if cmd == 53u8 {
+            res.push(stringify!(ethtool::OpRssGetDo));
+        }
+        if cmd == 54u8 {
+            res.push(stringify!(ethtool::OpPlcaGetCfgDump));
+        }
+        if cmd == 54u8 {
+            res.push(stringify!(ethtool::OpPlcaGetCfgDo));
+        }
+        if cmd == 55u8 {
+            res.push(stringify!(ethtool::OpPlcaSetCfgDo));
+        }
+        if cmd == 56u8 {
+            res.push(stringify!(ethtool::OpPlcaGetStatusDump));
+        }
+        if cmd == 56u8 {
+            res.push(stringify!(ethtool::OpPlcaGetStatusDo));
+        }
+        if cmd == 58u8 {
+            res.push(stringify!(ethtool::OpMmGetDump));
+        }
+        if cmd == 58u8 {
+            res.push(stringify!(ethtool::OpMmGetDo));
+        }
+        if cmd == 59u8 {
+            res.push(stringify!(ethtool::OpMmSetDo));
+        }
+        if cmd == 61u8 {
+            res.push(stringify!(ethtool::OpModuleFwFlashActDo));
+        }
+        if cmd == 63u8 {
+            res.push(stringify!(ethtool::OpPhyGetDump));
+        }
+        if cmd == 63u8 {
+            res.push(stringify!(ethtool::OpPhyGetDo));
+        }
+        if cmd == 65u8 {
+            res.push(stringify!(ethtool::OpTsconfigGetDump));
+        }
+        if cmd == 65u8 {
+            res.push(stringify!(ethtool::OpTsconfigGetDo));
+        }
+        if cmd == 66u8 {
+            res.push(stringify!(ethtool::OpTsconfigSetDo));
+        }
+        if cmd == 68u8 {
+            res.push(stringify!(ethtool::OpRssSetDo));
+        }
+        if cmd == 70u8 {
+            res.push(stringify!(ethtool::OpRssCreateActDo));
+        }
+        if cmd == 72u8 {
+            res.push(stringify!(ethtool::OpRssDeleteActDo));
+        }
+        if cmd == 74u8 {
+            res.push(stringify!(ethtool::OpMseGetDump));
+        }
+        if cmd == 74u8 {
+            res.push(stringify!(ethtool::OpMseGetDo));
+        }
+    }
+    if proto == b"fou" {
+        if cmd == 1u8 {
+            res.push(stringify!(fou::OpAddDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(fou::OpDelDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(fou::OpGetDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(fou::OpGetDo));
+        }
+    }
+    if proto == b"handshake" {
+        if cmd == 2u8 {
+            res.push(stringify!(handshake::OpAcceptDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(handshake::OpDoneDo));
+        }
+    }
+    if proto == b"lockd" {
+        if cmd == 1u8 {
+            res.push(stringify!(lockd::OpServerSetDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(lockd::OpServerGetDo));
+        }
+    }
+    if proto == b"mptcp_pm" {
+        if cmd == 1u8 {
+            res.push(stringify!(mptcp_pm::OpAddAddrDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(mptcp_pm::OpDelAddrDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(mptcp_pm::OpGetAddrDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(mptcp_pm::OpGetAddrDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(mptcp_pm::OpFlushAddrsDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(mptcp_pm::OpSetLimitsDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(mptcp_pm::OpGetLimitsDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(mptcp_pm::OpSetFlagsDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(mptcp_pm::OpAnnounceDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(mptcp_pm::OpRemoveDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(mptcp_pm::OpSubflowCreateDo));
+        }
+        if cmd == 11u8 {
+            res.push(stringify!(mptcp_pm::OpSubflowDestroyDo));
+        }
+    }
+    if proto == b"net-shaper" {
+        if cmd == 1u8 {
+            res.push(stringify!(net_shaper::OpGetDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(net_shaper::OpGetDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(net_shaper::OpSetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(net_shaper::OpDeleteDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(net_shaper::OpGroupDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(net_shaper::OpCapGetDump));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(net_shaper::OpCapGetDo));
+        }
+    }
+    if proto == b"netdev" {
+        if cmd == 1u8 {
+            res.push(stringify!(netdev::OpDevGetDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(netdev::OpDevGetDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(netdev::OpPagePoolGetDump));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(netdev::OpPagePoolGetDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(netdev::OpPagePoolStatsGetDump));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(netdev::OpPagePoolStatsGetDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(netdev::OpQueueGetDump));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(netdev::OpQueueGetDo));
+        }
+        if cmd == 11u8 {
+            res.push(stringify!(netdev::OpNapiGetDump));
+        }
+        if cmd == 11u8 {
+            res.push(stringify!(netdev::OpNapiGetDo));
+        }
+        if cmd == 12u8 {
+            res.push(stringify!(netdev::OpQstatsGetDump));
+        }
+        if cmd == 13u8 {
+            res.push(stringify!(netdev::OpBindRxDo));
+        }
+        if cmd == 14u8 {
+            res.push(stringify!(netdev::OpNapiSetDo));
+        }
+        if cmd == 15u8 {
+            res.push(stringify!(netdev::OpBindTxDo));
+        }
+        if cmd == 16u8 {
+            res.push(stringify!(netdev::OpQueueCreateDo));
+        }
+    }
+    if proto == b"nfsd" {
+        if cmd == 1u8 {
+            res.push(stringify!(nfsd::OpRpcStatusGetDump));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(nfsd::OpThreadsSetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(nfsd::OpThreadsGetDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(nfsd::OpVersionSetDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(nfsd::OpVersionGetDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(nfsd::OpListenerSetDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(nfsd::OpListenerGetDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(nfsd::OpPoolModeSetDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(nfsd::OpPoolModeGetDo));
+        }
+        if cmd == 11u8 {
+            res.push(stringify!(nfsd::OpSvcExportGetReqsDump));
+        }
+        if cmd == 12u8 {
+            res.push(stringify!(nfsd::OpSvcExportSetReqsDo));
+        }
+        if cmd == 13u8 {
+            res.push(stringify!(nfsd::OpExpkeyGetReqsDump));
+        }
+        if cmd == 14u8 {
+            res.push(stringify!(nfsd::OpExpkeySetReqsDo));
+        }
+        if cmd == 15u8 {
+            res.push(stringify!(nfsd::OpCacheFlushDo));
+        }
+        if cmd == 16u8 {
+            res.push(stringify!(nfsd::OpUnlockIpDo));
+        }
+        if cmd == 17u8 {
+            res.push(stringify!(nfsd::OpUnlockFilesystemDo));
+        }
+        if cmd == 18u8 {
+            res.push(stringify!(nfsd::OpUnlockExportDo));
+        }
+    }
+    if proto == b"nl80211" {
+        if cmd == 3u8 {
+            res.push(stringify!(nl80211::OpGetWiphyDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(nl80211::OpGetWiphyDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(nl80211::OpGetInterfaceDump));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(nl80211::OpGetInterfaceDo));
+        }
+        if cmd == 95u8 {
+            res.push(stringify!(nl80211::OpGetProtocolFeaturesDo));
+        }
+    }
+    if proto == b"nlctrl" {
+        if cmd == 1u8 {
+            res.push(stringify!(nlctrl::OpGetfamilyDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(nlctrl::OpGetfamilyDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(nlctrl::OpGetpolicyDump));
+        }
+    }
+    if proto == b"ovpn" {
+        if cmd == 1u8 {
+            res.push(stringify!(ovpn::OpPeerNewDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(ovpn::OpPeerSetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ovpn::OpPeerGetDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ovpn::OpPeerGetDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(ovpn::OpPeerDelDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(ovpn::OpKeyNewDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(ovpn::OpKeyGetDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(ovpn::OpKeySwapDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(ovpn::OpKeyDelDo));
+        }
+    }
+    if proto == b"ovs_datapath" {
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_datapath::OpGetDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_datapath::OpGetDo));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(ovs_datapath::OpNewDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(ovs_datapath::OpDelDo));
+        }
+    }
+    if proto == b"ovs_flow" {
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_flow::OpGetDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_flow::OpGetDo));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(ovs_flow::OpNewDo));
+        }
+    }
+    if proto == b"ovs_packet" {
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_packet::OpExecuteDo));
+        }
+    }
+    if proto == b"ovs_vport" {
+        if cmd == 1u8 {
+            res.push(stringify!(ovs_vport::OpNewDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(ovs_vport::OpDelDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_vport::OpGetDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(ovs_vport::OpGetDo));
+        }
+    }
+    if proto == b"psp" {
+        if cmd == 1u8 {
+            res.push(stringify!(psp::OpDevGetDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(psp::OpDevGetDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(psp::OpDevSetDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(psp::OpKeyRotateDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(psp::OpRxAssocDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(psp::OpTxAssocDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(psp::OpGetStatsDump));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(psp::OpGetStatsDo));
+        }
+        if cmd == 11u8 {
+            res.push(stringify!(psp::OpDevAssocDo));
+        }
+        if cmd == 12u8 {
+            res.push(stringify!(psp::OpDevDisassocDo));
+        }
+    }
+    if proto == b"sunrpc" {
+        if cmd == 2u8 {
+            res.push(stringify!(sunrpc::OpIpMapGetReqsDump));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(sunrpc::OpIpMapSetReqsDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(sunrpc::OpUnixGidGetReqsDump));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(sunrpc::OpUnixGidSetReqsDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(sunrpc::OpCacheFlushDo));
+        }
+    }
+    if proto == b"tcp_metrics" {
+        if cmd == 1u8 {
+            res.push(stringify!(tcp_metrics::OpGetDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(tcp_metrics::OpGetDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(tcp_metrics::OpDelDo));
+        }
+    }
+    if proto == b"team" {
+        if cmd == 0u8 {
+            res.push(stringify!(team::OpNoopDo));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(team::OpOptionsSetDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(team::OpOptionsGetDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(team::OpPortListGetDo));
+        }
+    }
+    if proto == b"wireguard" {
+        if cmd == 0u8 {
+            res.push(stringify!(wireguard::OpGetDeviceDump));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(wireguard::OpSetDeviceDo));
+        }
+    }
+    res
 }

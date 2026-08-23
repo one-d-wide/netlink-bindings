@@ -122,7 +122,8 @@ impl RtmType {
         })
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Ndmsg {
     pub ndm_family: u8,
     pub _ndm_pad: [u8; 3usize],
@@ -133,11 +134,6 @@ pub struct Ndmsg {
     pub ndm_flags: u8,
     #[doc = "Associated type: [`RtmType`] (enum)"]
     pub ndm_type: u8,
-}
-impl Clone for Ndmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Ndmsg {
@@ -180,6 +176,11 @@ impl Ndmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -192,6 +193,7 @@ impl Ndmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Ndmsg>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<Ndmsg>() == 4usize);
         12usize
     }
 }
@@ -215,15 +217,11 @@ impl std::fmt::Debug for Ndmsg {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Ndtmsg {
     pub family: u8,
     pub _pad: [u8; 3usize],
-}
-impl Clone for Ndtmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Ndtmsg {
@@ -266,6 +264,11 @@ impl Ndtmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -278,6 +281,7 @@ impl Ndtmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Ndtmsg>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<Ndtmsg>() == 1usize);
         4usize
     }
 }
@@ -288,18 +292,13 @@ impl std::fmt::Debug for Ndtmsg {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct NdaCacheinfo {
     pub confirmed: u32,
     pub used: u32,
     pub updated: u32,
     pub refcnt: u32,
-}
-impl Clone for NdaCacheinfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for NdaCacheinfo {
@@ -342,6 +341,11 @@ impl NdaCacheinfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -354,11 +358,12 @@ impl NdaCacheinfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<NdaCacheinfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<NdaCacheinfo>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct NdtConfig {
     pub key_len: u16,
     pub entry_size: u16,
@@ -369,11 +374,6 @@ pub struct NdtConfig {
     pub hash_mask: u32,
     pub hash_chain_gc: u32,
     pub proxy_qlen: u32,
-}
-impl Clone for NdtConfig {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for NdtConfig {
@@ -416,6 +416,11 @@ impl NdtConfig {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 32usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -428,10 +433,13 @@ impl NdtConfig {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<NdtConfig>() == 32usize);
+        const _: () = assert!(std::mem::align_of::<NdtConfig>() == 4usize);
         32usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct NdtStats {
     pub allocs: u64,
     pub destroys: u64,
@@ -444,11 +452,6 @@ pub struct NdtStats {
     pub periodic_gc_runs: u64,
     pub forced_gc_runs: u64,
     pub table_fulls: u64,
-}
-impl Clone for NdtStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for NdtStats {
@@ -491,6 +494,11 @@ impl NdtStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 88usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -503,6 +511,7 @@ impl NdtStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<NdtStats>() == 88usize);
+        const _: () = assert!(std::mem::align_of::<NdtStats>() == 4usize);
         88usize
     }
 }
@@ -988,7 +997,14 @@ impl<'a> Iterator for IterableNeighbourAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableNeighbourAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NeighbourAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNeighbourAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -999,7 +1015,7 @@ impl<'a> std::fmt::Debug for IterableNeighbourAttrs<'_> {
                 }
             };
             match attr {
-                NeighbourAttrs::Unspec(val) => fmt.field("Unspec", &val),
+                NeighbourAttrs::Unspec(val) => fmt.field("Unspec", &FormatHexdump(val)),
                 NeighbourAttrs::Dst(val) => fmt.field("Dst", &val),
                 NeighbourAttrs::Lladdr(val) => fmt.field("Lladdr", &FormatMac(val)),
                 NeighbourAttrs::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
@@ -1013,7 +1029,7 @@ impl<'a> std::fmt::Debug for IterableNeighbourAttrs<'_> {
                 NeighbourAttrs::SrcVni(val) => fmt.field("SrcVni", &val),
                 NeighbourAttrs::Protocol(val) => fmt.field("Protocol", &val),
                 NeighbourAttrs::NhId(val) => fmt.field("NhId", &val),
-                NeighbourAttrs::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &val),
+                NeighbourAttrs::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &FormatHexdump(val)),
                 NeighbourAttrs::FlagsExt(val) => fmt.field(
                     "FlagsExt",
                     &FormatFlags(val.into(), NtfExtFlags::from_value),
@@ -1431,7 +1447,14 @@ impl<'a> Iterator for IterableNdtAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableNdtAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NdtAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNdtAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2029,7 +2052,14 @@ impl<'a> Iterator for IterableNdtpaAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableNdtpaAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NdtpaAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNdtpaAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -2600,6 +2630,14 @@ impl<'r> OpNewneighDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ndmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewneighDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2660,6 +2698,14 @@ impl<'r> OpDelneighDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ndmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDelneighDo<'_> {
@@ -2724,6 +2770,14 @@ impl<'r> OpGetneighDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ndmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetneighDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -2784,6 +2838,14 @@ impl<'r> OpGetneighDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ndmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ndmsg {
+        let pos = self.request.pos;
+        Ndmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetneighDo<'_> {
@@ -2848,6 +2910,14 @@ impl<'r> OpGetneightblDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ndtmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ndtmsg {
+        let pos = self.request.pos;
+        Ndtmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ndtmsg {
+        let pos = self.request.pos;
+        Ndtmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetneightblDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -2908,6 +2978,14 @@ impl<'r> OpSetneightblDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ndtmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ndtmsg {
+        let pos = self.request.pos;
+        Ndtmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ndtmsg {
+        let pos = self.request.pos;
+        Ndtmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpSetneightblDo<'_> {
@@ -2997,7 +3075,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -3015,6 +3094,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -3081,6 +3161,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -3096,10 +3177,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -3116,9 +3199,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

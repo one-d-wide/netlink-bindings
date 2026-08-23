@@ -282,7 +282,14 @@ impl<'a> Iterator for IterableAddress<'a> {
 impl<'a> std::fmt::Debug for IterableAddress<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Address");
-        for attr in self.clone() {
+        let mut iter = IterableAddress::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -296,7 +303,7 @@ impl<'a> std::fmt::Debug for IterableAddress<'_> {
                 Address::Family(val) => fmt.field("Family", &val),
                 Address::Id(val) => fmt.field("Id", &val),
                 Address::Addr4(val) => fmt.field("Addr4", &val),
-                Address::Addr6(val) => fmt.field("Addr6", &val),
+                Address::Addr6(val) => fmt.field("Addr6", &FormatHexdump(val)),
                 Address::Port(val) => fmt.field("Port", &val),
                 Address::Flags(val) => fmt.field("Flags", &val),
                 Address::IfIdx(val) => fmt.field("IfIdx", &val),
@@ -687,7 +694,14 @@ impl<'a> Iterator for IterableSubflowAttribute<'a> {
 impl<'a> std::fmt::Debug for IterableSubflowAttribute<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SubflowAttribute");
-        for attr in self.clone() {
+        let mut iter = IterableSubflowAttribute::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -902,7 +916,14 @@ impl<'a> Iterator for IterableEndpoint<'a> {
 impl<'a> std::fmt::Debug for IterableEndpoint<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Endpoint");
-        for attr in self.clone() {
+        let mut iter = IterableEndpoint::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1159,7 +1180,14 @@ impl<'a> Iterator for IterableAttr<'a> {
 impl<'a> std::fmt::Debug for IterableAttr<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Attr");
-        for attr in self.clone() {
+        let mut iter = IterableAttr::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1714,7 +1742,14 @@ impl<'a> Iterator for IterableEventAttr<'a> {
 impl<'a> std::fmt::Debug for IterableEventAttr<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("EventAttr");
-        for attr in self.clone() {
+        let mut iter = IterableEventAttr::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1730,9 +1765,9 @@ impl<'a> std::fmt::Debug for IterableEventAttr<'_> {
                 EventAttr::LocId(val) => fmt.field("LocId", &val),
                 EventAttr::RemId(val) => fmt.field("RemId", &val),
                 EventAttr::Saddr4(val) => fmt.field("Saddr4", &val),
-                EventAttr::Saddr6(val) => fmt.field("Saddr6", &val),
+                EventAttr::Saddr6(val) => fmt.field("Saddr6", &FormatHexdump(val)),
                 EventAttr::Daddr4(val) => fmt.field("Daddr4", &val),
-                EventAttr::Daddr6(val) => fmt.field("Daddr6", &val),
+                EventAttr::Daddr6(val) => fmt.field("Daddr6", &FormatHexdump(val)),
                 EventAttr::Sport(val) => fmt.field("Sport", &val),
                 EventAttr::Dport(val) => fmt.field("Dport", &val),
                 EventAttr::Backup(val) => fmt.field("Backup", &val),
@@ -2321,6 +2356,14 @@ impl<'r> OpAddAddrDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpAddAddrDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2373,6 +2416,14 @@ impl<'r> OpDelAddrDo<'r> {
         header.cmd = 2u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDelAddrDo<'_> {
@@ -2429,6 +2480,14 @@ impl<'r> OpGetAddrDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetAddrDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -2481,6 +2540,14 @@ impl<'r> OpGetAddrDo<'r> {
         header.cmd = 3u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetAddrDo<'_> {
@@ -2535,6 +2602,14 @@ impl<'r> OpFlushAddrsDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpFlushAddrsDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2587,6 +2662,14 @@ impl<'r> OpSetLimitsDo<'r> {
         header.cmd = 5u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpSetLimitsDo<'_> {
@@ -2641,6 +2724,14 @@ impl<'r> OpGetLimitsDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetLimitsDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2693,6 +2784,14 @@ impl<'r> OpSetFlagsDo<'r> {
         header.cmd = 7u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpSetFlagsDo<'_> {
@@ -2747,6 +2846,14 @@ impl<'r> OpAnnounceDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpAnnounceDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2799,6 +2906,14 @@ impl<'r> OpRemoveDo<'r> {
         header.cmd = 9u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpRemoveDo<'_> {
@@ -2853,6 +2968,14 @@ impl<'r> OpSubflowCreateDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpSubflowCreateDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2906,6 +3029,14 @@ impl<'r> OpSubflowDestroyDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpSubflowDestroyDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -2934,6 +3065,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -2949,10 +3081,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -2969,9 +3103,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

@@ -445,16 +445,11 @@ impl ProtocolFeatures {
         })
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct StaFlagUpdate {
     pub mask: u32,
     pub set: u32,
-}
-impl Clone for StaFlagUpdate {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for StaFlagUpdate {
@@ -497,6 +492,11 @@ impl StaFlagUpdate {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -509,6 +509,7 @@ impl StaFlagUpdate {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<StaFlagUpdate>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<StaFlagUpdate>() == 4usize);
         8usize
     }
 }
@@ -7821,7 +7822,14 @@ impl std::fmt::Debug for IterableArrayIfCombinationAttributes<'_> {
 impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Nl80211Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableNl80211Attrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -7838,37 +7846,41 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::Ifname(val) => fmt.field("Ifname", &val),
                 Nl80211Attrs::Iftype(val) => fmt.field("Iftype", &val),
                 Nl80211Attrs::Mac(val) => fmt.field("Mac", &FormatMac(val)),
-                Nl80211Attrs::KeyData(val) => fmt.field("KeyData", &val),
+                Nl80211Attrs::KeyData(val) => fmt.field("KeyData", &FormatHexdump(val)),
                 Nl80211Attrs::KeyIdx(val) => fmt.field("KeyIdx", &val),
                 Nl80211Attrs::KeyCipher(val) => fmt.field("KeyCipher", &val),
-                Nl80211Attrs::KeySeq(val) => fmt.field("KeySeq", &val),
+                Nl80211Attrs::KeySeq(val) => fmt.field("KeySeq", &FormatHexdump(val)),
                 Nl80211Attrs::KeyDefault(val) => fmt.field("KeyDefault", &val),
                 Nl80211Attrs::BeaconInterval(val) => fmt.field("BeaconInterval", &val),
                 Nl80211Attrs::DtimPeriod(val) => fmt.field("DtimPeriod", &val),
-                Nl80211Attrs::BeaconHead(val) => fmt.field("BeaconHead", &val),
-                Nl80211Attrs::BeaconTail(val) => fmt.field("BeaconTail", &val),
+                Nl80211Attrs::BeaconHead(val) => fmt.field("BeaconHead", &FormatHexdump(val)),
+                Nl80211Attrs::BeaconTail(val) => fmt.field("BeaconTail", &FormatHexdump(val)),
                 Nl80211Attrs::StaAid(val) => fmt.field("StaAid", &val),
-                Nl80211Attrs::StaFlags(val) => fmt.field("StaFlags", &val),
+                Nl80211Attrs::StaFlags(val) => fmt.field("StaFlags", &FormatHexdump(val)),
                 Nl80211Attrs::StaListenInterval(val) => fmt.field("StaListenInterval", &val),
-                Nl80211Attrs::StaSupportedRates(val) => fmt.field("StaSupportedRates", &val),
+                Nl80211Attrs::StaSupportedRates(val) => {
+                    fmt.field("StaSupportedRates", &FormatHexdump(val))
+                }
                 Nl80211Attrs::StaVlan(val) => fmt.field("StaVlan", &val),
-                Nl80211Attrs::StaInfo(val) => fmt.field("StaInfo", &val),
+                Nl80211Attrs::StaInfo(val) => fmt.field("StaInfo", &FormatHexdump(val)),
                 Nl80211Attrs::WiphyBands(val) => fmt.field("WiphyBands", &val),
-                Nl80211Attrs::MntrFlags(val) => fmt.field("MntrFlags", &val),
-                Nl80211Attrs::MeshId(val) => fmt.field("MeshId", &val),
+                Nl80211Attrs::MntrFlags(val) => fmt.field("MntrFlags", &FormatHexdump(val)),
+                Nl80211Attrs::MeshId(val) => fmt.field("MeshId", &FormatHexdump(val)),
                 Nl80211Attrs::StaPlinkAction(val) => fmt.field("StaPlinkAction", &val),
                 Nl80211Attrs::MpathNextHop(val) => fmt.field("MpathNextHop", &FormatMac(val)),
-                Nl80211Attrs::MpathInfo(val) => fmt.field("MpathInfo", &val),
+                Nl80211Attrs::MpathInfo(val) => fmt.field("MpathInfo", &FormatHexdump(val)),
                 Nl80211Attrs::BssCtsProt(val) => fmt.field("BssCtsProt", &val),
                 Nl80211Attrs::BssShortPreamble(val) => fmt.field("BssShortPreamble", &val),
                 Nl80211Attrs::BssShortSlotTime(val) => fmt.field("BssShortSlotTime", &val),
-                Nl80211Attrs::HtCapability(val) => fmt.field("HtCapability", &val),
+                Nl80211Attrs::HtCapability(val) => fmt.field("HtCapability", &FormatHexdump(val)),
                 Nl80211Attrs::SupportedIftypes(val) => fmt.field("SupportedIftypes", &val),
-                Nl80211Attrs::RegAlpha2(val) => fmt.field("RegAlpha2", &val),
-                Nl80211Attrs::RegRules(val) => fmt.field("RegRules", &val),
-                Nl80211Attrs::MeshConfig(val) => fmt.field("MeshConfig", &val),
-                Nl80211Attrs::BssBasicRates(val) => fmt.field("BssBasicRates", &val),
-                Nl80211Attrs::WiphyTxqParams(val) => fmt.field("WiphyTxqParams", &val),
+                Nl80211Attrs::RegAlpha2(val) => fmt.field("RegAlpha2", &FormatHexdump(val)),
+                Nl80211Attrs::RegRules(val) => fmt.field("RegRules", &FormatHexdump(val)),
+                Nl80211Attrs::MeshConfig(val) => fmt.field("MeshConfig", &FormatHexdump(val)),
+                Nl80211Attrs::BssBasicRates(val) => fmt.field("BssBasicRates", &FormatHexdump(val)),
+                Nl80211Attrs::WiphyTxqParams(val) => {
+                    fmt.field("WiphyTxqParams", &FormatHexdump(val))
+                }
                 Nl80211Attrs::WiphyFreq(val) => fmt.field("WiphyFreq", &val),
                 Nl80211Attrs::WiphyChannelType(val) => fmt.field(
                     "WiphyChannelType",
@@ -7876,27 +7888,29 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 ),
                 Nl80211Attrs::KeyDefaultMgmt(val) => fmt.field("KeyDefaultMgmt", &val),
                 Nl80211Attrs::MgmtSubtype(val) => fmt.field("MgmtSubtype", &val),
-                Nl80211Attrs::Ie(val) => fmt.field("Ie", &val),
+                Nl80211Attrs::Ie(val) => fmt.field("Ie", &FormatHexdump(val)),
                 Nl80211Attrs::MaxNumScanSsids(val) => fmt.field("MaxNumScanSsids", &val),
-                Nl80211Attrs::ScanFrequencies(val) => fmt.field("ScanFrequencies", &val),
-                Nl80211Attrs::ScanSsids(val) => fmt.field("ScanSsids", &val),
+                Nl80211Attrs::ScanFrequencies(val) => {
+                    fmt.field("ScanFrequencies", &FormatHexdump(val))
+                }
+                Nl80211Attrs::ScanSsids(val) => fmt.field("ScanSsids", &FormatHexdump(val)),
                 Nl80211Attrs::Generation(val) => fmt.field("Generation", &val),
-                Nl80211Attrs::Bss(val) => fmt.field("Bss", &val),
+                Nl80211Attrs::Bss(val) => fmt.field("Bss", &FormatHexdump(val)),
                 Nl80211Attrs::RegInitiator(val) => fmt.field("RegInitiator", &val),
                 Nl80211Attrs::RegType(val) => fmt.field("RegType", &val),
                 Nl80211Attrs::SupportedCommands(val) => fmt.field(
                     "SupportedCommands",
                     &MapFormatArray(val, |v| FormatEnum(v.into(), Commands::from_value)),
                 ),
-                Nl80211Attrs::Frame(val) => fmt.field("Frame", &val),
-                Nl80211Attrs::Ssid(val) => fmt.field("Ssid", &val),
+                Nl80211Attrs::Frame(val) => fmt.field("Frame", &FormatHexdump(val)),
+                Nl80211Attrs::Ssid(val) => fmt.field("Ssid", &FormatHexdump(val)),
                 Nl80211Attrs::AuthType(val) => fmt.field("AuthType", &val),
                 Nl80211Attrs::ReasonCode(val) => fmt.field("ReasonCode", &val),
                 Nl80211Attrs::KeyType(val) => fmt.field("KeyType", &val),
                 Nl80211Attrs::MaxScanIeLen(val) => fmt.field("MaxScanIeLen", &val),
                 Nl80211Attrs::CipherSuites(val) => fmt.field("CipherSuites", &FormatHex(val)),
-                Nl80211Attrs::FreqBefore(val) => fmt.field("FreqBefore", &val),
-                Nl80211Attrs::FreqAfter(val) => fmt.field("FreqAfter", &val),
+                Nl80211Attrs::FreqBefore(val) => fmt.field("FreqBefore", &FormatHexdump(val)),
+                Nl80211Attrs::FreqAfter(val) => fmt.field("FreqAfter", &FormatHexdump(val)),
                 Nl80211Attrs::FreqFixed(val) => fmt.field("FreqFixed", &val),
                 Nl80211Attrs::WiphyRetryShort(val) => fmt.field("WiphyRetryShort", &val),
                 Nl80211Attrs::WiphyRetryLong(val) => fmt.field("WiphyRetryLong", &val),
@@ -7906,32 +7920,34 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::UseMfp(val) => fmt.field("UseMfp", &val),
                 Nl80211Attrs::StaFlags2(val) => fmt.field("StaFlags2", &val),
                 Nl80211Attrs::ControlPort(val) => fmt.field("ControlPort", &val),
-                Nl80211Attrs::Testdata(val) => fmt.field("Testdata", &val),
+                Nl80211Attrs::Testdata(val) => fmt.field("Testdata", &FormatHexdump(val)),
                 Nl80211Attrs::Privacy(val) => fmt.field("Privacy", &val),
                 Nl80211Attrs::DisconnectedByAp(val) => fmt.field("DisconnectedByAp", &val),
                 Nl80211Attrs::StatusCode(val) => fmt.field("StatusCode", &val),
-                Nl80211Attrs::CipherSuitesPairwise(val) => fmt.field("CipherSuitesPairwise", &val),
+                Nl80211Attrs::CipherSuitesPairwise(val) => {
+                    fmt.field("CipherSuitesPairwise", &FormatHexdump(val))
+                }
                 Nl80211Attrs::CipherSuiteGroup(val) => fmt.field("CipherSuiteGroup", &val),
                 Nl80211Attrs::WpaVersions(val) => fmt.field("WpaVersions", &val),
-                Nl80211Attrs::AkmSuites(val) => fmt.field("AkmSuites", &val),
-                Nl80211Attrs::ReqIe(val) => fmt.field("ReqIe", &val),
-                Nl80211Attrs::RespIe(val) => fmt.field("RespIe", &val),
-                Nl80211Attrs::PrevBssid(val) => fmt.field("PrevBssid", &val),
-                Nl80211Attrs::Key(val) => fmt.field("Key", &val),
-                Nl80211Attrs::Keys(val) => fmt.field("Keys", &val),
+                Nl80211Attrs::AkmSuites(val) => fmt.field("AkmSuites", &FormatHexdump(val)),
+                Nl80211Attrs::ReqIe(val) => fmt.field("ReqIe", &FormatHexdump(val)),
+                Nl80211Attrs::RespIe(val) => fmt.field("RespIe", &FormatHexdump(val)),
+                Nl80211Attrs::PrevBssid(val) => fmt.field("PrevBssid", &FormatHexdump(val)),
+                Nl80211Attrs::Key(val) => fmt.field("Key", &FormatHexdump(val)),
+                Nl80211Attrs::Keys(val) => fmt.field("Keys", &FormatHexdump(val)),
                 Nl80211Attrs::Pid(val) => fmt.field("Pid", &val),
                 Nl80211Attrs::_4addr(val) => fmt.field("_4addr", &val),
-                Nl80211Attrs::SurveyInfo(val) => fmt.field("SurveyInfo", &val),
-                Nl80211Attrs::Pmkid(val) => fmt.field("Pmkid", &val),
+                Nl80211Attrs::SurveyInfo(val) => fmt.field("SurveyInfo", &FormatHexdump(val)),
+                Nl80211Attrs::Pmkid(val) => fmt.field("Pmkid", &FormatHexdump(val)),
                 Nl80211Attrs::MaxNumPmkids(val) => fmt.field("MaxNumPmkids", &val),
                 Nl80211Attrs::Duration(val) => fmt.field("Duration", &val),
                 Nl80211Attrs::Cookie(val) => fmt.field("Cookie", &val),
                 Nl80211Attrs::WiphyCoverageClass(val) => fmt.field("WiphyCoverageClass", &val),
-                Nl80211Attrs::TxRates(val) => fmt.field("TxRates", &val),
-                Nl80211Attrs::FrameMatch(val) => fmt.field("FrameMatch", &val),
+                Nl80211Attrs::TxRates(val) => fmt.field("TxRates", &FormatHexdump(val)),
+                Nl80211Attrs::FrameMatch(val) => fmt.field("FrameMatch", &FormatHexdump(val)),
                 Nl80211Attrs::Ack(val) => fmt.field("Ack", &val),
                 Nl80211Attrs::PsState(val) => fmt.field("PsState", &val),
-                Nl80211Attrs::Cqm(val) => fmt.field("Cqm", &val),
+                Nl80211Attrs::Cqm(val) => fmt.field("Cqm", &FormatHexdump(val)),
                 Nl80211Attrs::LocalStateChange(val) => fmt.field("LocalStateChange", &val),
                 Nl80211Attrs::ApIsolate(val) => fmt.field("ApIsolate", &val),
                 Nl80211Attrs::WiphyTxPowerSetting(val) => fmt.field("WiphyTxPowerSetting", &val),
@@ -7947,16 +7963,20 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::McastRate(val) => fmt.field("McastRate", &val),
                 Nl80211Attrs::OffchannelTxOk(val) => fmt.field("OffchannelTxOk", &val),
                 Nl80211Attrs::BssHtOpmode(val) => fmt.field("BssHtOpmode", &val),
-                Nl80211Attrs::KeyDefaultTypes(val) => fmt.field("KeyDefaultTypes", &val),
+                Nl80211Attrs::KeyDefaultTypes(val) => {
+                    fmt.field("KeyDefaultTypes", &FormatHexdump(val))
+                }
                 Nl80211Attrs::MaxRemainOnChannelDuration(val) => {
                     fmt.field("MaxRemainOnChannelDuration", &val)
                 }
-                Nl80211Attrs::MeshSetup(val) => fmt.field("MeshSetup", &val),
+                Nl80211Attrs::MeshSetup(val) => fmt.field("MeshSetup", &FormatHexdump(val)),
                 Nl80211Attrs::WiphyAntennaAvailTx(val) => fmt.field("WiphyAntennaAvailTx", &val),
                 Nl80211Attrs::WiphyAntennaAvailRx(val) => fmt.field("WiphyAntennaAvailRx", &val),
                 Nl80211Attrs::SupportMeshAuth(val) => fmt.field("SupportMeshAuth", &val),
                 Nl80211Attrs::StaPlinkState(val) => fmt.field("StaPlinkState", &val),
-                Nl80211Attrs::WowlanTriggers(val) => fmt.field("WowlanTriggers", &val),
+                Nl80211Attrs::WowlanTriggers(val) => {
+                    fmt.field("WowlanTriggers", &FormatHexdump(val))
+                }
                 Nl80211Attrs::WowlanTriggersSupported(val) => {
                     fmt.field("WowlanTriggersSupported", &val)
                 }
@@ -7965,19 +7985,23 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                     fmt.field("InterfaceCombinations", &val)
                 }
                 Nl80211Attrs::SoftwareIftypes(val) => fmt.field("SoftwareIftypes", &val),
-                Nl80211Attrs::RekeyData(val) => fmt.field("RekeyData", &val),
+                Nl80211Attrs::RekeyData(val) => fmt.field("RekeyData", &FormatHexdump(val)),
                 Nl80211Attrs::MaxNumSchedScanSsids(val) => fmt.field("MaxNumSchedScanSsids", &val),
                 Nl80211Attrs::MaxSchedScanIeLen(val) => fmt.field("MaxSchedScanIeLen", &val),
-                Nl80211Attrs::ScanSuppRates(val) => fmt.field("ScanSuppRates", &val),
+                Nl80211Attrs::ScanSuppRates(val) => fmt.field("ScanSuppRates", &FormatHexdump(val)),
                 Nl80211Attrs::HiddenSsid(val) => fmt.field("HiddenSsid", &val),
-                Nl80211Attrs::IeProbeResp(val) => fmt.field("IeProbeResp", &val),
-                Nl80211Attrs::IeAssocResp(val) => fmt.field("IeAssocResp", &val),
-                Nl80211Attrs::StaWme(val) => fmt.field("StaWme", &val),
+                Nl80211Attrs::IeProbeResp(val) => fmt.field("IeProbeResp", &FormatHexdump(val)),
+                Nl80211Attrs::IeAssocResp(val) => fmt.field("IeAssocResp", &FormatHexdump(val)),
+                Nl80211Attrs::StaWme(val) => fmt.field("StaWme", &FormatHexdump(val)),
                 Nl80211Attrs::SupportApUapsd(val) => fmt.field("SupportApUapsd", &val),
                 Nl80211Attrs::RoamSupport(val) => fmt.field("RoamSupport", &val),
-                Nl80211Attrs::SchedScanMatch(val) => fmt.field("SchedScanMatch", &val),
+                Nl80211Attrs::SchedScanMatch(val) => {
+                    fmt.field("SchedScanMatch", &FormatHexdump(val))
+                }
                 Nl80211Attrs::MaxMatchSets(val) => fmt.field("MaxMatchSets", &val),
-                Nl80211Attrs::PmksaCandidate(val) => fmt.field("PmksaCandidate", &val),
+                Nl80211Attrs::PmksaCandidate(val) => {
+                    fmt.field("PmksaCandidate", &FormatHexdump(val))
+                }
                 Nl80211Attrs::TxNoCckRate(val) => fmt.field("TxNoCckRate", &val),
                 Nl80211Attrs::TdlsAction(val) => fmt.field("TdlsAction", &val),
                 Nl80211Attrs::TdlsDialogToken(val) => fmt.field("TdlsDialogToken", &val),
@@ -7991,10 +8015,12 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                     &FormatFlags(val.into(), FeatureFlags::from_value),
                 ),
                 Nl80211Attrs::ProbeRespOffload(val) => fmt.field("ProbeRespOffload", &val),
-                Nl80211Attrs::ProbeResp(val) => fmt.field("ProbeResp", &val),
+                Nl80211Attrs::ProbeResp(val) => fmt.field("ProbeResp", &FormatHexdump(val)),
                 Nl80211Attrs::DfsRegion(val) => fmt.field("DfsRegion", &val),
                 Nl80211Attrs::DisableHt(val) => fmt.field("DisableHt", &val),
-                Nl80211Attrs::HtCapabilityMask(val) => fmt.field("HtCapabilityMask", &val),
+                Nl80211Attrs::HtCapabilityMask(val) => {
+                    fmt.field("HtCapabilityMask", &FormatHexdump(val))
+                }
                 Nl80211Attrs::NoackMap(val) => fmt.field("NoackMap", &val),
                 Nl80211Attrs::InactivityTimeout(val) => fmt.field("InactivityTimeout", &val),
                 Nl80211Attrs::RxSignalDbm(val) => fmt.field("RxSignalDbm", &val),
@@ -8002,8 +8028,8 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::Wdev(val) => fmt.field("Wdev", &val),
                 Nl80211Attrs::UserRegHintType(val) => fmt.field("UserRegHintType", &val),
                 Nl80211Attrs::ConnFailedReason(val) => fmt.field("ConnFailedReason", &val),
-                Nl80211Attrs::AuthData(val) => fmt.field("AuthData", &val),
-                Nl80211Attrs::VhtCapability(val) => fmt.field("VhtCapability", &val),
+                Nl80211Attrs::AuthData(val) => fmt.field("AuthData", &FormatHexdump(val)),
+                Nl80211Attrs::VhtCapability(val) => fmt.field("VhtCapability", &FormatHexdump(val)),
                 Nl80211Attrs::ScanFlags(val) => fmt.field("ScanFlags", &val),
                 Nl80211Attrs::ChannelWidth(val) => fmt.field("ChannelWidth", &val),
                 Nl80211Attrs::CenterFreq1(val) => fmt.field("CenterFreq1", &val),
@@ -8012,35 +8038,45 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::P2pOppps(val) => fmt.field("P2pOppps", &val),
                 Nl80211Attrs::LocalMeshPowerMode(val) => fmt.field("LocalMeshPowerMode", &val),
                 Nl80211Attrs::AclPolicy(val) => fmt.field("AclPolicy", &val),
-                Nl80211Attrs::MacAddrs(val) => fmt.field("MacAddrs", &val),
+                Nl80211Attrs::MacAddrs(val) => fmt.field("MacAddrs", &FormatHexdump(val)),
                 Nl80211Attrs::MacAclMax(val) => fmt.field("MacAclMax", &val),
                 Nl80211Attrs::RadarEvent(val) => fmt.field("RadarEvent", &val),
-                Nl80211Attrs::ExtCapa(val) => fmt.field("ExtCapa", &val),
-                Nl80211Attrs::ExtCapaMask(val) => fmt.field("ExtCapaMask", &val),
+                Nl80211Attrs::ExtCapa(val) => fmt.field("ExtCapa", &FormatHexdump(val)),
+                Nl80211Attrs::ExtCapaMask(val) => fmt.field("ExtCapaMask", &FormatHexdump(val)),
                 Nl80211Attrs::StaCapability(val) => fmt.field("StaCapability", &val),
-                Nl80211Attrs::StaExtCapability(val) => fmt.field("StaExtCapability", &val),
+                Nl80211Attrs::StaExtCapability(val) => {
+                    fmt.field("StaExtCapability", &FormatHexdump(val))
+                }
                 Nl80211Attrs::ProtocolFeatures(val) => fmt.field(
                     "ProtocolFeatures",
                     &FormatFlags(val.into(), ProtocolFeatures::from_value),
                 ),
                 Nl80211Attrs::SplitWiphyDump(val) => fmt.field("SplitWiphyDump", &val),
                 Nl80211Attrs::DisableVht(val) => fmt.field("DisableVht", &val),
-                Nl80211Attrs::VhtCapabilityMask(val) => fmt.field("VhtCapabilityMask", &val),
+                Nl80211Attrs::VhtCapabilityMask(val) => {
+                    fmt.field("VhtCapabilityMask", &FormatHexdump(val))
+                }
                 Nl80211Attrs::Mdid(val) => fmt.field("Mdid", &val),
-                Nl80211Attrs::IeRic(val) => fmt.field("IeRic", &val),
+                Nl80211Attrs::IeRic(val) => fmt.field("IeRic", &FormatHexdump(val)),
                 Nl80211Attrs::CritProtId(val) => fmt.field("CritProtId", &val),
                 Nl80211Attrs::MaxCritProtDuration(val) => fmt.field("MaxCritProtDuration", &val),
                 Nl80211Attrs::PeerAid(val) => fmt.field("PeerAid", &val),
-                Nl80211Attrs::CoalesceRule(val) => fmt.field("CoalesceRule", &val),
+                Nl80211Attrs::CoalesceRule(val) => fmt.field("CoalesceRule", &FormatHexdump(val)),
                 Nl80211Attrs::ChSwitchCount(val) => fmt.field("ChSwitchCount", &val),
                 Nl80211Attrs::ChSwitchBlockTx(val) => fmt.field("ChSwitchBlockTx", &val),
-                Nl80211Attrs::CsaIes(val) => fmt.field("CsaIes", &val),
-                Nl80211Attrs::CntdwnOffsBeacon(val) => fmt.field("CntdwnOffsBeacon", &val),
-                Nl80211Attrs::CntdwnOffsPresp(val) => fmt.field("CntdwnOffsPresp", &val),
-                Nl80211Attrs::RxmgmtFlags(val) => fmt.field("RxmgmtFlags", &val),
-                Nl80211Attrs::StaSupportedChannels(val) => fmt.field("StaSupportedChannels", &val),
+                Nl80211Attrs::CsaIes(val) => fmt.field("CsaIes", &FormatHexdump(val)),
+                Nl80211Attrs::CntdwnOffsBeacon(val) => {
+                    fmt.field("CntdwnOffsBeacon", &FormatHexdump(val))
+                }
+                Nl80211Attrs::CntdwnOffsPresp(val) => {
+                    fmt.field("CntdwnOffsPresp", &FormatHexdump(val))
+                }
+                Nl80211Attrs::RxmgmtFlags(val) => fmt.field("RxmgmtFlags", &FormatHexdump(val)),
+                Nl80211Attrs::StaSupportedChannels(val) => {
+                    fmt.field("StaSupportedChannels", &FormatHexdump(val))
+                }
                 Nl80211Attrs::StaSupportedOperClasses(val) => {
-                    fmt.field("StaSupportedOperClasses", &val)
+                    fmt.field("StaSupportedOperClasses", &FormatHexdump(val))
                 }
                 Nl80211Attrs::HandleDfs(val) => fmt.field("HandleDfs", &val),
                 Nl80211Attrs::Support5Mhz(val) => fmt.field("Support5Mhz", &val),
@@ -8048,15 +8084,15 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::OpmodeNotif(val) => fmt.field("OpmodeNotif", &val),
                 Nl80211Attrs::VendorId(val) => fmt.field("VendorId", &val),
                 Nl80211Attrs::VendorSubcmd(val) => fmt.field("VendorSubcmd", &val),
-                Nl80211Attrs::VendorData(val) => fmt.field("VendorData", &val),
-                Nl80211Attrs::VendorEvents(val) => fmt.field("VendorEvents", &val),
-                Nl80211Attrs::QosMap(val) => fmt.field("QosMap", &val),
+                Nl80211Attrs::VendorData(val) => fmt.field("VendorData", &FormatHexdump(val)),
+                Nl80211Attrs::VendorEvents(val) => fmt.field("VendorEvents", &FormatHexdump(val)),
+                Nl80211Attrs::QosMap(val) => fmt.field("QosMap", &FormatHexdump(val)),
                 Nl80211Attrs::MacHint(val) => fmt.field("MacHint", &FormatMac(val)),
                 Nl80211Attrs::WiphyFreqHint(val) => fmt.field("WiphyFreqHint", &val),
                 Nl80211Attrs::MaxApAssocSta(val) => fmt.field("MaxApAssocSta", &val),
                 Nl80211Attrs::TdlsPeerCapability(val) => fmt.field("TdlsPeerCapability", &val),
                 Nl80211Attrs::SocketOwner(val) => fmt.field("SocketOwner", &val),
-                Nl80211Attrs::CsaCOffsetsTx(val) => fmt.field("CsaCOffsetsTx", &val),
+                Nl80211Attrs::CsaCOffsetsTx(val) => fmt.field("CsaCOffsetsTx", &FormatHexdump(val)),
                 Nl80211Attrs::MaxCsaCounters(val) => fmt.field("MaxCsaCounters", &val),
                 Nl80211Attrs::TdlsInitiator(val) => fmt.field("TdlsInitiator", &val),
                 Nl80211Attrs::UseRrm(val) => fmt.field("UseRrm", &val),
@@ -8068,8 +8104,10 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::OperClass(val) => fmt.field("OperClass", &val),
                 Nl80211Attrs::MacMask(val) => fmt.field("MacMask", &FormatMac(val)),
                 Nl80211Attrs::WiphySelfManagedReg(val) => fmt.field("WiphySelfManagedReg", &val),
-                Nl80211Attrs::ExtFeatures(val) => fmt.field("ExtFeatures", &val),
-                Nl80211Attrs::SurveyRadioStats(val) => fmt.field("SurveyRadioStats", &val),
+                Nl80211Attrs::ExtFeatures(val) => fmt.field("ExtFeatures", &FormatHexdump(val)),
+                Nl80211Attrs::SurveyRadioStats(val) => {
+                    fmt.field("SurveyRadioStats", &FormatHexdump(val))
+                }
                 Nl80211Attrs::NetnsFd(val) => fmt.field("NetnsFd", &val),
                 Nl80211Attrs::SchedScanDelay(val) => fmt.field("SchedScanDelay", &val),
                 Nl80211Attrs::RegIndoor(val) => fmt.field("RegIndoor", &val),
@@ -8078,19 +8116,23 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::MaxScanPlanIterations(val) => {
                     fmt.field("MaxScanPlanIterations", &val)
                 }
-                Nl80211Attrs::SchedScanPlans(val) => fmt.field("SchedScanPlans", &val),
+                Nl80211Attrs::SchedScanPlans(val) => {
+                    fmt.field("SchedScanPlans", &FormatHexdump(val))
+                }
                 Nl80211Attrs::Pbss(val) => fmt.field("Pbss", &val),
-                Nl80211Attrs::BssSelect(val) => fmt.field("BssSelect", &val),
+                Nl80211Attrs::BssSelect(val) => fmt.field("BssSelect", &FormatHexdump(val)),
                 Nl80211Attrs::StaSupportP2pPs(val) => fmt.field("StaSupportP2pPs", &val),
-                Nl80211Attrs::Pad(val) => fmt.field("Pad", &val),
-                Nl80211Attrs::IftypeExtCapa(val) => fmt.field("IftypeExtCapa", &val),
-                Nl80211Attrs::MuMimoGroupData(val) => fmt.field("MuMimoGroupData", &val),
+                Nl80211Attrs::Pad(val) => fmt.field("Pad", &FormatHexdump(val)),
+                Nl80211Attrs::IftypeExtCapa(val) => fmt.field("IftypeExtCapa", &FormatHexdump(val)),
+                Nl80211Attrs::MuMimoGroupData(val) => {
+                    fmt.field("MuMimoGroupData", &FormatHexdump(val))
+                }
                 Nl80211Attrs::MuMimoFollowMacAddr(val) => {
                     fmt.field("MuMimoFollowMacAddr", &FormatMac(val))
                 }
                 Nl80211Attrs::ScanStartTimeTsf(val) => fmt.field("ScanStartTimeTsf", &val),
                 Nl80211Attrs::ScanStartTimeTsfBssid(val) => {
-                    fmt.field("ScanStartTimeTsfBssid", &val)
+                    fmt.field("ScanStartTimeTsfBssid", &FormatHexdump(val))
                 }
                 Nl80211Attrs::MeasurementDuration(val) => fmt.field("MeasurementDuration", &val),
                 Nl80211Attrs::MeasurementDurationMandatory(val) => {
@@ -8099,10 +8141,10 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::MeshPeerAid(val) => fmt.field("MeshPeerAid", &val),
                 Nl80211Attrs::NanMasterPref(val) => fmt.field("NanMasterPref", &val),
                 Nl80211Attrs::Bands(val) => fmt.field("Bands", &val),
-                Nl80211Attrs::NanFunc(val) => fmt.field("NanFunc", &val),
-                Nl80211Attrs::NanMatch(val) => fmt.field("NanMatch", &val),
-                Nl80211Attrs::FilsKek(val) => fmt.field("FilsKek", &val),
-                Nl80211Attrs::FilsNonces(val) => fmt.field("FilsNonces", &val),
+                Nl80211Attrs::NanFunc(val) => fmt.field("NanFunc", &FormatHexdump(val)),
+                Nl80211Attrs::NanMatch(val) => fmt.field("NanMatch", &FormatHexdump(val)),
+                Nl80211Attrs::FilsKek(val) => fmt.field("FilsKek", &FormatHexdump(val)),
+                Nl80211Attrs::FilsNonces(val) => fmt.field("FilsNonces", &FormatHexdump(val)),
                 Nl80211Attrs::MulticastToUnicastEnabled(val) => {
                     fmt.field("MulticastToUnicastEnabled", &val)
                 }
@@ -8110,19 +8152,25 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::SchedScanRelativeRssi(val) => {
                     fmt.field("SchedScanRelativeRssi", &val)
                 }
-                Nl80211Attrs::SchedScanRssiAdjust(val) => fmt.field("SchedScanRssiAdjust", &val),
+                Nl80211Attrs::SchedScanRssiAdjust(val) => {
+                    fmt.field("SchedScanRssiAdjust", &FormatHexdump(val))
+                }
                 Nl80211Attrs::TimeoutReason(val) => fmt.field("TimeoutReason", &val),
-                Nl80211Attrs::FilsErpUsername(val) => fmt.field("FilsErpUsername", &val),
-                Nl80211Attrs::FilsErpRealm(val) => fmt.field("FilsErpRealm", &val),
+                Nl80211Attrs::FilsErpUsername(val) => {
+                    fmt.field("FilsErpUsername", &FormatHexdump(val))
+                }
+                Nl80211Attrs::FilsErpRealm(val) => fmt.field("FilsErpRealm", &FormatHexdump(val)),
                 Nl80211Attrs::FilsErpNextSeqNum(val) => fmt.field("FilsErpNextSeqNum", &val),
-                Nl80211Attrs::FilsErpRrk(val) => fmt.field("FilsErpRrk", &val),
-                Nl80211Attrs::FilsCacheId(val) => fmt.field("FilsCacheId", &val),
-                Nl80211Attrs::Pmk(val) => fmt.field("Pmk", &val),
+                Nl80211Attrs::FilsErpRrk(val) => fmt.field("FilsErpRrk", &FormatHexdump(val)),
+                Nl80211Attrs::FilsCacheId(val) => fmt.field("FilsCacheId", &FormatHexdump(val)),
+                Nl80211Attrs::Pmk(val) => fmt.field("Pmk", &FormatHexdump(val)),
                 Nl80211Attrs::SchedScanMulti(val) => fmt.field("SchedScanMulti", &val),
                 Nl80211Attrs::SchedScanMaxReqs(val) => fmt.field("SchedScanMaxReqs", &val),
                 Nl80211Attrs::Want1x4wayHs(val) => fmt.field("Want1x4wayHs", &val),
-                Nl80211Attrs::Pmkr0Name(val) => fmt.field("Pmkr0Name", &val),
-                Nl80211Attrs::PortAuthorized(val) => fmt.field("PortAuthorized", &val),
+                Nl80211Attrs::Pmkr0Name(val) => fmt.field("Pmkr0Name", &FormatHexdump(val)),
+                Nl80211Attrs::PortAuthorized(val) => {
+                    fmt.field("PortAuthorized", &FormatHexdump(val))
+                }
                 Nl80211Attrs::ExternalAuthAction(val) => fmt.field("ExternalAuthAction", &val),
                 Nl80211Attrs::ExternalAuthSupport(val) => fmt.field("ExternalAuthSupport", &val),
                 Nl80211Attrs::Nss(val) => fmt.field("Nss", &val),
@@ -8134,63 +8182,81 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::TxqLimit(val) => fmt.field("TxqLimit", &val),
                 Nl80211Attrs::TxqMemoryLimit(val) => fmt.field("TxqMemoryLimit", &val),
                 Nl80211Attrs::TxqQuantum(val) => fmt.field("TxqQuantum", &val),
-                Nl80211Attrs::HeCapability(val) => fmt.field("HeCapability", &val),
-                Nl80211Attrs::FtmResponder(val) => fmt.field("FtmResponder", &val),
-                Nl80211Attrs::FtmResponderStats(val) => fmt.field("FtmResponderStats", &val),
+                Nl80211Attrs::HeCapability(val) => fmt.field("HeCapability", &FormatHexdump(val)),
+                Nl80211Attrs::FtmResponder(val) => fmt.field("FtmResponder", &FormatHexdump(val)),
+                Nl80211Attrs::FtmResponderStats(val) => {
+                    fmt.field("FtmResponderStats", &FormatHexdump(val))
+                }
                 Nl80211Attrs::Timeout(val) => fmt.field("Timeout", &val),
-                Nl80211Attrs::PeerMeasurements(val) => fmt.field("PeerMeasurements", &val),
+                Nl80211Attrs::PeerMeasurements(val) => {
+                    fmt.field("PeerMeasurements", &FormatHexdump(val))
+                }
                 Nl80211Attrs::AirtimeWeight(val) => fmt.field("AirtimeWeight", &val),
                 Nl80211Attrs::StaTxPowerSetting(val) => fmt.field("StaTxPowerSetting", &val),
                 Nl80211Attrs::StaTxPower(val) => fmt.field("StaTxPower", &val),
-                Nl80211Attrs::SaePassword(val) => fmt.field("SaePassword", &val),
+                Nl80211Attrs::SaePassword(val) => fmt.field("SaePassword", &FormatHexdump(val)),
                 Nl80211Attrs::TwtResponder(val) => fmt.field("TwtResponder", &val),
-                Nl80211Attrs::HeObssPd(val) => fmt.field("HeObssPd", &val),
+                Nl80211Attrs::HeObssPd(val) => fmt.field("HeObssPd", &FormatHexdump(val)),
                 Nl80211Attrs::WiphyEdmgChannels(val) => fmt.field("WiphyEdmgChannels", &val),
                 Nl80211Attrs::WiphyEdmgBwConfig(val) => fmt.field("WiphyEdmgBwConfig", &val),
                 Nl80211Attrs::VlanId(val) => fmt.field("VlanId", &val),
-                Nl80211Attrs::HeBssColor(val) => fmt.field("HeBssColor", &val),
-                Nl80211Attrs::IftypeAkmSuites(val) => fmt.field("IftypeAkmSuites", &val),
-                Nl80211Attrs::TidConfig(val) => fmt.field("TidConfig", &val),
+                Nl80211Attrs::HeBssColor(val) => fmt.field("HeBssColor", &FormatHexdump(val)),
+                Nl80211Attrs::IftypeAkmSuites(val) => {
+                    fmt.field("IftypeAkmSuites", &FormatHexdump(val))
+                }
+                Nl80211Attrs::TidConfig(val) => fmt.field("TidConfig", &FormatHexdump(val)),
                 Nl80211Attrs::ControlPortNoPreauth(val) => fmt.field("ControlPortNoPreauth", &val),
                 Nl80211Attrs::PmkLifetime(val) => fmt.field("PmkLifetime", &val),
                 Nl80211Attrs::PmkReauthThreshold(val) => fmt.field("PmkReauthThreshold", &val),
                 Nl80211Attrs::ReceiveMulticast(val) => fmt.field("ReceiveMulticast", &val),
                 Nl80211Attrs::WiphyFreqOffset(val) => fmt.field("WiphyFreqOffset", &val),
                 Nl80211Attrs::CenterFreq1Offset(val) => fmt.field("CenterFreq1Offset", &val),
-                Nl80211Attrs::ScanFreqKhz(val) => fmt.field("ScanFreqKhz", &val),
-                Nl80211Attrs::He6ghzCapability(val) => fmt.field("He6ghzCapability", &val),
-                Nl80211Attrs::FilsDiscovery(val) => fmt.field("FilsDiscovery", &val),
-                Nl80211Attrs::UnsolBcastProbeResp(val) => fmt.field("UnsolBcastProbeResp", &val),
-                Nl80211Attrs::S1gCapability(val) => fmt.field("S1gCapability", &val),
-                Nl80211Attrs::S1gCapabilityMask(val) => fmt.field("S1gCapabilityMask", &val),
+                Nl80211Attrs::ScanFreqKhz(val) => fmt.field("ScanFreqKhz", &FormatHexdump(val)),
+                Nl80211Attrs::He6ghzCapability(val) => {
+                    fmt.field("He6ghzCapability", &FormatHexdump(val))
+                }
+                Nl80211Attrs::FilsDiscovery(val) => fmt.field("FilsDiscovery", &FormatHexdump(val)),
+                Nl80211Attrs::UnsolBcastProbeResp(val) => {
+                    fmt.field("UnsolBcastProbeResp", &FormatHexdump(val))
+                }
+                Nl80211Attrs::S1gCapability(val) => fmt.field("S1gCapability", &FormatHexdump(val)),
+                Nl80211Attrs::S1gCapabilityMask(val) => {
+                    fmt.field("S1gCapabilityMask", &FormatHexdump(val))
+                }
                 Nl80211Attrs::SaePwe(val) => fmt.field("SaePwe", &val),
-                Nl80211Attrs::ReconnectRequested(val) => fmt.field("ReconnectRequested", &val),
+                Nl80211Attrs::ReconnectRequested(val) => {
+                    fmt.field("ReconnectRequested", &FormatHexdump(val))
+                }
                 Nl80211Attrs::SarSpec(val) => fmt.field("SarSpec", &val),
                 Nl80211Attrs::DisableHe(val) => fmt.field("DisableHe", &val),
                 Nl80211Attrs::ObssColorBitmap(val) => fmt.field("ObssColorBitmap", &val),
                 Nl80211Attrs::ColorChangeCount(val) => fmt.field("ColorChangeCount", &val),
                 Nl80211Attrs::ColorChangeColor(val) => fmt.field("ColorChangeColor", &val),
-                Nl80211Attrs::ColorChangeElems(val) => fmt.field("ColorChangeElems", &val),
-                Nl80211Attrs::MbssidConfig(val) => fmt.field("MbssidConfig", &val),
-                Nl80211Attrs::MbssidElems(val) => fmt.field("MbssidElems", &val),
+                Nl80211Attrs::ColorChangeElems(val) => {
+                    fmt.field("ColorChangeElems", &FormatHexdump(val))
+                }
+                Nl80211Attrs::MbssidConfig(val) => fmt.field("MbssidConfig", &FormatHexdump(val)),
+                Nl80211Attrs::MbssidElems(val) => fmt.field("MbssidElems", &FormatHexdump(val)),
                 Nl80211Attrs::RadarBackground(val) => fmt.field("RadarBackground", &val),
                 Nl80211Attrs::ApSettingsFlags(val) => fmt.field("ApSettingsFlags", &val),
-                Nl80211Attrs::EhtCapability(val) => fmt.field("EhtCapability", &val),
+                Nl80211Attrs::EhtCapability(val) => fmt.field("EhtCapability", &FormatHexdump(val)),
                 Nl80211Attrs::DisableEht(val) => fmt.field("DisableEht", &val),
-                Nl80211Attrs::MloLinks(val) => fmt.field("MloLinks", &val),
+                Nl80211Attrs::MloLinks(val) => fmt.field("MloLinks", &FormatHexdump(val)),
                 Nl80211Attrs::MloLinkId(val) => fmt.field("MloLinkId", &val),
                 Nl80211Attrs::MldAddr(val) => fmt.field("MldAddr", &FormatMac(val)),
                 Nl80211Attrs::MloSupport(val) => fmt.field("MloSupport", &val),
-                Nl80211Attrs::MaxNumAkmSuites(val) => fmt.field("MaxNumAkmSuites", &val),
+                Nl80211Attrs::MaxNumAkmSuites(val) => {
+                    fmt.field("MaxNumAkmSuites", &FormatHexdump(val))
+                }
                 Nl80211Attrs::EmlCapability(val) => fmt.field("EmlCapability", &val),
                 Nl80211Attrs::MldCapaAndOps(val) => fmt.field("MldCapaAndOps", &val),
                 Nl80211Attrs::TxHwTimestamp(val) => fmt.field("TxHwTimestamp", &val),
                 Nl80211Attrs::RxHwTimestamp(val) => fmt.field("RxHwTimestamp", &val),
-                Nl80211Attrs::TdBitmap(val) => fmt.field("TdBitmap", &val),
+                Nl80211Attrs::TdBitmap(val) => fmt.field("TdBitmap", &FormatHexdump(val)),
                 Nl80211Attrs::PunctBitmap(val) => fmt.field("PunctBitmap", &val),
                 Nl80211Attrs::MaxHwTimestampPeers(val) => fmt.field("MaxHwTimestampPeers", &val),
                 Nl80211Attrs::HwTimestampEnabled(val) => fmt.field("HwTimestampEnabled", &val),
-                Nl80211Attrs::EmaRnrElems(val) => fmt.field("EmaRnrElems", &val),
+                Nl80211Attrs::EmaRnrElems(val) => fmt.field("EmaRnrElems", &FormatHexdump(val)),
                 Nl80211Attrs::MloLinkDisabled(val) => fmt.field("MloLinkDisabled", &val),
                 Nl80211Attrs::BssDumpIncludeUseData(val) => {
                     fmt.field("BssDumpIncludeUseData", &val)
@@ -8198,9 +8264,9 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::MloTtlmDlink(val) => fmt.field("MloTtlmDlink", &val),
                 Nl80211Attrs::MloTtlmUlink(val) => fmt.field("MloTtlmUlink", &val),
                 Nl80211Attrs::AssocSppAmsdu(val) => fmt.field("AssocSppAmsdu", &val),
-                Nl80211Attrs::WiphyRadios(val) => fmt.field("WiphyRadios", &val),
+                Nl80211Attrs::WiphyRadios(val) => fmt.field("WiphyRadios", &FormatHexdump(val)),
                 Nl80211Attrs::WiphyInterfaceCombinations(val) => {
-                    fmt.field("WiphyInterfaceCombinations", &val)
+                    fmt.field("WiphyInterfaceCombinations", &FormatHexdump(val))
                 }
                 Nl80211Attrs::VifRadioMask(val) => fmt.field("VifRadioMask", &val),
             };
@@ -10332,7 +10398,14 @@ impl<'a> Iterator for IterableFrameTypeAttrs<'a> {
 impl std::fmt::Debug for IterableFrameTypeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FrameTypeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFrameTypeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -10593,7 +10666,14 @@ impl<'a> Iterator for IterableWiphyBands<'a> {
 impl<'a> std::fmt::Debug for IterableWiphyBands<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("WiphyBands");
-        for attr in self.clone() {
+        let mut iter = IterableWiphyBands::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -11198,7 +11278,14 @@ impl std::fmt::Debug for IterableArrayIftypeDataAttrs<'_> {
 impl<'a> std::fmt::Debug for IterableBandAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BandAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableBandAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -11211,17 +11298,17 @@ impl<'a> std::fmt::Debug for IterableBandAttrs<'_> {
             match attr {
                 BandAttrs::Freqs(val) => fmt.field("Freqs", &val),
                 BandAttrs::Rates(val) => fmt.field("Rates", &val),
-                BandAttrs::HtMcsSet(val) => fmt.field("HtMcsSet", &val),
+                BandAttrs::HtMcsSet(val) => fmt.field("HtMcsSet", &FormatHexdump(val)),
                 BandAttrs::HtCapa(val) => fmt.field("HtCapa", &val),
                 BandAttrs::HtAmpduFactor(val) => fmt.field("HtAmpduFactor", &val),
                 BandAttrs::HtAmpduDensity(val) => fmt.field("HtAmpduDensity", &val),
-                BandAttrs::VhtMcsSet(val) => fmt.field("VhtMcsSet", &val),
+                BandAttrs::VhtMcsSet(val) => fmt.field("VhtMcsSet", &FormatHexdump(val)),
                 BandAttrs::VhtCapa(val) => fmt.field("VhtCapa", &val),
                 BandAttrs::IftypeData(val) => fmt.field("IftypeData", &val),
-                BandAttrs::EdmgChannels(val) => fmt.field("EdmgChannels", &val),
-                BandAttrs::EdmgBwConfig(val) => fmt.field("EdmgBwConfig", &val),
-                BandAttrs::S1gMcsNssSet(val) => fmt.field("S1gMcsNssSet", &val),
-                BandAttrs::S1gCapa(val) => fmt.field("S1gCapa", &val),
+                BandAttrs::EdmgChannels(val) => fmt.field("EdmgChannels", &FormatHexdump(val)),
+                BandAttrs::EdmgBwConfig(val) => fmt.field("EdmgBwConfig", &FormatHexdump(val)),
+                BandAttrs::S1gMcsNssSet(val) => fmt.field("S1gMcsNssSet", &FormatHexdump(val)),
+                BandAttrs::S1gCapa(val) => fmt.field("S1gCapa", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -11467,7 +11554,14 @@ impl<'a> Iterator for IterableBitrateAttrs<'a> {
 impl std::fmt::Debug for IterableBitrateAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BitrateAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableBitrateAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -12358,7 +12452,14 @@ impl std::fmt::Debug for IterableArrayWmmAttrs<'_> {
 impl<'a> std::fmt::Debug for IterableFrequencyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FrequencyAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFrequencyAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -12376,32 +12477,40 @@ impl<'a> std::fmt::Debug for IterableFrequencyAttrs<'_> {
                 FrequencyAttrs::Radar(val) => fmt.field("Radar", &val),
                 FrequencyAttrs::MaxTxPower(val) => fmt.field("MaxTxPower", &val),
                 FrequencyAttrs::DfsState(val) => fmt.field("DfsState", &val),
-                FrequencyAttrs::DfsTime(val) => fmt.field("DfsTime", &val),
-                FrequencyAttrs::NoHt40Minus(val) => fmt.field("NoHt40Minus", &val),
-                FrequencyAttrs::NoHt40Plus(val) => fmt.field("NoHt40Plus", &val),
-                FrequencyAttrs::No80mhz(val) => fmt.field("No80mhz", &val),
-                FrequencyAttrs::No160mhz(val) => fmt.field("No160mhz", &val),
-                FrequencyAttrs::DfsCacTime(val) => fmt.field("DfsCacTime", &val),
-                FrequencyAttrs::IndoorOnly(val) => fmt.field("IndoorOnly", &val),
-                FrequencyAttrs::IrConcurrent(val) => fmt.field("IrConcurrent", &val),
-                FrequencyAttrs::No20mhz(val) => fmt.field("No20mhz", &val),
-                FrequencyAttrs::No10mhz(val) => fmt.field("No10mhz", &val),
+                FrequencyAttrs::DfsTime(val) => fmt.field("DfsTime", &FormatHexdump(val)),
+                FrequencyAttrs::NoHt40Minus(val) => fmt.field("NoHt40Minus", &FormatHexdump(val)),
+                FrequencyAttrs::NoHt40Plus(val) => fmt.field("NoHt40Plus", &FormatHexdump(val)),
+                FrequencyAttrs::No80mhz(val) => fmt.field("No80mhz", &FormatHexdump(val)),
+                FrequencyAttrs::No160mhz(val) => fmt.field("No160mhz", &FormatHexdump(val)),
+                FrequencyAttrs::DfsCacTime(val) => fmt.field("DfsCacTime", &FormatHexdump(val)),
+                FrequencyAttrs::IndoorOnly(val) => fmt.field("IndoorOnly", &FormatHexdump(val)),
+                FrequencyAttrs::IrConcurrent(val) => fmt.field("IrConcurrent", &FormatHexdump(val)),
+                FrequencyAttrs::No20mhz(val) => fmt.field("No20mhz", &FormatHexdump(val)),
+                FrequencyAttrs::No10mhz(val) => fmt.field("No10mhz", &FormatHexdump(val)),
                 FrequencyAttrs::Wmm(val) => fmt.field("Wmm", &val),
-                FrequencyAttrs::NoHe(val) => fmt.field("NoHe", &val),
+                FrequencyAttrs::NoHe(val) => fmt.field("NoHe", &FormatHexdump(val)),
                 FrequencyAttrs::Offset(val) => fmt.field("Offset", &val),
-                FrequencyAttrs::_1mhz(val) => fmt.field("_1mhz", &val),
-                FrequencyAttrs::_2mhz(val) => fmt.field("_2mhz", &val),
-                FrequencyAttrs::_4mhz(val) => fmt.field("_4mhz", &val),
-                FrequencyAttrs::_8mhz(val) => fmt.field("_8mhz", &val),
-                FrequencyAttrs::_16mhz(val) => fmt.field("_16mhz", &val),
-                FrequencyAttrs::No320mhz(val) => fmt.field("No320mhz", &val),
-                FrequencyAttrs::NoEht(val) => fmt.field("NoEht", &val),
-                FrequencyAttrs::Psd(val) => fmt.field("Psd", &val),
-                FrequencyAttrs::DfsConcurrent(val) => fmt.field("DfsConcurrent", &val),
-                FrequencyAttrs::No6ghzVlpClient(val) => fmt.field("No6ghzVlpClient", &val),
-                FrequencyAttrs::No6ghzAfcClient(val) => fmt.field("No6ghzAfcClient", &val),
-                FrequencyAttrs::CanMonitor(val) => fmt.field("CanMonitor", &val),
-                FrequencyAttrs::Allow6ghzVlpAp(val) => fmt.field("Allow6ghzVlpAp", &val),
+                FrequencyAttrs::_1mhz(val) => fmt.field("_1mhz", &FormatHexdump(val)),
+                FrequencyAttrs::_2mhz(val) => fmt.field("_2mhz", &FormatHexdump(val)),
+                FrequencyAttrs::_4mhz(val) => fmt.field("_4mhz", &FormatHexdump(val)),
+                FrequencyAttrs::_8mhz(val) => fmt.field("_8mhz", &FormatHexdump(val)),
+                FrequencyAttrs::_16mhz(val) => fmt.field("_16mhz", &FormatHexdump(val)),
+                FrequencyAttrs::No320mhz(val) => fmt.field("No320mhz", &FormatHexdump(val)),
+                FrequencyAttrs::NoEht(val) => fmt.field("NoEht", &FormatHexdump(val)),
+                FrequencyAttrs::Psd(val) => fmt.field("Psd", &FormatHexdump(val)),
+                FrequencyAttrs::DfsConcurrent(val) => {
+                    fmt.field("DfsConcurrent", &FormatHexdump(val))
+                }
+                FrequencyAttrs::No6ghzVlpClient(val) => {
+                    fmt.field("No6ghzVlpClient", &FormatHexdump(val))
+                }
+                FrequencyAttrs::No6ghzAfcClient(val) => {
+                    fmt.field("No6ghzAfcClient", &FormatHexdump(val))
+                }
+                FrequencyAttrs::CanMonitor(val) => fmt.field("CanMonitor", &FormatHexdump(val)),
+                FrequencyAttrs::Allow6ghzVlpAp(val) => {
+                    fmt.field("Allow6ghzVlpAp", &FormatHexdump(val))
+                }
             };
         }
         fmt.finish()
@@ -12923,7 +13032,14 @@ impl std::fmt::Debug for IterableArrayIfaceLimitAttributes<'_> {
 impl<'a> std::fmt::Debug for IterableIfCombinationAttributes<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IfCombinationAttributes");
-        for attr in self.clone() {
+        let mut iter = IterableIfCombinationAttributes::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -13144,7 +13260,14 @@ impl<'a> Iterator for IterableIfaceLimitAttributes<'a> {
 impl<'a> std::fmt::Debug for IterableIfaceLimitAttributes<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IfaceLimitAttributes");
-        for attr in self.clone() {
+        let mut iter = IterableIfaceLimitAttributes::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -13517,7 +13640,14 @@ impl<'a> Iterator for IterableIftypeDataAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableIftypeDataAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IftypeDataAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableIftypeDataAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -13528,17 +13658,19 @@ impl<'a> std::fmt::Debug for IterableIftypeDataAttrs<'_> {
                 }
             };
             match attr {
-                IftypeDataAttrs::Iftypes(val) => fmt.field("Iftypes", &val),
-                IftypeDataAttrs::HeCapMac(val) => fmt.field("HeCapMac", &val),
-                IftypeDataAttrs::HeCapPhy(val) => fmt.field("HeCapPhy", &val),
-                IftypeDataAttrs::HeCapMcsSet(val) => fmt.field("HeCapMcsSet", &val),
-                IftypeDataAttrs::HeCapPpe(val) => fmt.field("HeCapPpe", &val),
-                IftypeDataAttrs::He6ghzCapa(val) => fmt.field("He6ghzCapa", &val),
-                IftypeDataAttrs::VendorElems(val) => fmt.field("VendorElems", &val),
-                IftypeDataAttrs::EhtCapMac(val) => fmt.field("EhtCapMac", &val),
-                IftypeDataAttrs::EhtCapPhy(val) => fmt.field("EhtCapPhy", &val),
-                IftypeDataAttrs::EhtCapMcsSet(val) => fmt.field("EhtCapMcsSet", &val),
-                IftypeDataAttrs::EhtCapPpe(val) => fmt.field("EhtCapPpe", &val),
+                IftypeDataAttrs::Iftypes(val) => fmt.field("Iftypes", &FormatHexdump(val)),
+                IftypeDataAttrs::HeCapMac(val) => fmt.field("HeCapMac", &FormatHexdump(val)),
+                IftypeDataAttrs::HeCapPhy(val) => fmt.field("HeCapPhy", &FormatHexdump(val)),
+                IftypeDataAttrs::HeCapMcsSet(val) => fmt.field("HeCapMcsSet", &FormatHexdump(val)),
+                IftypeDataAttrs::HeCapPpe(val) => fmt.field("HeCapPpe", &FormatHexdump(val)),
+                IftypeDataAttrs::He6ghzCapa(val) => fmt.field("He6ghzCapa", &FormatHexdump(val)),
+                IftypeDataAttrs::VendorElems(val) => fmt.field("VendorElems", &FormatHexdump(val)),
+                IftypeDataAttrs::EhtCapMac(val) => fmt.field("EhtCapMac", &FormatHexdump(val)),
+                IftypeDataAttrs::EhtCapPhy(val) => fmt.field("EhtCapPhy", &FormatHexdump(val)),
+                IftypeDataAttrs::EhtCapMcsSet(val) => {
+                    fmt.field("EhtCapMcsSet", &FormatHexdump(val))
+                }
+                IftypeDataAttrs::EhtCapPpe(val) => fmt.field("EhtCapPpe", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -13996,7 +14128,14 @@ impl<'a> Iterator for IterableIftypeAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableIftypeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IftypeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableIftypeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14299,7 +14438,14 @@ impl std::fmt::Debug for IterableArraySarSpecs<'_> {
 impl<'a> std::fmt::Debug for IterableSarAttributes<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SarAttributes");
-        for attr in self.clone() {
+        let mut iter = IterableSarAttributes::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14525,7 +14671,14 @@ impl<'a> Iterator for IterableSarSpecs<'a> {
 impl std::fmt::Debug for IterableSarSpecs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SarSpecs");
-        for attr in self.clone() {
+        let mut iter = IterableSarSpecs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14885,7 +15038,14 @@ impl<'a> Iterator for IterableSupportedIftypes<'a> {
 impl std::fmt::Debug for IterableSupportedIftypes<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("SupportedIftypes");
-        for attr in self.clone() {
+        let mut iter = IterableSupportedIftypes::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15327,7 +15487,14 @@ impl<'a> Iterator for IterableTxqStatsAttrs<'a> {
 impl std::fmt::Debug for IterableTxqStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TxqStatsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTxqStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15608,7 +15775,14 @@ impl<'a> Iterator for IterableWmmAttrs<'a> {
 impl std::fmt::Debug for IterableWmmAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("WmmAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableWmmAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16112,7 +16286,14 @@ impl<'a> Iterator for IterableWowlanTriggersAttrs<'a> {
 impl std::fmt::Debug for IterableWowlanTriggersAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("WowlanTriggersAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableWowlanTriggersAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -19692,6 +19873,14 @@ impl<'r> OpGetWiphyDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetWiphyDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -19744,6 +19933,14 @@ impl<'r> OpGetWiphyDo<'r> {
         header.cmd = 1u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetWiphyDo<'_> {
@@ -19800,6 +19997,14 @@ impl<'r> OpGetInterfaceDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetInterfaceDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -19853,6 +20058,14 @@ impl<'r> OpGetInterfaceDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetInterfaceDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -19905,6 +20118,14 @@ impl<'r> OpGetProtocolFeaturesDo<'r> {
         header.cmd = 95u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetProtocolFeaturesDo<'_> {
@@ -19964,6 +20185,14 @@ impl<'r> OpDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -20020,6 +20249,14 @@ impl<'r> OpDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -20048,6 +20285,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -20063,10 +20301,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -20083,9 +20323,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

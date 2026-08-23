@@ -373,7 +373,14 @@ impl<'a> Iterator for IterableTcpMetrics<'a> {
 impl<'a> std::fmt::Debug for IterableTcpMetrics<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TcpMetrics");
-        for attr in self.clone() {
+        let mut iter = IterableTcpMetrics::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -393,7 +400,7 @@ impl<'a> std::fmt::Debug for IterableTcpMetrics<'_> {
                 TcpMetrics::FopenMss(val) => fmt.field("FopenMss", &val),
                 TcpMetrics::FopenSynDrops(val) => fmt.field("FopenSynDrops", &val),
                 TcpMetrics::FopenSynDropTs(val) => fmt.field("FopenSynDropTs", &val),
-                TcpMetrics::FopenCookie(val) => fmt.field("FopenCookie", &val),
+                TcpMetrics::FopenCookie(val) => fmt.field("FopenCookie", &FormatHexdump(val)),
                 TcpMetrics::SaddrIpv4(val) => fmt.field("SaddrIpv4", &val),
                 TcpMetrics::SaddrIpv6(val) => fmt.field("SaddrIpv6", &val),
                 TcpMetrics::Pad(val) => fmt.field("Pad", &val),
@@ -749,7 +756,14 @@ impl<'a> Iterator for IterableMetrics<'a> {
 impl std::fmt::Debug for IterableMetrics<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Metrics");
-        for attr in self.clone() {
+        let mut iter = IterableMetrics::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1059,6 +1073,14 @@ impl<'r> OpGetDump<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -1111,6 +1133,14 @@ impl<'r> OpGetDo<'r> {
         header.cmd = 1u8;
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetDo<'_> {
@@ -1165,6 +1195,14 @@ impl<'r> OpDelDo<'r> {
         header.version = 1u8;
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDelDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1193,6 +1231,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1208,10 +1247,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1228,9 +1269,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

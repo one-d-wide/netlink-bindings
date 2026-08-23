@@ -124,7 +124,8 @@ impl Dualpi2SplitGso {
         })
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Tcmsg {
     pub family: u8,
     pub _pad: [u8; 3usize],
@@ -132,11 +133,6 @@ pub struct Tcmsg {
     pub handle: u32,
     pub parent: u32,
     pub info: u32,
-}
-impl Clone for Tcmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Tcmsg {
@@ -179,6 +175,11 @@ impl Tcmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -191,6 +192,7 @@ impl Tcmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Tcmsg>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<Tcmsg>() == 4usize);
         20usize
     }
 }
@@ -205,7 +207,9 @@ impl std::fmt::Debug for Tcmsg {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcStats {
     #[doc = "Number of enqueued bytes\n"]
     pub bytes: u64,
@@ -222,11 +226,6 @@ pub struct TcStats {
     pub qlen: u32,
     pub backlog: u32,
     pub _pad_36: [u8; 4usize],
-}
-impl Clone for TcStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcStats {
@@ -269,6 +268,11 @@ impl TcStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 40usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -281,6 +285,7 @@ impl TcStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcStats>() == 40usize);
+        const _: () = assert!(std::mem::align_of::<TcStats>() == 4usize);
         40usize
     }
 }
@@ -298,7 +303,8 @@ impl std::fmt::Debug for TcStats {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcCbsQopt {
     pub offload: u8,
     pub _pad: [u8; 3usize],
@@ -306,11 +312,6 @@ pub struct TcCbsQopt {
     pub locredit: i32,
     pub idleslope: i32,
     pub sendslope: i32,
-}
-impl Clone for TcCbsQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcCbsQopt {
@@ -353,6 +354,11 @@ impl TcCbsQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -365,6 +371,7 @@ impl TcCbsQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcCbsQopt>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcCbsQopt>() == 4usize);
         20usize
     }
 }
@@ -379,17 +386,12 @@ impl std::fmt::Debug for TcCbsQopt {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcEtfQopt {
     pub delta: i32,
     pub clockid: i32,
     pub flags: i32,
-}
-impl Clone for TcEtfQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcEtfQopt {
@@ -432,6 +434,11 @@ impl TcEtfQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -444,19 +451,15 @@ impl TcEtfQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcEtfQopt>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<TcEtfQopt>() == 4usize);
         12usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcFifoQopt {
     #[doc = "Queue length; bytes for bfifo, packets for pfifo\n"]
     pub limit: u32,
-}
-impl Clone for TcFifoQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcFifoQopt {
@@ -499,6 +502,11 @@ impl TcFifoQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -511,10 +519,12 @@ impl TcFifoQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcFifoQopt>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<TcFifoQopt>() == 4usize);
         4usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcHtbOpt {
     pub rate: TcRatespec,
     pub ceil: TcRatespec,
@@ -523,11 +533,6 @@ pub struct TcHtbOpt {
     pub quantum: u32,
     pub level: u32,
     pub prio: u32,
-}
-impl Clone for TcHtbOpt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcHtbOpt {
@@ -570,6 +575,11 @@ impl TcHtbOpt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 44usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -582,6 +592,7 @@ impl TcHtbOpt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcHtbOpt>() == 44usize);
+        const _: () = assert!(std::mem::align_of::<TcHtbOpt>() == 4usize);
         44usize
     }
 }
@@ -598,8 +609,8 @@ impl std::fmt::Debug for TcHtbOpt {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcHtbGlob {
     pub version: u32,
     #[doc = "bps-\\>quantum divisor\n"]
@@ -610,11 +621,6 @@ pub struct TcHtbGlob {
     pub debug: u32,
     #[doc = "Count of non shaped packets\n"]
     pub direct_pkts: u32,
-}
-impl Clone for TcHtbGlob {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcHtbGlob {
@@ -657,6 +663,11 @@ impl TcHtbGlob {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -669,11 +680,12 @@ impl TcHtbGlob {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcHtbGlob>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcHtbGlob>() == 4usize);
         20usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcGredQopt {
     #[doc = "HARD maximal queue length in bytes\n"]
     pub limit: u32,
@@ -699,11 +711,6 @@ pub struct TcGredQopt {
     pub prio: u8,
     pub packets: u32,
     pub bytesin: u32,
-}
-impl Clone for TcGredQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcGredQopt {
@@ -746,6 +753,11 @@ impl TcGredQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 52usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -758,21 +770,18 @@ impl TcGredQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcGredQopt>() == 52usize);
+        const _: () = assert!(std::mem::align_of::<TcGredQopt>() == 4usize);
         52usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcGredSopt {
     pub DPs: u32,
     pub def_DP: u32,
     pub grio: u8,
     pub flags: u8,
     pub _pad: [u8; 2usize],
-}
-impl Clone for TcGredSopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcGredSopt {
@@ -815,6 +824,11 @@ impl TcGredSopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -827,6 +841,7 @@ impl TcGredSopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcGredSopt>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<TcGredSopt>() == 4usize);
         12usize
     }
 }
@@ -840,15 +855,10 @@ impl std::fmt::Debug for TcGredSopt {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcHfscQopt {
     pub defcls: u16,
-}
-impl Clone for TcHfscQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcHfscQopt {
@@ -891,6 +901,11 @@ impl TcHfscQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 2usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -903,22 +918,18 @@ impl TcHfscQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcHfscQopt>() == 2usize);
+        const _: () = assert!(std::mem::align_of::<TcHfscQopt>() == 2usize);
         2usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcMqprioQopt {
     pub num_tc: u8,
     pub prio_tc_map: [u8; 16usize],
     pub hw: u8,
     pub count: [u8; 32usize],
     pub offset: [u8; 32usize],
-}
-impl Clone for TcMqprioQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcMqprioQopt {
@@ -961,6 +972,11 @@ impl TcMqprioQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 82usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -973,21 +989,28 @@ impl TcMqprioQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcMqprioQopt>() == 82usize);
+        const _: () = assert!(std::mem::align_of::<TcMqprioQopt>() == 1usize);
         82usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+impl std::fmt::Debug for TcMqprioQopt {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("TcMqprioQopt")
+            .field("num_tc", &self.num_tc)
+            .field("prio_tc_map", &FormatHexdump(self.prio_tc_map.as_slice()))
+            .field("hw", &self.hw)
+            .field("count", &FormatHexdump(self.count.as_slice()))
+            .field("offset", &FormatHexdump(self.offset.as_slice()))
+            .finish()
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcMultiqQopt {
     #[doc = "Number of bands\n"]
     pub bands: u16,
     #[doc = "Maximum number of queues\n"]
     pub max_bands: u16,
-}
-impl Clone for TcMultiqQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcMultiqQopt {
@@ -1030,6 +1053,11 @@ impl TcMultiqQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1042,11 +1070,12 @@ impl TcMultiqQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcMultiqQopt>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<TcMultiqQopt>() == 2usize);
         4usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemQopt {
     #[doc = "Added delay in microseconds\n"]
     pub latency: u32,
@@ -1060,11 +1089,6 @@ pub struct TcNetemQopt {
     pub duplicate: u32,
     #[doc = "Random jitter latency in microseconds\n"]
     pub jitter: u32,
-}
-impl Clone for TcNetemQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemQopt {
@@ -1107,6 +1131,11 @@ impl TcNetemQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1119,23 +1148,19 @@ impl TcNetemQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemQopt>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemQopt>() == 4usize);
         24usize
     }
 }
-#[derive(Debug)]
 #[doc = "State transition probabilities for 4 state model\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemGimodel {
     pub p13: u32,
     pub p31: u32,
     pub p32: u32,
     pub p14: u32,
     pub p23: u32,
-}
-impl Clone for TcNetemGimodel {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemGimodel {
@@ -1178,6 +1203,11 @@ impl TcNetemGimodel {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1190,22 +1220,18 @@ impl TcNetemGimodel {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemGimodel>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemGimodel>() == 4usize);
         20usize
     }
 }
-#[derive(Debug)]
 #[doc = "Gilbert-Elliot models\n"]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemGemodel {
     pub p: u32,
     pub r: u32,
     pub h: u32,
     pub k1: u32,
-}
-impl Clone for TcNetemGemodel {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemGemodel {
@@ -1248,6 +1274,11 @@ impl TcNetemGemodel {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1260,11 +1291,12 @@ impl TcNetemGemodel {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemGemodel>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemGemodel>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemCorr {
     #[doc = "Delay correlation\n"]
     pub delay_corr: u32,
@@ -1272,11 +1304,6 @@ pub struct TcNetemCorr {
     pub loss_corr: u32,
     #[doc = "Duplicate correlation\n"]
     pub dup_corr: u32,
-}
-impl Clone for TcNetemCorr {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemCorr {
@@ -1319,6 +1346,11 @@ impl TcNetemCorr {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1331,19 +1363,15 @@ impl TcNetemCorr {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemCorr>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemCorr>() == 4usize);
         12usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemReorder {
     pub probability: u32,
     pub correlation: u32,
-}
-impl Clone for TcNetemReorder {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemReorder {
@@ -1386,6 +1414,11 @@ impl TcNetemReorder {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1398,19 +1431,15 @@ impl TcNetemReorder {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemReorder>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemReorder>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemCorrupt {
     pub probability: u32,
     pub correlation: u32,
-}
-impl Clone for TcNetemCorrupt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemCorrupt {
@@ -1453,6 +1482,11 @@ impl TcNetemCorrupt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1465,21 +1499,17 @@ impl TcNetemCorrupt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemCorrupt>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemCorrupt>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcNetemRate {
     pub rate: u32,
     pub packet_overhead: i32,
     pub cell_size: u32,
     pub cell_overhead: i32,
-}
-impl Clone for TcNetemRate {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemRate {
@@ -1522,6 +1552,11 @@ impl TcNetemRate {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1534,10 +1569,13 @@ impl TcNetemRate {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemRate>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemRate>() == 4usize);
         16usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcNetemSlot {
     pub min_delay: i64,
     pub max_delay: i64,
@@ -1545,11 +1583,6 @@ pub struct TcNetemSlot {
     pub max_bytes: i32,
     pub dist_delay: i64,
     pub dist_jitter: i64,
-}
-impl Clone for TcNetemSlot {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcNetemSlot {
@@ -1592,6 +1625,11 @@ impl TcNetemSlot {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 40usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1604,6 +1642,7 @@ impl TcNetemSlot {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcNetemSlot>() == 40usize);
+        const _: () = assert!(std::mem::align_of::<TcNetemSlot>() == 4usize);
         40usize
     }
 }
@@ -1619,16 +1658,11 @@ impl std::fmt::Debug for TcNetemSlot {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcPlugQopt {
     pub action: i32,
     pub limit: u32,
-}
-impl Clone for TcPlugQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcPlugQopt {
@@ -1671,6 +1705,11 @@ impl TcPlugQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1683,21 +1722,17 @@ impl TcPlugQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcPlugQopt>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<TcPlugQopt>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcPrioQopt {
     #[doc = "Number of bands\n"]
     pub bands: u32,
     #[doc = "Map of logical priority -\\> PRIO band\n"]
     pub priomap: [u8; 16usize],
-}
-impl Clone for TcPrioQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcPrioQopt {
@@ -1740,6 +1775,11 @@ impl TcPrioQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1752,11 +1792,20 @@ impl TcPrioQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcPrioQopt>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcPrioQopt>() == 4usize);
         20usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+impl std::fmt::Debug for TcPrioQopt {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("TcPrioQopt")
+            .field("bands", &self.bands)
+            .field("priomap", &FormatHexdump(self.priomap.as_slice()))
+            .finish()
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcRedQopt {
     #[doc = "Hard queue length in packets\n"]
     pub limit: u32,
@@ -1771,11 +1820,6 @@ pub struct TcRedQopt {
     #[doc = "Cell size for idle damping\n"]
     pub Scell_log: u8,
     pub flags: u8,
-}
-impl Clone for TcRedQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcRedQopt {
@@ -1818,6 +1862,11 @@ impl TcRedQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1830,11 +1879,12 @@ impl TcRedQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcRedQopt>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcRedQopt>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSfbQopt {
     pub rehash_interval: u32,
     pub warmup_time: u32,
@@ -1845,11 +1895,6 @@ pub struct TcSfbQopt {
     pub limit: u32,
     pub penalty_rate: u32,
     pub penalty_burst: u32,
-}
-impl Clone for TcSfbQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSfbQopt {
@@ -1892,6 +1937,11 @@ impl TcSfbQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 36usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1904,11 +1954,12 @@ impl TcSfbQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSfbQopt>() == 36usize);
+        const _: () = assert!(std::mem::align_of::<TcSfbQopt>() == 4usize);
         36usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSfqQopt {
     #[doc = "Bytes per round allocated to flow\n"]
     pub quantum: u32,
@@ -1920,11 +1971,6 @@ pub struct TcSfqQopt {
     pub divisor: u32,
     #[doc = "Maximal number of flows\n"]
     pub flows: u32,
-}
-impl Clone for TcSfqQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSfqQopt {
@@ -1967,6 +2013,11 @@ impl TcSfqQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1979,11 +2030,12 @@ impl TcSfqQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSfqQopt>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcSfqQopt>() == 4usize);
         20usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSfqredStats {
     #[doc = "Early drops, below max threshold\n"]
     pub prob_drop: u32,
@@ -1997,11 +2049,6 @@ pub struct TcSfqredStats {
     pub prob_mark_head: u32,
     #[doc = "Marked packets, after max threshold\n"]
     pub forced_mark_head: u32,
-}
-impl Clone for TcSfqredStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSfqredStats {
@@ -2044,6 +2091,11 @@ impl TcSfqredStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2056,10 +2108,12 @@ impl TcSfqredStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSfqredStats>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcSfqredStats>() == 4usize);
         24usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSfqQoptV1 {
     pub v0: TcSfqQopt,
     #[doc = "Maximum number of packets per flow\n"]
@@ -2081,11 +2135,6 @@ pub struct TcSfqQoptV1 {
     #[doc = "probability, high resolution\n"]
     pub max_P: u32,
     pub stats: TcSfqredStats,
-}
-impl Clone for TcSfqQoptV1 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSfqQoptV1 {
@@ -2128,6 +2177,11 @@ impl TcSfqQoptV1 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 72usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2140,6 +2194,7 @@ impl TcSfqQoptV1 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSfqQoptV1>() == 72usize);
+        const _: () = assert!(std::mem::align_of::<TcSfqQoptV1>() == 4usize);
         72usize
     }
 }
@@ -2161,7 +2216,8 @@ impl std::fmt::Debug for TcSfqQoptV1 {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcRatespec {
     pub cell_log: u8,
     pub linklayer: u8,
@@ -2170,11 +2226,6 @@ pub struct TcRatespec {
     pub mpu: u8,
     pub _pad_5: [u8; 3usize],
     pub rate: u32,
-}
-impl Clone for TcRatespec {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcRatespec {
@@ -2217,6 +2268,11 @@ impl TcRatespec {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2229,6 +2285,7 @@ impl TcRatespec {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcRatespec>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<TcRatespec>() == 4usize);
         12usize
     }
 }
@@ -2244,18 +2301,14 @@ impl std::fmt::Debug for TcRatespec {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcTbfQopt {
     pub rate: TcRatespec,
     pub peakrate: TcRatespec,
     pub limit: u32,
     pub buffer: u32,
     pub mtu: u32,
-}
-impl Clone for TcTbfQopt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcTbfQopt {
@@ -2298,6 +2351,11 @@ impl TcTbfQopt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 36usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2310,6 +2368,7 @@ impl TcTbfQopt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcTbfQopt>() == 36usize);
+        const _: () = assert!(std::mem::align_of::<TcTbfQopt>() == 4usize);
         36usize
     }
 }
@@ -2324,8 +2383,8 @@ impl std::fmt::Debug for TcTbfQopt {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSizespec {
     pub cell_log: u8,
     pub size_log: u8,
@@ -2335,11 +2394,6 @@ pub struct TcSizespec {
     pub mpu: u32,
     pub mtu: u32,
     pub tsize: u32,
-}
-impl Clone for TcSizespec {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSizespec {
@@ -2382,6 +2436,11 @@ impl TcSizespec {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2394,21 +2453,17 @@ impl TcSizespec {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSizespec>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcSizespec>() == 4usize);
         24usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct GnetEstimator {
     #[doc = "Sampling period\n"]
     pub interval: i8,
     #[doc = "The log() of measurement window weight\n"]
     pub ewma_log: u8,
-}
-impl Clone for GnetEstimator {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for GnetEstimator {
@@ -2451,6 +2506,11 @@ impl GnetEstimator {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 2usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2463,11 +2523,12 @@ impl GnetEstimator {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<GnetEstimator>() == 2usize);
+        const _: () = assert!(std::mem::align_of::<GnetEstimator>() == 1usize);
         2usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcChokeXstats {
     #[doc = "Early drops\n"]
     pub early: u32,
@@ -2479,11 +2540,6 @@ pub struct TcChokeXstats {
     pub marked: u32,
     #[doc = "Drops due to flow match\n"]
     pub matched: u32,
-}
-impl Clone for TcChokeXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcChokeXstats {
@@ -2526,6 +2582,11 @@ impl TcChokeXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2538,11 +2599,12 @@ impl TcChokeXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcChokeXstats>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcChokeXstats>() == 4usize);
         20usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcCodelXstats {
     #[doc = "Largest packet we\\'ve seen so far\n"]
     pub maxpacket: u32,
@@ -2562,11 +2624,6 @@ pub struct TcCodelXstats {
     pub dropping: u32,
     #[doc = "Number of CE marked packets because of ce-threshold\n"]
     pub ce_mark: u32,
-}
-impl Clone for TcCodelXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcCodelXstats {
@@ -2609,6 +2666,11 @@ impl TcCodelXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 36usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2621,11 +2683,12 @@ impl TcCodelXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcCodelXstats>() == 36usize);
+        const _: () = assert!(std::mem::align_of::<TcCodelXstats>() == 4usize);
         36usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcFqCodelXstats {
     pub r#type: u32,
     #[doc = "Largest packet we\\'ve seen so far\n"]
@@ -2645,11 +2708,6 @@ pub struct TcFqCodelXstats {
     #[doc = "Memory usage in bytes\n"]
     pub memory_usage: u32,
     pub drop_overmemory: u32,
-}
-impl Clone for TcFqCodelXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcFqCodelXstats {
@@ -2692,6 +2750,11 @@ impl TcFqCodelXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 40usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2704,11 +2767,12 @@ impl TcFqCodelXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcFqCodelXstats>() == 40usize);
+        const _: () = assert!(std::mem::align_of::<TcFqCodelXstats>() == 4usize);
         40usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcDualpi2Xstats {
     #[doc = "Current base PI probability\n"]
     pub prob: u32,
@@ -2734,11 +2798,6 @@ pub struct TcDualpi2Xstats {
     pub max_memory_used: u32,
     #[doc = "Memory limit in bytes\n"]
     pub memory_limit: u32,
-}
-impl Clone for TcDualpi2Xstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcDualpi2Xstats {
@@ -2781,6 +2840,11 @@ impl TcDualpi2Xstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 48usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2793,11 +2857,12 @@ impl TcDualpi2Xstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcDualpi2Xstats>() == 48usize);
+        const _: () = assert!(std::mem::align_of::<TcDualpi2Xstats>() == 4usize);
         48usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcFqPieXstats {
     #[doc = "Total number of packets enqueued\n"]
     pub packets_in: u32,
@@ -2817,11 +2882,6 @@ pub struct TcFqPieXstats {
     pub old_flows_len: u32,
     #[doc = "Total memory across all queues\n"]
     pub memory_usage: u32,
-}
-impl Clone for TcFqPieXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcFqPieXstats {
@@ -2864,6 +2924,11 @@ impl TcFqPieXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 36usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2876,10 +2941,13 @@ impl TcFqPieXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcFqPieXstats>() == 36usize);
+        const _: () = assert!(std::mem::align_of::<TcFqPieXstats>() == 4usize);
         36usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcFqQdStats {
     pub gc_flows: u64,
     #[doc = "obsolete\n"]
@@ -2903,11 +2971,6 @@ pub struct TcFqQdStats {
     pub band_drops: [u8; 24usize],
     pub band_pkt_count: [u8; 12usize],
     pub _pad: [u8; 4usize],
-}
-impl Clone for TcFqQdStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcFqQdStats {
@@ -2950,6 +3013,11 @@ impl TcFqQdStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 152usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2962,6 +3030,7 @@ impl TcFqQdStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcFqQdStats>() == 152usize);
+        const _: () = assert!(std::mem::align_of::<TcFqQdStats>() == 4usize);
         152usize
     }
 }
@@ -2984,13 +3053,16 @@ impl std::fmt::Debug for TcFqQdStats {
             .field("horizon_drops", &{ self.horizon_drops })
             .field("horizon_caps", &{ self.horizon_caps })
             .field("fastpath_packets", &{ self.fastpath_packets })
-            .field("band_drops", &self.band_drops)
-            .field("band_pkt_count", &self.band_pkt_count)
+            .field("band_drops", &FormatHexdump(self.band_drops.as_slice()))
+            .field(
+                "band_pkt_count",
+                &FormatHexdump(self.band_pkt_count.as_slice()),
+            )
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcHhfXstats {
     #[doc = "Number of times max qdisc packet limit was hit\n"]
     pub drop_overlimit: u32,
@@ -3000,11 +3072,6 @@ pub struct TcHhfXstats {
     pub hh_tot_count: u32,
     #[doc = "Number of current heavy-hitters\n"]
     pub hh_cur_count: u32,
-}
-impl Clone for TcHhfXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcHhfXstats {
@@ -3047,6 +3114,11 @@ impl TcHhfXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3059,10 +3131,13 @@ impl TcHhfXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcHhfXstats>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcHhfXstats>() == 4usize);
         16usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcPieXstats {
     #[doc = "Current probability\n"]
     pub prob: u64,
@@ -3082,11 +3157,6 @@ pub struct TcPieXstats {
     pub maxq: u32,
     #[doc = "Packets marked with ECN\n"]
     pub ecn_mark: u32,
-}
-impl Clone for TcPieXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcPieXstats {
@@ -3129,6 +3199,11 @@ impl TcPieXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 40usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3141,6 +3216,7 @@ impl TcPieXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcPieXstats>() == 40usize);
+        const _: () = assert!(std::mem::align_of::<TcPieXstats>() == 4usize);
         40usize
     }
 }
@@ -3159,8 +3235,8 @@ impl std::fmt::Debug for TcPieXstats {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcRedXstats {
     #[doc = "Early drops\n"]
     pub early: u32,
@@ -3170,11 +3246,6 @@ pub struct TcRedXstats {
     pub other: u32,
     #[doc = "Marked packets\n"]
     pub marked: u32,
-}
-impl Clone for TcRedXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcRedXstats {
@@ -3217,6 +3288,11 @@ impl TcRedXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3229,11 +3305,12 @@ impl TcRedXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcRedXstats>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcRedXstats>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSfbXstats {
     pub earlydrop: u32,
     pub penaltydrop: u32,
@@ -3245,11 +3322,6 @@ pub struct TcSfbXstats {
     pub maxqlen: u32,
     pub maxprob: u32,
     pub avgprob: u32,
-}
-impl Clone for TcSfbXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSfbXstats {
@@ -3292,6 +3364,11 @@ impl TcSfbXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 36usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3304,18 +3381,14 @@ impl TcSfbXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSfbXstats>() == 36usize);
+        const _: () = assert!(std::mem::align_of::<TcSfbXstats>() == 4usize);
         36usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcSfqXstats {
     pub allot: i32,
-}
-impl Clone for TcSfqXstats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcSfqXstats {
@@ -3358,6 +3431,11 @@ impl TcSfqXstats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3370,19 +3448,17 @@ impl TcSfqXstats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcSfqXstats>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<TcSfqXstats>() == 4usize);
         4usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct GnetStatsBasic {
     pub bytes: u64,
     pub packets: u32,
     pub _pad_12: [u8; 4usize],
-}
-impl Clone for GnetStatsBasic {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for GnetStatsBasic {
@@ -3425,6 +3501,11 @@ impl GnetStatsBasic {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3437,6 +3518,7 @@ impl GnetStatsBasic {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<GnetStatsBasic>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<GnetStatsBasic>() == 4usize);
         16usize
     }
 }
@@ -3448,16 +3530,11 @@ impl std::fmt::Debug for GnetStatsBasic {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct GnetStatsRateEst {
     pub bps: u32,
     pub pps: u32,
-}
-impl Clone for GnetStatsRateEst {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for GnetStatsRateEst {
@@ -3500,6 +3577,11 @@ impl GnetStatsRateEst {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3512,18 +3594,16 @@ impl GnetStatsRateEst {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<GnetStatsRateEst>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<GnetStatsRateEst>() == 4usize);
         8usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct GnetStatsRateEst64 {
     pub bps: u64,
     pub pps: u64,
-}
-impl Clone for GnetStatsRateEst64 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for GnetStatsRateEst64 {
@@ -3566,6 +3646,11 @@ impl GnetStatsRateEst64 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3578,6 +3663,7 @@ impl GnetStatsRateEst64 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<GnetStatsRateEst64>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<GnetStatsRateEst64>() == 4usize);
         16usize
     }
 }
@@ -3589,19 +3675,14 @@ impl std::fmt::Debug for GnetStatsRateEst64 {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct GnetStatsQueue {
     pub qlen: u32,
     pub backlog: u32,
     pub drops: u32,
     pub requeues: u32,
     pub overlimits: u32,
-}
-impl Clone for GnetStatsQueue {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for GnetStatsQueue {
@@ -3644,6 +3725,11 @@ impl GnetStatsQueue {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3656,20 +3742,17 @@ impl GnetStatsQueue {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<GnetStatsQueue>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<GnetStatsQueue>() == 4usize);
         20usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcU32Key {
     pub _mask_be: u32,
     pub _val_be: u32,
     pub off: i32,
     pub offmask: i32,
-}
-impl Clone for TcU32Key {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcU32Key {
@@ -3712,6 +3795,11 @@ impl TcU32Key {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3724,6 +3812,7 @@ impl TcU32Key {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcU32Key>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcU32Key>() == 4usize);
         16usize
     }
     pub fn mask(&self) -> u32 {
@@ -3749,17 +3838,12 @@ impl std::fmt::Debug for TcU32Key {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcU32Mark {
     pub val: u32,
     pub mask: u32,
     pub success: u32,
-}
-impl Clone for TcU32Mark {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcU32Mark {
@@ -3802,6 +3886,11 @@ impl TcU32Mark {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3814,10 +3903,12 @@ impl TcU32Mark {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcU32Mark>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<TcU32Mark>() == 4usize);
         12usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcU32Sel {
     pub flags: u8,
     pub offshift: u8,
@@ -3829,11 +3920,6 @@ pub struct TcU32Sel {
     pub hoff: i16,
     pub _hmask_be: u32,
     pub keys: TcU32Key,
-}
-impl Clone for TcU32Sel {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcU32Sel {
@@ -3876,6 +3962,11 @@ impl TcU32Sel {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 32usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3888,6 +3979,7 @@ impl TcU32Sel {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcU32Sel>() == 32usize);
+        const _: () = assert!(std::mem::align_of::<TcU32Sel>() == 4usize);
         32usize
     }
     pub fn offmask(&self) -> u16 {
@@ -3918,16 +4010,13 @@ impl std::fmt::Debug for TcU32Sel {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcU32Pcnt {
     pub rcnt: u64,
     pub rhit: u64,
     pub kcnts: u64,
-}
-impl Clone for TcU32Pcnt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcU32Pcnt {
@@ -3970,6 +4059,11 @@ impl TcU32Pcnt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -3982,6 +4076,7 @@ impl TcU32Pcnt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcU32Pcnt>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcU32Pcnt>() == 4usize);
         24usize
     }
 }
@@ -3994,17 +4089,14 @@ impl std::fmt::Debug for TcU32Pcnt {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcfT {
     pub install: u64,
     pub lastuse: u64,
     pub expires: u64,
     pub firstuse: u64,
-}
-impl Clone for TcfT {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcfT {
@@ -4047,6 +4139,11 @@ impl TcfT {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 32usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4059,6 +4156,7 @@ impl TcfT {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcfT>() == 32usize);
+        const _: () = assert!(std::mem::align_of::<TcfT>() == 4usize);
         32usize
     }
 }
@@ -4072,19 +4170,14 @@ impl std::fmt::Debug for TcfT {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcGact {
     pub index: u32,
     pub capab: u32,
     pub action: i32,
     pub refcnt: i32,
     pub bindcnt: i32,
-}
-impl Clone for TcGact {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcGact {
@@ -4127,6 +4220,11 @@ impl TcGact {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 20usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4139,20 +4237,16 @@ impl TcGact {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcGact>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcGact>() == 4usize);
         20usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcGactP {
     pub ptype: u16,
     pub pval: u16,
     pub paction: i32,
-}
-impl Clone for TcGactP {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcGactP {
@@ -4195,6 +4289,11 @@ impl TcGactP {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4207,19 +4306,15 @@ impl TcGactP {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcGactP>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<TcGactP>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcfEmatchTreeHdr {
     pub nmatches: u16,
     pub progid: u16,
-}
-impl Clone for TcfEmatchTreeHdr {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcfEmatchTreeHdr {
@@ -4262,6 +4357,11 @@ impl TcfEmatchTreeHdr {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4274,18 +4374,16 @@ impl TcfEmatchTreeHdr {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcfEmatchTreeHdr>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<TcfEmatchTreeHdr>() == 2usize);
         4usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcBasicPcnt {
     pub rcnt: u64,
     pub rhit: u64,
-}
-impl Clone for TcBasicPcnt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcBasicPcnt {
@@ -4328,6 +4426,11 @@ impl TcBasicPcnt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4340,6 +4443,7 @@ impl TcBasicPcnt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcBasicPcnt>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<TcBasicPcnt>() == 4usize);
         16usize
     }
 }
@@ -4351,14 +4455,11 @@ impl std::fmt::Debug for TcBasicPcnt {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct TcMatchallPcnt {
     pub rhit: u64,
-}
-impl Clone for TcMatchallPcnt {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcMatchallPcnt {
@@ -4401,6 +4502,11 @@ impl TcMatchallPcnt {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4413,6 +4519,7 @@ impl TcMatchallPcnt {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcMatchallPcnt>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<TcMatchallPcnt>() == 4usize);
         8usize
     }
 }
@@ -4423,8 +4530,8 @@ impl std::fmt::Debug for TcMatchallPcnt {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcMpls {
     pub index: u32,
     pub capab: u32,
@@ -4432,11 +4539,6 @@ pub struct TcMpls {
     pub refcnt: i32,
     pub bindcnt: i32,
     pub m_action: i32,
-}
-impl Clone for TcMpls {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcMpls {
@@ -4479,6 +4581,11 @@ impl TcMpls {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4491,10 +4598,12 @@ impl TcMpls {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcMpls>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcMpls>() == 4usize);
         24usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcPolice {
     pub index: u32,
     pub action: i32,
@@ -4506,11 +4615,6 @@ pub struct TcPolice {
     pub refcnt: i32,
     pub bindcnt: i32,
     pub capab: u32,
-}
-impl Clone for TcPolice {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcPolice {
@@ -4553,6 +4657,11 @@ impl TcPolice {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 56usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4565,6 +4674,7 @@ impl TcPolice {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcPolice>() == 56usize);
+        const _: () = assert!(std::mem::align_of::<TcPolice>() == 4usize);
         56usize
     }
 }
@@ -4584,7 +4694,8 @@ impl std::fmt::Debug for TcPolice {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcPeditSel {
     pub index: u32,
     pub capab: u32,
@@ -4595,11 +4706,6 @@ pub struct TcPeditSel {
     pub flags: u8,
     pub _pad_22: [u8; 2usize],
     pub keys: TcPeditKey,
-}
-impl Clone for TcPeditSel {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcPeditSel {
@@ -4642,6 +4748,11 @@ impl TcPeditSel {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 48usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4654,6 +4765,7 @@ impl TcPeditSel {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcPeditSel>() == 48usize);
+        const _: () = assert!(std::mem::align_of::<TcPeditSel>() == 4usize);
         48usize
     }
 }
@@ -4671,8 +4783,8 @@ impl std::fmt::Debug for TcPeditSel {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcPeditKey {
     pub mask: u32,
     pub val: u32,
@@ -4680,11 +4792,6 @@ pub struct TcPeditKey {
     pub at: u32,
     pub offmask: u32,
     pub shift: u32,
-}
-impl Clone for TcPeditKey {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcPeditKey {
@@ -4727,6 +4834,11 @@ impl TcPeditKey {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4739,11 +4851,12 @@ impl TcPeditKey {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcPeditKey>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcPeditKey>() == 4usize);
         24usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct TcVlan {
     pub index: u32,
     pub capab: u32,
@@ -4751,11 +4864,6 @@ pub struct TcVlan {
     pub refcnt: i32,
     pub bindcnt: i32,
     pub v_action: i32,
-}
-impl Clone for TcVlan {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for TcVlan {
@@ -4798,6 +4906,11 @@ impl TcVlan {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 24usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -4810,6 +4923,7 @@ impl TcVlan {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<TcVlan>() == 24usize);
+        const _: () = assert!(std::mem::align_of::<TcVlan>() == 4usize);
         24usize
     }
 }
@@ -5121,8 +5235,8 @@ pub enum OptionsMsg<'a> {
     U32(IterableU32Attrs<'a>),
 }
 impl<'a> OptionsMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
-        match selector.to_bytes() {
+    fn select_with_loc(selector: &'_ [u8], buf: &'a [u8], loc: usize) -> Option<Self> {
+        match selector {
             b"basic" => Some(OptionsMsg::Basic(IterableBasicAttrs::with_loc(buf, loc))),
             b"bpf" => Some(OptionsMsg::Bpf(IterableBpfAttrs::with_loc(buf, loc))),
             b"bfifo" => Some(OptionsMsg::Bfifo(TcFifoQopt::new_from_zeroed(buf))),
@@ -5198,8 +5312,8 @@ pub enum TcaStatsAppMsg<'a> {
     Sfq(TcSfqXstats),
 }
 impl<'a> TcaStatsAppMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
-        match selector.to_bytes() {
+    fn select_with_loc(selector: &'_ [u8], buf: &'a [u8], loc: usize) -> Option<Self> {
+        match selector {
             b"cake" => Some(TcaStatsAppMsg::Cake(IterableCakeStatsAttrs::with_loc(
                 buf, loc,
             ))),
@@ -5254,6 +5368,7 @@ pub struct IterableAttrs<'a> {
     buf: &'a [u8],
     pos: usize,
     orig_loc: usize,
+    selector_kind: Option<&'a [u8]>,
 }
 impl<'a> IterableAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
@@ -5261,6 +5376,7 @@ impl<'a> IterableAttrs<'a> {
             buf,
             pos: 0,
             orig_loc,
+            selector_kind: None,
         }
     }
     pub fn get_buf(&self) -> &'a [u8] {
@@ -5291,7 +5407,9 @@ impl<'a> Iterator for IterableAttrs<'a> {
                 }),
                 2u16 => Attrs::Options({
                     let res = {
-                        let Ok(selector) = self.get_kind() else { break };
+                        let Some(selector) = self.selector_kind else {
+                            break;
+                        };
                         match OptionsMsg::select_with_loc(selector, next, self.orig_loc) {
                             Some(sub) => Some(sub),
                             None if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
@@ -5308,7 +5426,9 @@ impl<'a> Iterator for IterableAttrs<'a> {
                 }),
                 4u16 => Attrs::Xstats({
                     let res = {
-                        let Ok(selector) = self.get_kind() else { break };
+                        let Some(selector) = self.selector_kind else {
+                            break;
+                        };
                         match TcaStatsAppMsg::select_with_loc(selector, next, self.orig_loc) {
                             Some(sub) => Some(sub),
                             None if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
@@ -5377,6 +5497,9 @@ impl<'a> Iterator for IterableAttrs<'a> {
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
+            if let Attrs::Kind(sel) = &res {
+                self.selector_kind = Some(sel.to_bytes());
+            }
             return Some(Ok(res));
         }
         Some(Err(ErrorContext::new(
@@ -5390,7 +5513,14 @@ impl<'a> Iterator for IterableAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5737,8 +5867,8 @@ pub enum ActOptionsMsg<'a> {
     Vlan(IterableActVlanAttrs<'a>),
 }
 impl<'a> ActOptionsMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
-        match selector.to_bytes() {
+    fn select_with_loc(selector: &'_ [u8], buf: &'a [u8], loc: usize) -> Option<Self> {
+        match selector {
             b"bpf" => Some(ActOptionsMsg::Bpf(IterableActBpfAttrs::with_loc(buf, loc))),
             b"connmark" => Some(ActOptionsMsg::Connmark(IterableActConnmarkAttrs::with_loc(
                 buf, loc,
@@ -5818,6 +5948,7 @@ pub struct IterableActAttrs<'a> {
     buf: &'a [u8],
     pos: usize,
     orig_loc: usize,
+    selector_kind: Option<&'a [u8]>,
 }
 impl<'a> IterableActAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
@@ -5825,6 +5956,7 @@ impl<'a> IterableActAttrs<'a> {
             buf,
             pos: 0,
             orig_loc,
+            selector_kind: None,
         }
     }
     pub fn get_buf(&self) -> &'a [u8] {
@@ -5855,7 +5987,9 @@ impl<'a> Iterator for IterableActAttrs<'a> {
                 }),
                 2u16 => ActAttrs::Options({
                     let res = {
-                        let Ok(selector) = self.get_kind() else { break };
+                        let Some(selector) = self.selector_kind else {
+                            break;
+                        };
                         match ActOptionsMsg::select_with_loc(selector, next, self.orig_loc) {
                             Some(sub) => Some(sub),
                             None if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
@@ -5908,6 +6042,9 @@ impl<'a> Iterator for IterableActAttrs<'a> {
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
+            if let ActAttrs::Kind(sel) = &res {
+                self.selector_kind = Some(sel.to_bytes());
+            }
             return Some(Ok(res));
         }
         Some(Err(ErrorContext::new(
@@ -5921,7 +6058,14 @@ impl<'a> Iterator for IterableActAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5937,7 +6081,7 @@ impl<'a> std::fmt::Debug for IterableActAttrs<'_> {
                 ActAttrs::Index(val) => fmt.field("Index", &val),
                 ActAttrs::Stats(val) => fmt.field("Stats", &val),
                 ActAttrs::Pad(val) => fmt.field("Pad", &val),
-                ActAttrs::Cookie(val) => fmt.field("Cookie", &val),
+                ActAttrs::Cookie(val) => fmt.field("Cookie", &FormatHexdump(val)),
                 ActAttrs::Flags(val) => fmt.field("Flags", &val),
                 ActAttrs::HwStats(val) => fmt.field("HwStats", &val),
                 ActAttrs::UsedHwStats(val) => fmt.field("UsedHwStats", &val),
@@ -6306,7 +6450,14 @@ impl<'a> Iterator for IterableActBpfAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActBpfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActBpfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActBpfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6318,14 +6469,14 @@ impl<'a> std::fmt::Debug for IterableActBpfAttrs<'_> {
             };
             match attr {
                 ActBpfAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActBpfAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActBpfAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActBpfAttrs::OpsLen(val) => fmt.field("OpsLen", &val),
-                ActBpfAttrs::Ops(val) => fmt.field("Ops", &val),
+                ActBpfAttrs::Ops(val) => fmt.field("Ops", &FormatHexdump(val)),
                 ActBpfAttrs::Fd(val) => fmt.field("Fd", &val),
                 ActBpfAttrs::Name(val) => fmt.field("Name", &val),
                 ActBpfAttrs::Pad(val) => fmt.field("Pad", &val),
-                ActBpfAttrs::Tag(val) => fmt.field("Tag", &val),
-                ActBpfAttrs::Id(val) => fmt.field("Id", &val),
+                ActBpfAttrs::Tag(val) => fmt.field("Tag", &FormatHexdump(val)),
+                ActBpfAttrs::Id(val) => fmt.field("Id", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -6551,7 +6702,14 @@ impl<'a> Iterator for IterableActConnmarkAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActConnmarkAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActConnmarkAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActConnmarkAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6562,7 +6720,7 @@ impl<'a> std::fmt::Debug for IterableActConnmarkAttrs<'_> {
                 }
             };
             match attr {
-                ActConnmarkAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActConnmarkAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActConnmarkAttrs::Tm(val) => fmt.field("Tm", &val),
                 ActConnmarkAttrs::Pad(val) => fmt.field("Pad", &val),
             };
@@ -6754,7 +6912,14 @@ impl<'a> Iterator for IterableActCsumAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActCsumAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActCsumAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActCsumAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6765,7 +6930,7 @@ impl<'a> std::fmt::Debug for IterableActCsumAttrs<'_> {
                 }
             };
             match attr {
-                ActCsumAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActCsumAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActCsumAttrs::Tm(val) => fmt.field("Tm", &val),
                 ActCsumAttrs::Pad(val) => fmt.field("Pad", &val),
             };
@@ -7287,7 +7452,14 @@ impl<'a> Iterator for IterableActCtAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActCtAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActCtAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActCtAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -7298,18 +7470,18 @@ impl<'a> std::fmt::Debug for IterableActCtAttrs<'_> {
                 }
             };
             match attr {
-                ActCtAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActCtAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActCtAttrs::Tm(val) => fmt.field("Tm", &val),
                 ActCtAttrs::Action(val) => fmt.field("Action", &val),
                 ActCtAttrs::Zone(val) => fmt.field("Zone", &val),
                 ActCtAttrs::Mark(val) => fmt.field("Mark", &val),
                 ActCtAttrs::MarkMask(val) => fmt.field("MarkMask", &val),
-                ActCtAttrs::Labels(val) => fmt.field("Labels", &val),
-                ActCtAttrs::LabelsMask(val) => fmt.field("LabelsMask", &val),
+                ActCtAttrs::Labels(val) => fmt.field("Labels", &FormatHexdump(val)),
+                ActCtAttrs::LabelsMask(val) => fmt.field("LabelsMask", &FormatHexdump(val)),
                 ActCtAttrs::NatIpv4Min(val) => fmt.field("NatIpv4Min", &val),
                 ActCtAttrs::NatIpv4Max(val) => fmt.field("NatIpv4Max", &val),
-                ActCtAttrs::NatIpv6Min(val) => fmt.field("NatIpv6Min", &val),
-                ActCtAttrs::NatIpv6Max(val) => fmt.field("NatIpv6Max", &val),
+                ActCtAttrs::NatIpv6Min(val) => fmt.field("NatIpv6Min", &FormatHexdump(val)),
+                ActCtAttrs::NatIpv6Max(val) => fmt.field("NatIpv6Max", &FormatHexdump(val)),
                 ActCtAttrs::NatPortMin(val) => fmt.field("NatPortMin", &val),
                 ActCtAttrs::NatPortMax(val) => fmt.field("NatPortMax", &val),
                 ActCtAttrs::Pad(val) => fmt.field("Pad", &val),
@@ -7749,7 +7921,14 @@ impl<'a> Iterator for IterableActCtinfoAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActCtinfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActCtinfoAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActCtinfoAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -7762,7 +7941,7 @@ impl<'a> std::fmt::Debug for IterableActCtinfoAttrs<'_> {
             match attr {
                 ActCtinfoAttrs::Pad(val) => fmt.field("Pad", &val),
                 ActCtinfoAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActCtinfoAttrs::Act(val) => fmt.field("Act", &val),
+                ActCtinfoAttrs::Act(val) => fmt.field("Act", &FormatHexdump(val)),
                 ActCtinfoAttrs::Zone(val) => fmt.field("Zone", &val),
                 ActCtinfoAttrs::ParmsDscpMask(val) => fmt.field("ParmsDscpMask", &val),
                 ActCtinfoAttrs::ParmsDscpStatemask(val) => fmt.field("ParmsDscpStatemask", &val),
@@ -8155,7 +8334,14 @@ impl<'a> Iterator for IterableActGateAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActGateAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActGateAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActGateAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -8167,10 +8353,10 @@ impl<'a> std::fmt::Debug for IterableActGateAttrs<'_> {
             };
             match attr {
                 ActGateAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActGateAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActGateAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActGateAttrs::Pad(val) => fmt.field("Pad", &val),
                 ActGateAttrs::Priority(val) => fmt.field("Priority", &val),
-                ActGateAttrs::EntryList(val) => fmt.field("EntryList", &val),
+                ActGateAttrs::EntryList(val) => fmt.field("EntryList", &FormatHexdump(val)),
                 ActGateAttrs::BaseTime(val) => fmt.field("BaseTime", &val),
                 ActGateAttrs::CycleTime(val) => fmt.field("CycleTime", &val),
                 ActGateAttrs::CycleTimeExt(val) => fmt.field("CycleTimeExt", &val),
@@ -8495,7 +8681,14 @@ impl<'a> Iterator for IterableActIfeAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActIfeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActIfeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActIfeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -8506,12 +8699,12 @@ impl<'a> std::fmt::Debug for IterableActIfeAttrs<'_> {
                 }
             };
             match attr {
-                ActIfeAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActIfeAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActIfeAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActIfeAttrs::Dmac(val) => fmt.field("Dmac", &val),
-                ActIfeAttrs::Smac(val) => fmt.field("Smac", &val),
+                ActIfeAttrs::Dmac(val) => fmt.field("Dmac", &FormatHexdump(val)),
+                ActIfeAttrs::Smac(val) => fmt.field("Smac", &FormatHexdump(val)),
                 ActIfeAttrs::Type(val) => fmt.field("Type", &val),
-                ActIfeAttrs::Metalst(val) => fmt.field("Metalst", &val),
+                ActIfeAttrs::Metalst(val) => fmt.field("Metalst", &FormatHexdump(val)),
                 ActIfeAttrs::Pad(val) => fmt.field("Pad", &val),
             };
         }
@@ -8748,7 +8941,14 @@ impl<'a> Iterator for IterableActMirredAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActMirredAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActMirredAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActMirredAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -8760,9 +8960,9 @@ impl<'a> std::fmt::Debug for IterableActMirredAttrs<'_> {
             };
             match attr {
                 ActMirredAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActMirredAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActMirredAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActMirredAttrs::Pad(val) => fmt.field("Pad", &val),
-                ActMirredAttrs::Blockid(val) => fmt.field("Blockid", &val),
+                ActMirredAttrs::Blockid(val) => fmt.field("Blockid", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -9068,7 +9268,14 @@ impl<'a> Iterator for IterableActMplsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActMplsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActMplsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActMplsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -9306,7 +9513,14 @@ impl<'a> Iterator for IterableActNatAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActNatAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActNatAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActNatAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -9317,7 +9531,7 @@ impl<'a> std::fmt::Debug for IterableActNatAttrs<'_> {
                 }
             };
             match attr {
-                ActNatAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActNatAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActNatAttrs::Tm(val) => fmt.field("Tm", &val),
                 ActNatAttrs::Pad(val) => fmt.field("Pad", &val),
             };
@@ -9575,7 +9789,14 @@ impl<'a> Iterator for IterableActPeditAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActPeditAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActPeditAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActPeditAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -9589,9 +9810,9 @@ impl<'a> std::fmt::Debug for IterableActPeditAttrs<'_> {
                 ActPeditAttrs::Tm(val) => fmt.field("Tm", &val),
                 ActPeditAttrs::Parms(val) => fmt.field("Parms", &val),
                 ActPeditAttrs::Pad(val) => fmt.field("Pad", &val),
-                ActPeditAttrs::ParmsEx(val) => fmt.field("ParmsEx", &val),
-                ActPeditAttrs::KeysEx(val) => fmt.field("KeysEx", &val),
-                ActPeditAttrs::KeyEx(val) => fmt.field("KeyEx", &val),
+                ActPeditAttrs::ParmsEx(val) => fmt.field("ParmsEx", &FormatHexdump(val)),
+                ActPeditAttrs::KeysEx(val) => fmt.field("KeysEx", &FormatHexdump(val)),
+                ActPeditAttrs::KeyEx(val) => fmt.field("KeyEx", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -9821,7 +10042,14 @@ impl<'a> Iterator for IterableActSimpleAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActSimpleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActSimpleAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActSimpleAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -9833,8 +10061,8 @@ impl<'a> std::fmt::Debug for IterableActSimpleAttrs<'_> {
             };
             match attr {
                 ActSimpleAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActSimpleAttrs::Parms(val) => fmt.field("Parms", &val),
-                ActSimpleAttrs::Data(val) => fmt.field("Data", &val),
+                ActSimpleAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
+                ActSimpleAttrs::Data(val) => fmt.field("Data", &FormatHexdump(val)),
                 ActSimpleAttrs::Pad(val) => fmt.field("Pad", &val),
             };
         }
@@ -10185,7 +10413,14 @@ impl<'a> Iterator for IterableActSkbeditAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActSkbeditAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActSkbeditAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActSkbeditAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -10197,7 +10432,7 @@ impl<'a> std::fmt::Debug for IterableActSkbeditAttrs<'_> {
             };
             match attr {
                 ActSkbeditAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActSkbeditAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActSkbeditAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActSkbeditAttrs::Priority(val) => fmt.field("Priority", &val),
                 ActSkbeditAttrs::QueueMapping(val) => fmt.field("QueueMapping", &val),
                 ActSkbeditAttrs::Mark(val) => fmt.field("Mark", &val),
@@ -10503,7 +10738,14 @@ impl<'a> Iterator for IterableActSkbmodAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActSkbmodAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActSkbmodAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActSkbmodAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -10515,10 +10757,10 @@ impl<'a> std::fmt::Debug for IterableActSkbmodAttrs<'_> {
             };
             match attr {
                 ActSkbmodAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActSkbmodAttrs::Parms(val) => fmt.field("Parms", &val),
-                ActSkbmodAttrs::Dmac(val) => fmt.field("Dmac", &val),
-                ActSkbmodAttrs::Smac(val) => fmt.field("Smac", &val),
-                ActSkbmodAttrs::Etype(val) => fmt.field("Etype", &val),
+                ActSkbmodAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
+                ActSkbmodAttrs::Dmac(val) => fmt.field("Dmac", &FormatHexdump(val)),
+                ActSkbmodAttrs::Smac(val) => fmt.field("Smac", &FormatHexdump(val)),
+                ActSkbmodAttrs::Etype(val) => fmt.field("Etype", &FormatHexdump(val)),
                 ActSkbmodAttrs::Pad(val) => fmt.field("Pad", &val),
             };
         }
@@ -10965,7 +11207,14 @@ impl<'a> Iterator for IterableActTunnelKeyAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActTunnelKeyAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActTunnelKeyAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActTunnelKeyAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -10977,16 +11226,16 @@ impl<'a> std::fmt::Debug for IterableActTunnelKeyAttrs<'_> {
             };
             match attr {
                 ActTunnelKeyAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActTunnelKeyAttrs::Parms(val) => fmt.field("Parms", &val),
+                ActTunnelKeyAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
                 ActTunnelKeyAttrs::EncIpv4Src(val) => fmt.field("EncIpv4Src", &val),
                 ActTunnelKeyAttrs::EncIpv4Dst(val) => fmt.field("EncIpv4Dst", &val),
-                ActTunnelKeyAttrs::EncIpv6Src(val) => fmt.field("EncIpv6Src", &val),
-                ActTunnelKeyAttrs::EncIpv6Dst(val) => fmt.field("EncIpv6Dst", &val),
+                ActTunnelKeyAttrs::EncIpv6Src(val) => fmt.field("EncIpv6Src", &FormatHexdump(val)),
+                ActTunnelKeyAttrs::EncIpv6Dst(val) => fmt.field("EncIpv6Dst", &FormatHexdump(val)),
                 ActTunnelKeyAttrs::EncKeyId(val) => fmt.field("EncKeyId", &val),
                 ActTunnelKeyAttrs::Pad(val) => fmt.field("Pad", &val),
                 ActTunnelKeyAttrs::EncDstPort(val) => fmt.field("EncDstPort", &val),
                 ActTunnelKeyAttrs::NoCsum(val) => fmt.field("NoCsum", &val),
-                ActTunnelKeyAttrs::EncOpts(val) => fmt.field("EncOpts", &val),
+                ActTunnelKeyAttrs::EncOpts(val) => fmt.field("EncOpts", &FormatHexdump(val)),
                 ActTunnelKeyAttrs::EncTos(val) => fmt.field("EncTos", &val),
                 ActTunnelKeyAttrs::EncTtl(val) => fmt.field("EncTtl", &val),
                 ActTunnelKeyAttrs::NoFrag(val) => fmt.field("NoFrag", &val),
@@ -11355,7 +11604,14 @@ impl<'a> Iterator for IterableActVlanAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActVlanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActVlanAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActVlanAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -11372,8 +11628,8 @@ impl<'a> std::fmt::Debug for IterableActVlanAttrs<'_> {
                 ActVlanAttrs::PushVlanProtocol(val) => fmt.field("PushVlanProtocol", &val),
                 ActVlanAttrs::Pad(val) => fmt.field("Pad", &val),
                 ActVlanAttrs::PushVlanPriority(val) => fmt.field("PushVlanPriority", &val),
-                ActVlanAttrs::PushEthDst(val) => fmt.field("PushEthDst", &val),
-                ActVlanAttrs::PushEthSrc(val) => fmt.field("PushEthSrc", &val),
+                ActVlanAttrs::PushEthDst(val) => fmt.field("PushEthDst", &FormatHexdump(val)),
+                ActVlanAttrs::PushEthSrc(val) => fmt.field("PushEthSrc", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -11710,7 +11966,14 @@ impl std::fmt::Debug for IterableArrayActAttrs<'_> {
 impl<'a> std::fmt::Debug for IterableBasicAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BasicAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableBasicAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -12118,7 +12381,14 @@ impl<'a> Iterator for IterableBpfAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableBpfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BpfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableBpfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -12133,12 +12403,12 @@ impl<'a> std::fmt::Debug for IterableBpfAttrs<'_> {
                 BpfAttrs::Police(val) => fmt.field("Police", &val),
                 BpfAttrs::Classid(val) => fmt.field("Classid", &val),
                 BpfAttrs::OpsLen(val) => fmt.field("OpsLen", &val),
-                BpfAttrs::Ops(val) => fmt.field("Ops", &val),
+                BpfAttrs::Ops(val) => fmt.field("Ops", &FormatHexdump(val)),
                 BpfAttrs::Fd(val) => fmt.field("Fd", &val),
                 BpfAttrs::Name(val) => fmt.field("Name", &val),
                 BpfAttrs::Flags(val) => fmt.field("Flags", &val),
                 BpfAttrs::FlagsGen(val) => fmt.field("FlagsGen", &val),
-                BpfAttrs::Tag(val) => fmt.field("Tag", &val),
+                BpfAttrs::Tag(val) => fmt.field("Tag", &FormatHexdump(val)),
                 BpfAttrs::Id(val) => fmt.field("Id", &val),
             };
         }
@@ -12715,7 +12985,14 @@ impl<'a> Iterator for IterableCakeAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableCakeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CakeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCakeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -13388,7 +13665,14 @@ impl std::fmt::Debug for IterableArrayCakeTinStatsAttrs<'_> {
 impl<'a> std::fmt::Debug for IterableCakeStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CakeStatsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCakeStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14181,7 +14465,14 @@ impl<'a> Iterator for IterableCakeTinStatsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableCakeTinStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CakeTinStatsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCakeTinStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14494,7 +14785,14 @@ impl<'a> Iterator for IterableCbsAttrs<'a> {
 impl std::fmt::Debug for IterableCbsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CbsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCbsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14683,7 +14981,14 @@ impl<'a> Iterator for IterableCgroupAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableCgroupAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CgroupAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCgroupAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14696,7 +15001,7 @@ impl<'a> std::fmt::Debug for IterableCgroupAttrs<'_> {
             match attr {
                 CgroupAttrs::Act(val) => fmt.field("Act", &val),
                 CgroupAttrs::Police(val) => fmt.field("Police", &val),
-                CgroupAttrs::Ematches(val) => fmt.field("Ematches", &val),
+                CgroupAttrs::Ematches(val) => fmt.field("Ematches", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -14894,7 +15199,14 @@ impl<'a> Iterator for IterableChokeAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableChokeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ChokeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableChokeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14906,7 +15218,7 @@ impl<'a> std::fmt::Debug for IterableChokeAttrs<'_> {
             };
             match attr {
                 ChokeAttrs::Parms(val) => fmt.field("Parms", &val),
-                ChokeAttrs::Stab(val) => fmt.field("Stab", &val),
+                ChokeAttrs::Stab(val) => fmt.field("Stab", &FormatHexdump(val)),
                 ChokeAttrs::MaxP(val) => fmt.field("MaxP", &val),
             };
         }
@@ -15141,7 +15453,14 @@ impl<'a> Iterator for IterableCodelAttrs<'a> {
 impl std::fmt::Debug for IterableCodelAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("CodelAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableCodelAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15314,7 +15633,14 @@ impl<'a> Iterator for IterableDrrAttrs<'a> {
 impl std::fmt::Debug for IterableDrrAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("DrrAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableDrrAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15797,7 +16123,14 @@ impl<'a> Iterator for IterableDualpi2Attrs<'a> {
 impl std::fmt::Debug for IterableDualpi2Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Dualpi2Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableDualpi2Attrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16074,7 +16407,14 @@ impl<'a> Iterator for IterableEmatchAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableEmatchAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("EmatchAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableEmatchAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16086,7 +16426,7 @@ impl<'a> std::fmt::Debug for IterableEmatchAttrs<'_> {
             };
             match attr {
                 EmatchAttrs::TreeHdr(val) => fmt.field("TreeHdr", &val),
-                EmatchAttrs::TreeList(val) => fmt.field("TreeList", &val),
+                EmatchAttrs::TreeList(val) => fmt.field("TreeList", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -16468,7 +16808,14 @@ impl<'a> Iterator for IterableFlowAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFlowAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16487,9 +16834,9 @@ impl<'a> std::fmt::Debug for IterableFlowAttrs<'_> {
                 FlowAttrs::Mask(val) => fmt.field("Mask", &val),
                 FlowAttrs::Xor(val) => fmt.field("Xor", &val),
                 FlowAttrs::Divisor(val) => fmt.field("Divisor", &val),
-                FlowAttrs::Act(val) => fmt.field("Act", &val),
+                FlowAttrs::Act(val) => fmt.field("Act", &FormatHexdump(val)),
                 FlowAttrs::Police(val) => fmt.field("Police", &val),
-                FlowAttrs::Ematches(val) => fmt.field("Ematches", &val),
+                FlowAttrs::Ematches(val) => fmt.field("Ematches", &FormatHexdump(val)),
                 FlowAttrs::Perturb(val) => fmt.field("Perturb", &val),
             };
         }
@@ -19121,7 +19468,14 @@ impl<'a> Iterator for IterableFlowerAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFlowerAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -19236,8 +19590,10 @@ impl<'a> std::fmt::Debug for IterableFlowerAttrs<'_> {
                 FlowerAttrs::KeyCtZoneMask(val) => fmt.field("KeyCtZoneMask", &val),
                 FlowerAttrs::KeyCtMark(val) => fmt.field("KeyCtMark", &val),
                 FlowerAttrs::KeyCtMarkMask(val) => fmt.field("KeyCtMarkMask", &val),
-                FlowerAttrs::KeyCtLabels(val) => fmt.field("KeyCtLabels", &val),
-                FlowerAttrs::KeyCtLabelsMask(val) => fmt.field("KeyCtLabelsMask", &val),
+                FlowerAttrs::KeyCtLabels(val) => fmt.field("KeyCtLabels", &FormatHexdump(val)),
+                FlowerAttrs::KeyCtLabelsMask(val) => {
+                    fmt.field("KeyCtLabelsMask", &FormatHexdump(val))
+                }
                 FlowerAttrs::KeyMplsOpts(val) => fmt.field("KeyMplsOpts", &val),
                 FlowerAttrs::KeyHash(val) => fmt.field("KeyHash", &val),
                 FlowerAttrs::KeyHashMask(val) => fmt.field("KeyHashMask", &val),
@@ -20136,7 +20492,14 @@ impl<'a> Iterator for IterableFlowerKeyEncOptsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFlowerKeyEncOptsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyEncOptsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyEncOptsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -20347,7 +20710,14 @@ impl<'a> Iterator for IterableFlowerKeyEncOptGeneveAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFlowerKeyEncOptGeneveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyEncOptGeneveAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyEncOptGeneveAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -20360,7 +20730,7 @@ impl<'a> std::fmt::Debug for IterableFlowerKeyEncOptGeneveAttrs<'_> {
             match attr {
                 FlowerKeyEncOptGeneveAttrs::Class(val) => fmt.field("Class", &val),
                 FlowerKeyEncOptGeneveAttrs::Type(val) => fmt.field("Type", &val),
-                FlowerKeyEncOptGeneveAttrs::Data(val) => fmt.field("Data", &val),
+                FlowerKeyEncOptGeneveAttrs::Data(val) => fmt.field("Data", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -20506,7 +20876,14 @@ impl<'a> Iterator for IterableFlowerKeyEncOptVxlanAttrs<'a> {
 impl std::fmt::Debug for IterableFlowerKeyEncOptVxlanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyEncOptVxlanAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyEncOptVxlanAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -20717,7 +21094,14 @@ impl<'a> Iterator for IterableFlowerKeyEncOptErspanAttrs<'a> {
 impl std::fmt::Debug for IterableFlowerKeyEncOptErspanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyEncOptErspanAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyEncOptErspanAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -20905,7 +21289,14 @@ impl<'a> Iterator for IterableFlowerKeyEncOptGtpAttrs<'a> {
 impl std::fmt::Debug for IterableFlowerKeyEncOptGtpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyEncOptGtpAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyEncOptGtpAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -21145,7 +21536,14 @@ impl<'a> Iterator for IterableFlowerKeyMplsOptAttrs<'a> {
 impl std::fmt::Debug for IterableFlowerKeyMplsOptAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyMplsOptAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyMplsOptAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -21340,7 +21738,14 @@ impl<'a> Iterator for IterableFlowerKeyCfmAttrs<'a> {
 impl std::fmt::Debug for IterableFlowerKeyCfmAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FlowerKeyCfmAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFlowerKeyCfmAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -21580,7 +21985,14 @@ impl<'a> Iterator for IterableFwAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFwAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FwAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFwAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -21868,7 +22280,14 @@ impl<'a> Iterator for IterableGredAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableGredAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("GredAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableGredAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -21879,10 +22298,10 @@ impl<'a> std::fmt::Debug for IterableGredAttrs<'_> {
                 }
             };
             match attr {
-                GredAttrs::Parms(val) => fmt.field("Parms", &val),
-                GredAttrs::Stab(val) => fmt.field("Stab", &val),
+                GredAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
+                GredAttrs::Stab(val) => fmt.field("Stab", &FormatHexdump(val)),
                 GredAttrs::Dps(val) => fmt.field("Dps", &val),
-                GredAttrs::MaxP(val) => fmt.field("MaxP", &val),
+                GredAttrs::MaxP(val) => fmt.field("MaxP", &FormatHexdump(val)),
                 GredAttrs::Limit(val) => fmt.field("Limit", &val),
                 GredAttrs::VqList(val) => fmt.field("VqList", &val),
             };
@@ -22047,7 +22466,14 @@ impl<'a> Iterator for IterableTcaGredVqListAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTcaGredVqListAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TcaGredVqListAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTcaGredVqListAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -22435,7 +22861,14 @@ impl<'a> Iterator for IterableTcaGredVqEntryAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTcaGredVqEntryAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TcaGredVqEntryAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTcaGredVqEntryAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -22701,7 +23134,14 @@ impl<'a> Iterator for IterableHfscAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableHfscAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HfscAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableHfscAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -22712,9 +23152,9 @@ impl<'a> std::fmt::Debug for IterableHfscAttrs<'_> {
                 }
             };
             match attr {
-                HfscAttrs::Rsc(val) => fmt.field("Rsc", &val),
-                HfscAttrs::Fsc(val) => fmt.field("Fsc", &val),
-                HfscAttrs::Usc(val) => fmt.field("Usc", &val),
+                HfscAttrs::Rsc(val) => fmt.field("Rsc", &FormatHexdump(val)),
+                HfscAttrs::Fsc(val) => fmt.field("Fsc", &FormatHexdump(val)),
+                HfscAttrs::Usc(val) => fmt.field("Usc", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -22992,7 +23432,14 @@ impl<'a> Iterator for IterableHhfAttrs<'a> {
 impl std::fmt::Debug for IterableHhfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HhfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableHhfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -23351,7 +23798,14 @@ impl<'a> Iterator for IterableHtbAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableHtbAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HtbAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableHtbAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -23364,8 +23818,8 @@ impl<'a> std::fmt::Debug for IterableHtbAttrs<'_> {
             match attr {
                 HtbAttrs::Parms(val) => fmt.field("Parms", &val),
                 HtbAttrs::Init(val) => fmt.field("Init", &val),
-                HtbAttrs::Ctab(val) => fmt.field("Ctab", &val),
-                HtbAttrs::Rtab(val) => fmt.field("Rtab", &val),
+                HtbAttrs::Ctab(val) => fmt.field("Ctab", &FormatHexdump(val)),
+                HtbAttrs::Rtab(val) => fmt.field("Rtab", &FormatHexdump(val)),
                 HtbAttrs::DirectQlen(val) => fmt.field("DirectQlen", &val),
                 HtbAttrs::Rate64(val) => fmt.field("Rate64", &val),
                 HtbAttrs::Ceil64(val) => fmt.field("Ceil64", &val),
@@ -23640,7 +24094,14 @@ impl<'a> Iterator for IterableMatchallAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableMatchallAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("MatchallAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableMatchallAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -23821,7 +24282,14 @@ impl<'a> Iterator for IterableEtfAttrs<'a> {
 impl std::fmt::Debug for IterableEtfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("EtfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableEtfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -24068,7 +24536,14 @@ impl<'a> Iterator for IterableEtsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableEtsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("EtsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableEtsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -24631,7 +25106,14 @@ impl<'a> Iterator for IterableFqAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFqAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FqAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFqAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -24658,7 +25140,7 @@ impl<'a> std::fmt::Debug for IterableFqAttrs<'_> {
                 FqAttrs::Horizon(val) => fmt.field("Horizon", &val),
                 FqAttrs::HorizonDrop(val) => fmt.field("HorizonDrop", &val),
                 FqAttrs::Priomap(val) => fmt.field("Priomap", &val),
-                FqAttrs::Weights(val) => fmt.field("Weights", &val),
+                FqAttrs::Weights(val) => fmt.field("Weights", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -25105,7 +25587,14 @@ impl<'a> Iterator for IterableFqCodelAttrs<'a> {
 impl std::fmt::Debug for IterableFqCodelAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FqCodelAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFqCodelAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -25562,7 +26051,14 @@ impl<'a> Iterator for IterableFqPieAttrs<'a> {
 impl std::fmt::Debug for IterableFqPieAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FqPieAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFqPieAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -26070,7 +26566,14 @@ impl<'a> Iterator for IterableNetemAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableNetemAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NetemAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNetemAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -26082,7 +26585,7 @@ impl<'a> std::fmt::Debug for IterableNetemAttrs<'_> {
             };
             match attr {
                 NetemAttrs::Corr(val) => fmt.field("Corr", &val),
-                NetemAttrs::DelayDist(val) => fmt.field("DelayDist", &val),
+                NetemAttrs::DelayDist(val) => fmt.field("DelayDist", &FormatHexdump(val)),
                 NetemAttrs::Reorder(val) => fmt.field("Reorder", &val),
                 NetemAttrs::Corrupt(val) => fmt.field("Corrupt", &val),
                 NetemAttrs::Loss(val) => fmt.field("Loss", &val),
@@ -26093,7 +26596,7 @@ impl<'a> std::fmt::Debug for IterableNetemAttrs<'_> {
                 NetemAttrs::Latency64(val) => fmt.field("Latency64", &val),
                 NetemAttrs::Jitter64(val) => fmt.field("Jitter64", &val),
                 NetemAttrs::Slot(val) => fmt.field("Slot", &val),
-                NetemAttrs::SlotDist(val) => fmt.field("SlotDist", &val),
+                NetemAttrs::SlotDist(val) => fmt.field("SlotDist", &FormatHexdump(val)),
                 NetemAttrs::PrngSeed(val) => fmt.field("PrngSeed", &val),
             };
         }
@@ -26333,7 +26836,14 @@ impl<'a> Iterator for IterableNetemLossAttrs<'a> {
 impl std::fmt::Debug for IterableNetemLossAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("NetemLossAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableNetemLossAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -26639,7 +27149,14 @@ impl<'a> Iterator for IterablePieAttrs<'a> {
 impl std::fmt::Debug for IterablePieAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PieAttrs");
-        for attr in self.clone() {
+        let mut iter = IterablePieAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -27053,7 +27570,14 @@ impl<'a> Iterator for IterablePoliceAttrs<'a> {
 impl<'a> std::fmt::Debug for IterablePoliceAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PoliceAttrs");
-        for attr in self.clone() {
+        let mut iter = IterablePoliceAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -27065,8 +27589,8 @@ impl<'a> std::fmt::Debug for IterablePoliceAttrs<'_> {
             };
             match attr {
                 PoliceAttrs::Tbf(val) => fmt.field("Tbf", &val),
-                PoliceAttrs::Rate(val) => fmt.field("Rate", &val),
-                PoliceAttrs::Peakrate(val) => fmt.field("Peakrate", &val),
+                PoliceAttrs::Rate(val) => fmt.field("Rate", &FormatHexdump(val)),
+                PoliceAttrs::Peakrate(val) => fmt.field("Peakrate", &FormatHexdump(val)),
                 PoliceAttrs::Avrate(val) => fmt.field("Avrate", &val),
                 PoliceAttrs::Result(val) => fmt.field("Result", &val),
                 PoliceAttrs::Tm(val) => fmt.field("Tm", &val),
@@ -27290,7 +27814,14 @@ impl<'a> Iterator for IterableQfqAttrs<'a> {
 impl std::fmt::Debug for IterableQfqAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("QfqAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableQfqAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -27552,7 +28083,14 @@ impl<'a> Iterator for IterableRedAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableRedAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RedAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableRedAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -27564,7 +28102,7 @@ impl<'a> std::fmt::Debug for IterableRedAttrs<'_> {
             };
             match attr {
                 RedAttrs::Parms(val) => fmt.field("Parms", &val),
-                RedAttrs::Stab(val) => fmt.field("Stab", &val),
+                RedAttrs::Stab(val) => fmt.field("Stab", &FormatHexdump(val)),
                 RedAttrs::MaxP(val) => fmt.field("MaxP", &val),
                 RedAttrs::Flags(val) => fmt.field("Flags", &val),
                 RedAttrs::EarlyDropBlock(val) => fmt.field("EarlyDropBlock", &val),
@@ -27842,7 +28380,14 @@ impl<'a> Iterator for IterableRouteAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableRouteAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("RouteAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableRouteAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -28272,7 +28817,14 @@ impl<'a> Iterator for IterableTaprioAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTaprioAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TaprioAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTaprioAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -28289,7 +28841,7 @@ impl<'a> std::fmt::Debug for IterableTaprioAttrs<'_> {
                 TaprioAttrs::SchedSingleEntry(val) => fmt.field("SchedSingleEntry", &val),
                 TaprioAttrs::SchedClockid(val) => fmt.field("SchedClockid", &val),
                 TaprioAttrs::Pad(val) => fmt.field("Pad", &val),
-                TaprioAttrs::AdminSched(val) => fmt.field("AdminSched", &val),
+                TaprioAttrs::AdminSched(val) => fmt.field("AdminSched", &FormatHexdump(val)),
                 TaprioAttrs::SchedCycleTime(val) => fmt.field("SchedCycleTime", &val),
                 TaprioAttrs::SchedCycleTimeExtension(val) => {
                     fmt.field("SchedCycleTimeExtension", &val)
@@ -28495,7 +29047,14 @@ impl<'a> Iterator for IterableTaprioSchedEntryList<'a> {
 impl<'a> std::fmt::Debug for IterableTaprioSchedEntryList<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TaprioSchedEntryList");
-        for attr in self.clone() {
+        let mut iter = IterableTaprioSchedEntryList::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -28707,7 +29266,14 @@ impl<'a> Iterator for IterableTaprioSchedEntry<'a> {
 impl std::fmt::Debug for IterableTaprioSchedEntry<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TaprioSchedEntry");
-        for attr in self.clone() {
+        let mut iter = IterableTaprioSchedEntry::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -28917,7 +29483,14 @@ impl<'a> Iterator for IterableTaprioTcEntryAttrs<'a> {
 impl std::fmt::Debug for IterableTaprioTcEntryAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TaprioTcEntryAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTaprioTcEntryAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -29230,7 +29803,14 @@ impl<'a> Iterator for IterableTbfAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTbfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TbfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTbfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -29242,8 +29822,8 @@ impl<'a> std::fmt::Debug for IterableTbfAttrs<'_> {
             };
             match attr {
                 TbfAttrs::Parms(val) => fmt.field("Parms", &val),
-                TbfAttrs::Rtab(val) => fmt.field("Rtab", &val),
-                TbfAttrs::Ptab(val) => fmt.field("Ptab", &val),
+                TbfAttrs::Rtab(val) => fmt.field("Rtab", &FormatHexdump(val)),
+                TbfAttrs::Ptab(val) => fmt.field("Ptab", &FormatHexdump(val)),
                 TbfAttrs::Rate64(val) => fmt.field("Rate64", &val),
                 TbfAttrs::Prate64(val) => fmt.field("Prate64", &val),
                 TbfAttrs::Burst(val) => fmt.field("Burst", &val),
@@ -29534,7 +30114,14 @@ impl<'a> Iterator for IterableActSampleAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActSampleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActSampleAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActSampleAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -29780,7 +30367,14 @@ impl<'a> Iterator for IterableActGactAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableActGactAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("ActGactAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableActGactAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -29968,7 +30562,14 @@ impl<'a> Iterator for IterableTcaStabAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTcaStabAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TcaStabAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTcaStabAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -29980,7 +30581,7 @@ impl<'a> std::fmt::Debug for IterableTcaStabAttrs<'_> {
             };
             match attr {
                 TcaStabAttrs::Base(val) => fmt.field("Base", &val),
-                TcaStabAttrs::Data(val) => fmt.field("Data", &val),
+                TcaStabAttrs::Data(val) => fmt.field("Data", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -30269,7 +30870,14 @@ impl<'a> Iterator for IterableTcaStatsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableTcaStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("TcaStatsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableTcaStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -30705,7 +31313,14 @@ impl<'a> Iterator for IterableU32Attrs<'a> {
 impl<'a> std::fmt::Debug for IterableU32Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("U32Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableU32Attrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -37555,6 +38170,14 @@ impl<'r> OpNewqdiscDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewqdiscDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -37615,6 +38238,14 @@ impl<'r> OpDelqdiscDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDelqdiscDo<'_> {
@@ -37679,6 +38310,14 @@ impl<'r> OpGetqdiscDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetqdiscDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -37739,6 +38378,14 @@ impl<'r> OpGetqdiscDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetqdiscDo<'_> {
@@ -37801,6 +38448,14 @@ impl<'r> OpNewtclassDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewtclassDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -37861,6 +38516,14 @@ impl<'r> OpDeltclassDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDeltclassDo<'_> {
@@ -37923,6 +38586,14 @@ impl<'r> OpGettclassDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGettclassDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -37984,6 +38655,14 @@ impl<'r> OpNewtfilterDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewtfilterDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -38044,6 +38723,14 @@ impl<'r> OpDeltfilterDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDeltfilterDo<'_> {
@@ -38108,6 +38795,14 @@ impl<'r> OpGettfilterDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGettfilterDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -38168,6 +38863,14 @@ impl<'r> OpGettfilterDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGettfilterDo<'_> {
@@ -38230,6 +38933,14 @@ impl<'r> OpNewchainDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewchainDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -38291,6 +39002,14 @@ impl<'r> OpDelchainDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpDelchainDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -38351,6 +39070,14 @@ impl<'r> OpGetchainDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Tcmsg {
+        let pos = self.request.pos;
+        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetchainDo<'_> {
@@ -38440,7 +39167,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -38458,6 +39186,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -38524,6 +39253,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -38539,10 +39269,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -38559,9 +39291,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

@@ -45,15 +45,11 @@ impl FrAct {
         })
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Rtgenmsg {
     pub family: u8,
     pub _pad: [u8; 3usize],
-}
-impl Clone for Rtgenmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Rtgenmsg {
@@ -96,6 +92,11 @@ impl Rtgenmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -108,6 +109,7 @@ impl Rtgenmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Rtgenmsg>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<Rtgenmsg>() == 1usize);
         4usize
     }
 }
@@ -118,7 +120,8 @@ impl std::fmt::Debug for Rtgenmsg {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct FibRuleHdr {
     pub family: u8,
     pub dst_len: u8,
@@ -130,11 +133,6 @@ pub struct FibRuleHdr {
     #[doc = "Associated type: [`FrAct`] (enum)"]
     pub action: u8,
     pub flags: u32,
-}
-impl Clone for FibRuleHdr {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for FibRuleHdr {
@@ -177,6 +175,11 @@ impl FibRuleHdr {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -189,6 +192,7 @@ impl FibRuleHdr {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<FibRuleHdr>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<FibRuleHdr>() == 4usize);
         12usize
     }
 }
@@ -205,16 +209,11 @@ impl std::fmt::Debug for FibRuleHdr {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct FibRulePortRange {
     pub start: u16,
     pub end: u16,
-}
-impl Clone for FibRulePortRange {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for FibRulePortRange {
@@ -257,6 +256,11 @@ impl FibRulePortRange {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -269,19 +273,15 @@ impl FibRulePortRange {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<FibRulePortRange>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<FibRulePortRange>() == 2usize);
         4usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct FibRuleUidRange {
     pub start: u32,
     pub end: u32,
-}
-impl Clone for FibRuleUidRange {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for FibRuleUidRange {
@@ -324,6 +324,11 @@ impl FibRuleUidRange {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -336,6 +341,7 @@ impl FibRuleUidRange {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<FibRuleUidRange>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<FibRuleUidRange>() == 4usize);
         8usize
     }
 }
@@ -1066,7 +1072,14 @@ impl<'a> Iterator for IterableFibRuleAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableFibRuleAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("FibRuleAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableFibRuleAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -1574,6 +1587,14 @@ impl<'r> OpNewruleDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &FibRuleHdr) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &FibRuleHdr {
+        let pos = self.request.pos;
+        FibRuleHdr::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut FibRuleHdr {
+        let pos = self.request.pos;
+        FibRuleHdr::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewruleDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -1634,6 +1655,14 @@ impl<'r> OpDelruleDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &FibRuleHdr) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &FibRuleHdr {
+        let pos = self.request.pos;
+        FibRuleHdr::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut FibRuleHdr {
+        let pos = self.request.pos;
+        FibRuleHdr::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDelruleDo<'_> {
@@ -1697,6 +1726,14 @@ impl<'r> OpGetruleDump<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &FibRuleHdr) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &FibRuleHdr {
+        let pos = self.request.pos;
+        FibRuleHdr::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut FibRuleHdr {
+        let pos = self.request.pos;
+        FibRuleHdr::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetruleDump<'_> {
@@ -1786,7 +1823,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -1804,6 +1842,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -1870,6 +1909,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1885,10 +1925,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1905,9 +1947,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

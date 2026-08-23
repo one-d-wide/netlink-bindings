@@ -551,15 +551,34 @@ impl BrStpMode {
         })
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Debug, Clone, Copy)]
+pub enum BrBooloptId {
+    #[doc = "disable learning from link-local packets\n"]
+    NoLlLearn = 1 << 0,
+    #[doc = "control vlan multicast snooping\n"]
+    McastVlanSnooping = 1 << 1,
+    MstEnable = 1 << 2,
+    MdbOffloadFailNotification = 1 << 3,
+    #[doc = "local FDB entries installed by the bridge driver itself should only be\nadded on VLAN 0\n"]
+    FdbLocalVlan0 = 1 << 4,
+}
+impl BrBooloptId {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::NoLlLearn,
+            n if n == 1 << 1 => Self::McastVlanSnooping,
+            n if n == 1 << 2 => Self::MstEnable,
+            n if n == 1 << 3 => Self::MdbOffloadFailNotification,
+            n if n == 1 << 4 => Self::FdbLocalVlan0,
+            _ => return None,
+        })
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Rtgenmsg {
     pub family: u8,
-}
-impl Clone for Rtgenmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Rtgenmsg {
@@ -602,6 +621,11 @@ impl Rtgenmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 1usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -614,10 +638,12 @@ impl Rtgenmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Rtgenmsg>() == 1usize);
+        const _: () = assert!(std::mem::align_of::<Rtgenmsg>() == 1usize);
         1usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Ifinfomsg {
     pub ifi_family: u8,
     pub _pad: [u8; 1usize],
@@ -626,11 +652,6 @@ pub struct Ifinfomsg {
     #[doc = "Associated type: [`IfinfoFlags`] (1 bit per enumeration)"]
     pub ifi_flags: u32,
     pub ifi_change: u32,
-}
-impl Clone for Ifinfomsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Ifinfomsg {
@@ -673,6 +694,11 @@ impl Ifinfomsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -685,6 +711,7 @@ impl Ifinfomsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Ifinfomsg>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<Ifinfomsg>() == 4usize);
         16usize
     }
 }
@@ -702,16 +729,11 @@ impl std::fmt::Debug for Ifinfomsg {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaBridgeId {
     pub prio: u16,
     pub addr: [u8; 6usize],
-}
-impl Clone for IflaBridgeId {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaBridgeId {
@@ -754,6 +776,11 @@ impl IflaBridgeId {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -766,21 +793,17 @@ impl IflaBridgeId {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaBridgeId>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaBridgeId>() == 2usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaCacheinfo {
     pub max_reasm_len: u32,
     pub tstamp: u32,
     pub reachable_time: i32,
     pub retrans_time: u32,
-}
-impl Clone for IflaCacheinfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaCacheinfo {
@@ -823,6 +846,11 @@ impl IflaCacheinfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -835,11 +863,12 @@ impl IflaCacheinfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaCacheinfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<IflaCacheinfo>() == 4usize);
         16usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct RtnlLinkStats {
     pub rx_packets: u32,
     pub tx_packets: u32,
@@ -865,11 +894,6 @@ pub struct RtnlLinkStats {
     pub rx_compressed: u32,
     pub tx_compressed: u32,
     pub rx_nohandler: u32,
-}
-impl Clone for RtnlLinkStats {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for RtnlLinkStats {
@@ -912,6 +936,11 @@ impl RtnlLinkStats {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 96usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -924,10 +953,13 @@ impl RtnlLinkStats {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<RtnlLinkStats>() == 96usize);
+        const _: () = assert!(std::mem::align_of::<RtnlLinkStats>() == 4usize);
         96usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct RtnlLinkStats64 {
     pub rx_packets: u64,
     pub tx_packets: u64,
@@ -954,11 +986,6 @@ pub struct RtnlLinkStats64 {
     pub tx_compressed: u64,
     pub rx_nohandler: u64,
     pub rx_otherhost_dropped: u64,
-}
-impl Clone for RtnlLinkStats64 {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for RtnlLinkStats64 {
@@ -1001,6 +1028,11 @@ impl RtnlLinkStats64 {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 200usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1013,6 +1045,7 @@ impl RtnlLinkStats64 {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<RtnlLinkStats64>() == 200usize);
+        const _: () = assert!(std::mem::align_of::<RtnlLinkStats64>() == 4usize);
         200usize
     }
 }
@@ -1047,7 +1080,9 @@ impl std::fmt::Debug for RtnlLinkStats64 {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct RtnlLinkIfmap {
     pub mem_start: u64,
     pub mem_end: u64,
@@ -1056,11 +1091,6 @@ pub struct RtnlLinkIfmap {
     pub dma: u8,
     pub port: u8,
     pub _pad_28: [u8; 4usize],
-}
-impl Clone for RtnlLinkIfmap {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for RtnlLinkIfmap {
@@ -1103,6 +1133,11 @@ impl RtnlLinkIfmap {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 32usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1115,6 +1150,7 @@ impl RtnlLinkIfmap {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<RtnlLinkIfmap>() == 32usize);
+        const _: () = assert!(std::mem::align_of::<RtnlLinkIfmap>() == 4usize);
         32usize
     }
 }
@@ -1130,16 +1166,13 @@ impl std::fmt::Debug for RtnlLinkIfmap {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct BrBooloptMulti {
+    #[doc = "Associated type: [`BrBooloptId`] (enum)"]
     pub optval: u32,
+    #[doc = "Associated type: [`BrBooloptId`] (enum)"]
     pub optmask: u32,
-}
-impl Clone for BrBooloptMulti {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for BrBooloptMulti {
@@ -1182,6 +1215,11 @@ impl BrBooloptMulti {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1194,20 +1232,31 @@ impl BrBooloptMulti {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<BrBooloptMulti>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<BrBooloptMulti>() == 4usize);
         8usize
     }
 }
-#[repr(C, packed(4))]
+impl std::fmt::Debug for BrBooloptMulti {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("BrBooloptMulti")
+            .field(
+                "optval",
+                &FormatFlags(self.optval.into(), BrBooloptId::from_value),
+            )
+            .field(
+                "optmask",
+                &FormatFlags(self.optmask.into(), BrBooloptId::from_value),
+            )
+            .finish()
+    }
+}
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IfStatsMsg {
     pub family: u8,
     pub _pad: [u8; 3usize],
     pub ifindex: u32,
     pub filter_mask: u32,
-}
-impl Clone for IfStatsMsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IfStatsMsg {
@@ -1250,6 +1299,11 @@ impl IfStatsMsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1262,6 +1316,7 @@ impl IfStatsMsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IfStatsMsg>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<IfStatsMsg>() == 4usize);
         12usize
     }
 }
@@ -1274,16 +1329,12 @@ impl std::fmt::Debug for IfStatsMsg {
             .finish()
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVlanFlags {
     #[doc = "Associated type: [`VlanFlags`] (1 bit per enumeration)"]
     pub flags: u32,
     pub mask: u32,
-}
-impl Clone for IflaVlanFlags {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVlanFlags {
@@ -1326,6 +1377,11 @@ impl IflaVlanFlags {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1338,6 +1394,7 @@ impl IflaVlanFlags {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVlanFlags>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVlanFlags>() == 4usize);
         8usize
     }
 }
@@ -1352,16 +1409,11 @@ impl std::fmt::Debug for IflaVlanFlags {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVlanQosMapping {
     pub from: u32,
     pub to: u32,
-}
-impl Clone for IflaVlanQosMapping {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVlanQosMapping {
@@ -1404,6 +1456,11 @@ impl IflaVlanQosMapping {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1416,18 +1473,15 @@ impl IflaVlanQosMapping {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVlanQosMapping>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVlanQosMapping>() == 4usize);
         8usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaGenevePortRange {
     pub _low_be: u16,
     pub _high_be: u16,
-}
-impl Clone for IflaGenevePortRange {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaGenevePortRange {
@@ -1470,6 +1524,11 @@ impl IflaGenevePortRange {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 4usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1482,6 +1541,7 @@ impl IflaGenevePortRange {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaGenevePortRange>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<IflaGenevePortRange>() == 2usize);
         4usize
     }
     pub fn low(&self) -> u16 {
@@ -1505,16 +1565,11 @@ impl std::fmt::Debug for IflaGenevePortRange {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfMac {
     pub vf: u32,
     pub mac: [u8; 32usize],
-}
-impl Clone for IflaVfMac {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfMac {
@@ -1557,6 +1612,11 @@ impl IflaVfMac {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 36usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1569,20 +1629,24 @@ impl IflaVfMac {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfMac>() == 36usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfMac>() == 4usize);
         36usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+impl std::fmt::Debug for IflaVfMac {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVfMac")
+            .field("vf", &self.vf)
+            .field("mac", &FormatHexdump(self.mac.as_slice()))
+            .finish()
+    }
+}
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfVlan {
     pub vf: u32,
     pub vlan: u32,
     pub qos: u32,
-}
-impl Clone for IflaVfVlan {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfVlan {
@@ -1625,6 +1689,11 @@ impl IflaVfVlan {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1637,19 +1706,15 @@ impl IflaVfVlan {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfVlan>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfVlan>() == 4usize);
         12usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfTxRate {
     pub vf: u32,
     pub rate: u32,
-}
-impl Clone for IflaVfTxRate {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfTxRate {
@@ -1692,6 +1757,11 @@ impl IflaVfTxRate {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1704,19 +1774,15 @@ impl IflaVfTxRate {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfTxRate>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfTxRate>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfSpoofchk {
     pub vf: u32,
     pub setting: u32,
-}
-impl Clone for IflaVfSpoofchk {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfSpoofchk {
@@ -1759,6 +1825,11 @@ impl IflaVfSpoofchk {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1771,19 +1842,16 @@ impl IflaVfSpoofchk {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfSpoofchk>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfSpoofchk>() == 4usize);
         8usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfLinkState {
     pub vf: u32,
     #[doc = "Associated type: [`IflaVfLinkStateEnum`] (enum)"]
     pub link_state: u32,
-}
-impl Clone for IflaVfLinkState {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfLinkState {
@@ -1826,6 +1894,11 @@ impl IflaVfLinkState {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1838,6 +1911,7 @@ impl IflaVfLinkState {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfLinkState>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfLinkState>() == 4usize);
         8usize
     }
 }
@@ -1852,17 +1926,12 @@ impl std::fmt::Debug for IflaVfLinkState {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfRate {
     pub vf: u32,
     pub min_tx_rate: u32,
     pub max_tx_rate: u32,
-}
-impl Clone for IflaVfRate {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfRate {
@@ -1905,6 +1974,11 @@ impl IflaVfRate {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 12usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1917,19 +1991,15 @@ impl IflaVfRate {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfRate>() == 12usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfRate>() == 4usize);
         12usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfRssQueryEn {
     pub vf: u32,
     pub setting: u32,
-}
-impl Clone for IflaVfRssQueryEn {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfRssQueryEn {
@@ -1972,6 +2042,11 @@ impl IflaVfRssQueryEn {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -1984,19 +2059,15 @@ impl IflaVfRssQueryEn {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfRssQueryEn>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfRssQueryEn>() == 4usize);
         8usize
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfTrust {
     pub vf: u32,
     pub setting: u32,
-}
-impl Clone for IflaVfTrust {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfTrust {
@@ -2039,6 +2110,11 @@ impl IflaVfTrust {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2051,19 +2127,17 @@ impl IflaVfTrust {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfTrust>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfTrust>() == 4usize);
         8usize
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(packed(4))]
+#[repr(C)]
 pub struct IflaVfGuid {
     pub vf: u32,
     pub _pad_4: [u8; 4usize],
     pub guid: u64,
-}
-impl Clone for IflaVfGuid {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfGuid {
@@ -2106,6 +2180,11 @@ impl IflaVfGuid {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2118,6 +2197,7 @@ impl IflaVfGuid {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfGuid>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfGuid>() == 4usize);
         16usize
     }
 }
@@ -2129,18 +2209,13 @@ impl std::fmt::Debug for IflaVfGuid {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IflaVfVlanInfo {
     pub vf: u32,
     pub vlan: u32,
     pub qos: u32,
     pub vlan_proto: u32,
-}
-impl Clone for IflaVfVlanInfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IflaVfVlanInfo {
@@ -2183,6 +2258,11 @@ impl IflaVfVlanInfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -2195,6 +2275,7 @@ impl IflaVfVlanInfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IflaVfVlanInfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<IflaVfVlanInfo>() == 4usize);
         16usize
     }
 }
@@ -3749,7 +3830,14 @@ impl<'a> Iterator for IterableLinkAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -3768,8 +3856,8 @@ impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
                 LinkAttrs::Qdisc(val) => fmt.field("Qdisc", &val),
                 LinkAttrs::Stats(val) => fmt.field("Stats", &val),
                 LinkAttrs::Master(val) => fmt.field("Master", &val),
-                LinkAttrs::Wireless(val) => fmt.field("Wireless", &val),
-                LinkAttrs::Protinfo(val) => fmt.field("Protinfo", &val),
+                LinkAttrs::Wireless(val) => fmt.field("Wireless", &FormatHexdump(val)),
+                LinkAttrs::Protinfo(val) => fmt.field("Protinfo", &FormatHexdump(val)),
                 LinkAttrs::Txqlen(val) => fmt.field("Txqlen", &val),
                 LinkAttrs::Map(val) => fmt.field("Map", &val),
                 LinkAttrs::Weight(val) => fmt.field("Weight", &val),
@@ -3793,9 +3881,9 @@ impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
                 LinkAttrs::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
                 LinkAttrs::NumRxQueues(val) => fmt.field("NumRxQueues", &val),
                 LinkAttrs::Carrier(val) => fmt.field("Carrier", &val),
-                LinkAttrs::PhysPortId(val) => fmt.field("PhysPortId", &val),
+                LinkAttrs::PhysPortId(val) => fmt.field("PhysPortId", &FormatHexdump(val)),
                 LinkAttrs::CarrierChanges(val) => fmt.field("CarrierChanges", &val),
-                LinkAttrs::PhysSwitchId(val) => fmt.field("PhysSwitchId", &val),
+                LinkAttrs::PhysSwitchId(val) => fmt.field("PhysSwitchId", &FormatHexdump(val)),
                 LinkAttrs::LinkNetnsid(val) => fmt.field("LinkNetnsid", &val),
                 LinkAttrs::PhysPortName(val) => fmt.field("PhysPortName", &val),
                 LinkAttrs::ProtoDown(val) => fmt.field("ProtoDown", &val),
@@ -3821,7 +3909,7 @@ impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
                 LinkAttrs::TsoMaxSize(val) => fmt.field("TsoMaxSize", &val),
                 LinkAttrs::TsoMaxSegs(val) => fmt.field("TsoMaxSegs", &val),
                 LinkAttrs::Allmulti(val) => fmt.field("Allmulti", &val),
-                LinkAttrs::DevlinkPort(val) => fmt.field("DevlinkPort", &val),
+                LinkAttrs::DevlinkPort(val) => fmt.field("DevlinkPort", &FormatHexdump(val)),
                 LinkAttrs::GsoIpv4MaxSize(val) => fmt.field("GsoIpv4MaxSize", &val),
                 LinkAttrs::GroIpv4MaxSize(val) => fmt.field("GroIpv4MaxSize", &val),
                 LinkAttrs::DpllPin(val) => fmt.field("DpllPin", &val),
@@ -4353,7 +4441,14 @@ impl<'a> Iterator for IterablePropListLinkAttrs<'a> {
 impl<'a> std::fmt::Debug for IterablePropListLinkAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PropListLinkAttrs");
-        for attr in self.clone() {
+        let mut iter = IterablePropListLinkAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -4542,7 +4637,14 @@ impl<'a> Iterator for IterableAfSpecAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableAfSpecAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AfSpecAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableAfSpecAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -4700,7 +4802,14 @@ impl<'a> Iterator for IterableVfinfoListAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableVfinfoListAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfinfoListAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableVfinfoListAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5110,7 +5219,14 @@ impl<'a> Iterator for IterableVfinfoAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableVfinfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfinfoAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableVfinfoAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5133,7 +5249,7 @@ impl<'a> std::fmt::Debug for IterableVfinfoAttrs<'_> {
                 VfinfoAttrs::IbNodeGuid(val) => fmt.field("IbNodeGuid", &val),
                 VfinfoAttrs::IbPortGuid(val) => fmt.field("IbPortGuid", &val),
                 VfinfoAttrs::VlanList(val) => fmt.field("VlanList", &val),
-                VfinfoAttrs::Broadcast(val) => fmt.field("Broadcast", &val),
+                VfinfoAttrs::Broadcast(val) => fmt.field("Broadcast", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -5516,7 +5632,14 @@ impl<'a> Iterator for IterableVfStatsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableVfStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfStatsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableVfStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5713,7 +5836,14 @@ impl<'a> Iterator for IterableVfVlanAttrs<'a> {
 impl std::fmt::Debug for IterableVfVlanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfVlanAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableVfVlanAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5831,7 +5961,14 @@ impl<'a> Iterator for IterableVfPortsAttrs<'a> {
 impl std::fmt::Debug for IterableVfPortsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("VfPortsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableVfPortsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -5926,7 +6063,14 @@ impl<'a> Iterator for IterablePortSelfAttrs<'a> {
 impl std::fmt::Debug for IterablePortSelfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("PortSelfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterablePortSelfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6066,8 +6210,8 @@ pub enum LinkinfoDataMsg<'a> {
     Ovpn(IterableLinkinfoOvpnAttrs<'a>),
 }
 impl<'a> LinkinfoDataMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
-        match selector.to_bytes() {
+    fn select_with_loc(selector: &'_ [u8], buf: &'a [u8], loc: usize) -> Option<Self> {
+        match selector {
             b"bond" => Some(LinkinfoDataMsg::Bond(IterableLinkinfoBondAttrs::with_loc(
                 buf, loc,
             ))),
@@ -6132,8 +6276,8 @@ pub enum LinkinfoMemberDataMsg<'a> {
     Bond(IterableBondSlaveAttrs<'a>),
 }
 impl<'a> LinkinfoMemberDataMsg<'a> {
-    fn select_with_loc(selector: &'a CStr, buf: &'a [u8], loc: usize) -> Option<Self> {
-        match selector.to_bytes() {
+    fn select_with_loc(selector: &'_ [u8], buf: &'a [u8], loc: usize) -> Option<Self> {
+        match selector {
             b"bridge" => Some(LinkinfoMemberDataMsg::Bridge(
                 IterableLinkinfoBrportAttrs::with_loc(buf, loc),
             )),
@@ -6165,6 +6309,8 @@ pub struct IterableLinkinfoAttrs<'a> {
     buf: &'a [u8],
     pos: usize,
     orig_loc: usize,
+    selector_kind: Option<&'a [u8]>,
+    selector_slave_kind: Option<&'a [u8]>,
 }
 impl<'a> IterableLinkinfoAttrs<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
@@ -6172,6 +6318,8 @@ impl<'a> IterableLinkinfoAttrs<'a> {
             buf,
             pos: 0,
             orig_loc,
+            selector_kind: None,
+            selector_slave_kind: None,
         }
     }
     pub fn get_buf(&self) -> &'a [u8] {
@@ -6202,7 +6350,9 @@ impl<'a> Iterator for IterableLinkinfoAttrs<'a> {
                 }),
                 2u16 => LinkinfoAttrs::Data({
                     let res = {
-                        let Ok(selector) = self.get_kind() else { break };
+                        let Some(selector) = self.selector_kind else {
+                            break;
+                        };
                         match LinkinfoDataMsg::select_with_loc(selector, next, self.orig_loc) {
                             Some(sub) => Some(sub),
                             None if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
@@ -6224,7 +6374,7 @@ impl<'a> Iterator for IterableLinkinfoAttrs<'a> {
                 }),
                 5u16 => LinkinfoAttrs::SlaveData({
                     let res = {
-                        let Ok(selector) = self.get_slave_kind() else {
+                        let Some(selector) = self.selector_slave_kind else {
                             break;
                         };
                         match LinkinfoMemberDataMsg::select_with_loc(selector, next, self.orig_loc)
@@ -6240,6 +6390,9 @@ impl<'a> Iterator for IterableLinkinfoAttrs<'a> {
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
+            if let LinkinfoAttrs::SlaveKind(sel) = &res {
+                self.selector_slave_kind = Some(sel.to_bytes());
+            }
             return Some(Ok(res));
         }
         Some(Err(ErrorContext::new(
@@ -6253,7 +6406,14 @@ impl<'a> Iterator for IterableLinkinfoAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -6266,7 +6426,7 @@ impl<'a> std::fmt::Debug for IterableLinkinfoAttrs<'_> {
             match attr {
                 LinkinfoAttrs::Kind(val) => fmt.field("Kind", &val),
                 LinkinfoAttrs::Data(val) => fmt.field("Data", &val),
-                LinkinfoAttrs::Xstats(val) => fmt.field("Xstats", &val),
+                LinkinfoAttrs::Xstats(val) => fmt.field("Xstats", &FormatHexdump(val)),
                 LinkinfoAttrs::SlaveKind(val) => fmt.field("SlaveKind", &val),
                 LinkinfoAttrs::SlaveData(val) => fmt.field("SlaveData", &val),
             };
@@ -7248,7 +7408,14 @@ impl std::fmt::Debug for IterableArrayBinary<'_> {
 impl<'a> std::fmt::Debug for IterableLinkinfoBondAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoBondAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoBondAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -7715,7 +7882,14 @@ impl<'a> Iterator for IterableBondAdInfoAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableBondAdInfoAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BondAdInfoAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableBondAdInfoAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -8064,7 +8238,14 @@ impl<'a> Iterator for IterableBondSlaveAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableBondSlaveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("BondSlaveAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableBondSlaveAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -9119,7 +9300,7 @@ impl<'a> Iterator for IterableLinkinfoBridgeAttrs<'a> {
                     val
                 }),
                 8u16 => LinkinfoBridgeAttrs::VlanProtocol({
-                    let res = parse_u16(next);
+                    let res = parse_be_u16(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -9349,7 +9530,14 @@ impl<'a> Iterator for IterableLinkinfoBridgeAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoBridgeAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoBridgeAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoBridgeAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -9384,7 +9572,7 @@ impl<'a> std::fmt::Debug for IterableLinkinfoBridgeAttrs<'_> {
                 }
                 LinkinfoBridgeAttrs::GcTimer(val) => fmt.field("GcTimer", &val),
                 LinkinfoBridgeAttrs::GroupAddr(val) => fmt.field("GroupAddr", &FormatMac(val)),
-                LinkinfoBridgeAttrs::FdbFlush(val) => fmt.field("FdbFlush", &val),
+                LinkinfoBridgeAttrs::FdbFlush(val) => fmt.field("FdbFlush", &FormatHexdump(val)),
                 LinkinfoBridgeAttrs::McastRouter(val) => fmt.field("McastRouter", &val),
                 LinkinfoBridgeAttrs::McastSnooping(val) => fmt.field("McastSnooping", &val),
                 LinkinfoBridgeAttrs::McastQueryUseIfaddr(val) => {
@@ -9426,7 +9614,9 @@ impl<'a> std::fmt::Debug for IterableLinkinfoBridgeAttrs<'_> {
                 LinkinfoBridgeAttrs::McastMldVersion(val) => fmt.field("McastMldVersion", &val),
                 LinkinfoBridgeAttrs::VlanStatsPerPort(val) => fmt.field("VlanStatsPerPort", &val),
                 LinkinfoBridgeAttrs::MultiBoolopt(val) => fmt.field("MultiBoolopt", &val),
-                LinkinfoBridgeAttrs::McastQuerierState(val) => fmt.field("McastQuerierState", &val),
+                LinkinfoBridgeAttrs::McastQuerierState(val) => {
+                    fmt.field("McastQuerierState", &FormatHexdump(val))
+                }
                 LinkinfoBridgeAttrs::FdbNLearned(val) => fmt.field("FdbNLearned", &val),
                 LinkinfoBridgeAttrs::FdbMaxLearned(val) => fmt.field("FdbMaxLearned", &val),
                 LinkinfoBridgeAttrs::StpMode(val) => {
@@ -10743,7 +10933,14 @@ impl<'a> Iterator for IterableLinkinfoBrportAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoBrportAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoBrportAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoBrportAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -11700,7 +11897,14 @@ impl<'a> Iterator for IterableLinkinfoGreAttrs<'a> {
 impl std::fmt::Debug for IterableLinkinfoGreAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGreAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoGreAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -12418,7 +12622,14 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoGre6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGre6Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoGre6Attrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -12813,7 +13024,14 @@ impl<'a> Iterator for IterableLinkinfoVtiAttrs<'a> {
 impl std::fmt::Debug for IterableLinkinfoVtiAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVtiAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoVtiAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -13094,7 +13312,14 @@ impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoVti6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVti6Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoVti6Attrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -13636,7 +13861,14 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoGeneveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGeneveAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoGeneveAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14054,7 +14286,14 @@ impl<'a> Iterator for IterableLinkinfoHsrAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoHsrAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoHsrAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoHsrAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -14664,7 +14903,14 @@ impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoIptunAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIptunAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoIptunAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15209,7 +15455,14 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoIp6tnlAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIp6tnlAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoIp6tnlAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15621,7 +15874,14 @@ impl<'a> Iterator for IterableLinkinfoTunAttrs<'a> {
 impl std::fmt::Debug for IterableLinkinfoTunAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoTunAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoTunAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -15912,7 +16172,14 @@ impl<'a> Iterator for IterableLinkinfoVlanAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoVlanAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVlanAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoVlanAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16085,7 +16352,14 @@ impl<'a> Iterator for IterableIflaVlanQos<'a> {
 impl std::fmt::Debug for IterableIflaVlanQos<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IflaVlanQos");
-        for attr in self.clone() {
+        let mut iter = IterableIflaVlanQos::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16230,7 +16504,14 @@ impl<'a> Iterator for IterableLinkinfoVrfAttrs<'a> {
 impl std::fmt::Debug for IterableLinkinfoVrfAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVrfAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoVrfAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16529,7 +16810,14 @@ impl<'a> Iterator for IterableXdpAttrs<'a> {
 impl std::fmt::Debug for IterableXdpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("XdpAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableXdpAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16725,7 +17013,14 @@ impl<'a> Iterator for IterableIflaAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableIflaAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("IflaAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableIflaAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -16736,7 +17031,7 @@ impl<'a> std::fmt::Debug for IterableIflaAttrs<'_> {
                 }
             };
             match attr {
-                IflaAttrs::Conf(val) => fmt.field("Conf", &val),
+                IflaAttrs::Conf(val) => fmt.field("Conf", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -17048,7 +17343,14 @@ impl<'a> Iterator for IterableIfla6Attrs<'a> {
 impl<'a> std::fmt::Debug for IterableIfla6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("Ifla6Attrs");
-        for attr in self.clone() {
+        let mut iter = IterableIfla6Attrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -17060,12 +17362,12 @@ impl<'a> std::fmt::Debug for IterableIfla6Attrs<'_> {
             };
             match attr {
                 Ifla6Attrs::Flags(val) => fmt.field("Flags", &val),
-                Ifla6Attrs::Conf(val) => fmt.field("Conf", &val),
-                Ifla6Attrs::Stats(val) => fmt.field("Stats", &val),
-                Ifla6Attrs::Mcast(val) => fmt.field("Mcast", &val),
+                Ifla6Attrs::Conf(val) => fmt.field("Conf", &FormatHexdump(val)),
+                Ifla6Attrs::Stats(val) => fmt.field("Stats", &FormatHexdump(val)),
+                Ifla6Attrs::Mcast(val) => fmt.field("Mcast", &FormatHexdump(val)),
                 Ifla6Attrs::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
-                Ifla6Attrs::Icmp6stats(val) => fmt.field("Icmp6stats", &val),
-                Ifla6Attrs::Token(val) => fmt.field("Token", &val),
+                Ifla6Attrs::Icmp6stats(val) => fmt.field("Icmp6stats", &FormatHexdump(val)),
+                Ifla6Attrs::Token(val) => fmt.field("Token", &FormatHexdump(val)),
                 Ifla6Attrs::AddrGenMode(val) => fmt.field("AddrGenMode", &val),
                 Ifla6Attrs::RaMtu(val) => fmt.field("RaMtu", &val),
             };
@@ -17271,7 +17573,14 @@ impl<'a> Iterator for IterableMctpAttrs<'a> {
 impl std::fmt::Debug for IterableMctpAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("MctpAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableMctpAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -17511,7 +17820,14 @@ impl<'a> Iterator for IterableStatsAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableStatsAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("StatsAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -17523,10 +17839,12 @@ impl<'a> std::fmt::Debug for IterableStatsAttrs<'_> {
             };
             match attr {
                 StatsAttrs::Link64(val) => fmt.field("Link64", &val),
-                StatsAttrs::LinkXstats(val) => fmt.field("LinkXstats", &val),
-                StatsAttrs::LinkXstatsSlave(val) => fmt.field("LinkXstatsSlave", &val),
+                StatsAttrs::LinkXstats(val) => fmt.field("LinkXstats", &FormatHexdump(val)),
+                StatsAttrs::LinkXstatsSlave(val) => {
+                    fmt.field("LinkXstatsSlave", &FormatHexdump(val))
+                }
                 StatsAttrs::LinkOffloadXstats(val) => fmt.field("LinkOffloadXstats", &val),
-                StatsAttrs::AfSpec(val) => fmt.field("AfSpec", &val),
+                StatsAttrs::AfSpec(val) => fmt.field("AfSpec", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -17781,7 +18099,14 @@ impl std::fmt::Debug for IterableArrayHwSInfoOne<'_> {
 impl<'a> std::fmt::Debug for IterableLinkOffloadXstats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkOffloadXstats");
-        for attr in self.clone() {
+        let mut iter = IterableLinkOffloadXstats::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -17792,9 +18117,9 @@ impl<'a> std::fmt::Debug for IterableLinkOffloadXstats<'_> {
                 }
             };
             match attr {
-                LinkOffloadXstats::CpuHit(val) => fmt.field("CpuHit", &val),
+                LinkOffloadXstats::CpuHit(val) => fmt.field("CpuHit", &FormatHexdump(val)),
                 LinkOffloadXstats::HwSInfo(val) => fmt.field("HwSInfo", &val),
-                LinkOffloadXstats::L3Stats(val) => fmt.field("L3Stats", &val),
+                LinkOffloadXstats::L3Stats(val) => fmt.field("L3Stats", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -17970,7 +18295,14 @@ impl<'a> Iterator for IterableHwSInfoOne<'a> {
 impl std::fmt::Debug for IterableHwSInfoOne<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("HwSInfoOne");
-        for attr in self.clone() {
+        let mut iter = IterableHwSInfoOne::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -18122,7 +18454,14 @@ impl<'a> Iterator for IterableLinkDpllPinAttrs<'a> {
 impl std::fmt::Debug for IterableLinkDpllPinAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkDpllPinAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkDpllPinAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -18477,7 +18816,14 @@ impl<'a> Iterator for IterableLinkinfoNetkitAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableLinkinfoNetkitAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoNetkitAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoNetkitAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -18488,7 +18834,7 @@ impl<'a> std::fmt::Debug for IterableLinkinfoNetkitAttrs<'_> {
                 }
             };
             match attr {
-                LinkinfoNetkitAttrs::PeerInfo(val) => fmt.field("PeerInfo", &val),
+                LinkinfoNetkitAttrs::PeerInfo(val) => fmt.field("PeerInfo", &FormatHexdump(val)),
                 LinkinfoNetkitAttrs::Primary(val) => fmt.field("Primary", &val),
                 LinkinfoNetkitAttrs::Policy(val) => {
                     fmt.field("Policy", &FormatEnum(val.into(), NetkitPolicy::from_value))
@@ -18702,7 +19048,14 @@ impl<'a> Iterator for IterableLinkinfoOvpnAttrs<'a> {
 impl std::fmt::Debug for IterableLinkinfoOvpnAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoOvpnAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableLinkinfoOvpnAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -20545,7 +20898,7 @@ impl<Prev: Pusher> PushLinkinfoBridgeAttrs<Prev> {
     }
     pub fn push_vlan_protocol(mut self, value: u16) -> Self {
         push_header(self.as_vec_mut(), 8u16, 2 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
+        self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
     pub fn push_group_fwd_mask(mut self, value: u16) -> Self {
@@ -22799,6 +23152,14 @@ impl<'r> OpNewlinkDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewlinkDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -22859,6 +23220,14 @@ impl<'r> OpDellinkDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDellinkDo<'_> {
@@ -22923,6 +23292,14 @@ impl<'r> OpGetlinkDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetlinkDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -22984,6 +23361,14 @@ impl<'r> OpGetlinkDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetlinkDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -23044,6 +23429,14 @@ impl<'r> OpSetlinkDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpSetlinkDo<'_> {
@@ -23108,6 +23501,14 @@ impl<'r> OpGetstatsDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &IfStatsMsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &IfStatsMsg {
+        let pos = self.request.pos;
+        IfStatsMsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut IfStatsMsg {
+        let pos = self.request.pos;
+        IfStatsMsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetstatsDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -23168,6 +23569,14 @@ impl<'r> OpGetstatsDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &IfStatsMsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &IfStatsMsg {
+        let pos = self.request.pos;
+        IfStatsMsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut IfStatsMsg {
+        let pos = self.request.pos;
+        IfStatsMsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetstatsDo<'_> {
@@ -23257,7 +23666,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -23275,6 +23685,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -23341,6 +23752,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -23356,10 +23768,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -23376,9 +23790,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }

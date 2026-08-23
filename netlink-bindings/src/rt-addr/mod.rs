@@ -51,7 +51,8 @@ impl IfaFlags {
         })
     }
 }
-#[repr(C, packed(4))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct Ifaddrmsg {
     pub ifa_family: u8,
     pub ifa_prefixlen: u8,
@@ -59,11 +60,6 @@ pub struct Ifaddrmsg {
     pub ifa_flags: u8,
     pub ifa_scope: u8,
     pub ifa_index: u32,
-}
-impl Clone for Ifaddrmsg {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for Ifaddrmsg {
@@ -106,6 +102,11 @@ impl Ifaddrmsg {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 8usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -118,6 +119,7 @@ impl Ifaddrmsg {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<Ifaddrmsg>() == 8usize);
+        const _: () = assert!(std::mem::align_of::<Ifaddrmsg>() == 4usize);
         8usize
     }
 }
@@ -135,18 +137,13 @@ impl std::fmt::Debug for Ifaddrmsg {
             .finish()
     }
 }
-#[derive(Debug)]
-#[repr(C, packed(4))]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
 pub struct IfaCacheinfo {
     pub ifa_prefered: u32,
     pub ifa_valid: u32,
     pub cstamp: u32,
     pub tstamp: u32,
-}
-impl Clone for IfaCacheinfo {
-    fn clone(&self) -> Self {
-        Self::new_from_array(*self.as_array())
-    }
 }
 #[doc = "Create zero-initialized struct"]
 impl Default for IfaCacheinfo {
@@ -189,6 +186,11 @@ impl IfaCacheinfo {
         assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
         unsafe { std::mem::transmute(buf.as_ptr()) }
     }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
     pub fn as_array(&self) -> &[u8; 16usize] {
         unsafe { std::mem::transmute(self) }
     }
@@ -201,6 +203,7 @@ impl IfaCacheinfo {
     }
     pub const fn len() -> usize {
         const _: () = assert!(std::mem::size_of::<IfaCacheinfo>() == 16usize);
+        const _: () = assert!(std::mem::align_of::<IfaCacheinfo>() == 4usize);
         16usize
     }
 }
@@ -210,9 +213,9 @@ pub enum AddrAttrs<'a> {
     Local(std::net::IpAddr),
     Label(&'a CStr),
     Broadcast(std::net::Ipv4Addr),
-    Anycast(&'a [u8]),
+    Anycast(std::net::IpAddr),
     Cacheinfo(IfaCacheinfo),
-    Multicast(&'a [u8]),
+    Multicast(std::net::IpAddr),
     #[doc = "Associated type: [`IfaFlags`] (1 bit per enumeration)"]
     Flags(u32),
     RtPriority(u32),
@@ -280,7 +283,7 @@ impl<'a> IterableAddrAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_anycast(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_anycast(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -310,7 +313,7 @@ impl<'a> IterableAddrAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_multicast(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_multicast(&self) -> Result<std::net::IpAddr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -465,7 +468,7 @@ impl<'a> Iterator for IterableAddrAttrs<'a> {
                     val
                 }),
                 5u16 => AddrAttrs::Anycast({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -475,7 +478,7 @@ impl<'a> Iterator for IterableAddrAttrs<'a> {
                     val
                 }),
                 7u16 => AddrAttrs::Multicast({
-                    let res = Some(next);
+                    let res = parse_ip(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -515,7 +518,14 @@ impl<'a> Iterator for IterableAddrAttrs<'a> {
 impl<'a> std::fmt::Debug for IterableAddrAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("AddrAttrs");
-        for attr in self.clone() {
+        let mut iter = IterableAddrAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
             let attr = match attr {
                 Ok(a) => a,
                 Err(err) => {
@@ -537,7 +547,7 @@ impl<'a> std::fmt::Debug for IterableAddrAttrs<'_> {
                     fmt.field("Flags", &FormatFlags(val.into(), IfaFlags::from_value))
                 }
                 AddrAttrs::RtPriority(val) => fmt.field("RtPriority", &val),
-                AddrAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
+                AddrAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &FormatHexdump(val)),
                 AddrAttrs::Proto(val) => fmt.field("Proto", &val),
             };
         }
@@ -709,9 +719,14 @@ impl<Prev: Pusher> PushAddrAttrs<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_anycast(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 5u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_anycast(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_vec_mut(), 5u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_vec_mut(), value);
         self
     }
     pub fn push_cacheinfo(mut self, value: IfaCacheinfo) -> Self {
@@ -719,9 +734,14 @@ impl<Prev: Pusher> PushAddrAttrs<Prev> {
         self.as_vec_mut().extend(value.as_slice());
         self
     }
-    pub fn push_multicast(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 7u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_multicast(mut self, value: std::net::IpAddr) -> Self {
+        push_header(self.as_vec_mut(), 7u16, {
+            match &value {
+                IpAddr::V4(_) => 4,
+                IpAddr::V6(_) => 16,
+            }
+        } as u16);
+        encode_ip(self.as_vec_mut(), value);
         self
     }
     #[doc = "Associated type: [`IfaFlags`] (1 bit per enumeration)"]
@@ -788,6 +808,14 @@ impl<'r> OpNewaddrDo<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifaddrmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpNewaddrDo<'_> {
     fn protocol(&self) -> Protocol {
@@ -848,6 +876,14 @@ impl<'r> OpDeladdrDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifaddrmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDeladdrDo<'_> {
@@ -912,6 +948,14 @@ impl<'r> OpGetaddrDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifaddrmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetaddrDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -975,6 +1019,14 @@ impl<'r> OpGetmulticastDump<'r> {
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifaddrmsg) {
         prev.as_vec_mut().extend(header.as_slice());
     }
+    pub fn header(&self) -> &Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
 }
 impl NetlinkRequest for OpGetmulticastDump<'_> {
     fn protocol(&self) -> Protocol {
@@ -1035,6 +1087,14 @@ impl<'r> OpGetmulticastDo<'r> {
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifaddrmsg) {
         prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifaddrmsg {
+        let pos = self.request.pos;
+        Ifaddrmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGetmulticastDo<'_> {
@@ -1124,7 +1184,8 @@ impl Chained<'static> {
     pub fn new(first_seq: u32) -> Self {
         Self::new_from_buf(Vec::new(), first_seq)
     }
-    pub fn new_from_buf(buf: Vec<u8>, first_seq: u32) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Own(buf),
             first_seq,
@@ -1142,6 +1203,7 @@ impl Chained<'static> {
 }
 impl<'a> Chained<'a> {
     pub fn new_with_buf(buf: &'a mut Vec<u8>, first_seq: u32) -> Self {
+        buf.clear();
         Self {
             buf: RequestBuf::Ref(buf),
             first_seq,
@@ -1208,6 +1270,7 @@ use crate::utils::RequestBuf;
 #[derive(Debug)]
 pub struct Request<'buf> {
     buf: RequestBuf<'buf>,
+    pos: usize,
     flags: u16,
     writeback: Option<&'buf mut Option<RequestInfo>>,
 }
@@ -1223,10 +1286,12 @@ impl Request<'static> {
     pub fn new() -> Self {
         Self::new_from_buf(Vec::new())
     }
-    pub fn new_from_buf(buf: Vec<u8>) -> Self {
+    pub fn new_from_buf(mut buf: Vec<u8>) -> Self {
+        buf.clear();
         Self {
             flags: 0,
             buf: RequestBuf::Own(buf),
+            pos: 0,
             writeback: None,
         }
     }
@@ -1243,9 +1308,12 @@ impl<'buf> Request<'buf> {
         Self::new_extend(buf)
     }
     pub fn new_extend(buf: &'buf mut Vec<u8>) -> Self {
+        align(buf);
+        let pos = buf.len();
         Self {
             flags: 0,
             buf: RequestBuf::Ref(buf),
+            pos,
             writeback: None,
         }
     }
