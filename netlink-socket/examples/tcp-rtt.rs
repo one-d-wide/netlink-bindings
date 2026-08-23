@@ -22,10 +22,7 @@ use netlink_bindings::{
 };
 use netlink_socket2::NetlinkSocket;
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let sock = std::net::TcpListener::bind("127.0.0.1:0")?;
     let addr = sock.local_addr()?;
 
@@ -89,8 +86,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut sock = NetlinkSocket::new();
 
-    let mut iter = sock.request(&request).await?;
-    while let Some((header, attrs)) = iter.recv().await.transpose()? {
+    let mut iter = sock.request(&request)?;
+    while let Some((header, attrs)) = iter.recv().transpose()? {
         let (src, dst) = decode_sockid(header.family, &header.sockid);
         print!(
             "{src} -> {dst} state={:?}",

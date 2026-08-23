@@ -37,6 +37,10 @@ examples="
   multicast-rtnetlink
 "
 
+examples_async="
+  multicast-simple-async
+"
+
 targets="
   $(uname -m)-unknown-linux-gnu
   $(uname -m)-unknown-linux-musl
@@ -70,6 +74,12 @@ cargo() {
   run cargo "$@" --features="$(echo $features | tr -d " ")" --target="$target"
 }
 
+cargo_run_save() {
+  cargo run --example="$example" --features="$runtime"
+  bin="$(cargo run --example="$example" --features="$runtime" --config 'target."cfg(true)".runner="echo"')"
+  cp -- "$bin" "./target/bin_dir/$target-$runtime-$example"
+}
+
 matches() {
   if ! rg --passthru -- "$1"; then
     echo
@@ -101,9 +111,13 @@ for target in $targets; do
       matches 'Attribute failed policy validation: attribute "Ifname" in "LinkAttrs": PolicyTypeAttrs \{ MaxLength: 15, Type: 11 \}'
 
     for example in $examples; do
-      cargo run --example="$example" --features="$runtime"
-      bin="$(cargo run --example="$example" --features="$runtime" --config 'target."cfg(true)".runner="echo"')"
-      cp -- "$bin" "./target/bin_dir/$target-$runtime-$example"
+      cargo_run_save
+    done
+  done
+
+  for runtime in tokio smol; do
+    for example in $examples_async; do
+      cargo_run_save
     done
   done
 done

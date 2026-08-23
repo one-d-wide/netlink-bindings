@@ -14,10 +14,7 @@ use netlink_bindings::{
 };
 use netlink_socket2::{NetlinkSocket, ReplyError};
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let chain = "example-api-chain";
@@ -28,7 +25,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Same as
     //   iptables -N example-api-chain
     //   iptables -A example-api-chain --src 1.2.3.4 -j ACCEPT
-    let mut rules = Transaction::new(&mut sock).await?;
+    let mut rules = Transaction::new(&mut sock)?;
 
     rules.create_chain(chain);
 
@@ -37,7 +34,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .has_source_ipv4("1.2.3.4".parse()?)
         .accept();
 
-    rules.send(&mut sock).await?;
+    rules.send(&mut sock)?;
 
     println!();
     println!("Running iptables -L to verify");
@@ -49,11 +46,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Same as
     //   iptables -D example-api-chain
-    let mut rules = Transaction::new(&mut sock).await?;
+    let mut rules = Transaction::new(&mut sock)?;
 
     rules.delete_chain(chain);
 
-    rules.send(&mut sock).await?;
+    rules.send(&mut sock)?;
 
     println!();
     println!("Running iptables -L again");
@@ -78,11 +75,10 @@ fn print_chain(chain: &str) {
 struct GenerationId(u32);
 
 impl GenerationId {
-    #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-    async fn new_latest(sock: &mut NetlinkSocket) -> Result<Self, ReplyError> {
+    fn new_latest(sock: &mut NetlinkSocket) -> Result<Self, ReplyError> {
         let request = nftables::Request::new().op_getgen_do(&Nfgenmsg::new());
-        let mut iter = sock.request(&request).await?;
-        let (_, attrs) = iter.recv_one().await?;
+        let mut iter = sock.request(&request)?;
+        let (_, attrs) = iter.recv_one()?;
 
         Ok(GenerationId(attrs.get_id()?))
     }
@@ -95,10 +91,9 @@ struct Transaction {
 }
 
 impl Transaction {
-    #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-    async fn new(sock: &mut NetlinkSocket) -> Result<Self, ReplyError> {
+    fn new(sock: &mut NetlinkSocket) -> Result<Self, ReplyError> {
         let seq = sock.reserve_seq(256);
-        let genid = GenerationId::new_latest(sock).await?;
+        let genid = GenerationId::new_latest(sock)?;
 
         Ok(Self::new_with_genid(seq, genid))
     }
@@ -166,8 +161,7 @@ impl Transaction {
         NewRuleExprs { inner }
     }
 
-    #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-    async fn send(mut self, sock: &mut NetlinkSocket) -> Result<(), ReplyError> {
+    fn send(mut self, sock: &mut NetlinkSocket) -> Result<(), ReplyError> {
         let mut h = nftables::Nfgenmsg::new();
         h.set_res_id(10);
 
@@ -175,7 +169,7 @@ impl Transaction {
 
         let c = self.inner.finalize();
 
-        let res = sock.request_chained(&c).await?.recv_all().await;
+        let res = sock.request_chained(&c)?.recv_all();
 
         if let Err(err) = &res {
             if let Some(err) = err.as_io_error().raw_os_error() {

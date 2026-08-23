@@ -14,20 +14,17 @@ use netlink_bindings::{
 };
 use netlink_socket2::NetlinkSocket;
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = NetlinkSocket::new();
 
     let ifname = "nl80211-example";
 
     println!("Dumping wifi devices");
-    let devices = dump_wiphy(&mut sock).await?;
+    let devices = dump_wiphy(&mut sock)?;
 
-    if let Some(ifindex) = get_interface_index(&mut sock, ifname).await? {
+    if let Some(ifindex) = get_interface_index(&mut sock, ifname)? {
         println!("Interface {ifname:?} already exists. Removing it");
-        wiphy_del_interface(&mut sock, ifindex).await?;
+        wiphy_del_interface(&mut sock, ifindex)?;
     }
 
     if devices.is_empty() {
@@ -38,16 +35,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let (phy, phy_id) = devices.first().unwrap();
 
     println!("Adding {ifname:?} for phy {phy:?}");
-    let ifindex = wiphy_add_interface(&mut sock, *phy_id, ifname).await?;
+    let ifindex = wiphy_add_interface(&mut sock, *phy_id, ifname)?;
 
     println!("Removing {ifname:?}");
-    wiphy_del_interface(&mut sock, ifindex).await?;
+    wiphy_del_interface(&mut sock, ifindex)?;
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn dump_wiphy(sock: &mut NetlinkSocket) -> Result<Vec<(String, u32)>, Box<dyn Error>> {
+fn dump_wiphy(sock: &mut NetlinkSocket) -> Result<Vec<(String, u32)>, Box<dyn Error>> {
     let mut request = nl80211::Request::new().op_dump(Commands::GetWiphy as u8);
     request
         .encode()
@@ -56,8 +52,8 @@ async fn dump_wiphy(sock: &mut NetlinkSocket) -> Result<Vec<(String, u32)>, Box<
         .push_split_wiphy_dump(());
 
     let mut devices = HashSet::new();
-    let mut request = sock.request(&request).await?;
-    while let Some(attrs) = request.recv().await.transpose()? {
+    let mut request = sock.request(&request)?;
+    while let Some(attrs) = request.recv().transpose()? {
         let name = attrs.get_wiphy_name()?;
         let index = attrs.get_wiphy()?;
 
@@ -71,8 +67,7 @@ async fn dump_wiphy(sock: &mut NetlinkSocket) -> Result<Vec<(String, u32)>, Box<
     Ok(devices.into_iter().collect())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn wiphy_add_interface(
+fn wiphy_add_interface(
     sock: &mut NetlinkSocket,
     phy_id: u32,
     new_ifname: &str,
@@ -85,29 +80,27 @@ async fn wiphy_add_interface(
         // ...
         ;
 
-    let mut iter = sock.request(&request).await?;
-    let attrs = iter.recv_one().await?;
+    let mut iter = sock.request(&request)?;
+    let attrs = iter.recv_one()?;
 
     Ok(attrs.get_ifindex()?)
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) -> Result<(), Box<dyn Error>> {
+fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) -> Result<(), Box<dyn Error>> {
     let mut request = nl80211::Request::new().op_do(Commands::DelInterface as u8);
     request.encode().push_ifindex(ifindex);
-    sock.request(&request).await?.recv_ack().await?;
+    sock.request(&request)?.recv_ack()?;
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn get_interface_index(
+fn get_interface_index(
     sock: &mut NetlinkSocket,
     ifname: &str,
 ) -> Result<Option<u32>, Box<dyn Error>> {
     let request = rt_link::Request::new().op_getlink_dump(&Default::default());
 
-    let mut iter = sock.request(&request).await?;
-    while let Some((header, attrs)) = iter.recv().await.transpose()? {
+    let mut iter = sock.request(&request)?;
+    while let Some((header, attrs)) = iter.recv().transpose()? {
         if attrs.get_ifname().unwrap().to_bytes() == ifname.as_bytes() {
             return Ok(Some(header.ifi_index as u32));
         }

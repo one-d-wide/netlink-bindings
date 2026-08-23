@@ -21,32 +21,24 @@ use netlink_socket2::NetlinkSocket;
 
 const TC_H_ROOT: u32 = 0xffffffff;
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let ifname = std::env::args().skip(1).next().unwrap_or("wg0".to_string());
 
     let mut sock = NetlinkSocket::new();
-    let ifi = link_get_ifindex(&mut sock, &ifname).await?;
+    let ifi = link_get_ifindex(&mut sock, &ifname)?;
 
     // Handle id consists of major:minor parts, each is 16 bits.
     // Qdisc handle has only the major part, minor is used by classes.
     let qdisc_handle = 0xbeef << 16;
 
-    tc_prio_add(&mut sock, ifi, qdisc_handle).await?;
-    tc_prio_show(&mut sock, ifi, qdisc_handle).await?;
-    tc_prio_del(&mut sock, ifi, qdisc_handle).await?;
+    tc_prio_add(&mut sock, ifi, qdisc_handle)?;
+    tc_prio_show(&mut sock, ifi, qdisc_handle)?;
+    tc_prio_del(&mut sock, ifi, qdisc_handle)?;
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn tc_prio_add(
-    sock: &mut NetlinkSocket,
-    ifi: i32,
-    handle: u32,
-) -> Result<(), Box<dyn Error>> {
+fn tc_prio_add(sock: &mut NetlinkSocket, ifi: i32, handle: u32) -> Result<(), Box<dyn Error>> {
     let header = Tcmsg {
         family: 0,
         ifindex: ifi,
@@ -69,15 +61,14 @@ async fn tc_prio_add(
 
     req.encode().nested_options_prio(&tc_prio_opt);
 
-    sock.request(&req).await?.recv_ack().await?;
+    sock.request(&req)?.recv_ack()?;
 
     println!("tc prio add on ifi {} OK", ifi);
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn tc_prio_show(
+fn tc_prio_show(
     sock: &mut NetlinkSocket,
     ifi: i32,
     qdisc_handle: u32,
@@ -93,8 +84,8 @@ async fn tc_prio_show(
 
     let req = tc::Request::new().op_getqdisc_dump(&header);
 
-    let mut iter = sock.request(&req).await?;
-    while let Some((header, attrs)) = iter.recv().await.transpose()? {
+    let mut iter = sock.request(&req)?;
+    while let Some((header, attrs)) = iter.recv().transpose()? {
         if header.ifindex == ifi && header.handle == qdisc_handle {
             println!("{:#?}", (header, attrs));
             println!("tc prio show on ifi {} OK", ifi);
@@ -105,8 +96,7 @@ async fn tc_prio_show(
     panic!("No qdisc found");
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn tc_prio_del(
+fn tc_prio_del(
     sock: &mut NetlinkSocket,
     ifi: i32,
     qdisc_handle: u32,
@@ -120,23 +110,19 @@ async fn tc_prio_del(
         ..Default::default()
     });
 
-    sock.request(&req).await?.recv_ack().await?;
+    sock.request(&req)?.recv_ack()?;
 
     println!("tc prio del on ifi {} OK", ifi);
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-pub async fn link_get_ifindex(
-    sock: &mut NetlinkSocket,
-    ifname: &str,
-) -> Result<i32, Box<dyn Error>> {
+fn link_get_ifindex(sock: &mut NetlinkSocket, ifname: &str) -> Result<i32, Box<dyn Error>> {
     let mut request = rt_link::Request::new().op_getlink_do(&Default::default());
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request).await?;
-    let (header, _attrs) = iter.recv_one().await?;
+    let mut iter = sock.request(&request)?;
+    let (header, _attrs) = iter.recv_one()?;
 
     Ok(header.ifi_index)
 }

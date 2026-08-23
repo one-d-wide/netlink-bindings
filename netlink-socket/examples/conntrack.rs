@@ -8,16 +8,13 @@ use std::{error::Error, net::IpAddr};
 use netlink_bindings::conntrack;
 use netlink_socket2::NetlinkSocket;
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let request = conntrack::Request::new().op_get_dump(&conntrack::Nfgenmsg::new());
 
     let mut sock = NetlinkSocket::new();
 
-    let mut iter = sock.request(&request).await?;
-    while let Some((_header, attrs)) = iter.recv().await.transpose()? {
+    let mut iter = sock.request(&request)?;
+    while let Some((_header, attrs)) = iter.recv().transpose()? {
         let orig = attrs.get_tuple_orig()?;
         let reply = attrs.get_tuple_reply()?;
         let proto = orig.get_tuple_proto()?;

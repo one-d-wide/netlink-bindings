@@ -60,6 +60,10 @@ required-features = [ "netlink-bindings/netdev", "netlink-bindings/rt-link" ]
 name = "multicast-rtnetlink"
 required-features = [ "netlink-bindings/rt-link" ]
 
+[[example]]
+name = "multicast-simple-async"
+required-features = [ "netlink-bindings/netdev", "netlink-bindings/rt-link", "async" ]
+
 [package.metadata.docs.rs]
 all-features = true
 

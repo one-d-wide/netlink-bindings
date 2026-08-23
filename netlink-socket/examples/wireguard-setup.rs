@@ -22,10 +22,7 @@ use netlink_bindings::{
 };
 use netlink_socket2::NetlinkSocket;
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = NetlinkSocket::new();
 
     let ifname = "wg-example";
@@ -35,34 +32,33 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let peer: SocketAddr = "127.0.0.1:12345".parse().unwrap();
 
     println!("Adding {ifname:?}");
-    link_add(&mut sock, ifname).await?;
+    link_add(&mut sock, ifname)?;
 
-    let ifindex = link_get_ifindex(&mut sock, ifname).await?;
+    let ifindex = link_get_ifindex(&mut sock, ifname)?;
     println!("Device {ifname:?} received ifindex {ifindex}");
 
     println!("Assigning {ifname:?} address {addr}/{prefix}");
-    addr_add(&mut sock, ifindex, addr, prefix).await?;
+    addr_add(&mut sock, ifindex, addr, prefix)?;
 
     println!("Configuring wireguard parameters");
-    wg_set(&mut sock, ifname, addr, peer, &peer_key[..]).await?;
+    wg_set(&mut sock, ifname, addr, peer, &peer_key[..])?;
 
     println!("Dumping wireguard devices (all)");
-    wg_dump(&mut sock).await?;
+    wg_dump(&mut sock)?;
 
     // Comment these lines to inspect manually from the console
     println!("Deleting {ifname:?}");
-    link_del(&mut sock, ifname).await?;
+    link_del(&mut sock, ifname)?;
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn wg_dump(sock: &mut NetlinkSocket) -> Result<(), Box<dyn Error>> {
+fn wg_dump(sock: &mut NetlinkSocket) -> Result<(), Box<dyn Error>> {
     let mut sock_wg = NetlinkSocket::new();
 
     let request_links = rt_link::Request::new().op_getlink_dump(&Ifinfomsg::new());
-    let mut iter = sock.request(&request_links).await?;
-    while let Some((_header, attrs)) = iter.recv().await.transpose()? {
+    let mut iter = sock.request(&request_links)?;
+    while let Some((_header, attrs)) = iter.recv().transpose()? {
         let link = attrs.get_ifname()?;
 
         if Ok(c"wireguard") != attrs.get_linkinfo().unwrap_or_default().get_kind() {
@@ -74,8 +70,8 @@ async fn wg_dump(sock: &mut NetlinkSocket) -> Result<(), Box<dyn Error>> {
         let mut request = wireguard::Request::new().op_get_device_dump();
         request.encode().push_ifname(link);
 
-        let mut iter = sock_wg.request(&request).await?;
-        while let Some(attrs) = iter.recv().await.transpose()? {
+        let mut iter = sock_wg.request(&request)?;
+        while let Some(attrs) = iter.recv().transpose()? {
             println!("{:#?}", attrs);
         }
 
@@ -85,8 +81,7 @@ async fn wg_dump(sock: &mut NetlinkSocket) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn wg_set(
+fn wg_set(
     sock: &mut NetlinkSocket,
     ifname: &str,
     addr: IpAddr,
@@ -113,13 +108,12 @@ async fn wg_set(
         .end_nested()
         .end_array();
 
-    sock.request(&request).await?.recv_ack().await?;
+    sock.request(&request)?.recv_ack()?;
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn addr_add(
+fn addr_add(
     sock: &mut NetlinkSocket,
     ifindex: u32,
     addr: IpAddr,
@@ -138,14 +132,13 @@ async fn addr_add(
 
     request.encode().push_local(addr);
 
-    sock.request(&request).await?.recv_ack().await?;
+    sock.request(&request)?.recv_ack()?;
 
     Ok(())
 }
 
 /// Equivalent to `ip link add dev {ifname} type wireguard`
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>> {
+fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>> {
     let mut request = rt_link::Request::new()
         .set_create()
         // .set_excl() // If exclusive flag set, existing device will cause an error
@@ -157,31 +150,29 @@ async fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn 
         .nested_linkinfo()
         .push_kind(c"wireguard");
 
-    sock.request(&request).await?.recv_ack().await?;
+    sock.request(&request)?.recv_ack()?;
 
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn link_get_ifindex(sock: &mut NetlinkSocket, ifname: &str) -> Result<u32, Box<dyn Error>> {
+fn link_get_ifindex(sock: &mut NetlinkSocket, ifname: &str) -> Result<u32, Box<dyn Error>> {
     let mut request = rt_link::Request::new().op_getlink_do(&rt_link::Ifinfomsg::new());
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request).await?;
-    let (header, _attrs) = iter.recv_one().await?;
+    let mut iter = sock.request(&request)?;
+    let (header, _attrs) = iter.recv_one()?;
 
     Ok(header.ifi_index as u32)
 }
 
 /// Equivalent to `ip link del dev {ifname}`
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>> {
+fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>> {
     let mut request = rt_link::Request::new().op_dellink_do(&Default::default());
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    sock.request(&request).await?.recv_ack().await?;
+    sock.request(&request)?.recv_ack()?;
 
     Ok(())
 }

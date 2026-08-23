@@ -7,10 +7,7 @@ use std::{error::Error, net::Ipv4Addr};
 use netlink_bindings::{rt_link, rt_route};
 use netlink_socket2::NetlinkSocket;
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-#[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
-#[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = NetlinkSocket::new();
 
     let header = rt_route::Rtmsg {
@@ -21,8 +18,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let req = rt_route::Request::new().op_getroute_dump(&header);
 
-    let mut res = sock.request(&req).await?;
-    while let Some((header, attrs)) = res.recv().await.transpose()? {
+    let mut res = sock.request(&req)?;
+    while let Some((header, attrs)) = res.recv().transpose()? {
         let dst = attrs.get_dst().unwrap_or(Ipv4Addr::UNSPECIFIED.into());
 
         println!();
@@ -31,7 +28,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             print!(" via {gateway}");
         }
         if let Ok(ifindex) = attrs.get_oif() {
-            let ifname = get_ifname(ifindex).await?;
+            let ifname = get_ifname(ifindex)?;
             print!(" dev {ifname}");
         }
         if let Ok(src) = attrs.get_prefsrc() {
@@ -46,15 +43,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-#[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn get_ifname(ifindex: u32) -> Result<String, Box<dyn Error>> {
+fn get_ifname(ifindex: u32) -> Result<String, Box<dyn Error>> {
     let req = rt_link::Request::new().op_getlink_do(&rt_link::Ifinfomsg {
         ifi_index: ifindex as i32,
         ..Default::default()
     });
 
     let mut sock = NetlinkSocket::new();
-    let mut iter = sock.request(&req).await?;
-    let (_, attrs) = iter.recv_one().await?;
+    let mut iter = sock.request(&req)?;
+    let (_, attrs) = iter.recv_one()?;
     Ok(attrs.get_ifname()?.to_string_lossy().to_string())
 }
