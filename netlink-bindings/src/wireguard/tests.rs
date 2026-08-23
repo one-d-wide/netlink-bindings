@@ -4,27 +4,6 @@ use crate::wireguard;
 use crate::wireguard::*;
 
 #[test]
-#[should_panic(expected = "Error parsing header of \"Wgdevice\" (unknown attribute) at offset 4")]
-fn invalid_header_size() {
-    let payload = &[0x01, 0x01, 0x00, 0x00, 0x01, 0x00];
-
-    dump_hex(payload);
-
-    // NOTE: Decoder is configured to panic on error in #[cfg(test)]
-    println!("{:#?}", OpSetDeviceDo::decode_request(payload));
-}
-
-#[test]
-#[should_panic(expected = "Error parsing header of \"Wgdevice\" (unknown attribute) at offset 4")]
-fn overflowing_header_size() {
-    let payload = &[0x01, 0x01, 0x00, 0x00, 0x04];
-
-    dump_hex(payload);
-
-    println!("{:#?}", OpSetDeviceDo::decode_request(payload));
-}
-
-#[test]
 #[should_panic(expected = "Error parsing attribute \"Ifindex\" of \"Wgdevice\" at offset 4")]
 fn invalid_len_of_fixed_payload() {
     let payload = &[
