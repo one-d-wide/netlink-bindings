@@ -238,6 +238,11 @@ pub fn gen_cstruct(
                 assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
                 unsafe { std::mem::transmute(buf.as_ptr()) }
             }
+            pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+                assert!(buf.len() >= Self::len());
+                assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+                unsafe { std::mem::transmute(buf.as_ptr()) }
+            }
             pub fn as_array(&self) -> &[u8; #len] {
                 unsafe { std::mem::transmute(self) }
             }
