@@ -21,6 +21,25 @@ pub fn dump_hex(buf: &[u8]) {
     }
 }
 
+fn dump_hex_write(fmt: &mut impl fmt::Write, pad: &str, buf: &[u8]) -> fmt::Result {
+    let mut len = 0;
+    for chunk in buf.chunks(16) {
+        write!(fmt, "{pad}")?;
+        write!(fmt, "{len:04x?}: ")?;
+        write!(fmt, "{chunk:02x?} ")?;
+        for b in chunk {
+            if b.is_ascii() && !b.is_ascii_control() {
+                write!(fmt, "{}", char::from_u32(*b as u32).unwrap())?;
+            } else {
+                write!(fmt, ".")?;
+            }
+        }
+        writeln!(fmt)?;
+        len += chunk.len();
+    }
+    Ok(())
+}
+
 pub fn dump_assert_eq(left: &[u8], right: &[u8]) {
     if left.len() != right.len() {
         dump_hex(left);
@@ -77,6 +96,38 @@ impl<T: AsRef<[u8]>> Debug for FormatHex<T> {
             write!(fmt, "{i:02x}")?
         }
         write!(fmt, "\"")?;
+        Ok(())
+    }
+}
+
+#[derive(Clone, Copy, Default)]
+pub struct FormatUnrecognized<'a>(pub &'a [u8]);
+
+impl fmt::Debug for FormatUnrecognized<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("UnrecognozedAttribute");
+        if let Some((header, attr)) = chop_header(self.0, &mut 0) {
+            f.field("header", &header);
+            f.field("data", &FormatHexdump(attr));
+        } else {
+            f.field("data", &FormatHexdump(self.0));
+        }
+        f.finish()
+    }
+}
+
+#[derive(Clone, Copy, Default)]
+pub struct FormatHexdump<'a>(pub &'a [u8]);
+impl fmt::Debug for FormatHexdump<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Hexdump(")?;
+        if f.alternate() {
+            writeln!(f)?;
+            dump_hex_write(f, "    ", self.0)?;
+        } else {
+            self.0.fmt(f)?
+        }
+        write!(f, ")")?;
         Ok(())
     }
 }
@@ -236,7 +287,7 @@ pub fn write_header(buf: &mut Vec<u8>, r#type: u16) -> usize {
 
 /// Returns header offset
 /// The kernel doesn't really check byteorder bit nor set it correctly
-fn push_header_type(buf: &mut Vec<u8>, mut r#type: u16, len: u16, is_nested: bool) -> usize {
+pub fn push_header_type(buf: &mut Vec<u8>, mut r#type: u16, len: u16, is_nested: bool) -> usize {
     align(buf);
 
     let header_offset = buf.len();
@@ -302,10 +353,57 @@ impl<'buf> Iterator for IterableChunks<'buf> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+/// Similar to [`IterableChunks`], but includes attribute header
+#[derive(Debug, Clone, Copy, Default)]
+pub struct IterateAttrs<'buf> {
+    pub buf: &'buf [u8],
+    pub pos: usize,
+}
+
+impl<'buf> IterateAttrs<'buf> {
+    pub fn new(buf: &'buf [u8]) -> Self {
+        Self { buf, pos: 0 }
+    }
+    pub fn is_empty(&self) -> bool {
+        self.buf.len() == self.pos
+    }
+}
+
+impl<'buf> Iterator for IterateAttrs<'buf> {
+    type Item = &'buf [u8];
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos + 2 > self.buf.len() {
+            self.pos = self.buf.len();
+            return None;
+        }
+
+        let len = parse_u16(&self.buf[self.pos..self.pos + 2]).unwrap();
+        if len < 4 {
+            self.pos = self.buf.len();
+            return None;
+        }
+
+        let new_pos = nla_align_up(self.pos + len as usize).min(self.buf.len());
+        let attr = &self.buf[self.pos..new_pos];
+        self.pos = new_pos;
+        Some(attr)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Header {
     pub r#type: u16,
     pub is_nested: bool,
+}
+
+pub fn find_attr(buf: &[u8], r#type: u16) -> Option<&[u8]> {
+    let mut pos = 0;
+    while let Some((header, attr)) = chop_header(buf, &mut pos) {
+        if header.r#type == r#type {
+            return Some(attr);
+        }
+    }
+    None
 }
 
 pub fn chop_header<'a>(buf: &'a [u8], pos: &mut usize) -> Option<(Header, &'a [u8])> {
