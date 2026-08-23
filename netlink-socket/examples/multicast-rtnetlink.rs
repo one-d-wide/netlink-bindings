@@ -8,18 +8,20 @@
 //!
 //! Run with: `cargo run --example multicast-raw --features=rt-link`
 
+use std::error::Error;
+
 use netlink_bindings::{rt_link, traits::NetlinkRequest};
 use netlink_socket2::{MulticastSocketRaw, NetlinkSocket};
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = NetlinkSocket::new();
 
     // The same protonum is also used by rt_addr, rt_neigh, tc, etc.
     let protonum = rt_link::PROTONUM /* 0 */;
-    let mut multicast_sock = MulticastSocketRaw::new(protonum).unwrap();
+    let mut multicast_sock = MulticastSocketRaw::new(protonum)?;
 
     // Before receiving notifications, you have to subscribe to relevant groups.
     // Check the [`netdev::NotifGroup`] for available groups, or the upstream
@@ -27,7 +29,7 @@ async fn main() {
     // "mcast-groups" and are usually placed at the bottom of the file.
     //
     // Under the hood, .listen() calls setsockopt*() with NETLINK_ADD_MEMBERSHIP.
-    multicast_sock.listen(libc::RTNLGRP_LINK).unwrap();
+    multicast_sock.listen(libc::RTNLGRP_LINK)?;
 
     // Group ids for rtnetlink are allocated statically, we subscribe to a bunch
     // of them blinds simply to surface notifications drifting on your system.
@@ -39,11 +41,11 @@ async fn main() {
 
     // This should emit notifications for us to process
     let link = "example-link";
-    link_add(&mut sock, link).await;
-    link_del(&mut sock, link).await;
+    link_add(&mut sock, link).await?;
+    link_del(&mut sock, link).await?;
 
     loop {
-        let (recv, buf) = multicast_sock.recv().await.unwrap();
+        let (recv, buf) = multicast_sock.recv().await?;
 
         let multicast_group = recv.multicast_group;
         let value = recv.message_type;
@@ -65,7 +67,7 @@ async fn main() {
                 let (_header, attrs) = rt_link::OpGetlinkDo::decode_reply(buf);
 
                 let op = rt_op_from_id(value).unwrap().strip_prefix("RTM_").unwrap();
-                let link = attrs.get_ifname().unwrap();
+                let link = attrs.get_ifname()?;
                 let r#type = attrs
                     .get_linkinfo()
                     .unwrap_or_default()
@@ -75,7 +77,7 @@ async fn main() {
                 println!("{op} link {link:?} of type {type:?}");
 
                 if std::env::var("TESTING").is_ok() && op == "DELLINK" {
-                    return;
+                    return Ok(());
                 }
             }
 
@@ -253,7 +255,7 @@ to_from_enum! {
 
 /// Equivalent to `ip link add dev {ifname} type dummy`
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn link_add(sock: &mut NetlinkSocket, ifname: &str) {
+async fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>> {
     let mut request = rt_link::Request::new()
         .set_create()
         .set_excl()
@@ -265,17 +267,19 @@ async fn link_add(sock: &mut NetlinkSocket, ifname: &str) {
         .nested_linkinfo()
         .push_kind(c"dummy");
 
-    let mut iter = sock.request(&request).await.unwrap();
-    iter.recv_ack().await.unwrap();
+    let mut iter = sock.request(&request).await?;
+    let _ = iter.recv_ack().await?;
+    Ok(())
 }
 
 /// Equivalent to `ip link del dev {ifname}`
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn link_del(sock: &mut NetlinkSocket, ifname: &str) {
+async fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>> {
     let mut request = rt_link::Request::new().op_dellink_do(&Default::default());
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request).await.unwrap();
-    iter.recv_ack().await.unwrap();
+    let mut iter = sock.request(&request).await?;
+    let _ = iter.recv_ack().await;
+    Ok(())
 }

@@ -6,12 +6,14 @@
 //!
 //! Run with: `cargo run --example extack --features=rt-link`
 
+use std::error::Error;
+
 use netlink_bindings::rt_link;
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let mut request = rt_link::Request::new()
         .set_create()
         .op_newlink_do(&rt_link::Ifinfomsg::new());
@@ -24,8 +26,10 @@ async fn main() {
 
     let mut sock = netlink_socket2::NetlinkSocket::new();
 
-    let mut iter = sock.request(&request).await.unwrap();
+    let mut iter = sock.request(&request).await?;
     while let Some(res) = iter.recv().await {
         println!("{:?}", res);
     }
+
+    Ok(())
 }

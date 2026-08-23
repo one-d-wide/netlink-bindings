@@ -5,7 +5,7 @@
 //!
 //! Run with: `cargo run --example nl80211-raw --features=nl80211,rt-link`
 
-use std::collections::HashSet;
+use std::{collections::HashSet, error::Error};
 
 use netlink_bindings::{
     builtin::BuiltinNfgenmsg,
@@ -52,35 +52,37 @@ impl NetlinkRequest for RawRequest {
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = NetlinkSocket::new();
 
     let ifname = "nl80211-example";
 
     println!("Dumping wifi devices");
-    let devices = dump_wiphy(&mut sock).await;
+    let devices = dump_wiphy(&mut sock).await?;
 
-    if let Some(ifindex) = get_interface_index(&mut sock, ifname).await {
+    if let Some(ifindex) = get_interface_index(&mut sock, ifname).await? {
         println!("Interface {ifname:?} already exists. Removing it");
-        wiphy_del_interface(&mut sock, ifindex).await;
+        wiphy_del_interface(&mut sock, ifindex).await?;
     }
 
     if devices.is_empty() {
         println!("No wifi devices found");
-        return;
+        return Ok(());
     }
 
     let (phy, phy_id) = devices.first().unwrap();
 
     println!("Adding {ifname:?} for phy {phy:?}");
-    let ifindex = wiphy_add_interface(&mut sock, *phy_id, ifname).await;
+    let ifindex = wiphy_add_interface(&mut sock, *phy_id, ifname).await?;
 
     println!("Removing {ifname:?}");
-    wiphy_del_interface(&mut sock, ifindex).await;
+    wiphy_del_interface(&mut sock, ifindex).await?;
+
+    Ok(())
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn dump_wiphy(sock: &mut NetlinkSocket) -> Vec<(String, u32)> {
+async fn dump_wiphy(sock: &mut NetlinkSocket) -> Result<Vec<(String, u32)>, Box<dyn Error>> {
     let mut request = RawRequest::new();
 
     // Request may specify multiple of NLM_F_* flags.
@@ -103,19 +105,19 @@ async fn dump_wiphy(sock: &mut NetlinkSocket) -> Vec<(String, u32)> {
         ;
 
     let mut devices = HashSet::new();
-    let mut request = sock.request(&request).await.unwrap();
-    while let Some(res) = request.recv().await {
+    let mut request = sock.request(&request).await?;
+    while let Some(res) = request.recv().await.transpose()? {
         // Parse a reply. Genetlink reply header doesn't carry any significant
         // information, so it can be ignored.
-        let (_genl_header, attrs) = res.unwrap().split_at(BuiltinNfgenmsg::len());
+        let (_genl_header, attrs) = res.split_at(BuiltinNfgenmsg::len());
         let attrs = Nl80211Attrs::new(attrs);
 
         // And here we go
         // dbg!(attrs);
 
         // Collect names of wifi devices
-        let name = attrs.get_wiphy_name().unwrap();
-        let index = attrs.get_wiphy().unwrap();
+        let name = attrs.get_wiphy_name()?;
+        let index = attrs.get_wiphy()?;
 
         if let Ok(mut commands) = attrs.get_supported_commands() {
             if commands.any(|c| c == Commands::NewInterface as u32) {
@@ -124,11 +126,15 @@ async fn dump_wiphy(sock: &mut NetlinkSocket) -> Vec<(String, u32)> {
         }
     }
 
-    devices.into_iter().collect()
+    Ok(devices.into_iter().collect())
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn wiphy_add_interface(sock: &mut NetlinkSocket, phy_id: u32, new_ifname: &str) -> u32 {
+async fn wiphy_add_interface(
+    sock: &mut NetlinkSocket,
+    phy_id: u32,
+    new_ifname: &str,
+) -> Result<u32, Box<dyn Error>> {
     let mut request = RawRequest::new();
 
     let mut header = BuiltinNfgenmsg::new();
@@ -142,18 +148,17 @@ async fn wiphy_add_interface(sock: &mut NetlinkSocket, phy_id: u32, new_ifname: 
         // ...
         ;
 
-    let mut iter = sock.request(&request).await.unwrap();
-    let reply = iter.recv_one().await.unwrap();
-    let (_genl_header, attrs) = reply.split_at(BuiltinNfgenmsg::len());
+    let mut iter = sock.request(&request).await?;
+    let (_genl_header, attrs) = iter.recv_one().await?.split_at(BuiltinNfgenmsg::len());
     let attrs = Nl80211Attrs::new(attrs);
 
     // dbg!(attrs);
 
-    attrs.get_ifindex().unwrap()
+    Ok(attrs.get_ifindex()?)
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) {
+async fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) -> Result<(), Box<dyn Error>> {
     let mut request = RawRequest::new();
 
     let mut header = BuiltinNfgenmsg::new();
@@ -162,21 +167,24 @@ async fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) {
 
     PushNl80211Attrs::new(&mut request.buf).push_ifindex(ifindex);
 
-    let mut iter = sock.request(&request).await.unwrap();
-    iter.recv_ack().await.unwrap();
+    sock.request(&request).await?.recv_ack().await?;
+
+    Ok(())
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn get_interface_index(sock: &mut NetlinkSocket, ifname: &str) -> Option<u32> {
+async fn get_interface_index(
+    sock: &mut NetlinkSocket,
+    ifname: &str,
+) -> Result<Option<u32>, Box<dyn Error>> {
     let request = rt_link::Request::new().op_getlink_dump(&Default::default());
 
     let mut iter = sock.request(&request).await.unwrap();
-    while let Some(res) = iter.recv().await {
-        let (header, attrs) = res.unwrap();
+    while let Some((header, attrs)) = iter.recv().await.transpose()? {
         if attrs.get_ifname().unwrap().to_bytes() == ifname.as_bytes() {
-            return Some(header.ifi_index as u32);
+            return Ok(Some(header.ifi_index as u32));
         }
     }
 
-    None
+    Ok(None)
 }

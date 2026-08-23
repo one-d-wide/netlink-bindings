@@ -11,6 +11,7 @@
 //! Run with: `cargo run --example tcp-rtt --features=inet-diag`
 
 use std::{
+    error::Error,
     net::{IpAddr, SocketAddr},
     time::Duration,
 };
@@ -24,17 +25,17 @@ use netlink_socket2::NetlinkSocket;
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() {
-    let sock = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-    let addr = sock.local_addr().unwrap();
+async fn main() -> Result<(), Box<dyn Error>> {
+    let sock = std::net::TcpListener::bind("127.0.0.1:0")?;
+    let addr = sock.local_addr()?;
 
     std::thread::spawn(move || {
         let _conn = std::net::TcpStream::connect(addr).unwrap();
         std::thread::sleep(Duration::MAX);
     });
 
-    let (conn, peer_addr) = sock.accept().unwrap();
-    let sockaddr = conn.local_addr().unwrap();
+    let (conn, peer_addr) = sock.accept()?;
+    let sockaddr = conn.local_addr()?;
 
     let header = inet_diag::ReqV2 {
         family: libc::AF_INET as u8,
@@ -88,13 +89,11 @@ async fn main() {
 
     let mut sock = NetlinkSocket::new();
 
-    let mut iter = sock.request(&request).await.unwrap();
-    while let Some(res) = iter.recv().await {
-        let (header, attrs) = res.unwrap();
-
-        let (s, d) = decode_sockid(header.family, &header.sockid);
+    let mut iter = sock.request(&request).await?;
+    while let Some((header, attrs)) = iter.recv().await.transpose()? {
+        let (src, dst) = decode_sockid(header.family, &header.sockid);
         print!(
-            "{s} -> {d} state={:?}",
+            "{src} -> {dst} state={:?}",
             FormatEnum(header.state as u64, TcpState::from_value)
         );
 
@@ -107,6 +106,8 @@ async fn main() {
     }
 
     // std::thread::sleep(Duration::MAX);
+
+    Ok(())
 }
 
 fn to_ms(micros: u32) -> f32 {

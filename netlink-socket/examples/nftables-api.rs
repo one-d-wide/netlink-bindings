@@ -3,7 +3,7 @@
 //!
 //! Run with: `cargo run --example nftables-api --features=nftables`
 
-use std::{io, net::Ipv4Addr};
+use std::{error::Error, io, net::Ipv4Addr};
 
 use netlink_bindings::{
     nftables::{
@@ -17,7 +17,7 @@ use netlink_socket2::{NetlinkSocket, ReplyError};
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let chain = "example-api-chain";
@@ -28,16 +28,16 @@ async fn main() {
     // Same as
     //   iptables -N example-api-chain
     //   iptables -A example-api-chain --src 1.2.3.4 -j ACCEPT
-    let mut rules = Transaction::new(&mut sock).await.unwrap();
+    let mut rules = Transaction::new(&mut sock).await?;
 
     rules.create_chain(chain);
 
     rules
         .append_rule_ipv4(chain)
-        .has_source_ipv4("1.2.3.4".parse().unwrap())
+        .has_source_ipv4("1.2.3.4".parse()?)
         .accept();
 
-    rules.send(&mut sock).await.unwrap();
+    rules.send(&mut sock).await?;
 
     println!();
     println!("Running iptables -L to verify");
@@ -49,16 +49,18 @@ async fn main() {
 
     // Same as
     //   iptables -D example-api-chain
-    let mut rules = Transaction::new(&mut sock).await.unwrap();
+    let mut rules = Transaction::new(&mut sock).await?;
 
     rules.delete_chain(chain);
 
-    rules.send(&mut sock).await.unwrap();
+    rules.send(&mut sock).await?;
 
     println!();
     println!("Running iptables -L again");
 
     print_chain(chain);
+
+    Ok(())
 }
 
 fn print_chain(chain: &str) {

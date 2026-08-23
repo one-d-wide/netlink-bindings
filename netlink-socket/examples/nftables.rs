@@ -3,7 +3,7 @@
 //!
 //! Run with: `cargo run --example nftables --features=nftables`
 
-use std::{ffi::CStr, net::Ipv4Addr};
+use std::{error::Error, ffi::CStr, net::Ipv4Addr};
 
 use netlink_bindings::nftables::{self, CmpOps, Nfgenmsg, PayloadBase, Registers, VerdictCode};
 use netlink_socket2::NetlinkSocket;
@@ -11,7 +11,7 @@ use netlink_socket2::NetlinkSocket;
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
 #[cfg_attr(feature = "tokio", tokio::main(flavor = "current_thread"))]
 #[cfg_attr(feature = "smol", macro_rules_attribute::apply(smol_macros::main))]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let mut sock = netlink_socket2::NetlinkSocket::new();
 
     let table = c"filter";
@@ -19,20 +19,26 @@ async fn main() {
 
     println!();
     println!("Appending new rule to {chain:?} chain");
-    append_rule(&mut sock, table, chain).await;
+    append_rule(&mut sock, table, chain).await?;
 
     println!();
     println!("Printing the rules in the {chain:?} chain");
-    dump_rules(&mut sock, table, chain).await;
+    dump_rules(&mut sock, table, chain).await?;
 
     println!();
     println!("Deleting {chain:?} chain");
-    del_chain(&mut sock, table, chain).await;
+    del_chain(&mut sock, table, chain).await?;
+
+    Ok(())
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn append_rule(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) {
-    let id = get_latest_genid(sock).await;
+async fn append_rule(
+    sock: &mut NetlinkSocket,
+    table: &CStr,
+    chain: &CStr,
+) -> Result<(), Box<dyn Error>> {
+    let id = get_latest_genid(sock).await?;
 
     // Base sequence number for the messages in the chain. Might as well be random.
     let seq = sock.reserve_seq(256);
@@ -44,6 +50,11 @@ async fn append_rule(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) {
         .op_batch_begin_do(&batch_header())
         .encode()
         .push_genid(id);
+
+    c.request()
+        .op_newtable_do(&msg_header())
+        .encode()
+        .push_name(table);
 
     // Create a separate table to not interfere with actual traffic
     c.request()
@@ -104,35 +115,44 @@ async fn append_rule(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) {
     c.request().op_batch_end_do(&batch_header());
 
     sock.request_chained(&c.finalize())
-        .await
-        .unwrap()
+        .await?
         .recv_all()
-        .await
-        .unwrap();
+        .await?;
+
+    Ok(())
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn get_latest_genid(sock: &mut NetlinkSocket) -> u32 {
+async fn get_latest_genid(sock: &mut NetlinkSocket) -> Result<u32, Box<dyn Error>> {
     let request = nftables::Request::new().op_getgen_do(&Nfgenmsg::new());
-    let mut iter = sock.request(&request).await.unwrap();
-    let (_, attrs) = iter.recv_one().await.unwrap();
+    let mut iter = sock.request(&request).await?;
+    let (_, attrs) = iter.recv_one().await?;
 
-    attrs.get_id().unwrap()
+    Ok(attrs.get_id()?)
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn dump_rules(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) {
+async fn dump_rules(
+    sock: &mut NetlinkSocket,
+    table: &CStr,
+    chain: &CStr,
+) -> Result<(), Box<dyn Error>> {
     let mut request = nftables::Request::new().op_getrule_dump(&msg_header());
     request.encode().push_table(table).push_chain(chain);
-    let mut iter = sock.request(&request).await.unwrap();
-    while let Some(res) = iter.recv().await {
+    let mut iter = sock.request(&request).await?;
+    while let Some(res) = iter.recv().await.transpose()? {
         println!("{res:#?}");
     }
+    Ok(())
 }
 
 #[cfg_attr(not(feature = "async"), maybe_async::must_be_sync)]
-async fn del_chain(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) {
-    let genid = get_latest_genid(sock).await;
+async fn del_chain(
+    sock: &mut NetlinkSocket,
+    table: &CStr,
+    chain: &CStr,
+) -> Result<(), Box<dyn Error>> {
+    let genid = get_latest_genid(sock).await?;
 
     let mut c = nftables::Chained::new(sock.reserve_seq(256));
     c.request()
@@ -150,10 +170,9 @@ async fn del_chain(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) {
 
     let c = c.finalize();
 
-    let mut iter = sock.request_chained(&c).await.unwrap();
-    while let Some(res) = iter.recv().await {
-        res.unwrap();
-    }
+    sock.request_chained(&c).await?.recv_all().await?;
+
+    Ok(())
 }
 
 fn batch_header() -> nftables::Nfgenmsg {
