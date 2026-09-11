@@ -310,6 +310,10 @@ pub struct AttrProp {
     /// supported hints are hex, mac, fddi, ipv4, ipv6 and uuid.
     pub display_hint: Option<String>,
     pub doc: Option<String>,
+    /// Starting index for indexed-array. Defaults to 0, but some kernel
+    /// consumers index the array 1-based and silently ignore entries below
+    /// their start index.
+    pub array_index_start: Option<u16>,
 }
 
 impl AttrProp {
