@@ -86,14 +86,14 @@ pub fn gen_debug_attrs(
 
                 let debug = match &next.r#type {
                     AttrType::IndexedArray { .. } => {
-                        quote! { &MapFormatArray(#val_name, |v| #formatter(v.into(), #from_val)) }
+                        quote! { &MapFormatArray(#val_name, |v| #formatter(v as u64, #from_val)) }
                     },
                     AttrType::Binary { r#struct: Some(s), .. }
                         if s == "builtin-bitfield32" =>
                     {
-                        quote! { &#formatter(#val_name.value.into(), #from_val) }
+                        quote! { &#formatter(#val_name.value as u64, #from_val) }
                     },
-                    _ => quote! { &#formatter(#val_name.into(), #from_val) },
+                    _ => quote! { &#formatter(#val_name as u64, #from_val) },
                 };
 
                 variants.extend(quote! {
