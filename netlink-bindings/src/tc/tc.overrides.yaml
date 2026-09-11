@@ -1,0 +1,182 @@
+definitions:
+  - type: const
+    name: tc-h-min-priority
+    value: 0xFFE0
+    doc: Minor values at or above this are reserved for internal pseudo-classids.
+
+  - name: tc-handle
+    enum-name: tc-handle
+    name-prefix: tc-h-
+    type: enum
+    header: linux/pkt_sched.h
+    doc: Special values for ``handle`` and ``parent``.
+    entries:
+      -
+        name: unspec
+        value: 0
+      -
+        name: ingress
+        value: 0xFFFFFFF1
+        doc: Parent of a standalone ``ingress`` qdisc.
+      -
+        name: clsact-ingress
+        value: 0xFFFFFFF2
+        doc: Parent for filters on a ``clsact`` qdisc's ingress hook.
+      -
+        name: clsact-egress
+        value: 0xFFFFFFF3
+        doc: Parent for filters on a ``clsact`` qdisc's egress hook.
+      -
+        name: root
+        value: 0xFFFFFFFF
+
+  - name: tc-classifier-info
+    type: struct
+    header: linux/rtnetlink.h
+    doc: Filter ``tcm_info``, holding the classifier protocol and priority.
+    members:
+      -
+        name: protocol
+        type: u16
+        byte-order: big-endian
+      -
+        name: priority
+        type: u16
+
+  - name: tc-action-type
+    enum-name: tc-action-type
+    name-prefix: tc-act-
+    type: enum
+    header: linux/pkt_cls.h
+    doc: Verdict applied to the packet after an action runs.
+    entries:
+      - ok
+      - reclassify
+      - shot
+      - pipe
+      - stolen
+      - queued
+      - repeat
+      - redirect
+      - trap
+
+  - name: tc-mirred-eaction
+    enum-name: tc-mirred-eaction
+    name-prefix: tca-
+    type: enum
+    value-start: 1
+    header: linux/tc_act/tc_mirred.h
+    doc: Mirred direction and mode.
+    entries:
+      - egress-redir
+      - egress-mirror
+      - ingress-redir
+      - ingress-mirror
+
+  - name: tcmsg
+    doc: Fixed header for qdisc, class and chain operations.
+    members:
+      -
+        name: handle
+        enum: tc-handle
+      -
+        name: parent
+        enum: tc-handle
+
+  - name: tcmsg-filter
+    type: struct
+    header: linux/rtnetlink.h
+    doc: Fixed header for filter operations.
+    members:
+      -
+        name: family
+        type: u8
+      -
+        name: pad
+        type: pad
+        len: 3
+      -
+        name: ifindex
+        type: s32
+      -
+        name: handle
+        type: u32
+        enum: tc-handle
+      -
+        name: parent
+        type: u32
+        enum: tc-handle
+      -
+        name: info
+        type: binary
+        struct: tc-classifier-info
+
+  - name: tc-mirred
+    type: struct
+    header: linux/tc_act/tc_mirred.h
+    doc: Payload of ``TCA_MIRRED_PARMS``.
+    members:
+      -
+        name: index
+        type: u32
+      -
+        name: capab
+        type: u32
+      -
+        name: action
+        type: s32
+        enum: tc-action-type
+      -
+        name: refcnt
+        type: s32
+      -
+        name: bindcnt
+        type: s32
+      -
+        name: eaction
+        type: s32
+        enum: tc-mirred-eaction
+      -
+        name: ifindex
+        type: u32
+
+operations:
+  list:
+    -
+      name: newtfilter
+      fixed-header: tcmsg-filter
+    -
+      name: deltfilter
+      fixed-header: tcmsg-filter
+    -
+      name: gettfilter
+      fixed-header: tcmsg-filter
+
+attribute-sets:
+  -
+    name: act-mirred-attrs
+    attributes:
+      -
+        name: parms
+        struct: tc-mirred
+
+  - name: basic-attrs
+    attributes: &act-1-based
+      -
+        name: act
+        array-index-start: 1
+        doc: Actions to run on match.
+  - name: bpf-attrs
+    attributes: *act-1-based
+  - name: cgroup-attrs
+    attributes: *act-1-based
+  - name: flower-attrs
+    attributes: *act-1-based
+  - name: fw-attrs
+    attributes: *act-1-based
+  - name: matchall-attrs
+    attributes: *act-1-based
+  - name: route-attrs
+    attributes: *act-1-based
+  - name: u32-attrs
+    attributes: *act-1-based
