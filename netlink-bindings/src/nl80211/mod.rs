@@ -432,6 +432,19 @@ impl ChannelType {
         })
     }
 }
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Debug, Clone, Copy)]
+pub enum ProtocolFeatures {
+    SplitWiphyDump = 1 << 0,
+}
+impl ProtocolFeatures {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::SplitWiphyDump,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum Iftype {
@@ -494,19 +507,6 @@ impl StaFlag {
             5 => Self::TdlsPeer,
             6 => Self::Associated,
             7 => Self::SppAmsdu,
-            _ => return None,
-        })
-    }
-}
-#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
-pub enum ProtocolFeatures {
-    SplitWiphyDump = 1 << 0,
-}
-impl ProtocolFeatures {
-    pub fn from_value(value: u64) -> Option<Self> {
-        Some(match value {
-            n if n == 1 << 0 => Self::SplitWiphyDump,
             _ => return None,
         })
     }
@@ -14842,6 +14842,1737 @@ impl IterableSarSpecs<'_> {
     }
 }
 #[derive(Clone)]
+pub enum SupportedIftypes {
+    Adhoc(()),
+    Station(()),
+    Ap(()),
+    ApVlan(()),
+    Wds(()),
+    Monitor(()),
+    MeshPoint(()),
+    P2pClient(()),
+    P2pGo(()),
+    P2pDevice(()),
+    Ocb(()),
+    Nan(()),
+}
+impl<'a> IterableSupportedIftypes<'a> {
+    pub fn get_adhoc(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Adhoc(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Adhoc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_station(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Station(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Station",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ap(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Ap(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Ap",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ap_vlan(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::ApVlan(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "ApVlan",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wds(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Wds(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Wds",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_monitor(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Monitor(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Monitor",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_mesh_point(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::MeshPoint(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "MeshPoint",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_p2p_client(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::P2pClient(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "P2pClient",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_p2p_go(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::P2pGo(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "P2pGo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_p2p_device(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::P2pDevice(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "P2pDevice",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ocb(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Ocb(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Ocb",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_nan(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Nan(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Nan",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl SupportedIftypes {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableSupportedIftypes<'a> {
+        IterableSupportedIftypes::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Adhoc",
+            2u16 => "Station",
+            3u16 => "Ap",
+            4u16 => "ApVlan",
+            5u16 => "Wds",
+            6u16 => "Monitor",
+            7u16 => "MeshPoint",
+            8u16 => "P2pClient",
+            9u16 => "P2pGo",
+            10u16 => "P2pDevice",
+            11u16 => "Ocb",
+            12u16 => "Nan",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableSupportedIftypes<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableSupportedIftypes<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableSupportedIftypes<'a> {
+    type Item = Result<SupportedIftypes, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => SupportedIftypes::Adhoc(()),
+                2u16 => SupportedIftypes::Station(()),
+                3u16 => SupportedIftypes::Ap(()),
+                4u16 => SupportedIftypes::ApVlan(()),
+                5u16 => SupportedIftypes::Wds(()),
+                6u16 => SupportedIftypes::Monitor(()),
+                7u16 => SupportedIftypes::MeshPoint(()),
+                8u16 => SupportedIftypes::P2pClient(()),
+                9u16 => SupportedIftypes::P2pGo(()),
+                10u16 => SupportedIftypes::P2pDevice(()),
+                11u16 => SupportedIftypes::Ocb(()),
+                12u16 => SupportedIftypes::Nan(()),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "SupportedIftypes",
+            r#type.and_then(|t| SupportedIftypes::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableSupportedIftypes<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("SupportedIftypes");
+        let mut iter = IterableSupportedIftypes::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                SupportedIftypes::Adhoc(val) => fmt.field("Adhoc", &val),
+                SupportedIftypes::Station(val) => fmt.field("Station", &val),
+                SupportedIftypes::Ap(val) => fmt.field("Ap", &val),
+                SupportedIftypes::ApVlan(val) => fmt.field("ApVlan", &val),
+                SupportedIftypes::Wds(val) => fmt.field("Wds", &val),
+                SupportedIftypes::Monitor(val) => fmt.field("Monitor", &val),
+                SupportedIftypes::MeshPoint(val) => fmt.field("MeshPoint", &val),
+                SupportedIftypes::P2pClient(val) => fmt.field("P2pClient", &val),
+                SupportedIftypes::P2pGo(val) => fmt.field("P2pGo", &val),
+                SupportedIftypes::P2pDevice(val) => fmt.field("P2pDevice", &val),
+                SupportedIftypes::Ocb(val) => fmt.field("Ocb", &val),
+                SupportedIftypes::Nan(val) => fmt.field("Nan", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableSupportedIftypes<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("SupportedIftypes", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| SupportedIftypes::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                SupportedIftypes::Adhoc(val) => {
+                    if last_off == offset {
+                        stack.push(("Adhoc", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Station(val) => {
+                    if last_off == offset {
+                        stack.push(("Station", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Ap(val) => {
+                    if last_off == offset {
+                        stack.push(("Ap", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::ApVlan(val) => {
+                    if last_off == offset {
+                        stack.push(("ApVlan", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Wds(val) => {
+                    if last_off == offset {
+                        stack.push(("Wds", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Monitor(val) => {
+                    if last_off == offset {
+                        stack.push(("Monitor", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::MeshPoint(val) => {
+                    if last_off == offset {
+                        stack.push(("MeshPoint", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::P2pClient(val) => {
+                    if last_off == offset {
+                        stack.push(("P2pClient", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::P2pGo(val) => {
+                    if last_off == offset {
+                        stack.push(("P2pGo", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::P2pDevice(val) => {
+                    if last_off == offset {
+                        stack.push(("P2pDevice", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Ocb(val) => {
+                    if last_off == offset {
+                        stack.push(("Ocb", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Nan(val) => {
+                    if last_off == offset {
+                        stack.push(("Nan", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("SupportedIftypes", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
+pub enum TxqStatsAttrs {
+    BacklogBytes(u32),
+    BacklogPackets(u32),
+    Flows(u32),
+    Drops(u32),
+    EcnMarks(u32),
+    Overlimit(u32),
+    Overmemory(u32),
+    Collisions(u32),
+    TxBytes(u32),
+    TxPackets(u32),
+    MaxFlows(u32),
+}
+impl<'a> IterableTxqStatsAttrs<'a> {
+    pub fn get_backlog_bytes(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::BacklogBytes(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "BacklogBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_backlog_packets(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::BacklogPackets(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "BacklogPackets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_flows(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::Flows(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "Flows",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_drops(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::Drops(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "Drops",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ecn_marks(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::EcnMarks(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "EcnMarks",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_overlimit(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::Overlimit(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "Overlimit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_overmemory(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::Overmemory(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "Overmemory",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_collisions(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::Collisions(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "Collisions",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_bytes(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::TxBytes(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "TxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_packets(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::TxPackets(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "TxPackets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_max_flows(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TxqStatsAttrs::MaxFlows(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TxqStatsAttrs",
+            "MaxFlows",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl TxqStatsAttrs {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableTxqStatsAttrs<'a> {
+        IterableTxqStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "BacklogBytes",
+            2u16 => "BacklogPackets",
+            3u16 => "Flows",
+            4u16 => "Drops",
+            5u16 => "EcnMarks",
+            6u16 => "Overlimit",
+            7u16 => "Overmemory",
+            8u16 => "Collisions",
+            9u16 => "TxBytes",
+            10u16 => "TxPackets",
+            11u16 => "MaxFlows",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableTxqStatsAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableTxqStatsAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableTxqStatsAttrs<'a> {
+    type Item = Result<TxqStatsAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => TxqStatsAttrs::BacklogBytes({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => TxqStatsAttrs::BacklogPackets({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => TxqStatsAttrs::Flows({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => TxqStatsAttrs::Drops({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => TxqStatsAttrs::EcnMarks({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => TxqStatsAttrs::Overlimit({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => TxqStatsAttrs::Overmemory({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => TxqStatsAttrs::Collisions({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => TxqStatsAttrs::TxBytes({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => TxqStatsAttrs::TxPackets({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => TxqStatsAttrs::MaxFlows({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "TxqStatsAttrs",
+            r#type.and_then(|t| TxqStatsAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableTxqStatsAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("TxqStatsAttrs");
+        let mut iter = IterableTxqStatsAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                TxqStatsAttrs::BacklogBytes(val) => fmt.field("BacklogBytes", &val),
+                TxqStatsAttrs::BacklogPackets(val) => fmt.field("BacklogPackets", &val),
+                TxqStatsAttrs::Flows(val) => fmt.field("Flows", &val),
+                TxqStatsAttrs::Drops(val) => fmt.field("Drops", &val),
+                TxqStatsAttrs::EcnMarks(val) => fmt.field("EcnMarks", &val),
+                TxqStatsAttrs::Overlimit(val) => fmt.field("Overlimit", &val),
+                TxqStatsAttrs::Overmemory(val) => fmt.field("Overmemory", &val),
+                TxqStatsAttrs::Collisions(val) => fmt.field("Collisions", &val),
+                TxqStatsAttrs::TxBytes(val) => fmt.field("TxBytes", &val),
+                TxqStatsAttrs::TxPackets(val) => fmt.field("TxPackets", &val),
+                TxqStatsAttrs::MaxFlows(val) => fmt.field("MaxFlows", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableTxqStatsAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("TxqStatsAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TxqStatsAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TxqStatsAttrs::BacklogBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("BacklogBytes", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::BacklogPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("BacklogPackets", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::Flows(val) => {
+                    if last_off == offset {
+                        stack.push(("Flows", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::Drops(val) => {
+                    if last_off == offset {
+                        stack.push(("Drops", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::EcnMarks(val) => {
+                    if last_off == offset {
+                        stack.push(("EcnMarks", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::Overlimit(val) => {
+                    if last_off == offset {
+                        stack.push(("Overlimit", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::Overmemory(val) => {
+                    if last_off == offset {
+                        stack.push(("Overmemory", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::Collisions(val) => {
+                    if last_off == offset {
+                        stack.push(("Collisions", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::TxBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("TxBytes", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::TxPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("TxPackets", last_off));
+                        break;
+                    }
+                }
+                TxqStatsAttrs::MaxFlows(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxFlows", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TxqStatsAttrs", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
+pub enum WmmAttrs {
+    CwMin(u16),
+    CwMax(u16),
+    Aifsn(u8),
+    Txop(u16),
+}
+impl<'a> IterableWmmAttrs<'a> {
+    pub fn get_cw_min(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WmmAttrs::CwMin(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WmmAttrs",
+            "CwMin",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_cw_max(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WmmAttrs::CwMax(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WmmAttrs",
+            "CwMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_aifsn(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WmmAttrs::Aifsn(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WmmAttrs",
+            "Aifsn",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_txop(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WmmAttrs::Txop(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WmmAttrs",
+            "Txop",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl WmmAttrs {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableWmmAttrs<'a> {
+        IterableWmmAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "CwMin",
+            2u16 => "CwMax",
+            3u16 => "Aifsn",
+            4u16 => "Txop",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableWmmAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableWmmAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableWmmAttrs<'a> {
+    type Item = Result<WmmAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => WmmAttrs::CwMin({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => WmmAttrs::CwMax({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => WmmAttrs::Aifsn({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => WmmAttrs::Txop({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "WmmAttrs",
+            r#type.and_then(|t| WmmAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableWmmAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("WmmAttrs");
+        let mut iter = IterableWmmAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                WmmAttrs::CwMin(val) => fmt.field("CwMin", &val),
+                WmmAttrs::CwMax(val) => fmt.field("CwMax", &val),
+                WmmAttrs::Aifsn(val) => fmt.field("Aifsn", &val),
+                WmmAttrs::Txop(val) => fmt.field("Txop", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableWmmAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("WmmAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| WmmAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                WmmAttrs::CwMin(val) => {
+                    if last_off == offset {
+                        stack.push(("CwMin", last_off));
+                        break;
+                    }
+                }
+                WmmAttrs::CwMax(val) => {
+                    if last_off == offset {
+                        stack.push(("CwMax", last_off));
+                        break;
+                    }
+                }
+                WmmAttrs::Aifsn(val) => {
+                    if last_off == offset {
+                        stack.push(("Aifsn", last_off));
+                        break;
+                    }
+                }
+                WmmAttrs::Txop(val) => {
+                    if last_off == offset {
+                        stack.push(("Txop", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("WmmAttrs", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
+pub enum WowlanTriggersAttrs {
+    Any(()),
+    Disconnect(()),
+    MagicPkt(()),
+    PktPattern(()),
+    GtkRekeySupported(()),
+    GtkRekeyFailure(()),
+    EapIdentRequest(()),
+    _4wayHandshake(()),
+    RfkillRelease(()),
+    WakeupPkt80211(()),
+    WakeupPkt80211Len(()),
+    WakeupPkt8023(()),
+    WakeupPkt8023Len(()),
+    TcpConnection(()),
+    WakeupTcpMatch(()),
+    WakeupTcpConnlost(()),
+    WakeupTcpNomoretokens(()),
+    NetDetect(()),
+    NetDetectResults(()),
+    UnprotectedDeauthDisassoc(()),
+}
+impl<'a> IterableWowlanTriggersAttrs<'a> {
+    pub fn get_any(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::Any(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "Any",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_disconnect(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::Disconnect(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "Disconnect",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_magic_pkt(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::MagicPkt(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "MagicPkt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_pkt_pattern(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::PktPattern(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "PktPattern",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_gtk_rekey_supported(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::GtkRekeySupported(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "GtkRekeySupported",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_gtk_rekey_failure(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::GtkRekeyFailure(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "GtkRekeyFailure",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_eap_ident_request(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::EapIdentRequest(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "EapIdentRequest",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_4way_handshake(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::_4wayHandshake(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "4wayHandshake",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rfkill_release(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::RfkillRelease(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "RfkillRelease",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_pkt_80211(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupPkt80211(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupPkt80211",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_pkt_80211_len(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupPkt80211Len(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupPkt80211Len",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_pkt_8023(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupPkt8023(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupPkt8023",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_pkt_8023_len(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupPkt8023Len(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupPkt8023Len",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tcp_connection(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::TcpConnection(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "TcpConnection",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_tcp_match(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupTcpMatch(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupTcpMatch",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_tcp_connlost(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupTcpConnlost(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupTcpConnlost",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_wakeup_tcp_nomoretokens(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::WakeupTcpNomoretokens(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "WakeupTcpNomoretokens",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_net_detect(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::NetDetect(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "NetDetect",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_net_detect_results(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::NetDetectResults(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "NetDetectResults",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_unprotected_deauth_disassoc(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(WowlanTriggersAttrs::UnprotectedDeauthDisassoc(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "WowlanTriggersAttrs",
+            "UnprotectedDeauthDisassoc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl WowlanTriggersAttrs {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableWowlanTriggersAttrs<'a> {
+        IterableWowlanTriggersAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Any",
+            2u16 => "Disconnect",
+            3u16 => "MagicPkt",
+            4u16 => "PktPattern",
+            5u16 => "GtkRekeySupported",
+            6u16 => "GtkRekeyFailure",
+            7u16 => "EapIdentRequest",
+            8u16 => "4wayHandshake",
+            9u16 => "RfkillRelease",
+            10u16 => "WakeupPkt80211",
+            11u16 => "WakeupPkt80211Len",
+            12u16 => "WakeupPkt8023",
+            13u16 => "WakeupPkt8023Len",
+            14u16 => "TcpConnection",
+            15u16 => "WakeupTcpMatch",
+            16u16 => "WakeupTcpConnlost",
+            17u16 => "WakeupTcpNomoretokens",
+            18u16 => "NetDetect",
+            19u16 => "NetDetectResults",
+            20u16 => "UnprotectedDeauthDisassoc",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableWowlanTriggersAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableWowlanTriggersAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableWowlanTriggersAttrs<'a> {
+    type Item = Result<WowlanTriggersAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => WowlanTriggersAttrs::Any(()),
+                2u16 => WowlanTriggersAttrs::Disconnect(()),
+                3u16 => WowlanTriggersAttrs::MagicPkt(()),
+                4u16 => WowlanTriggersAttrs::PktPattern(()),
+                5u16 => WowlanTriggersAttrs::GtkRekeySupported(()),
+                6u16 => WowlanTriggersAttrs::GtkRekeyFailure(()),
+                7u16 => WowlanTriggersAttrs::EapIdentRequest(()),
+                8u16 => WowlanTriggersAttrs::_4wayHandshake(()),
+                9u16 => WowlanTriggersAttrs::RfkillRelease(()),
+                10u16 => WowlanTriggersAttrs::WakeupPkt80211(()),
+                11u16 => WowlanTriggersAttrs::WakeupPkt80211Len(()),
+                12u16 => WowlanTriggersAttrs::WakeupPkt8023(()),
+                13u16 => WowlanTriggersAttrs::WakeupPkt8023Len(()),
+                14u16 => WowlanTriggersAttrs::TcpConnection(()),
+                15u16 => WowlanTriggersAttrs::WakeupTcpMatch(()),
+                16u16 => WowlanTriggersAttrs::WakeupTcpConnlost(()),
+                17u16 => WowlanTriggersAttrs::WakeupTcpNomoretokens(()),
+                18u16 => WowlanTriggersAttrs::NetDetect(()),
+                19u16 => WowlanTriggersAttrs::NetDetectResults(()),
+                20u16 => WowlanTriggersAttrs::UnprotectedDeauthDisassoc(()),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "WowlanTriggersAttrs",
+            r#type.and_then(|t| WowlanTriggersAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableWowlanTriggersAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("WowlanTriggersAttrs");
+        let mut iter = IterableWowlanTriggersAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                WowlanTriggersAttrs::Any(val) => fmt.field("Any", &val),
+                WowlanTriggersAttrs::Disconnect(val) => fmt.field("Disconnect", &val),
+                WowlanTriggersAttrs::MagicPkt(val) => fmt.field("MagicPkt", &val),
+                WowlanTriggersAttrs::PktPattern(val) => fmt.field("PktPattern", &val),
+                WowlanTriggersAttrs::GtkRekeySupported(val) => fmt.field("GtkRekeySupported", &val),
+                WowlanTriggersAttrs::GtkRekeyFailure(val) => fmt.field("GtkRekeyFailure", &val),
+                WowlanTriggersAttrs::EapIdentRequest(val) => fmt.field("EapIdentRequest", &val),
+                WowlanTriggersAttrs::_4wayHandshake(val) => fmt.field("_4wayHandshake", &val),
+                WowlanTriggersAttrs::RfkillRelease(val) => fmt.field("RfkillRelease", &val),
+                WowlanTriggersAttrs::WakeupPkt80211(val) => fmt.field("WakeupPkt80211", &val),
+                WowlanTriggersAttrs::WakeupPkt80211Len(val) => fmt.field("WakeupPkt80211Len", &val),
+                WowlanTriggersAttrs::WakeupPkt8023(val) => fmt.field("WakeupPkt8023", &val),
+                WowlanTriggersAttrs::WakeupPkt8023Len(val) => fmt.field("WakeupPkt8023Len", &val),
+                WowlanTriggersAttrs::TcpConnection(val) => fmt.field("TcpConnection", &val),
+                WowlanTriggersAttrs::WakeupTcpMatch(val) => fmt.field("WakeupTcpMatch", &val),
+                WowlanTriggersAttrs::WakeupTcpConnlost(val) => fmt.field("WakeupTcpConnlost", &val),
+                WowlanTriggersAttrs::WakeupTcpNomoretokens(val) => {
+                    fmt.field("WakeupTcpNomoretokens", &val)
+                }
+                WowlanTriggersAttrs::NetDetect(val) => fmt.field("NetDetect", &val),
+                WowlanTriggersAttrs::NetDetectResults(val) => fmt.field("NetDetectResults", &val),
+                WowlanTriggersAttrs::UnprotectedDeauthDisassoc(val) => {
+                    fmt.field("UnprotectedDeauthDisassoc", &val)
+                }
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableWowlanTriggersAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("WowlanTriggersAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| WowlanTriggersAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                WowlanTriggersAttrs::Any(val) => {
+                    if last_off == offset {
+                        stack.push(("Any", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::Disconnect(val) => {
+                    if last_off == offset {
+                        stack.push(("Disconnect", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::MagicPkt(val) => {
+                    if last_off == offset {
+                        stack.push(("MagicPkt", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::PktPattern(val) => {
+                    if last_off == offset {
+                        stack.push(("PktPattern", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::GtkRekeySupported(val) => {
+                    if last_off == offset {
+                        stack.push(("GtkRekeySupported", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::GtkRekeyFailure(val) => {
+                    if last_off == offset {
+                        stack.push(("GtkRekeyFailure", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::EapIdentRequest(val) => {
+                    if last_off == offset {
+                        stack.push(("EapIdentRequest", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::_4wayHandshake(val) => {
+                    if last_off == offset {
+                        stack.push(("4wayHandshake", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::RfkillRelease(val) => {
+                    if last_off == offset {
+                        stack.push(("RfkillRelease", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupPkt80211(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupPkt80211", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupPkt80211Len(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupPkt80211Len", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupPkt8023(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupPkt8023", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupPkt8023Len(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupPkt8023Len", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::TcpConnection(val) => {
+                    if last_off == offset {
+                        stack.push(("TcpConnection", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupTcpMatch(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupTcpMatch", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupTcpConnlost(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupTcpConnlost", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::WakeupTcpNomoretokens(val) => {
+                    if last_off == offset {
+                        stack.push(("WakeupTcpNomoretokens", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::NetDetect(val) => {
+                    if last_off == offset {
+                        stack.push(("NetDetect", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::NetDetectResults(val) => {
+                    if last_off == offset {
+                        stack.push(("NetDetectResults", last_off));
+                        break;
+                    }
+                }
+                WowlanTriggersAttrs::UnprotectedDeauthDisassoc(val) => {
+                    if last_off == offset {
+                        stack.push(("UnprotectedDeauthDisassoc", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("WowlanTriggersAttrs", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
 pub enum StaBssParam {
     CtsProt(()),
     ShortPreamble(()),
@@ -16463,1787 +18194,6 @@ impl IterableStaInfo<'_> {
             stack.push(("StaInfo", cur));
         }
         (stack, missing)
-    }
-}
-#[derive(Clone)]
-pub enum SupportedIftypes {
-    Adhoc(()),
-    Station(()),
-    Ap(()),
-    ApVlan(()),
-    Wds(()),
-    Monitor(()),
-    MeshPoint(()),
-    P2pClient(()),
-    P2pGo(()),
-    P2pDevice(()),
-    Ocb(()),
-    Nan(()),
-    NanData(()),
-    Pd(()),
-}
-impl<'a> IterableSupportedIftypes<'a> {
-    pub fn get_adhoc(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Adhoc(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Adhoc",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_station(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Station(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Station",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_ap(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Ap(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Ap",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_ap_vlan(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::ApVlan(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "ApVlan",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wds(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Wds(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Wds",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_monitor(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Monitor(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Monitor",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_mesh_point(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::MeshPoint(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "MeshPoint",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_p2p_client(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::P2pClient(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "P2pClient",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_p2p_go(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::P2pGo(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "P2pGo",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_p2p_device(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::P2pDevice(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "P2pDevice",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_ocb(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Ocb(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Ocb",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_nan(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Nan(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Nan",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_nan_data(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::NanData(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "NanData",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_pd(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(SupportedIftypes::Pd(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "SupportedIftypes",
-            "Pd",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-}
-impl SupportedIftypes {
-    pub fn new<'a>(buf: &'a [u8]) -> IterableSupportedIftypes<'a> {
-        IterableSupportedIftypes::with_loc(buf, buf.as_ptr() as usize)
-    }
-    fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Adhoc",
-            2u16 => "Station",
-            3u16 => "Ap",
-            4u16 => "ApVlan",
-            5u16 => "Wds",
-            6u16 => "Monitor",
-            7u16 => "MeshPoint",
-            8u16 => "P2pClient",
-            9u16 => "P2pGo",
-            10u16 => "P2pDevice",
-            11u16 => "Ocb",
-            12u16 => "Nan",
-            13u16 => "NanData",
-            14u16 => "Pd",
-            _ => return None,
-        };
-        Some(res)
-    }
-}
-#[derive(Clone, Copy, Default)]
-pub struct IterableSupportedIftypes<'a> {
-    buf: &'a [u8],
-    pos: usize,
-    orig_loc: usize,
-}
-impl<'a> IterableSupportedIftypes<'a> {
-    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
-    }
-    pub fn get_buf(&self) -> &'a [u8] {
-        self.buf
-    }
-}
-impl<'a> Iterator for IterableSupportedIftypes<'a> {
-    type Item = Result<SupportedIftypes, ErrorContext>;
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut pos;
-        let mut r#type;
-        loop {
-            pos = self.pos;
-            r#type = None;
-            if self.buf.len() == self.pos {
-                return None;
-            }
-            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
-                self.pos = self.buf.len();
-                break;
-            };
-            r#type = Some(header.r#type);
-            let res = match header.r#type {
-                1u16 => SupportedIftypes::Adhoc(()),
-                2u16 => SupportedIftypes::Station(()),
-                3u16 => SupportedIftypes::Ap(()),
-                4u16 => SupportedIftypes::ApVlan(()),
-                5u16 => SupportedIftypes::Wds(()),
-                6u16 => SupportedIftypes::Monitor(()),
-                7u16 => SupportedIftypes::MeshPoint(()),
-                8u16 => SupportedIftypes::P2pClient(()),
-                9u16 => SupportedIftypes::P2pGo(()),
-                10u16 => SupportedIftypes::P2pDevice(()),
-                11u16 => SupportedIftypes::Ocb(()),
-                12u16 => SupportedIftypes::Nan(()),
-                13u16 => SupportedIftypes::NanData(()),
-                14u16 => SupportedIftypes::Pd(()),
-                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
-                n => continue,
-            };
-            return Some(Ok(res));
-        }
-        Some(Err(ErrorContext::new(
-            "SupportedIftypes",
-            r#type.and_then(|t| SupportedIftypes::attr_from_type(t)),
-            self.orig_loc,
-            self.buf.as_ptr().wrapping_add(pos) as usize,
-        )))
-    }
-}
-impl std::fmt::Debug for IterableSupportedIftypes<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut fmt = f.debug_struct("SupportedIftypes");
-        let mut iter = IterableSupportedIftypes::with_loc(&[], self.orig_loc);
-        for attr in IterateAttrs::new(self.get_buf()) {
-            iter.buf = attr;
-            iter.pos = 0;
-            let Some(attr) = iter.next() else {
-                fmt.field("Err", &FormatUnrecognized(attr));
-                continue;
-            };
-            let attr = match attr {
-                Ok(a) => a,
-                Err(err) => {
-                    fmt.finish()?;
-                    f.write_str("Err(")?;
-                    err.fmt(f)?;
-                    return f.write_str(")");
-                }
-            };
-            match attr {
-                SupportedIftypes::Adhoc(val) => fmt.field("Adhoc", &val),
-                SupportedIftypes::Station(val) => fmt.field("Station", &val),
-                SupportedIftypes::Ap(val) => fmt.field("Ap", &val),
-                SupportedIftypes::ApVlan(val) => fmt.field("ApVlan", &val),
-                SupportedIftypes::Wds(val) => fmt.field("Wds", &val),
-                SupportedIftypes::Monitor(val) => fmt.field("Monitor", &val),
-                SupportedIftypes::MeshPoint(val) => fmt.field("MeshPoint", &val),
-                SupportedIftypes::P2pClient(val) => fmt.field("P2pClient", &val),
-                SupportedIftypes::P2pGo(val) => fmt.field("P2pGo", &val),
-                SupportedIftypes::P2pDevice(val) => fmt.field("P2pDevice", &val),
-                SupportedIftypes::Ocb(val) => fmt.field("Ocb", &val),
-                SupportedIftypes::Nan(val) => fmt.field("Nan", &val),
-                SupportedIftypes::NanData(val) => fmt.field("NanData", &val),
-                SupportedIftypes::Pd(val) => fmt.field("Pd", &val),
-            };
-        }
-        fmt.finish()
-    }
-}
-impl IterableSupportedIftypes<'_> {
-    pub fn lookup_attr(
-        &self,
-        offset: usize,
-        missing_type: Option<u16>,
-    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        let mut stack = Vec::new();
-        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
-        if missing_type.is_some() && cur == offset {
-            stack.push(("SupportedIftypes", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| SupportedIftypes::attr_from_type(t)),
-            );
-        }
-        if cur > offset || cur + self.buf.len() < offset {
-            return (stack, None);
-        }
-        let mut attrs = self.clone();
-        let mut last_off = cur + attrs.pos;
-        while let Some(attr) = attrs.next() {
-            let Ok(attr) = attr else { break };
-            match attr {
-                SupportedIftypes::Adhoc(val) => {
-                    if last_off == offset {
-                        stack.push(("Adhoc", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Station(val) => {
-                    if last_off == offset {
-                        stack.push(("Station", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Ap(val) => {
-                    if last_off == offset {
-                        stack.push(("Ap", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::ApVlan(val) => {
-                    if last_off == offset {
-                        stack.push(("ApVlan", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Wds(val) => {
-                    if last_off == offset {
-                        stack.push(("Wds", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Monitor(val) => {
-                    if last_off == offset {
-                        stack.push(("Monitor", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::MeshPoint(val) => {
-                    if last_off == offset {
-                        stack.push(("MeshPoint", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::P2pClient(val) => {
-                    if last_off == offset {
-                        stack.push(("P2pClient", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::P2pGo(val) => {
-                    if last_off == offset {
-                        stack.push(("P2pGo", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::P2pDevice(val) => {
-                    if last_off == offset {
-                        stack.push(("P2pDevice", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Ocb(val) => {
-                    if last_off == offset {
-                        stack.push(("Ocb", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Nan(val) => {
-                    if last_off == offset {
-                        stack.push(("Nan", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::NanData(val) => {
-                    if last_off == offset {
-                        stack.push(("NanData", last_off));
-                        break;
-                    }
-                }
-                SupportedIftypes::Pd(val) => {
-                    if last_off == offset {
-                        stack.push(("Pd", last_off));
-                        break;
-                    }
-                }
-                _ => {}
-            };
-            last_off = cur + attrs.pos;
-        }
-        if !stack.is_empty() {
-            stack.push(("SupportedIftypes", cur));
-        }
-        (stack, None)
-    }
-}
-#[derive(Clone)]
-pub enum TxqStatsAttrs {
-    BacklogBytes(u32),
-    BacklogPackets(u32),
-    Flows(u32),
-    Drops(u32),
-    EcnMarks(u32),
-    Overlimit(u32),
-    Overmemory(u32),
-    Collisions(u32),
-    TxBytes(u32),
-    TxPackets(u32),
-    MaxFlows(u32),
-}
-impl<'a> IterableTxqStatsAttrs<'a> {
-    pub fn get_backlog_bytes(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::BacklogBytes(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "BacklogBytes",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_backlog_packets(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::BacklogPackets(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "BacklogPackets",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_flows(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::Flows(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "Flows",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_drops(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::Drops(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "Drops",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_ecn_marks(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::EcnMarks(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "EcnMarks",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_overlimit(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::Overlimit(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "Overlimit",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_overmemory(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::Overmemory(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "Overmemory",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_collisions(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::Collisions(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "Collisions",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_tx_bytes(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::TxBytes(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "TxBytes",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_tx_packets(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::TxPackets(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "TxPackets",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_max_flows(&self) -> Result<u32, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(TxqStatsAttrs::MaxFlows(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "TxqStatsAttrs",
-            "MaxFlows",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-}
-impl TxqStatsAttrs {
-    pub fn new<'a>(buf: &'a [u8]) -> IterableTxqStatsAttrs<'a> {
-        IterableTxqStatsAttrs::with_loc(buf, buf.as_ptr() as usize)
-    }
-    fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "BacklogBytes",
-            2u16 => "BacklogPackets",
-            3u16 => "Flows",
-            4u16 => "Drops",
-            5u16 => "EcnMarks",
-            6u16 => "Overlimit",
-            7u16 => "Overmemory",
-            8u16 => "Collisions",
-            9u16 => "TxBytes",
-            10u16 => "TxPackets",
-            11u16 => "MaxFlows",
-            _ => return None,
-        };
-        Some(res)
-    }
-}
-#[derive(Clone, Copy, Default)]
-pub struct IterableTxqStatsAttrs<'a> {
-    buf: &'a [u8],
-    pos: usize,
-    orig_loc: usize,
-}
-impl<'a> IterableTxqStatsAttrs<'a> {
-    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
-    }
-    pub fn get_buf(&self) -> &'a [u8] {
-        self.buf
-    }
-}
-impl<'a> Iterator for IterableTxqStatsAttrs<'a> {
-    type Item = Result<TxqStatsAttrs, ErrorContext>;
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut pos;
-        let mut r#type;
-        loop {
-            pos = self.pos;
-            r#type = None;
-            if self.buf.len() == self.pos {
-                return None;
-            }
-            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
-                self.pos = self.buf.len();
-                break;
-            };
-            r#type = Some(header.r#type);
-            let res = match header.r#type {
-                1u16 => TxqStatsAttrs::BacklogBytes({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                2u16 => TxqStatsAttrs::BacklogPackets({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                3u16 => TxqStatsAttrs::Flows({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                4u16 => TxqStatsAttrs::Drops({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                5u16 => TxqStatsAttrs::EcnMarks({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                6u16 => TxqStatsAttrs::Overlimit({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                7u16 => TxqStatsAttrs::Overmemory({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                8u16 => TxqStatsAttrs::Collisions({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                9u16 => TxqStatsAttrs::TxBytes({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                10u16 => TxqStatsAttrs::TxPackets({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                11u16 => TxqStatsAttrs::MaxFlows({
-                    let res = parse_u32(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
-                n => continue,
-            };
-            return Some(Ok(res));
-        }
-        Some(Err(ErrorContext::new(
-            "TxqStatsAttrs",
-            r#type.and_then(|t| TxqStatsAttrs::attr_from_type(t)),
-            self.orig_loc,
-            self.buf.as_ptr().wrapping_add(pos) as usize,
-        )))
-    }
-}
-impl std::fmt::Debug for IterableTxqStatsAttrs<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut fmt = f.debug_struct("TxqStatsAttrs");
-        let mut iter = IterableTxqStatsAttrs::with_loc(&[], self.orig_loc);
-        for attr in IterateAttrs::new(self.get_buf()) {
-            iter.buf = attr;
-            iter.pos = 0;
-            let Some(attr) = iter.next() else {
-                fmt.field("Err", &FormatUnrecognized(attr));
-                continue;
-            };
-            let attr = match attr {
-                Ok(a) => a,
-                Err(err) => {
-                    fmt.finish()?;
-                    f.write_str("Err(")?;
-                    err.fmt(f)?;
-                    return f.write_str(")");
-                }
-            };
-            match attr {
-                TxqStatsAttrs::BacklogBytes(val) => fmt.field("BacklogBytes", &val),
-                TxqStatsAttrs::BacklogPackets(val) => fmt.field("BacklogPackets", &val),
-                TxqStatsAttrs::Flows(val) => fmt.field("Flows", &val),
-                TxqStatsAttrs::Drops(val) => fmt.field("Drops", &val),
-                TxqStatsAttrs::EcnMarks(val) => fmt.field("EcnMarks", &val),
-                TxqStatsAttrs::Overlimit(val) => fmt.field("Overlimit", &val),
-                TxqStatsAttrs::Overmemory(val) => fmt.field("Overmemory", &val),
-                TxqStatsAttrs::Collisions(val) => fmt.field("Collisions", &val),
-                TxqStatsAttrs::TxBytes(val) => fmt.field("TxBytes", &val),
-                TxqStatsAttrs::TxPackets(val) => fmt.field("TxPackets", &val),
-                TxqStatsAttrs::MaxFlows(val) => fmt.field("MaxFlows", &val),
-            };
-        }
-        fmt.finish()
-    }
-}
-impl IterableTxqStatsAttrs<'_> {
-    pub fn lookup_attr(
-        &self,
-        offset: usize,
-        missing_type: Option<u16>,
-    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        let mut stack = Vec::new();
-        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
-        if missing_type.is_some() && cur == offset {
-            stack.push(("TxqStatsAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| TxqStatsAttrs::attr_from_type(t)),
-            );
-        }
-        if cur > offset || cur + self.buf.len() < offset {
-            return (stack, None);
-        }
-        let mut attrs = self.clone();
-        let mut last_off = cur + attrs.pos;
-        while let Some(attr) = attrs.next() {
-            let Ok(attr) = attr else { break };
-            match attr {
-                TxqStatsAttrs::BacklogBytes(val) => {
-                    if last_off == offset {
-                        stack.push(("BacklogBytes", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::BacklogPackets(val) => {
-                    if last_off == offset {
-                        stack.push(("BacklogPackets", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::Flows(val) => {
-                    if last_off == offset {
-                        stack.push(("Flows", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::Drops(val) => {
-                    if last_off == offset {
-                        stack.push(("Drops", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::EcnMarks(val) => {
-                    if last_off == offset {
-                        stack.push(("EcnMarks", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::Overlimit(val) => {
-                    if last_off == offset {
-                        stack.push(("Overlimit", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::Overmemory(val) => {
-                    if last_off == offset {
-                        stack.push(("Overmemory", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::Collisions(val) => {
-                    if last_off == offset {
-                        stack.push(("Collisions", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::TxBytes(val) => {
-                    if last_off == offset {
-                        stack.push(("TxBytes", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::TxPackets(val) => {
-                    if last_off == offset {
-                        stack.push(("TxPackets", last_off));
-                        break;
-                    }
-                }
-                TxqStatsAttrs::MaxFlows(val) => {
-                    if last_off == offset {
-                        stack.push(("MaxFlows", last_off));
-                        break;
-                    }
-                }
-                _ => {}
-            };
-            last_off = cur + attrs.pos;
-        }
-        if !stack.is_empty() {
-            stack.push(("TxqStatsAttrs", cur));
-        }
-        (stack, None)
-    }
-}
-#[derive(Clone)]
-pub enum WmmAttrs {
-    CwMin(u16),
-    CwMax(u16),
-    Aifsn(u8),
-    Txop(u16),
-}
-impl<'a> IterableWmmAttrs<'a> {
-    pub fn get_cw_min(&self) -> Result<u16, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WmmAttrs::CwMin(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WmmAttrs",
-            "CwMin",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_cw_max(&self) -> Result<u16, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WmmAttrs::CwMax(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WmmAttrs",
-            "CwMax",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_aifsn(&self) -> Result<u8, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WmmAttrs::Aifsn(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WmmAttrs",
-            "Aifsn",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_txop(&self) -> Result<u16, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WmmAttrs::Txop(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WmmAttrs",
-            "Txop",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-}
-impl WmmAttrs {
-    pub fn new<'a>(buf: &'a [u8]) -> IterableWmmAttrs<'a> {
-        IterableWmmAttrs::with_loc(buf, buf.as_ptr() as usize)
-    }
-    fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "CwMin",
-            2u16 => "CwMax",
-            3u16 => "Aifsn",
-            4u16 => "Txop",
-            _ => return None,
-        };
-        Some(res)
-    }
-}
-#[derive(Clone, Copy, Default)]
-pub struct IterableWmmAttrs<'a> {
-    buf: &'a [u8],
-    pos: usize,
-    orig_loc: usize,
-}
-impl<'a> IterableWmmAttrs<'a> {
-    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
-    }
-    pub fn get_buf(&self) -> &'a [u8] {
-        self.buf
-    }
-}
-impl<'a> Iterator for IterableWmmAttrs<'a> {
-    type Item = Result<WmmAttrs, ErrorContext>;
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut pos;
-        let mut r#type;
-        loop {
-            pos = self.pos;
-            r#type = None;
-            if self.buf.len() == self.pos {
-                return None;
-            }
-            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
-                self.pos = self.buf.len();
-                break;
-            };
-            r#type = Some(header.r#type);
-            let res = match header.r#type {
-                1u16 => WmmAttrs::CwMin({
-                    let res = parse_u16(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                2u16 => WmmAttrs::CwMax({
-                    let res = parse_u16(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                3u16 => WmmAttrs::Aifsn({
-                    let res = parse_u8(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                4u16 => WmmAttrs::Txop({
-                    let res = parse_u16(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
-                n => continue,
-            };
-            return Some(Ok(res));
-        }
-        Some(Err(ErrorContext::new(
-            "WmmAttrs",
-            r#type.and_then(|t| WmmAttrs::attr_from_type(t)),
-            self.orig_loc,
-            self.buf.as_ptr().wrapping_add(pos) as usize,
-        )))
-    }
-}
-impl std::fmt::Debug for IterableWmmAttrs<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut fmt = f.debug_struct("WmmAttrs");
-        let mut iter = IterableWmmAttrs::with_loc(&[], self.orig_loc);
-        for attr in IterateAttrs::new(self.get_buf()) {
-            iter.buf = attr;
-            iter.pos = 0;
-            let Some(attr) = iter.next() else {
-                fmt.field("Err", &FormatUnrecognized(attr));
-                continue;
-            };
-            let attr = match attr {
-                Ok(a) => a,
-                Err(err) => {
-                    fmt.finish()?;
-                    f.write_str("Err(")?;
-                    err.fmt(f)?;
-                    return f.write_str(")");
-                }
-            };
-            match attr {
-                WmmAttrs::CwMin(val) => fmt.field("CwMin", &val),
-                WmmAttrs::CwMax(val) => fmt.field("CwMax", &val),
-                WmmAttrs::Aifsn(val) => fmt.field("Aifsn", &val),
-                WmmAttrs::Txop(val) => fmt.field("Txop", &val),
-            };
-        }
-        fmt.finish()
-    }
-}
-impl IterableWmmAttrs<'_> {
-    pub fn lookup_attr(
-        &self,
-        offset: usize,
-        missing_type: Option<u16>,
-    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        let mut stack = Vec::new();
-        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
-        if missing_type.is_some() && cur == offset {
-            stack.push(("WmmAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| WmmAttrs::attr_from_type(t)),
-            );
-        }
-        if cur > offset || cur + self.buf.len() < offset {
-            return (stack, None);
-        }
-        let mut attrs = self.clone();
-        let mut last_off = cur + attrs.pos;
-        while let Some(attr) = attrs.next() {
-            let Ok(attr) = attr else { break };
-            match attr {
-                WmmAttrs::CwMin(val) => {
-                    if last_off == offset {
-                        stack.push(("CwMin", last_off));
-                        break;
-                    }
-                }
-                WmmAttrs::CwMax(val) => {
-                    if last_off == offset {
-                        stack.push(("CwMax", last_off));
-                        break;
-                    }
-                }
-                WmmAttrs::Aifsn(val) => {
-                    if last_off == offset {
-                        stack.push(("Aifsn", last_off));
-                        break;
-                    }
-                }
-                WmmAttrs::Txop(val) => {
-                    if last_off == offset {
-                        stack.push(("Txop", last_off));
-                        break;
-                    }
-                }
-                _ => {}
-            };
-            last_off = cur + attrs.pos;
-        }
-        if !stack.is_empty() {
-            stack.push(("WmmAttrs", cur));
-        }
-        (stack, None)
-    }
-}
-#[derive(Clone)]
-pub enum WowlanTriggersAttrs {
-    Any(()),
-    Disconnect(()),
-    MagicPkt(()),
-    PktPattern(()),
-    GtkRekeySupported(()),
-    GtkRekeyFailure(()),
-    EapIdentRequest(()),
-    _4wayHandshake(()),
-    RfkillRelease(()),
-    WakeupPkt80211(()),
-    WakeupPkt80211Len(()),
-    WakeupPkt8023(()),
-    WakeupPkt8023Len(()),
-    TcpConnection(()),
-    WakeupTcpMatch(()),
-    WakeupTcpConnlost(()),
-    WakeupTcpNomoretokens(()),
-    NetDetect(()),
-    NetDetectResults(()),
-    UnprotectedDeauthDisassoc(()),
-}
-impl<'a> IterableWowlanTriggersAttrs<'a> {
-    pub fn get_any(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::Any(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "Any",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_disconnect(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::Disconnect(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "Disconnect",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_magic_pkt(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::MagicPkt(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "MagicPkt",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_pkt_pattern(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::PktPattern(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "PktPattern",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_gtk_rekey_supported(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::GtkRekeySupported(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "GtkRekeySupported",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_gtk_rekey_failure(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::GtkRekeyFailure(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "GtkRekeyFailure",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_eap_ident_request(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::EapIdentRequest(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "EapIdentRequest",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_4way_handshake(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::_4wayHandshake(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "4wayHandshake",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_rfkill_release(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::RfkillRelease(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "RfkillRelease",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_pkt_80211(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupPkt80211(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupPkt80211",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_pkt_80211_len(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupPkt80211Len(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupPkt80211Len",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_pkt_8023(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupPkt8023(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupPkt8023",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_pkt_8023_len(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupPkt8023Len(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupPkt8023Len",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_tcp_connection(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::TcpConnection(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "TcpConnection",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_tcp_match(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupTcpMatch(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupTcpMatch",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_tcp_connlost(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupTcpConnlost(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupTcpConnlost",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_wakeup_tcp_nomoretokens(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::WakeupTcpNomoretokens(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "WakeupTcpNomoretokens",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_net_detect(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::NetDetect(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "NetDetect",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_net_detect_results(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::NetDetectResults(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "NetDetectResults",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-    pub fn get_unprotected_deauth_disassoc(&self) -> Result<(), ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(WowlanTriggersAttrs::UnprotectedDeauthDisassoc(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "WowlanTriggersAttrs",
-            "UnprotectedDeauthDisassoc",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
-}
-impl WowlanTriggersAttrs {
-    pub fn new<'a>(buf: &'a [u8]) -> IterableWowlanTriggersAttrs<'a> {
-        IterableWowlanTriggersAttrs::with_loc(buf, buf.as_ptr() as usize)
-    }
-    fn attr_from_type(r#type: u16) -> Option<&'static str> {
-        let res = match r#type {
-            1u16 => "Any",
-            2u16 => "Disconnect",
-            3u16 => "MagicPkt",
-            4u16 => "PktPattern",
-            5u16 => "GtkRekeySupported",
-            6u16 => "GtkRekeyFailure",
-            7u16 => "EapIdentRequest",
-            8u16 => "4wayHandshake",
-            9u16 => "RfkillRelease",
-            10u16 => "WakeupPkt80211",
-            11u16 => "WakeupPkt80211Len",
-            12u16 => "WakeupPkt8023",
-            13u16 => "WakeupPkt8023Len",
-            14u16 => "TcpConnection",
-            15u16 => "WakeupTcpMatch",
-            16u16 => "WakeupTcpConnlost",
-            17u16 => "WakeupTcpNomoretokens",
-            18u16 => "NetDetect",
-            19u16 => "NetDetectResults",
-            20u16 => "UnprotectedDeauthDisassoc",
-            _ => return None,
-        };
-        Some(res)
-    }
-}
-#[derive(Clone, Copy, Default)]
-pub struct IterableWowlanTriggersAttrs<'a> {
-    buf: &'a [u8],
-    pos: usize,
-    orig_loc: usize,
-}
-impl<'a> IterableWowlanTriggersAttrs<'a> {
-    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
-        Self {
-            buf,
-            pos: 0,
-            orig_loc,
-        }
-    }
-    pub fn get_buf(&self) -> &'a [u8] {
-        self.buf
-    }
-}
-impl<'a> Iterator for IterableWowlanTriggersAttrs<'a> {
-    type Item = Result<WowlanTriggersAttrs, ErrorContext>;
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut pos;
-        let mut r#type;
-        loop {
-            pos = self.pos;
-            r#type = None;
-            if self.buf.len() == self.pos {
-                return None;
-            }
-            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
-                self.pos = self.buf.len();
-                break;
-            };
-            r#type = Some(header.r#type);
-            let res = match header.r#type {
-                1u16 => WowlanTriggersAttrs::Any(()),
-                2u16 => WowlanTriggersAttrs::Disconnect(()),
-                3u16 => WowlanTriggersAttrs::MagicPkt(()),
-                4u16 => WowlanTriggersAttrs::PktPattern(()),
-                5u16 => WowlanTriggersAttrs::GtkRekeySupported(()),
-                6u16 => WowlanTriggersAttrs::GtkRekeyFailure(()),
-                7u16 => WowlanTriggersAttrs::EapIdentRequest(()),
-                8u16 => WowlanTriggersAttrs::_4wayHandshake(()),
-                9u16 => WowlanTriggersAttrs::RfkillRelease(()),
-                10u16 => WowlanTriggersAttrs::WakeupPkt80211(()),
-                11u16 => WowlanTriggersAttrs::WakeupPkt80211Len(()),
-                12u16 => WowlanTriggersAttrs::WakeupPkt8023(()),
-                13u16 => WowlanTriggersAttrs::WakeupPkt8023Len(()),
-                14u16 => WowlanTriggersAttrs::TcpConnection(()),
-                15u16 => WowlanTriggersAttrs::WakeupTcpMatch(()),
-                16u16 => WowlanTriggersAttrs::WakeupTcpConnlost(()),
-                17u16 => WowlanTriggersAttrs::WakeupTcpNomoretokens(()),
-                18u16 => WowlanTriggersAttrs::NetDetect(()),
-                19u16 => WowlanTriggersAttrs::NetDetectResults(()),
-                20u16 => WowlanTriggersAttrs::UnprotectedDeauthDisassoc(()),
-                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
-                n => continue,
-            };
-            return Some(Ok(res));
-        }
-        Some(Err(ErrorContext::new(
-            "WowlanTriggersAttrs",
-            r#type.and_then(|t| WowlanTriggersAttrs::attr_from_type(t)),
-            self.orig_loc,
-            self.buf.as_ptr().wrapping_add(pos) as usize,
-        )))
-    }
-}
-impl std::fmt::Debug for IterableWowlanTriggersAttrs<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut fmt = f.debug_struct("WowlanTriggersAttrs");
-        let mut iter = IterableWowlanTriggersAttrs::with_loc(&[], self.orig_loc);
-        for attr in IterateAttrs::new(self.get_buf()) {
-            iter.buf = attr;
-            iter.pos = 0;
-            let Some(attr) = iter.next() else {
-                fmt.field("Err", &FormatUnrecognized(attr));
-                continue;
-            };
-            let attr = match attr {
-                Ok(a) => a,
-                Err(err) => {
-                    fmt.finish()?;
-                    f.write_str("Err(")?;
-                    err.fmt(f)?;
-                    return f.write_str(")");
-                }
-            };
-            match attr {
-                WowlanTriggersAttrs::Any(val) => fmt.field("Any", &val),
-                WowlanTriggersAttrs::Disconnect(val) => fmt.field("Disconnect", &val),
-                WowlanTriggersAttrs::MagicPkt(val) => fmt.field("MagicPkt", &val),
-                WowlanTriggersAttrs::PktPattern(val) => fmt.field("PktPattern", &val),
-                WowlanTriggersAttrs::GtkRekeySupported(val) => fmt.field("GtkRekeySupported", &val),
-                WowlanTriggersAttrs::GtkRekeyFailure(val) => fmt.field("GtkRekeyFailure", &val),
-                WowlanTriggersAttrs::EapIdentRequest(val) => fmt.field("EapIdentRequest", &val),
-                WowlanTriggersAttrs::_4wayHandshake(val) => fmt.field("_4wayHandshake", &val),
-                WowlanTriggersAttrs::RfkillRelease(val) => fmt.field("RfkillRelease", &val),
-                WowlanTriggersAttrs::WakeupPkt80211(val) => fmt.field("WakeupPkt80211", &val),
-                WowlanTriggersAttrs::WakeupPkt80211Len(val) => fmt.field("WakeupPkt80211Len", &val),
-                WowlanTriggersAttrs::WakeupPkt8023(val) => fmt.field("WakeupPkt8023", &val),
-                WowlanTriggersAttrs::WakeupPkt8023Len(val) => fmt.field("WakeupPkt8023Len", &val),
-                WowlanTriggersAttrs::TcpConnection(val) => fmt.field("TcpConnection", &val),
-                WowlanTriggersAttrs::WakeupTcpMatch(val) => fmt.field("WakeupTcpMatch", &val),
-                WowlanTriggersAttrs::WakeupTcpConnlost(val) => fmt.field("WakeupTcpConnlost", &val),
-                WowlanTriggersAttrs::WakeupTcpNomoretokens(val) => {
-                    fmt.field("WakeupTcpNomoretokens", &val)
-                }
-                WowlanTriggersAttrs::NetDetect(val) => fmt.field("NetDetect", &val),
-                WowlanTriggersAttrs::NetDetectResults(val) => fmt.field("NetDetectResults", &val),
-                WowlanTriggersAttrs::UnprotectedDeauthDisassoc(val) => {
-                    fmt.field("UnprotectedDeauthDisassoc", &val)
-                }
-            };
-        }
-        fmt.finish()
-    }
-}
-impl IterableWowlanTriggersAttrs<'_> {
-    pub fn lookup_attr(
-        &self,
-        offset: usize,
-        missing_type: Option<u16>,
-    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
-        let mut stack = Vec::new();
-        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
-        if missing_type.is_some() && cur == offset {
-            stack.push(("WowlanTriggersAttrs", offset));
-            return (
-                stack,
-                missing_type.and_then(|t| WowlanTriggersAttrs::attr_from_type(t)),
-            );
-        }
-        if cur > offset || cur + self.buf.len() < offset {
-            return (stack, None);
-        }
-        let mut attrs = self.clone();
-        let mut last_off = cur + attrs.pos;
-        while let Some(attr) = attrs.next() {
-            let Ok(attr) = attr else { break };
-            match attr {
-                WowlanTriggersAttrs::Any(val) => {
-                    if last_off == offset {
-                        stack.push(("Any", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::Disconnect(val) => {
-                    if last_off == offset {
-                        stack.push(("Disconnect", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::MagicPkt(val) => {
-                    if last_off == offset {
-                        stack.push(("MagicPkt", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::PktPattern(val) => {
-                    if last_off == offset {
-                        stack.push(("PktPattern", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::GtkRekeySupported(val) => {
-                    if last_off == offset {
-                        stack.push(("GtkRekeySupported", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::GtkRekeyFailure(val) => {
-                    if last_off == offset {
-                        stack.push(("GtkRekeyFailure", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::EapIdentRequest(val) => {
-                    if last_off == offset {
-                        stack.push(("EapIdentRequest", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::_4wayHandshake(val) => {
-                    if last_off == offset {
-                        stack.push(("4wayHandshake", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::RfkillRelease(val) => {
-                    if last_off == offset {
-                        stack.push(("RfkillRelease", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupPkt80211(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupPkt80211", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupPkt80211Len(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupPkt80211Len", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupPkt8023(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupPkt8023", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupPkt8023Len(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupPkt8023Len", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::TcpConnection(val) => {
-                    if last_off == offset {
-                        stack.push(("TcpConnection", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupTcpMatch(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupTcpMatch", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupTcpConnlost(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupTcpConnlost", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::WakeupTcpNomoretokens(val) => {
-                    if last_off == offset {
-                        stack.push(("WakeupTcpNomoretokens", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::NetDetect(val) => {
-                    if last_off == offset {
-                        stack.push(("NetDetect", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::NetDetectResults(val) => {
-                    if last_off == offset {
-                        stack.push(("NetDetectResults", last_off));
-                        break;
-                    }
-                }
-                WowlanTriggersAttrs::UnprotectedDeauthDisassoc(val) => {
-                    if last_off == offset {
-                        stack.push(("UnprotectedDeauthDisassoc", last_off));
-                        break;
-                    }
-                }
-                _ => {}
-            };
-            last_off = cur + attrs.pos;
-        }
-        if !stack.is_empty() {
-            stack.push(("WowlanTriggersAttrs", cur));
-        }
-        (stack, None)
     }
 }
 pub struct PushNl80211Attrs<Prev: Pusher> {
@@ -21239,6 +21189,353 @@ impl<Prev: Pusher> Drop for PushSarSpecs<Prev> {
         }
     }
 }
+pub struct PushSupportedIftypes<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushSupportedIftypes<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushSupportedIftypes<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_adhoc(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 0 as u16);
+        self
+    }
+    pub fn push_station(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 0 as u16);
+        self
+    }
+    pub fn push_ap(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 0 as u16);
+        self
+    }
+    pub fn push_ap_vlan(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 0 as u16);
+        self
+    }
+    pub fn push_wds(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 0 as u16);
+        self
+    }
+    pub fn push_monitor(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 0 as u16);
+        self
+    }
+    pub fn push_mesh_point(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 0 as u16);
+        self
+    }
+    pub fn push_p2p_client(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 8u16, 0 as u16);
+        self
+    }
+    pub fn push_p2p_go(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 9u16, 0 as u16);
+        self
+    }
+    pub fn push_p2p_device(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 0 as u16);
+        self
+    }
+    pub fn push_ocb(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 0 as u16);
+        self
+    }
+    pub fn push_nan(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 12u16, 0 as u16);
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushSupportedIftypes<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushTxqStatsAttrs<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushTxqStatsAttrs<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushTxqStatsAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_backlog_bytes(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_backlog_packets(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_flows(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_drops(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ecn_marks(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_overlimit(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_overmemory(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_collisions(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 8u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_bytes(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 9u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_packets(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_max_flows(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushTxqStatsAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushWmmAttrs<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushWmmAttrs<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushWmmAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_cw_min(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_cw_max(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_aifsn(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_txop(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushWmmAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushWowlanTriggersAttrs<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushWowlanTriggersAttrs<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushWowlanTriggersAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_any(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 0 as u16);
+        self
+    }
+    pub fn push_disconnect(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 0 as u16);
+        self
+    }
+    pub fn push_magic_pkt(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 0 as u16);
+        self
+    }
+    pub fn push_pkt_pattern(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 0 as u16);
+        self
+    }
+    pub fn push_gtk_rekey_supported(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 0 as u16);
+        self
+    }
+    pub fn push_gtk_rekey_failure(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 0 as u16);
+        self
+    }
+    pub fn push_eap_ident_request(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 0 as u16);
+        self
+    }
+    pub fn push_4way_handshake(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 8u16, 0 as u16);
+        self
+    }
+    pub fn push_rfkill_release(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 9u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_pkt_80211(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_pkt_80211_len(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_pkt_8023(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 12u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_pkt_8023_len(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 13u16, 0 as u16);
+        self
+    }
+    pub fn push_tcp_connection(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 14u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_tcp_match(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 15u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_tcp_connlost(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 16u16, 0 as u16);
+        self
+    }
+    pub fn push_wakeup_tcp_nomoretokens(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 17u16, 0 as u16);
+        self
+    }
+    pub fn push_net_detect(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 18u16, 0 as u16);
+        self
+    }
+    pub fn push_net_detect_results(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 19u16, 0 as u16);
+        self
+    }
+    pub fn push_unprotected_deauth_disassoc(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 20u16, 0 as u16);
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushWowlanTriggersAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
 pub struct PushStaBssParam<Prev: Pusher> {
     pub(crate) prev: Option<Prev>,
     pub(crate) header_offset: Option<usize>,
@@ -21542,361 +21839,6 @@ impl<Prev: Pusher> PushStaInfo<Prev> {
     }
 }
 impl<Prev: Pusher> Drop for PushStaInfo<Prev> {
-    fn drop(&mut self) {
-        if let Some(prev) = &mut self.prev {
-            if let Some(header_offset) = &self.header_offset {
-                finalize_nested_header(prev.as_vec_mut(), *header_offset);
-            }
-        }
-    }
-}
-pub struct PushSupportedIftypes<Prev: Pusher> {
-    pub(crate) prev: Option<Prev>,
-    pub(crate) header_offset: Option<usize>,
-}
-impl<Prev: Pusher> Pusher for PushSupportedIftypes<Prev> {
-    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
-        self.prev.as_mut().unwrap().as_vec_mut()
-    }
-    fn as_vec(&self) -> &Vec<u8> {
-        self.prev.as_ref().unwrap().as_vec()
-    }
-}
-impl<Prev: Pusher> PushSupportedIftypes<Prev> {
-    pub fn new(prev: Prev) -> Self {
-        Self {
-            prev: Some(prev),
-            header_offset: None,
-        }
-    }
-    pub fn end_nested(mut self) -> Prev {
-        let mut prev = self.prev.take().unwrap();
-        if let Some(header_offset) = &self.header_offset {
-            finalize_nested_header(prev.as_vec_mut(), *header_offset);
-        }
-        prev
-    }
-    pub fn push_adhoc(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 1u16, 0 as u16);
-        self
-    }
-    pub fn push_station(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 2u16, 0 as u16);
-        self
-    }
-    pub fn push_ap(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 3u16, 0 as u16);
-        self
-    }
-    pub fn push_ap_vlan(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 4u16, 0 as u16);
-        self
-    }
-    pub fn push_wds(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 5u16, 0 as u16);
-        self
-    }
-    pub fn push_monitor(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 6u16, 0 as u16);
-        self
-    }
-    pub fn push_mesh_point(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 7u16, 0 as u16);
-        self
-    }
-    pub fn push_p2p_client(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 8u16, 0 as u16);
-        self
-    }
-    pub fn push_p2p_go(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 9u16, 0 as u16);
-        self
-    }
-    pub fn push_p2p_device(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 10u16, 0 as u16);
-        self
-    }
-    pub fn push_ocb(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 11u16, 0 as u16);
-        self
-    }
-    pub fn push_nan(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 12u16, 0 as u16);
-        self
-    }
-    pub fn push_nan_data(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 13u16, 0 as u16);
-        self
-    }
-    pub fn push_pd(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 14u16, 0 as u16);
-        self
-    }
-}
-impl<Prev: Pusher> Drop for PushSupportedIftypes<Prev> {
-    fn drop(&mut self) {
-        if let Some(prev) = &mut self.prev {
-            if let Some(header_offset) = &self.header_offset {
-                finalize_nested_header(prev.as_vec_mut(), *header_offset);
-            }
-        }
-    }
-}
-pub struct PushTxqStatsAttrs<Prev: Pusher> {
-    pub(crate) prev: Option<Prev>,
-    pub(crate) header_offset: Option<usize>,
-}
-impl<Prev: Pusher> Pusher for PushTxqStatsAttrs<Prev> {
-    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
-        self.prev.as_mut().unwrap().as_vec_mut()
-    }
-    fn as_vec(&self) -> &Vec<u8> {
-        self.prev.as_ref().unwrap().as_vec()
-    }
-}
-impl<Prev: Pusher> PushTxqStatsAttrs<Prev> {
-    pub fn new(prev: Prev) -> Self {
-        Self {
-            prev: Some(prev),
-            header_offset: None,
-        }
-    }
-    pub fn end_nested(mut self) -> Prev {
-        let mut prev = self.prev.take().unwrap();
-        if let Some(header_offset) = &self.header_offset {
-            finalize_nested_header(prev.as_vec_mut(), *header_offset);
-        }
-        prev
-    }
-    pub fn push_backlog_bytes(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 1u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_backlog_packets(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 2u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_flows(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 3u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_drops(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 4u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_ecn_marks(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 5u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_overlimit(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 6u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_overmemory(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 7u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_collisions(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 8u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_tx_bytes(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 9u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_tx_packets(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 10u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_max_flows(mut self, value: u32) -> Self {
-        push_header(self.as_vec_mut(), 11u16, 4 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-}
-impl<Prev: Pusher> Drop for PushTxqStatsAttrs<Prev> {
-    fn drop(&mut self) {
-        if let Some(prev) = &mut self.prev {
-            if let Some(header_offset) = &self.header_offset {
-                finalize_nested_header(prev.as_vec_mut(), *header_offset);
-            }
-        }
-    }
-}
-pub struct PushWmmAttrs<Prev: Pusher> {
-    pub(crate) prev: Option<Prev>,
-    pub(crate) header_offset: Option<usize>,
-}
-impl<Prev: Pusher> Pusher for PushWmmAttrs<Prev> {
-    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
-        self.prev.as_mut().unwrap().as_vec_mut()
-    }
-    fn as_vec(&self) -> &Vec<u8> {
-        self.prev.as_ref().unwrap().as_vec()
-    }
-}
-impl<Prev: Pusher> PushWmmAttrs<Prev> {
-    pub fn new(prev: Prev) -> Self {
-        Self {
-            prev: Some(prev),
-            header_offset: None,
-        }
-    }
-    pub fn end_nested(mut self) -> Prev {
-        let mut prev = self.prev.take().unwrap();
-        if let Some(header_offset) = &self.header_offset {
-            finalize_nested_header(prev.as_vec_mut(), *header_offset);
-        }
-        prev
-    }
-    pub fn push_cw_min(mut self, value: u16) -> Self {
-        push_header(self.as_vec_mut(), 1u16, 2 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_cw_max(mut self, value: u16) -> Self {
-        push_header(self.as_vec_mut(), 2u16, 2 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_aifsn(mut self, value: u8) -> Self {
-        push_header(self.as_vec_mut(), 3u16, 1 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-    pub fn push_txop(mut self, value: u16) -> Self {
-        push_header(self.as_vec_mut(), 4u16, 2 as u16);
-        self.as_vec_mut().extend(value.to_ne_bytes());
-        self
-    }
-}
-impl<Prev: Pusher> Drop for PushWmmAttrs<Prev> {
-    fn drop(&mut self) {
-        if let Some(prev) = &mut self.prev {
-            if let Some(header_offset) = &self.header_offset {
-                finalize_nested_header(prev.as_vec_mut(), *header_offset);
-            }
-        }
-    }
-}
-pub struct PushWowlanTriggersAttrs<Prev: Pusher> {
-    pub(crate) prev: Option<Prev>,
-    pub(crate) header_offset: Option<usize>,
-}
-impl<Prev: Pusher> Pusher for PushWowlanTriggersAttrs<Prev> {
-    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
-        self.prev.as_mut().unwrap().as_vec_mut()
-    }
-    fn as_vec(&self) -> &Vec<u8> {
-        self.prev.as_ref().unwrap().as_vec()
-    }
-}
-impl<Prev: Pusher> PushWowlanTriggersAttrs<Prev> {
-    pub fn new(prev: Prev) -> Self {
-        Self {
-            prev: Some(prev),
-            header_offset: None,
-        }
-    }
-    pub fn end_nested(mut self) -> Prev {
-        let mut prev = self.prev.take().unwrap();
-        if let Some(header_offset) = &self.header_offset {
-            finalize_nested_header(prev.as_vec_mut(), *header_offset);
-        }
-        prev
-    }
-    pub fn push_any(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 1u16, 0 as u16);
-        self
-    }
-    pub fn push_disconnect(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 2u16, 0 as u16);
-        self
-    }
-    pub fn push_magic_pkt(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 3u16, 0 as u16);
-        self
-    }
-    pub fn push_pkt_pattern(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 4u16, 0 as u16);
-        self
-    }
-    pub fn push_gtk_rekey_supported(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 5u16, 0 as u16);
-        self
-    }
-    pub fn push_gtk_rekey_failure(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 6u16, 0 as u16);
-        self
-    }
-    pub fn push_eap_ident_request(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 7u16, 0 as u16);
-        self
-    }
-    pub fn push_4way_handshake(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 8u16, 0 as u16);
-        self
-    }
-    pub fn push_rfkill_release(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 9u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_pkt_80211(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 10u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_pkt_80211_len(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 11u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_pkt_8023(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 12u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_pkt_8023_len(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 13u16, 0 as u16);
-        self
-    }
-    pub fn push_tcp_connection(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 14u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_tcp_match(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 15u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_tcp_connlost(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 16u16, 0 as u16);
-        self
-    }
-    pub fn push_wakeup_tcp_nomoretokens(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 17u16, 0 as u16);
-        self
-    }
-    pub fn push_net_detect(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 18u16, 0 as u16);
-        self
-    }
-    pub fn push_net_detect_results(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 19u16, 0 as u16);
-        self
-    }
-    pub fn push_unprotected_deauth_disassoc(mut self, value: ()) -> Self {
-        push_header(self.as_vec_mut(), 20u16, 0 as u16);
-        self
-    }
-}
-impl<Prev: Pusher> Drop for PushWowlanTriggersAttrs<Prev> {
     fn drop(&mut self) {
         if let Some(prev) = &mut self.prev {
             if let Some(header_offset) = &self.header_offset {
