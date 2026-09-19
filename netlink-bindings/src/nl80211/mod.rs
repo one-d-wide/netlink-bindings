@@ -535,7 +535,7 @@ pub enum Nl80211Attrs<'a> {
     StaListenInterval(u16),
     StaSupportedRates(&'a [u8]),
     StaVlan(u32),
-    StaInfo(&'a [u8]),
+    StaInfo(IterableStaInfo<'a>),
     WiphyBands(IterableWiphyBands<'a>),
     MntrFlags(&'a [u8]),
     MeshId(&'a [u8]),
@@ -1154,7 +1154,7 @@ impl<'a> IterableNl80211Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_sta_info(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_sta_info(&self) -> Result<IterableStaInfo<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -6425,7 +6425,7 @@ impl<'a> Iterator for IterableNl80211Attrs<'a> {
                     val
                 }),
                 21u16 => Nl80211Attrs::StaInfo({
-                    let res = Some(next);
+                    let res = Some(IterableStaInfo::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7862,7 +7862,7 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                     fmt.field("StaSupportedRates", &FormatHexdump(val))
                 }
                 Nl80211Attrs::StaVlan(val) => fmt.field("StaVlan", &val),
-                Nl80211Attrs::StaInfo(val) => fmt.field("StaInfo", &FormatHexdump(val)),
+                Nl80211Attrs::StaInfo(val) => fmt.field("StaInfo", &val),
                 Nl80211Attrs::WiphyBands(val) => fmt.field("WiphyBands", &val),
                 Nl80211Attrs::MntrFlags(val) => fmt.field("MntrFlags", &FormatHexdump(val)),
                 Nl80211Attrs::MeshId(val) => fmt.field("MeshId", &FormatHexdump(val)),
@@ -8419,8 +8419,8 @@ impl IterableNl80211Attrs<'_> {
                     }
                 }
                 Nl80211Attrs::StaInfo(val) => {
-                    if last_off == offset {
-                        stack.push(("StaInfo", last_off));
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
                         break;
                     }
                 }
@@ -14756,6 +14756,1373 @@ impl IterableSarSpecs<'_> {
     }
 }
 #[derive(Clone)]
+pub enum StaInfo<'a> {
+    InactiveTime(u32),
+    RxBytes(u32),
+    TxBytes(u32),
+    Llid(u16),
+    Plid(u16),
+    PlinkState(&'a [u8]),
+    Signal(i8),
+    TxBitrate(&'a [u8]),
+    RxPackets(u32),
+    TxPackets(u32),
+    TxRetries(u32),
+    TxFailed(u32),
+    SignalAvg(i8),
+    RxBitrate(&'a [u8]),
+    BssParam(&'a [u8]),
+    ConnectedTime(u32),
+    StaFlags(&'a [u8]),
+    BeaconLoss(u32),
+    TOffset(i64),
+    LocalPm(&'a [u8]),
+    PeerPm(&'a [u8]),
+    NonpeerPm(&'a [u8]),
+    RxBytes64(u64),
+    TxBytes64(u64),
+    ChainSignal(&'a [u8]),
+    ChainSignalAvg(&'a [u8]),
+    ExpectedThroughput(u32),
+    RxDropMisc(u64),
+    BeaconRx(u64),
+    BeaconSignalAvg(i8),
+    TidStats(&'a [u8]),
+    RxDuration(u64),
+    Pad(&'a [u8]),
+    AckSignal(i8),
+    AckSignalAvg(i8),
+    RxMpdus(u32),
+    FcsErrorCount(u32),
+    ConnectedToGate(u8),
+    TxDuration(u64),
+    AirtimeWeight(u16),
+    AirtimeLinkMetric(u32),
+    AssocAtBoottime(u64),
+    ConnectedToAs(u8),
+}
+impl<'a> IterableStaInfo<'a> {
+    pub fn get_inactive_time(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::InactiveTime(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "InactiveTime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_bytes(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxBytes(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_bytes(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxBytes(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxBytes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_llid(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::Llid(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "Llid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_plid(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::Plid(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "Plid",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_plink_state(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::PlinkState(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "PlinkState",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_signal(&self) -> Result<i8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::Signal(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "Signal",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_bitrate(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxBitrate(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxBitrate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_packets(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxPackets(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxPackets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_packets(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxPackets(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxPackets",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_retries(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxRetries(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxRetries",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_failed(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxFailed(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxFailed",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_signal_avg(&self) -> Result<i8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::SignalAvg(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "SignalAvg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_bitrate(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxBitrate(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxBitrate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_bss_param(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::BssParam(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "BssParam",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_connected_time(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::ConnectedTime(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "ConnectedTime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_sta_flags(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::StaFlags(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "StaFlags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_beacon_loss(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::BeaconLoss(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "BeaconLoss",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_t_offset(&self) -> Result<i64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TOffset(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TOffset",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_local_pm(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::LocalPm(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "LocalPm",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_peer_pm(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::PeerPm(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "PeerPm",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_nonpeer_pm(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::NonpeerPm(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "NonpeerPm",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_bytes64(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxBytes64(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxBytes64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_bytes64(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxBytes64(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxBytes64",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_chain_signal(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::ChainSignal(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "ChainSignal",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_chain_signal_avg(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::ChainSignalAvg(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "ChainSignalAvg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_expected_throughput(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::ExpectedThroughput(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "ExpectedThroughput",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_drop_misc(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxDropMisc(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxDropMisc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_beacon_rx(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::BeaconRx(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "BeaconRx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_beacon_signal_avg(&self) -> Result<i8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::BeaconSignalAvg(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "BeaconSignalAvg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tid_stats(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TidStats(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TidStats",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_duration(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxDuration(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxDuration",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ack_signal(&self) -> Result<i8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::AckSignal(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "AckSignal",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ack_signal_avg(&self) -> Result<i8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::AckSignalAvg(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "AckSignalAvg",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rx_mpdus(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::RxMpdus(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "RxMpdus",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_fcs_error_count(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::FcsErrorCount(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "FcsErrorCount",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_connected_to_gate(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::ConnectedToGate(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "ConnectedToGate",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tx_duration(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::TxDuration(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "TxDuration",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_airtime_weight(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::AirtimeWeight(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "AirtimeWeight",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_airtime_link_metric(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::AirtimeLinkMetric(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "AirtimeLinkMetric",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_assoc_at_boottime(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::AssocAtBoottime(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "AssocAtBoottime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_connected_to_as(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaInfo::ConnectedToAs(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaInfo",
+            "ConnectedToAs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl StaInfo<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableStaInfo<'a> {
+        IterableStaInfo::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "InactiveTime",
+            2u16 => "RxBytes",
+            3u16 => "TxBytes",
+            4u16 => "Llid",
+            5u16 => "Plid",
+            6u16 => "PlinkState",
+            7u16 => "Signal",
+            8u16 => "TxBitrate",
+            9u16 => "RxPackets",
+            10u16 => "TxPackets",
+            11u16 => "TxRetries",
+            12u16 => "TxFailed",
+            13u16 => "SignalAvg",
+            14u16 => "RxBitrate",
+            15u16 => "BssParam",
+            16u16 => "ConnectedTime",
+            17u16 => "StaFlags",
+            18u16 => "BeaconLoss",
+            19u16 => "TOffset",
+            20u16 => "LocalPm",
+            21u16 => "PeerPm",
+            22u16 => "NonpeerPm",
+            23u16 => "RxBytes64",
+            24u16 => "TxBytes64",
+            25u16 => "ChainSignal",
+            26u16 => "ChainSignalAvg",
+            27u16 => "ExpectedThroughput",
+            28u16 => "RxDropMisc",
+            29u16 => "BeaconRx",
+            30u16 => "BeaconSignalAvg",
+            31u16 => "TidStats",
+            32u16 => "RxDuration",
+            33u16 => "Pad",
+            34u16 => "AckSignal",
+            35u16 => "AckSignalAvg",
+            36u16 => "RxMpdus",
+            37u16 => "FcsErrorCount",
+            38u16 => "ConnectedToGate",
+            39u16 => "TxDuration",
+            40u16 => "AirtimeWeight",
+            41u16 => "AirtimeLinkMetric",
+            42u16 => "AssocAtBoottime",
+            43u16 => "ConnectedToAs",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableStaInfo<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableStaInfo<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableStaInfo<'a> {
+    type Item = Result<StaInfo<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => StaInfo::InactiveTime({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => StaInfo::RxBytes({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => StaInfo::TxBytes({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => StaInfo::Llid({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => StaInfo::Plid({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => StaInfo::PlinkState({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => StaInfo::Signal({
+                    let res = parse_i8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => StaInfo::TxBitrate({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => StaInfo::RxPackets({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => StaInfo::TxPackets({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => StaInfo::TxRetries({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => StaInfo::TxFailed({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => StaInfo::SignalAvg({
+                    let res = parse_i8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => StaInfo::RxBitrate({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => StaInfo::BssParam({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => StaInfo::ConnectedTime({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => StaInfo::StaFlags({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => StaInfo::BeaconLoss({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => StaInfo::TOffset({
+                    let res = parse_i64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => StaInfo::LocalPm({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => StaInfo::PeerPm({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => StaInfo::NonpeerPm({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => StaInfo::RxBytes64({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                24u16 => StaInfo::TxBytes64({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                25u16 => StaInfo::ChainSignal({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                26u16 => StaInfo::ChainSignalAvg({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => StaInfo::ExpectedThroughput({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                28u16 => StaInfo::RxDropMisc({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                29u16 => StaInfo::BeaconRx({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => StaInfo::BeaconSignalAvg({
+                    let res = parse_i8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => StaInfo::TidStats({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => StaInfo::RxDuration({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                33u16 => StaInfo::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                34u16 => StaInfo::AckSignal({
+                    let res = parse_i8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                35u16 => StaInfo::AckSignalAvg({
+                    let res = parse_i8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                36u16 => StaInfo::RxMpdus({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                37u16 => StaInfo::FcsErrorCount({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                38u16 => StaInfo::ConnectedToGate({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                39u16 => StaInfo::TxDuration({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                40u16 => StaInfo::AirtimeWeight({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                41u16 => StaInfo::AirtimeLinkMetric({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                42u16 => StaInfo::AssocAtBoottime({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                43u16 => StaInfo::ConnectedToAs({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "StaInfo",
+            r#type.and_then(|t| StaInfo::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableStaInfo<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("StaInfo");
+        let mut iter = IterableStaInfo::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                StaInfo::InactiveTime(val) => fmt.field("InactiveTime", &val),
+                StaInfo::RxBytes(val) => fmt.field("RxBytes", &val),
+                StaInfo::TxBytes(val) => fmt.field("TxBytes", &val),
+                StaInfo::Llid(val) => fmt.field("Llid", &val),
+                StaInfo::Plid(val) => fmt.field("Plid", &val),
+                StaInfo::PlinkState(val) => fmt.field("PlinkState", &FormatHexdump(val)),
+                StaInfo::Signal(val) => fmt.field("Signal", &val),
+                StaInfo::TxBitrate(val) => fmt.field("TxBitrate", &FormatHexdump(val)),
+                StaInfo::RxPackets(val) => fmt.field("RxPackets", &val),
+                StaInfo::TxPackets(val) => fmt.field("TxPackets", &val),
+                StaInfo::TxRetries(val) => fmt.field("TxRetries", &val),
+                StaInfo::TxFailed(val) => fmt.field("TxFailed", &val),
+                StaInfo::SignalAvg(val) => fmt.field("SignalAvg", &val),
+                StaInfo::RxBitrate(val) => fmt.field("RxBitrate", &FormatHexdump(val)),
+                StaInfo::BssParam(val) => fmt.field("BssParam", &FormatHexdump(val)),
+                StaInfo::ConnectedTime(val) => fmt.field("ConnectedTime", &val),
+                StaInfo::StaFlags(val) => fmt.field("StaFlags", &FormatHexdump(val)),
+                StaInfo::BeaconLoss(val) => fmt.field("BeaconLoss", &val),
+                StaInfo::TOffset(val) => fmt.field("TOffset", &val),
+                StaInfo::LocalPm(val) => fmt.field("LocalPm", &FormatHexdump(val)),
+                StaInfo::PeerPm(val) => fmt.field("PeerPm", &FormatHexdump(val)),
+                StaInfo::NonpeerPm(val) => fmt.field("NonpeerPm", &FormatHexdump(val)),
+                StaInfo::RxBytes64(val) => fmt.field("RxBytes64", &val),
+                StaInfo::TxBytes64(val) => fmt.field("TxBytes64", &val),
+                StaInfo::ChainSignal(val) => fmt.field("ChainSignal", &FormatHexdump(val)),
+                StaInfo::ChainSignalAvg(val) => fmt.field("ChainSignalAvg", &FormatHexdump(val)),
+                StaInfo::ExpectedThroughput(val) => fmt.field("ExpectedThroughput", &val),
+                StaInfo::RxDropMisc(val) => fmt.field("RxDropMisc", &val),
+                StaInfo::BeaconRx(val) => fmt.field("BeaconRx", &val),
+                StaInfo::BeaconSignalAvg(val) => fmt.field("BeaconSignalAvg", &val),
+                StaInfo::TidStats(val) => fmt.field("TidStats", &FormatHexdump(val)),
+                StaInfo::RxDuration(val) => fmt.field("RxDuration", &val),
+                StaInfo::Pad(val) => fmt.field("Pad", &FormatHexdump(val)),
+                StaInfo::AckSignal(val) => fmt.field("AckSignal", &val),
+                StaInfo::AckSignalAvg(val) => fmt.field("AckSignalAvg", &val),
+                StaInfo::RxMpdus(val) => fmt.field("RxMpdus", &val),
+                StaInfo::FcsErrorCount(val) => fmt.field("FcsErrorCount", &val),
+                StaInfo::ConnectedToGate(val) => fmt.field("ConnectedToGate", &val),
+                StaInfo::TxDuration(val) => fmt.field("TxDuration", &val),
+                StaInfo::AirtimeWeight(val) => fmt.field("AirtimeWeight", &val),
+                StaInfo::AirtimeLinkMetric(val) => fmt.field("AirtimeLinkMetric", &val),
+                StaInfo::AssocAtBoottime(val) => fmt.field("AssocAtBoottime", &val),
+                StaInfo::ConnectedToAs(val) => fmt.field("ConnectedToAs", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableStaInfo<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("StaInfo", offset));
+            return (stack, missing_type.and_then(|t| StaInfo::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                StaInfo::InactiveTime(val) => {
+                    if last_off == offset {
+                        stack.push(("InactiveTime", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("RxBytes", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxBytes(val) => {
+                    if last_off == offset {
+                        stack.push(("TxBytes", last_off));
+                        break;
+                    }
+                }
+                StaInfo::Llid(val) => {
+                    if last_off == offset {
+                        stack.push(("Llid", last_off));
+                        break;
+                    }
+                }
+                StaInfo::Plid(val) => {
+                    if last_off == offset {
+                        stack.push(("Plid", last_off));
+                        break;
+                    }
+                }
+                StaInfo::PlinkState(val) => {
+                    if last_off == offset {
+                        stack.push(("PlinkState", last_off));
+                        break;
+                    }
+                }
+                StaInfo::Signal(val) => {
+                    if last_off == offset {
+                        stack.push(("Signal", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxBitrate(val) => {
+                    if last_off == offset {
+                        stack.push(("TxBitrate", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("RxPackets", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxPackets(val) => {
+                    if last_off == offset {
+                        stack.push(("TxPackets", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxRetries(val) => {
+                    if last_off == offset {
+                        stack.push(("TxRetries", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxFailed(val) => {
+                    if last_off == offset {
+                        stack.push(("TxFailed", last_off));
+                        break;
+                    }
+                }
+                StaInfo::SignalAvg(val) => {
+                    if last_off == offset {
+                        stack.push(("SignalAvg", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxBitrate(val) => {
+                    if last_off == offset {
+                        stack.push(("RxBitrate", last_off));
+                        break;
+                    }
+                }
+                StaInfo::BssParam(val) => {
+                    if last_off == offset {
+                        stack.push(("BssParam", last_off));
+                        break;
+                    }
+                }
+                StaInfo::ConnectedTime(val) => {
+                    if last_off == offset {
+                        stack.push(("ConnectedTime", last_off));
+                        break;
+                    }
+                }
+                StaInfo::StaFlags(val) => {
+                    if last_off == offset {
+                        stack.push(("StaFlags", last_off));
+                        break;
+                    }
+                }
+                StaInfo::BeaconLoss(val) => {
+                    if last_off == offset {
+                        stack.push(("BeaconLoss", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TOffset(val) => {
+                    if last_off == offset {
+                        stack.push(("TOffset", last_off));
+                        break;
+                    }
+                }
+                StaInfo::LocalPm(val) => {
+                    if last_off == offset {
+                        stack.push(("LocalPm", last_off));
+                        break;
+                    }
+                }
+                StaInfo::PeerPm(val) => {
+                    if last_off == offset {
+                        stack.push(("PeerPm", last_off));
+                        break;
+                    }
+                }
+                StaInfo::NonpeerPm(val) => {
+                    if last_off == offset {
+                        stack.push(("NonpeerPm", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxBytes64(val) => {
+                    if last_off == offset {
+                        stack.push(("RxBytes64", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxBytes64(val) => {
+                    if last_off == offset {
+                        stack.push(("TxBytes64", last_off));
+                        break;
+                    }
+                }
+                StaInfo::ChainSignal(val) => {
+                    if last_off == offset {
+                        stack.push(("ChainSignal", last_off));
+                        break;
+                    }
+                }
+                StaInfo::ChainSignalAvg(val) => {
+                    if last_off == offset {
+                        stack.push(("ChainSignalAvg", last_off));
+                        break;
+                    }
+                }
+                StaInfo::ExpectedThroughput(val) => {
+                    if last_off == offset {
+                        stack.push(("ExpectedThroughput", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxDropMisc(val) => {
+                    if last_off == offset {
+                        stack.push(("RxDropMisc", last_off));
+                        break;
+                    }
+                }
+                StaInfo::BeaconRx(val) => {
+                    if last_off == offset {
+                        stack.push(("BeaconRx", last_off));
+                        break;
+                    }
+                }
+                StaInfo::BeaconSignalAvg(val) => {
+                    if last_off == offset {
+                        stack.push(("BeaconSignalAvg", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TidStats(val) => {
+                    if last_off == offset {
+                        stack.push(("TidStats", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxDuration(val) => {
+                    if last_off == offset {
+                        stack.push(("RxDuration", last_off));
+                        break;
+                    }
+                }
+                StaInfo::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                StaInfo::AckSignal(val) => {
+                    if last_off == offset {
+                        stack.push(("AckSignal", last_off));
+                        break;
+                    }
+                }
+                StaInfo::AckSignalAvg(val) => {
+                    if last_off == offset {
+                        stack.push(("AckSignalAvg", last_off));
+                        break;
+                    }
+                }
+                StaInfo::RxMpdus(val) => {
+                    if last_off == offset {
+                        stack.push(("RxMpdus", last_off));
+                        break;
+                    }
+                }
+                StaInfo::FcsErrorCount(val) => {
+                    if last_off == offset {
+                        stack.push(("FcsErrorCount", last_off));
+                        break;
+                    }
+                }
+                StaInfo::ConnectedToGate(val) => {
+                    if last_off == offset {
+                        stack.push(("ConnectedToGate", last_off));
+                        break;
+                    }
+                }
+                StaInfo::TxDuration(val) => {
+                    if last_off == offset {
+                        stack.push(("TxDuration", last_off));
+                        break;
+                    }
+                }
+                StaInfo::AirtimeWeight(val) => {
+                    if last_off == offset {
+                        stack.push(("AirtimeWeight", last_off));
+                        break;
+                    }
+                }
+                StaInfo::AirtimeLinkMetric(val) => {
+                    if last_off == offset {
+                        stack.push(("AirtimeLinkMetric", last_off));
+                        break;
+                    }
+                }
+                StaInfo::AssocAtBoottime(val) => {
+                    if last_off == offset {
+                        stack.push(("AssocAtBoottime", last_off));
+                        break;
+                    }
+                }
+                StaInfo::ConnectedToAs(val) => {
+                    if last_off == offset {
+                        stack.push(("ConnectedToAs", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("StaInfo", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
 pub enum SupportedIftypes {
     Adhoc(()),
     Station(()),
@@ -16723,10 +18090,12 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_sta_info(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 21u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
-        self
+    pub fn nested_sta_info(mut self) -> PushStaInfo<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 21u16);
+        PushStaInfo {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
     }
     pub fn nested_wiphy_bands(mut self) -> PushWiphyBands<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 22u16);
@@ -19469,6 +20838,257 @@ impl<Prev: Pusher> PushSarSpecs<Prev> {
     }
 }
 impl<Prev: Pusher> Drop for PushSarSpecs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushStaInfo<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushStaInfo<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushStaInfo<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_inactive_time(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rx_bytes(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_bytes(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_llid(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_plid(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_plink_state(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 6u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_signal(mut self, value: i8) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_bitrate(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 8u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_rx_packets(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 9u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_packets(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_retries(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_failed(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 12u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_signal_avg(mut self, value: i8) -> Self {
+        push_header(self.as_vec_mut(), 13u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rx_bitrate(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 14u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_bss_param(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 15u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_connected_time(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 16u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_sta_flags(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 17u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_beacon_loss(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 18u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_t_offset(mut self, value: i64) -> Self {
+        push_header(self.as_vec_mut(), 19u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_local_pm(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 20u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_peer_pm(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 21u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_nonpeer_pm(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 22u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_rx_bytes64(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 23u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_bytes64(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 24u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_chain_signal(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 25u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_chain_signal_avg(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 26u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_expected_throughput(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 27u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rx_drop_misc(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 28u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_beacon_rx(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 29u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_beacon_signal_avg(mut self, value: i8) -> Self {
+        push_header(self.as_vec_mut(), 30u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tid_stats(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 31u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_rx_duration(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 32u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 33u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_ack_signal(mut self, value: i8) -> Self {
+        push_header(self.as_vec_mut(), 34u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ack_signal_avg(mut self, value: i8) -> Self {
+        push_header(self.as_vec_mut(), 35u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rx_mpdus(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 36u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_fcs_error_count(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 37u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_connected_to_gate(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 38u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tx_duration(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 39u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_airtime_weight(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 40u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_airtime_link_metric(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 41u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_assoc_at_boottime(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 42u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_connected_to_as(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 43u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushStaInfo<Prev> {
     fn drop(&mut self) {
         if let Some(prev) = &mut self.prev {
             if let Some(header_offset) = &self.header_offset {

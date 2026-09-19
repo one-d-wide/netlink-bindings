@@ -297,7 +297,8 @@ attribute-sets:
         type: u32
       -
         name: sta-info
-        type: binary  # TODO: nest
+        type: nest
+        nested-attributes: sta-info
       -
         name: wiphy-bands
         type: nest
@@ -1631,6 +1632,140 @@ attribute-sets:
       -
         name: end-freq
         type: u32
+  -
+    name: sta-info
+    enum-name: nl80211-sta-info
+    name-prefix: nl80211-sta-info-
+    attributes:
+      -
+        name: inactive-time
+        type: u32
+      -
+        name: rx-bytes
+        type: u32
+      -
+        name: tx-bytes
+        type: u32
+      -
+        name: llid
+        type: u16
+      -
+        name: plid
+        type: u16
+      -
+        name: plink-state
+        type: binary # TODO: nest
+      -
+        name: signal
+        type: s8
+      -
+        name: tx-bitrate
+        type: binary # TODO: nest
+      -
+        name: rx-packets
+        type: u32
+      -
+        name: tx-packets
+        type: u32
+      -
+        name: tx-retries
+        type: u32
+      -
+        name: tx-failed
+        type: u32
+      -
+        name: signal-avg
+        type: s8
+      -
+        name: rx-bitrate
+        type: binary # TODO: nest
+      -
+        name: bss-param
+        type: binary # TODO: nest HIGH PRIORITY
+      -
+        name: connected-time
+        type: u32
+      -
+        name: sta-flags
+        type: binary # TODO: nest HIGH PRIORITY
+      -
+        name: beacon-loss
+        type: u32
+      -
+        name: t-offset
+        type: s64
+      -
+        name: local-pm
+        type: binary # TODO: nest
+      -
+        name: peer-pm
+        type: binary # TODO: nest
+      -
+        name: nonpeer-pm
+        type: binary # TODO: nest
+      -
+        name: rx-bytes64
+        type: u64
+      -
+        name: tx-bytes64
+        type: u64
+      -
+        name: chain-signal
+        type: binary # TODO: nest
+      -
+        name: chain-signal-avg
+        type: binary # TODO: nest
+      -
+        name: expected-throughput
+        type: u32
+      -
+        name: rx-drop-misc
+        type: u64
+      -
+        name: beacon-rx
+        type: u64
+      -
+        name: beacon-signal-avg
+        type: s8
+      -
+        name: tid-stats
+        type: binary # TODO: nest
+      -
+        name: rx-duration
+        type: u64
+      -
+        name: pad
+        type: binary
+      -
+        name: ack-signal
+        type: s8
+      -
+        name: ack-signal-avg
+        type: s8
+      -
+        name: rx-mpdus
+        type: u32
+      -
+        name: fcs-error-count
+        type: u32
+      -
+        name: connected-to-gate
+        type: u8
+      -
+        name: tx-duration
+        type: u64
+      -
+        name: airtime-weight
+        type: u16
+      -
+        name: airtime-link-metric
+        type: u32
+      -
+        name: assoc-at-boottime
+        type: u64
+      -
+        name: connected-to-as
+        type: u8
   -
     name: supported-iftypes
     enum-name: nl80211-iftype
