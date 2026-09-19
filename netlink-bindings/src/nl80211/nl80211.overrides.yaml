@@ -5,6 +5,7 @@ definitions:
   - name: iftype
     type: enum
     entries:
+      - unspecified
       - adhoc
       - station
       - ap
@@ -22,6 +23,7 @@ definitions:
   - name: sta-flag
     type: enum
     entries:
+      - invalid
       - authorized
       - short-preamble
       - wme
@@ -43,9 +45,6 @@ definitions:
         enum-as-flags: true
 attribute-sets:
   - name: nl80211-attrs
-    name-prefix: nl80211-attr-
-    enum-name: nl80211-attrs
-    attr-max-name: num-nl80211-attr
     attributes:
       - name: sta-info
         type: nest
