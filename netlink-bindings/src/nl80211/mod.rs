@@ -489,7 +489,6 @@ impl Iftype {
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
 #[derive(Debug, Clone, Copy)]
 pub enum StaFlag {
-    Invalid = 0,
     Authorized = 1,
     ShortPreamble = 2,
     Wme = 3,
@@ -502,7 +501,6 @@ pub enum StaFlag {
 impl StaFlag {
     pub fn from_value(value: u64) -> Option<Self> {
         Some(match value {
-            0 => Self::Invalid,
             1 => Self::Authorized,
             2 => Self::ShortPreamble,
             3 => Self::Wme,

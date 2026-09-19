@@ -23,8 +23,8 @@ definitions:
   - name: sta-flag
     type: enum
     entries:
-      - invalid
-      - authorized
+      - name: authorized
+        value: 1
       - short-preamble
       - wme
       - mfp
