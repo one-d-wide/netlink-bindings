@@ -212,15 +212,49 @@ definitions:
       - ht40minus
       - ht40plus
   -
+    name: iftype
+    type: enum
+    entries:
+      - adhoc
+      - station
+      - ap
+      - ap-vlan
+      - wds
+      - monitor
+      - mesh-point
+      - p2p-client
+      - p2p-go
+      - p2p-device
+      - ocb
+      - nan
+      - nan-data
+      - pd
+  -
+    name: sta-flag
+    type: enum
+    entries:
+      - authorized
+      - short-preamble
+      - wme
+      - mfp
+      - authenticated
+      - tdls-peer
+      - associated
+      - spp-amsdu
+  -
     name: sta-flag-update
     type: struct
     members:
       -
         name: mask
         type: u32
+        enum: sta-flag
+        enum-as-flags: true
       -
         name: set
         type: u32
+        enum: sta-flag
+        enum-as-flags: true
   -
     name: protocol-features
     type: flags
@@ -1633,6 +1667,26 @@ attribute-sets:
         name: end-freq
         type: u32
   -
+    name: sta-bss-param
+    enum-name: nl80211-sta-bss-param
+    name-prefix: nl80211-sta-bss-param-
+    attributes:
+      -
+        name: cts-prot
+        type: flag
+      -
+        name: short-preamble
+        type: flag
+      -
+        name: short-slot-time
+        type: flag
+      -
+        name: dtim-period
+        type: u8
+      -
+        name: beacon-interval
+        type: u16
+  -
     name: sta-info
     enum-name: nl80211-sta-info
     name-prefix: nl80211-sta-info-
@@ -1681,13 +1735,15 @@ attribute-sets:
         type: binary # TODO: nest
       -
         name: bss-param
-        type: binary # TODO: nest HIGH PRIORITY
+        type: nest
+        nested-attributes: sta-bss-param
       -
         name: connected-time
         type: u32
       -
         name: sta-flags
-        type: binary # TODO: nest HIGH PRIORITY
+        type: binary
+        struct: sta-flag-update
       -
         name: beacon-loss
         type: u32
@@ -1806,6 +1862,12 @@ attribute-sets:
         type: flag
       -
         name: nan
+        type: flag
+      -
+        name: nan-data
+        type: flag
+      -
+        name: pd
         type: flag
   -
     name: txq-stats-attrs

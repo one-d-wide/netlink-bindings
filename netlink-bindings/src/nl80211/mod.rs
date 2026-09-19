@@ -432,6 +432,72 @@ impl ChannelType {
         })
     }
 }
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy)]
+pub enum Iftype {
+    Adhoc = 0,
+    Station = 1,
+    Ap = 2,
+    ApVlan = 3,
+    Wds = 4,
+    Monitor = 5,
+    MeshPoint = 6,
+    P2pClient = 7,
+    P2pGo = 8,
+    P2pDevice = 9,
+    Ocb = 10,
+    Nan = 11,
+    NanData = 12,
+    Pd = 13,
+}
+impl Iftype {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Adhoc,
+            1 => Self::Station,
+            2 => Self::Ap,
+            3 => Self::ApVlan,
+            4 => Self::Wds,
+            5 => Self::Monitor,
+            6 => Self::MeshPoint,
+            7 => Self::P2pClient,
+            8 => Self::P2pGo,
+            9 => Self::P2pDevice,
+            10 => Self::Ocb,
+            11 => Self::Nan,
+            12 => Self::NanData,
+            13 => Self::Pd,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy)]
+pub enum StaFlag {
+    Authorized = 0,
+    ShortPreamble = 1,
+    Wme = 2,
+    Mfp = 3,
+    Authenticated = 4,
+    TdlsPeer = 5,
+    Associated = 6,
+    SppAmsdu = 7,
+}
+impl StaFlag {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Authorized,
+            1 => Self::ShortPreamble,
+            2 => Self::Wme,
+            3 => Self::Mfp,
+            4 => Self::Authenticated,
+            5 => Self::TdlsPeer,
+            6 => Self::Associated,
+            7 => Self::SppAmsdu,
+            _ => return None,
+        })
+    }
+}
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
 #[derive(Debug, Clone, Copy)]
 pub enum ProtocolFeatures {
@@ -445,10 +511,12 @@ impl ProtocolFeatures {
         })
     }
 }
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)]
 pub struct StaFlagUpdate {
+    #[doc = "Associated type: [`StaFlag`] (1 bit per enumeration)"]
     pub mask: u32,
+    #[doc = "Associated type: [`StaFlag`] (1 bit per enumeration)"]
     pub set: u32,
 }
 #[doc = "Create zero-initialized struct"]
@@ -511,6 +579,24 @@ impl StaFlagUpdate {
         const _: () = assert!(std::mem::size_of::<StaFlagUpdate>() == 8usize);
         const _: () = assert!(std::mem::align_of::<StaFlagUpdate>() == 4usize);
         8usize
+    }
+}
+impl std::fmt::Debug for StaFlagUpdate {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("StaFlagUpdate")
+            .field(
+                "mask",
+                &FormatFlags(self.mask.into(), |val| {
+                    StaFlag::from_value(val.trailing_zeros().into())
+                }),
+            )
+            .field(
+                "set",
+                &FormatFlags(self.set.into(), |val| {
+                    StaFlag::from_value(val.trailing_zeros().into())
+                }),
+            )
+            .finish()
     }
 }
 #[derive(Clone)]
@@ -14756,6 +14842,262 @@ impl IterableSarSpecs<'_> {
     }
 }
 #[derive(Clone)]
+pub enum StaBssParam {
+    CtsProt(()),
+    ShortPreamble(()),
+    ShortSlotTime(()),
+    DtimPeriod(u8),
+    BeaconInterval(u16),
+}
+impl<'a> IterableStaBssParam<'a> {
+    pub fn get_cts_prot(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaBssParam::CtsProt(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaBssParam",
+            "CtsProt",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_short_preamble(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaBssParam::ShortPreamble(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaBssParam",
+            "ShortPreamble",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_short_slot_time(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaBssParam::ShortSlotTime(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaBssParam",
+            "ShortSlotTime",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_dtim_period(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaBssParam::DtimPeriod(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaBssParam",
+            "DtimPeriod",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_beacon_interval(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(StaBssParam::BeaconInterval(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "StaBssParam",
+            "BeaconInterval",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl StaBssParam {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableStaBssParam<'a> {
+        IterableStaBssParam::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "CtsProt",
+            2u16 => "ShortPreamble",
+            3u16 => "ShortSlotTime",
+            4u16 => "DtimPeriod",
+            5u16 => "BeaconInterval",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableStaBssParam<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableStaBssParam<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableStaBssParam<'a> {
+    type Item = Result<StaBssParam, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => StaBssParam::CtsProt(()),
+                2u16 => StaBssParam::ShortPreamble(()),
+                3u16 => StaBssParam::ShortSlotTime(()),
+                4u16 => StaBssParam::DtimPeriod({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => StaBssParam::BeaconInterval({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "StaBssParam",
+            r#type.and_then(|t| StaBssParam::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableStaBssParam<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("StaBssParam");
+        let mut iter = IterableStaBssParam::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                StaBssParam::CtsProt(val) => fmt.field("CtsProt", &val),
+                StaBssParam::ShortPreamble(val) => fmt.field("ShortPreamble", &val),
+                StaBssParam::ShortSlotTime(val) => fmt.field("ShortSlotTime", &val),
+                StaBssParam::DtimPeriod(val) => fmt.field("DtimPeriod", &val),
+                StaBssParam::BeaconInterval(val) => fmt.field("BeaconInterval", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableStaBssParam<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("StaBssParam", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| StaBssParam::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                StaBssParam::CtsProt(val) => {
+                    if last_off == offset {
+                        stack.push(("CtsProt", last_off));
+                        break;
+                    }
+                }
+                StaBssParam::ShortPreamble(val) => {
+                    if last_off == offset {
+                        stack.push(("ShortPreamble", last_off));
+                        break;
+                    }
+                }
+                StaBssParam::ShortSlotTime(val) => {
+                    if last_off == offset {
+                        stack.push(("ShortSlotTime", last_off));
+                        break;
+                    }
+                }
+                StaBssParam::DtimPeriod(val) => {
+                    if last_off == offset {
+                        stack.push(("DtimPeriod", last_off));
+                        break;
+                    }
+                }
+                StaBssParam::BeaconInterval(val) => {
+                    if last_off == offset {
+                        stack.push(("BeaconInterval", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("StaBssParam", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
 pub enum StaInfo<'a> {
     InactiveTime(u32),
     RxBytes(u32),
@@ -14771,9 +15113,9 @@ pub enum StaInfo<'a> {
     TxFailed(u32),
     SignalAvg(i8),
     RxBitrate(&'a [u8]),
-    BssParam(&'a [u8]),
+    BssParam(IterableStaBssParam<'a>),
     ConnectedTime(u32),
-    StaFlags(&'a [u8]),
+    StaFlags(StaFlagUpdate),
     BeaconLoss(u32),
     TOffset(i64),
     LocalPm(&'a [u8]),
@@ -15012,7 +15354,7 @@ impl<'a> IterableStaInfo<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_bss_param(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_bss_param(&self) -> Result<IterableStaBssParam<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -15042,7 +15384,7 @@ impl<'a> IterableStaInfo<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_sta_flags(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_sta_flags(&self) -> Result<StaFlagUpdate, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -15608,7 +15950,7 @@ impl<'a> Iterator for IterableStaInfo<'a> {
                     val
                 }),
                 15u16 => StaInfo::BssParam({
-                    let res = Some(next);
+                    let res = Some(IterableStaBssParam::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -15618,7 +15960,7 @@ impl<'a> Iterator for IterableStaInfo<'a> {
                     val
                 }),
                 17u16 => StaInfo::StaFlags({
-                    let res = Some(next);
+                    let res = Some(StaFlagUpdate::new_from_zeroed(next));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -15800,9 +16142,9 @@ impl<'a> std::fmt::Debug for IterableStaInfo<'_> {
                 StaInfo::TxFailed(val) => fmt.field("TxFailed", &val),
                 StaInfo::SignalAvg(val) => fmt.field("SignalAvg", &val),
                 StaInfo::RxBitrate(val) => fmt.field("RxBitrate", &FormatHexdump(val)),
-                StaInfo::BssParam(val) => fmt.field("BssParam", &FormatHexdump(val)),
+                StaInfo::BssParam(val) => fmt.field("BssParam", &val),
                 StaInfo::ConnectedTime(val) => fmt.field("ConnectedTime", &val),
-                StaInfo::StaFlags(val) => fmt.field("StaFlags", &FormatHexdump(val)),
+                StaInfo::StaFlags(val) => fmt.field("StaFlags", &val),
                 StaInfo::BeaconLoss(val) => fmt.field("BeaconLoss", &val),
                 StaInfo::TOffset(val) => fmt.field("TOffset", &val),
                 StaInfo::LocalPm(val) => fmt.field("LocalPm", &FormatHexdump(val)),
@@ -15851,6 +16193,7 @@ impl IterableStaInfo<'_> {
         }
         let mut attrs = self.clone();
         let mut last_off = cur + attrs.pos;
+        let mut missing = None;
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
@@ -15939,8 +16282,8 @@ impl IterableStaInfo<'_> {
                     }
                 }
                 StaInfo::BssParam(val) => {
-                    if last_off == offset {
-                        stack.push(("BssParam", last_off));
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
                         break;
                     }
                 }
@@ -16119,7 +16462,7 @@ impl IterableStaInfo<'_> {
         if !stack.is_empty() {
             stack.push(("StaInfo", cur));
         }
-        (stack, None)
+        (stack, missing)
     }
 }
 #[derive(Clone)]
@@ -16136,6 +16479,8 @@ pub enum SupportedIftypes {
     P2pDevice(()),
     Ocb(()),
     Nan(()),
+    NanData(()),
+    Pd(()),
 }
 impl<'a> IterableSupportedIftypes<'a> {
     pub fn get_adhoc(&self) -> Result<(), ErrorContext> {
@@ -16318,6 +16663,36 @@ impl<'a> IterableSupportedIftypes<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    pub fn get_nan_data(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::NanData(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "NanData",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_pd(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(SupportedIftypes::Pd(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "SupportedIftypes",
+            "Pd",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl SupportedIftypes {
     pub fn new<'a>(buf: &'a [u8]) -> IterableSupportedIftypes<'a> {
@@ -16337,6 +16712,8 @@ impl SupportedIftypes {
             10u16 => "P2pDevice",
             11u16 => "Ocb",
             12u16 => "Nan",
+            13u16 => "NanData",
+            14u16 => "Pd",
             _ => return None,
         };
         Some(res)
@@ -16389,6 +16766,8 @@ impl<'a> Iterator for IterableSupportedIftypes<'a> {
                 10u16 => SupportedIftypes::P2pDevice(()),
                 11u16 => SupportedIftypes::Ocb(()),
                 12u16 => SupportedIftypes::Nan(()),
+                13u16 => SupportedIftypes::NanData(()),
+                14u16 => SupportedIftypes::Pd(()),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -16435,6 +16814,8 @@ impl std::fmt::Debug for IterableSupportedIftypes<'_> {
                 SupportedIftypes::P2pDevice(val) => fmt.field("P2pDevice", &val),
                 SupportedIftypes::Ocb(val) => fmt.field("Ocb", &val),
                 SupportedIftypes::Nan(val) => fmt.field("Nan", &val),
+                SupportedIftypes::NanData(val) => fmt.field("NanData", &val),
+                SupportedIftypes::Pd(val) => fmt.field("Pd", &val),
             };
         }
         fmt.finish()
@@ -16532,6 +16913,18 @@ impl IterableSupportedIftypes<'_> {
                 SupportedIftypes::Nan(val) => {
                     if last_off == offset {
                         stack.push(("Nan", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::NanData(val) => {
+                    if last_off == offset {
+                        stack.push(("NanData", last_off));
+                        break;
+                    }
+                }
+                SupportedIftypes::Pd(val) => {
+                    if last_off == offset {
+                        stack.push(("Pd", last_off));
                         break;
                     }
                 }
@@ -20846,6 +21239,64 @@ impl<Prev: Pusher> Drop for PushSarSpecs<Prev> {
         }
     }
 }
+pub struct PushStaBssParam<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushStaBssParam<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushStaBssParam<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_cts_prot(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 0 as u16);
+        self
+    }
+    pub fn push_short_preamble(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 0 as u16);
+        self
+    }
+    pub fn push_short_slot_time(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 0 as u16);
+        self
+    }
+    pub fn push_dtim_period(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_beacon_interval(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushStaBssParam<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
 pub struct PushStaInfo<Prev: Pusher> {
     pub(crate) prev: Option<Prev>,
     pub(crate) header_offset: Option<usize>,
@@ -20942,19 +21393,21 @@ impl<Prev: Pusher> PushStaInfo<Prev> {
         self.as_vec_mut().extend(value);
         self
     }
-    pub fn push_bss_param(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 15u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
-        self
+    pub fn nested_bss_param(mut self) -> PushStaBssParam<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 15u16);
+        PushStaBssParam {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
     }
     pub fn push_connected_time(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 16u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_sta_flags(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 17u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_sta_flags(mut self, value: StaFlagUpdate) -> Self {
+        push_header(self.as_vec_mut(), 17u16, value.as_slice().len() as u16);
+        self.as_vec_mut().extend(value.as_slice());
         self
     }
     pub fn push_beacon_loss(mut self, value: u32) -> Self {
@@ -21169,6 +21622,14 @@ impl<Prev: Pusher> PushSupportedIftypes<Prev> {
     }
     pub fn push_nan(mut self, value: ()) -> Self {
         push_header(self.as_vec_mut(), 12u16, 0 as u16);
+        self
+    }
+    pub fn push_nan_data(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 13u16, 0 as u16);
+        self
+    }
+    pub fn push_pd(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 14u16, 0 as u16);
         self
     }
 }
