@@ -46,6 +46,8 @@ definitions:
 attribute-sets:
   - name: nl80211-attrs
     attributes:
+      - name: iftype
+        enum: iftype
       - name: sta-info
         type: nest
         nested-attributes: sta-info
