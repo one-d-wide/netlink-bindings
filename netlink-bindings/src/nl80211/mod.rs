@@ -607,6 +607,7 @@ pub enum Nl80211Attrs<'a> {
     WiphyName(&'a CStr),
     Ifindex(u32),
     Ifname(&'a CStr),
+    #[doc = "Associated type: [`Iftype`] (enum)"]
     Iftype(u32),
     Mac(&'a [u8]),
     KeyData(&'a [u8]),
@@ -1002,6 +1003,7 @@ impl<'a> IterableNl80211Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Associated type: [`Iftype`] (enum)"]
     pub fn get_iftype(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -7932,7 +7934,9 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::WiphyName(val) => fmt.field("WiphyName", &val),
                 Nl80211Attrs::Ifindex(val) => fmt.field("Ifindex", &val),
                 Nl80211Attrs::Ifname(val) => fmt.field("Ifname", &val),
-                Nl80211Attrs::Iftype(val) => fmt.field("Iftype", &val),
+                Nl80211Attrs::Iftype(val) => {
+                    fmt.field("Iftype", &FormatEnum(val.into(), Iftype::from_value))
+                }
                 Nl80211Attrs::Mac(val) => fmt.field("Mac", &FormatMac(val)),
                 Nl80211Attrs::KeyData(val) => fmt.field("KeyData", &FormatHexdump(val)),
                 Nl80211Attrs::KeyIdx(val) => fmt.field("KeyIdx", &val),
@@ -18356,6 +18360,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         self.as_vec_mut().push(0);
         self
     }
+    #[doc = "Associated type: [`Iftype`] (enum)"]
     pub fn push_iftype(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 5u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
