@@ -39,7 +39,6 @@ definitions:
         enum: sta-flag
         enum-as-flags: true
       - name: set
-        type: u32
         enum: sta-flag
         enum-as-flags: true
 attribute-sets:
