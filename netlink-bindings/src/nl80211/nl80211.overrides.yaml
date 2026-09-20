@@ -36,7 +36,6 @@ definitions:
     type: struct
     members:
       - name: mask
-        type: u32
         enum: sta-flag
         enum-as-flags: true
       - name: set
