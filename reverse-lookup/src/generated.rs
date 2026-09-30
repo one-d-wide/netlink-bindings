@@ -2098,6 +2098,43 @@ impl Debug for ReverseLookup {
             Protocol::Generic(name) => {
                 let value = value as u8;
                 let request_value = request_value.map(|val| val as u8);
+                if name == b"amneziawg" {
+                    let pat = (value, request_value, is_dump);
+                    #[cfg(feature = "amneziawg")]
+                    {
+                        if let (0u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::amneziawg::OpGetDeviceDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (0u8, Some(0u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::amneziawg::OpGetDeviceDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (1u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::amneziawg::OpSetDeviceDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (1u8, Some(1u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::amneziawg::OpSetDeviceDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        write!(
+                            fmt,
+                            "(Unknown genl operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
+                        )?;
+                        return Ok(());
+                    }
+                    #[cfg(not(feature = "amneziawg"))]
+                    return consider(fmt, "amneziawg");
+                }
                 if name == b"binder" {
                     let pat = (value, request_value, is_dump);
                     #[cfg(feature = "binder")]
