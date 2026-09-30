@@ -26,7 +26,8 @@ impl NetlinkSocket {
     where
         Chained: NetlinkChained + Send + Sync,
     {
-        let sock = Self::get_socket_cached(&mut self.sock, request.protonum())?;
+        let sock =
+            Self::get_socket_cached(&mut self.sock, self.factory.as_ref(), request.protonum())?;
 
         Self::write_buf(sock, &[IoSlice::new(request.payload())]).await?;
 

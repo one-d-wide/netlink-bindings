@@ -2,13 +2,13 @@ use std::{
     collections::{hash_map::Entry, HashMap},
     io::{self, ErrorKind, IoSlice},
     marker::PhantomData,
-    os::fd::{AsRawFd, FromRawFd, OwnedFd},
+    os::fd::OwnedFd,
     sync::Arc,
 };
 
 #[allow(unused_imports)]
 use super::{Read, Socket, Write};
-use crate::{ReplyError, RECV_BUF_SIZE};
+use crate::{create_socket, ReplyError, SocketFactory, RECV_BUF_SIZE};
 
 use netlink_bindings::{
     builtin::Nlmsghdr,
@@ -22,6 +22,7 @@ pub struct NetlinkSocket {
     pub(crate) cache: HashMap<&'static [u8], u16>,
     pub(crate) sock: HashMap<u16, Socket>,
     pub(crate) seq: u32,
+    pub(crate) factory: Option<SocketFactory>,
 }
 
 impl Default for NetlinkSocket {
@@ -37,50 +38,45 @@ impl NetlinkSocket {
             cache: HashMap::default(),
             sock: HashMap::new(),
             seq: 1,
+            factory: None,
         }
     }
 
-    pub(crate) fn get_socket_cached(
-        cache: &mut HashMap<u16, Socket>,
+    /// Create a socket using `factory` to open underlying netlink sockets.
+    ///
+    /// The closure is called with the protocol number (e.g.
+    /// `libc::NETLINK_ROUTE`) each time a socket for a new protocol is needed,
+    /// and should return a socket as created by [`create_socket`].
+    ///
+    /// For example it can be used to open sockets in a namespace.
+    pub fn with_socket_factory(
+        factory: impl Fn(u16) -> io::Result<OwnedFd> + Send + Sync + 'static,
+    ) -> Self {
+        Self {
+            factory: Some(Arc::new(factory)),
+            ..Self::new()
+        }
+    }
+
+    pub(crate) fn get_socket_cached<'a>(
+        cache: &'a mut HashMap<u16, Socket>,
+        factory: Option<&SocketFactory>,
         protonum: u16,
-    ) -> io::Result<&mut Socket> {
+    ) -> io::Result<&'a mut Socket> {
         match cache.entry(protonum) {
             Entry::Occupied(sock) => Ok(sock.into_mut()),
             Entry::Vacant(ent) => {
-                let sock = Self::get_socket_new(protonum)?;
-                Ok(ent.insert(sock))
+                let fd = match factory {
+                    Some(factory) => factory(protonum)?,
+                    None => create_socket(protonum)?,
+                };
+                Ok(ent.insert(Self::convert_sock(fd.into())?))
             }
         }
     }
 
     pub(crate) fn get_socket_new(family: u16) -> io::Result<Socket> {
-        let fd = unsafe {
-            libc::socket(
-                libc::AF_NETLINK,
-                libc::SOCK_RAW | libc::SOCK_CLOEXEC,
-                family as i32,
-            )
-        };
-        if fd < 0 {
-            return Err(io::Error::from_raw_os_error(-fd));
-        }
-        let fd = unsafe { OwnedFd::from_raw_fd(fd) };
-
-        // Enable extended attributes in libc::NLMSG_ERROR and libc::NLMSG_DONE
-        let res = unsafe {
-            libc::setsockopt(
-                fd.as_raw_fd(),
-                libc::SOL_NETLINK,
-                libc::NETLINK_EXT_ACK,
-                &1u32 as *const u32 as *const libc::c_void,
-                4,
-            )
-        };
-        if res < 0 {
-            return Err(io::Error::from_raw_os_error(-res));
-        }
-
-        Self::convert_sock(fd.into())
+        Self::convert_sock(create_socket(family)?.into())
     }
 
     #[super::only_async]
@@ -163,7 +159,7 @@ impl NetlinkSocket {
         Request: NetlinkRequest,
     {
         let seq = self.reserve_seq(1);
-        let sock = Self::get_socket_cached(&mut self.sock, protonum)?;
+        let sock = Self::get_socket_cached(&mut self.sock, self.factory.as_ref(), protonum)?;
 
         let header = Nlmsghdr {
             len: Nlmsghdr::len() as u32 + request.payload().len() as u32,

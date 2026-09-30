@@ -8,6 +8,48 @@ pub const RECV_BUF_SIZE: usize = 8192;
 mod error;
 pub use error::ReplyError;
 
+use ::std::{
+    io,
+    os::fd::{AsRawFd, FromRawFd, OwnedFd},
+    sync::Arc,
+};
+
+/// Closure opening a netlink socket for a protocol number, see
+/// [`NetlinkSocket::with_socket_factory`]
+pub type SocketFactory = Arc<dyn Fn(u16) -> io::Result<OwnedFd> + Send + Sync>;
+
+/// Open a netlink socket for the protocol number (e.g. `libc::NETLINK_ROUTE`),
+/// in the network namespace of the calling thread.
+pub fn create_socket(protonum: u16) -> io::Result<OwnedFd> {
+    let fd = unsafe {
+        libc::socket(
+            libc::AF_NETLINK,
+            libc::SOCK_RAW | libc::SOCK_CLOEXEC,
+            protonum as i32,
+        )
+    };
+    if fd < 0 {
+        return Err(io::Error::last_os_error());
+    }
+    let fd = unsafe { OwnedFd::from_raw_fd(fd) };
+
+    // Enable extended attributes in libc::NLMSG_ERROR and libc::NLMSG_DONE
+    let res = unsafe {
+        libc::setsockopt(
+            fd.as_raw_fd(),
+            libc::SOL_NETLINK,
+            libc::NETLINK_EXT_ACK,
+            &1u32 as *const u32 as *const libc::c_void,
+            4,
+        )
+    };
+    if res < 0 {
+        return Err(io::Error::last_os_error());
+    }
+
+    Ok(fd)
+}
+
 #[cfg(all(feature = "std", feature = "async"))]
 pub use crate::std::*;
 
