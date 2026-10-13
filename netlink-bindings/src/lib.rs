@@ -127,6 +127,11 @@ pub mod rt_link;
 #[path = "rt-neigh/mod.rs"]
 pub mod rt_neigh;
 
+#[cfg(feature = "rt-nsid")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rt-nsid")))]
+#[path = "rt-nsid/mod.rs"]
+pub mod rt_nsid;
+
 #[cfg(feature = "rt-route")]
 #[cfg_attr(docsrs, doc(cfg(feature = "rt-route")))]
 #[path = "rt-route/mod.rs"]
