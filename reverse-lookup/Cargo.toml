@@ -46,6 +46,7 @@ psp = [ "netlink-bindings/psp" ]
 rt-addr = [ "netlink-bindings/rt-addr" ]
 rt-link = [ "netlink-bindings/rt-link" ]
 rt-neigh = [ "netlink-bindings/rt-neigh" ]
+rt-nsid = [ "netlink-bindings/rt-nsid" ]
 rt-route = [ "netlink-bindings/rt-route" ]
 rt-rule = [ "netlink-bindings/rt-rule" ]
 sunrpc = [ "netlink-bindings/sunrpc" ]
@@ -83,6 +84,7 @@ all-subsystems = [
   "rt-addr",
   "rt-link",
   "rt-neigh",
+  "rt-nsid",
   "rt-route",
   "rt-rule",
   "sunrpc",

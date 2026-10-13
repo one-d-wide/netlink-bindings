@@ -49,6 +49,7 @@ psp = []
 rt-addr = []
 rt-link = []
 rt-neigh = []
+rt-nsid = []
 rt-route = []
 rt-rule = []
 sunrpc = []
@@ -86,6 +87,7 @@ all-subsystems = [
   "rt-addr",
   "rt-link",
   "rt-neigh",
+  "rt-nsid",
   "rt-route",
   "rt-rule",
   "sunrpc",
