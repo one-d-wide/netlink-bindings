@@ -16964,10 +16964,10 @@ pub enum FlowerAttrs<'a> {
     KeyIpv4SrcMask(std::net::Ipv4Addr),
     KeyIpv4Dst(std::net::Ipv4Addr),
     KeyIpv4DstMask(std::net::Ipv4Addr),
-    KeyIpv6Src(&'a [u8]),
-    KeyIpv6SrcMask(&'a [u8]),
-    KeyIpv6Dst(&'a [u8]),
-    KeyIpv6DstMask(&'a [u8]),
+    KeyIpv6Src(std::net::Ipv6Addr),
+    KeyIpv6SrcMask(std::net::Ipv6Addr),
+    KeyIpv6Dst(std::net::Ipv6Addr),
+    KeyIpv6DstMask(std::net::Ipv6Addr),
     KeyTcpSrc(u16),
     KeyTcpDst(u16),
     KeyUdpSrc(u16),
@@ -16982,10 +16982,10 @@ pub enum FlowerAttrs<'a> {
     KeyEncIpv4SrcMask(std::net::Ipv4Addr),
     KeyEncIpv4Dst(std::net::Ipv4Addr),
     KeyEncIpv4DstMask(std::net::Ipv4Addr),
-    KeyEncIpv6Src(&'a [u8]),
-    KeyEncIpv6SrcMask(&'a [u8]),
-    KeyEncIpv6Dst(&'a [u8]),
-    KeyEncIpv6DstMask(&'a [u8]),
+    KeyEncIpv6Src(std::net::Ipv6Addr),
+    KeyEncIpv6SrcMask(std::net::Ipv6Addr),
+    KeyEncIpv6Dst(std::net::Ipv6Addr),
+    KeyEncIpv6DstMask(std::net::Ipv6Addr),
     KeyTcpSrcMask(u16),
     KeyTcpDstMask(u16),
     KeyUdpSrcMask(u16),
@@ -17264,7 +17264,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_ipv6_src(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_ipv6_src(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17279,7 +17279,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_ipv6_src_mask(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_ipv6_src_mask(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17294,7 +17294,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_ipv6_dst(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_ipv6_dst(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17309,7 +17309,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_ipv6_dst_mask(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_ipv6_dst_mask(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17520,7 +17520,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_enc_ipv6_src(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_enc_ipv6_src(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17535,7 +17535,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_enc_ipv6_src_mask(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_enc_ipv6_src_mask(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17550,7 +17550,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_enc_ipv6_dst(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_enc_ipv6_dst(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -17565,7 +17565,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_key_enc_ipv6_dst_mask(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_key_enc_ipv6_dst_mask(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -18963,22 +18963,22 @@ impl<'a> Iterator for IterableFlowerAttrs<'a> {
                     val
                 }),
                 14u16 => FlowerAttrs::KeyIpv6Src({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 15u16 => FlowerAttrs::KeyIpv6SrcMask({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 16u16 => FlowerAttrs::KeyIpv6Dst({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 17u16 => FlowerAttrs::KeyIpv6DstMask({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19048,22 +19048,22 @@ impl<'a> Iterator for IterableFlowerAttrs<'a> {
                     val
                 }),
                 31u16 => FlowerAttrs::KeyEncIpv6Src({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 32u16 => FlowerAttrs::KeyEncIpv6SrcMask({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 33u16 => FlowerAttrs::KeyEncIpv6Dst({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 34u16 => FlowerAttrs::KeyEncIpv6DstMask({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -35088,24 +35088,24 @@ impl<Prev: Pusher> PushFlowerAttrs<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_key_ipv6_src(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 14u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_ipv6_src(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 14u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_key_ipv6_src_mask(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 15u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_ipv6_src_mask(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 15u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_key_ipv6_dst(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 16u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_ipv6_dst(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 16u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_key_ipv6_dst_mask(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 17u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_ipv6_dst_mask(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 17u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_key_tcp_src(mut self, value: u16) -> Self {
@@ -35174,24 +35174,24 @@ impl<Prev: Pusher> PushFlowerAttrs<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_key_enc_ipv6_src(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 31u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_enc_ipv6_src(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 31u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_key_enc_ipv6_src_mask(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 32u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_enc_ipv6_src_mask(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 32u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_key_enc_ipv6_dst(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 33u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_enc_ipv6_dst(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 33u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_key_enc_ipv6_dst_mask(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 34u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_key_enc_ipv6_dst_mask(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 34u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_key_tcp_src_mask(mut self, value: u16) -> Self {

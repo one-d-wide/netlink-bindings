@@ -263,8 +263,8 @@ pub enum RpcStatus<'a> {
     Pad(&'a [u8]),
     Saddr4(std::net::Ipv4Addr),
     Daddr4(std::net::Ipv4Addr),
-    Saddr6(&'a [u8]),
-    Daddr6(&'a [u8]),
+    Saddr6(std::net::Ipv6Addr),
+    Daddr6(std::net::Ipv6Addr),
     Sport(u16),
     Dport(u16),
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
@@ -406,7 +406,7 @@ impl<'a> IterableRpcStatus<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_saddr6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_saddr6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -421,7 +421,7 @@ impl<'a> IterableRpcStatus<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_daddr6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_daddr6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -583,12 +583,12 @@ impl<'a> Iterator for IterableRpcStatus<'a> {
                     val
                 }),
                 10u16 => RpcStatus::Saddr6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 11u16 => RpcStatus::Daddr6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5191,14 +5191,14 @@ impl<Prev: Pusher> PushRpcStatus<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_saddr6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 10u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_saddr6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_daddr6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 11u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_daddr6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_sport(mut self, value: u16) -> Self {
