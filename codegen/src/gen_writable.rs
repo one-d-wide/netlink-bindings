@@ -8,7 +8,7 @@ use crate::{
     gen_cstruct::{gen_struct_len, struct_type},
     gen_ops::{gen_op_header, OpHeader},
     gen_sub_message::{self, SelectorType},
-    gen_utils::{doc_attr, kebab_to_rust, kebab_to_type},
+    gen_utils::{attr_type_to_tokens, doc_attr, kebab_to_rust, kebab_to_type},
     parse_spec::{AttrProp, AttrSet, AttrType, ByteOrder, IndexedArrayType, Spec},
     Context,
 };
@@ -212,10 +212,15 @@ pub fn gen_writable_attrset(
                 let (_, sel_type) = gen_sub_message::sub_message(spec, set, sub_message, selector);
 
                 let sel_val = match &sel_type {
-                    SelectorType::U32 { enum_name } => {
+                    SelectorType::Integer {
+                        rust_type,
+                        enum_name,
+                        ..
+                    } => {
                         let enum_type = format_ident!("{}", kebab_to_type(enum_name));
                         let val = format_ident!("{}", kebab_to_type(&sub_attr.value));
-                        quote!(#enum_type::#val as u32)
+
+                        quote!(#enum_type::#val as #rust_type)
                     }
                     SelectorType::CStr => {
                         let val = CString::new(sub_attr.value.clone()).unwrap();
@@ -490,17 +495,7 @@ pub fn gen_writable_type(spec: &Spec, next: &AttrProp) -> WritableType {
             align: 1,
         },
         r#type => {
-            let (rust_type, len) = match r#type {
-                AttrType::U8 => (quote!(u8), 1),
-                AttrType::U16 => (quote!(u16), 2),
-                AttrType::U32 => (quote!(u32), 4),
-                AttrType::U64 => (quote!(u64), 8),
-                AttrType::S8 => (quote!(i8), 1),
-                AttrType::S16 => (quote!(i16), 2),
-                AttrType::S32 => (quote!(i32), 4),
-                AttrType::S64 => (quote!(i64), 8),
-                r#type => unreachable!("{:?}", r#type),
-            };
+            let (rust_type, len) = attr_type_to_tokens(r#type);
             WritableType {
                 rust_type,
                 encode_expr: quote!(#value_name.#encode()),
