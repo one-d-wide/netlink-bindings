@@ -149,7 +149,7 @@ fn gen_def_enum(
     let type_name = format_ident!("{}", kebab_to_type(name));
     tokens.extend(quote! {
         #[doc = #comment]
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
         pub enum #type_name {
             #variants
         }

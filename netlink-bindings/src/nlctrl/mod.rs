@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "nlctrl";
 pub const PROTONAME_CSTR: &CStr = c"nlctrl";
 pub const PROTONUM: u16 = 0x10;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OpFlags {
     AdminPerm = 1 << 0,
     CmdCapDo = 1 << 1,
@@ -38,7 +38,7 @@ impl OpFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AttrType {
     Invalid = 0,
     Flag = 1,

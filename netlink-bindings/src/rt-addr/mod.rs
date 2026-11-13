@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "rt-addr";
 pub const PROTONAME_CSTR: &CStr = c"rt-addr";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum IfaFlags {
     Secondary = 1 << 0,
     Nodad = 1 << 1,

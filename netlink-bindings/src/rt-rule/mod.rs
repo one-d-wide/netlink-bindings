@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "rt-rule";
 pub const PROTONAME_CSTR: &CStr = c"rt-rule";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FrAct {
     Unspec = 0,
     ToTbl = 1,

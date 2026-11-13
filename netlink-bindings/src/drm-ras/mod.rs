@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "drm-ras";
 pub const PROTONAME_CSTR: &CStr = c"drm-ras";
 #[doc = "Type of the node. Currently, only error-counter nodes are supported,\nwhich expose reliability counters for a hardware/software component.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NodeType {
     ErrorCounter = 1,
 }

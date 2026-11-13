@@ -21,7 +21,7 @@ pub const DCCPDIAG_GETSOCK_CONST: u64 = 19u64;
 pub const GETSOCK_MAX_CONST: u64 = 24u64;
 pub const NOCOOKIE_CONST: u64 = 4294967295u64;
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BytecodeOpCode {
     Nop = 0,
     #[doc = "unconditional jump. \\\"no\\\" value is ignored.\n"]
@@ -73,7 +73,7 @@ impl BytecodeOpCode {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SockoptFlag {
     Recverr = 1 << 0,
     IsIcsk = 1 << 1,
@@ -106,7 +106,7 @@ impl SockoptFlag {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TcpState {
     Established = 1,
     SynSent = 2,

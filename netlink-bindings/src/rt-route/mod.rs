@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "rt-route";
 pub const PROTONAME_CSTR: &CStr = c"rt-route";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RtmType {
     Unspec = 0,
     Unicast = 1,
@@ -53,7 +53,7 @@ impl RtmType {
 }
 #[doc = "Why the kernel deleted a route. New causes may be appended. The value\nspace is family-agnostic, a value is never reinterpreted per address\nfamily.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DelReason {
     #[doc = "The deletion path does not record a cause.\n"]
     Unspec = 0,
@@ -73,7 +73,7 @@ impl DelReason {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RtmFlag {
     #[doc = "Notify user of route change\n"]
     Notify = 1 << 8,

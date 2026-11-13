@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "net-shaper";
 pub const PROTONAME_CSTR: &CStr = c"net-shaper";
 #[doc = "Defines the shaper \\@id interpretation.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Scope {
     #[doc = "The scope is not specified.\n"]
     Unspec = 0,
@@ -41,7 +41,7 @@ impl Scope {
 }
 #[doc = "Different metric supported by the shaper.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Metric {
     #[doc = "Shaper operates on a bits per second basis.\n"]
     Bps = 0,

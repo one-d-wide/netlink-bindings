@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "nftables";
 pub const PROTONAME_CSTR: &CStr = c"nftables";
 pub const PROTONUM: u16 = 12u16;
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum MetaKeys {
     Len = 0,
     Protocol = 1,
@@ -100,7 +100,7 @@ impl MetaKeys {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BitwiseOps {
     #[doc = "mask-and-xor operation used to implement NOT, AND, OR and XOR boolean\noperations\n"]
     MaskXor = 0,
@@ -124,7 +124,7 @@ impl BitwiseOps {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CmpOps {
     Eq = 0,
     Neq = 1,
@@ -147,7 +147,7 @@ impl CmpOps {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ObjectType {
     Unspec = 0,
     Counter = 1,
@@ -180,7 +180,7 @@ impl ObjectType {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NatRangeFlags {
     MapIps = 1 << 0,
     ProtoSpecified = 1 << 1,
@@ -205,7 +205,7 @@ impl NatRangeFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TableFlags {
     Dormant = 1 << 0,
     Owner = 1 << 1,
@@ -222,7 +222,7 @@ impl TableFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ChainFlags {
     Base = 1 << 0,
     HwOffload = 1 << 1,
@@ -239,7 +239,7 @@ impl ChainFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SetFlags {
     Anonymous = 1 << 0,
     Constant = 1 << 1,
@@ -268,7 +268,7 @@ impl SetFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SetElemFlags {
     IntervalEnd = 1 << 0,
     Catchall = 1 << 1,
@@ -283,7 +283,7 @@ impl SetElemFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum LookupFlags {
     Invert = 1 << 0,
 }
@@ -296,7 +296,7 @@ impl LookupFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CtKeys {
     State = 0,
     Direction = 1,
@@ -355,7 +355,7 @@ impl CtKeys {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CtDirection {
     Original = 0,
     Reply = 1,
@@ -370,7 +370,7 @@ impl CtDirection {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum QuotaFlags {
     Invert = 1 << 0,
     Depleted = 1 << 1,
@@ -385,7 +385,7 @@ impl QuotaFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VerdictCode {
     Continue = 4294967295,
     Break = 4294967294,
@@ -416,7 +416,7 @@ impl VerdictCode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FibResult {
     Oif = 0,
     Oifname = 1,
@@ -433,7 +433,7 @@ impl FibResult {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FibFlags {
     Saddr = 1 << 0,
     Daddr = 1 << 1,
@@ -456,7 +456,7 @@ impl FibFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RejectTypes {
     IcmpUnreach = 0,
     TcpRst = 1,
@@ -474,7 +474,7 @@ impl RejectTypes {
 }
 #[doc = "These codes are mapped to real ICMP and ICMPv6 codes.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RejectInetCode {
     IcmpxNoRoute = 0,
     IcmpxPortUnreach = 1,
@@ -493,7 +493,7 @@ impl RejectInetCode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PayloadBase {
     LinkLayerHeader = 0,
     NetworkHeader = 1,
@@ -515,7 +515,7 @@ impl PayloadBase {
 }
 #[doc = "Range operator\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RangeOps {
     Eq = 0,
     Neq = 1,
@@ -531,7 +531,7 @@ impl RangeOps {
 }
 #[doc = "nf_tables registers. nf_tables used to have five registers: a verdict\nregister and four data registers of size 16. The data registers have\nbeen changed to 16 registers of size 4. For compatibility reasons, the\n[NFT_REG]()\\[1-4\\] registers still map to areas of size 16, the 4 byte\nregisters are addressed using NFT_REG32_00 - NFT_REG32_15.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Registers {
     RegVerdict = 0,
     Reg1 = 1,
@@ -584,7 +584,7 @@ impl Registers {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NumgenTypes {
     Incremental = 0,
     Random = 1,
@@ -600,7 +600,7 @@ impl NumgenTypes {
 }
 #[doc = "nf_tables log levels\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum LogLevel {
     #[doc = "system is unusable\n"]
     Emerg = 0,
@@ -639,7 +639,7 @@ impl LogLevel {
 }
 #[doc = "nf_tables log flags\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum LogFlags {
     #[doc = "Log TCP sequence numbers\n"]
     Tcpseq = 1 << 0,
@@ -668,7 +668,7 @@ impl LogFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XtLogFlag {
     #[doc = "Log TCP sequence numbers\n"]
     Tcpseq = 1 << 0,

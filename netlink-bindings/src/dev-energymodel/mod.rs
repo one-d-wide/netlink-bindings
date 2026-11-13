@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "dev-energymodel";
 pub const PROTONAME_CSTR: &CStr = c"dev-energymodel";
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PerfStateFlags {
     #[doc = "The performance state is inefficient. There is in this perf-domain,\nanother performance state with a higher frequency but a lower or equal\npower cost.\n"]
     PerfStateInefficient = 1 << 0,
@@ -30,7 +30,7 @@ impl PerfStateFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PerfDomainFlags {
     #[doc = "The power values are in micro-Watts or some other scale.\n"]
     PerfDomainMicrowatts = 1 << 0,

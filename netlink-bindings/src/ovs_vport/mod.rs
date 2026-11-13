@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "ovs_vport";
 pub const PROTONAME_CSTR: &CStr = c"ovs_vport";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VportType {
     Unspec = 0,
     Netdev = 1,

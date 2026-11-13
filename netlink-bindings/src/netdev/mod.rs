@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "netdev";
 pub const PROTONAME_CSTR: &CStr = c"netdev";
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XdpAct {
     #[doc = "XDP features set supported by all drivers (XDP_ABORTED, XDP_DROP,\nXDP_PASS, XDP_TX)\n"]
     Basic = 1 << 0,
@@ -48,7 +48,7 @@ impl XdpAct {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XdpRxMetadata {
     #[doc = "Device is capable of exposing receive HW timestamp via\nbpf_xdp_metadata_rx_timestamp().\n"]
     Timestamp = 1 << 0,
@@ -68,7 +68,7 @@ impl XdpRxMetadata {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XskFlags {
     #[doc = "HW timestamping egress packets is supported by the driver.\n"]
     TxTimestamp = 1 << 0,
@@ -88,7 +88,7 @@ impl XskFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum QueueType {
     Rx = 0,
     Tx = 1,
@@ -103,7 +103,7 @@ impl QueueType {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum QstatsScope {
     Queue = 1 << 0,
 }
@@ -116,7 +116,7 @@ impl QstatsScope {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NapiThreaded {
     Disabled = 0,
     Enabled = 1,

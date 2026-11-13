@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "nfsd";
 pub const PROTONAME_CSTR: &CStr = c"nfsd";
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CacheType {
     SvcExport = 1 << 0,
     Expkey = 1 << 1,
@@ -32,7 +32,7 @@ impl CacheType {
 }
 #[doc = "These flags are ordered to match the [NFSEXP]()\\* flags in\ninclude/linux/nfsd/export.h\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ExportFlags {
     Readonly = 1 << 0,
     InsecurePort = 1 << 1,
@@ -80,7 +80,7 @@ impl ExportFlags {
 }
 #[doc = "These flags are ordered to match the [NFSEXP_XPRTSEC]()\\* flags in\ninclude/linux/nfsd/export.h\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XprtsecMode {
     None = 1 << 0,
     Tls = 1 << 1,
