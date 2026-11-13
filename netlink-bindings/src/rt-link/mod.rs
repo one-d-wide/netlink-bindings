@@ -723,7 +723,7 @@ impl std::fmt::Debug for Ifinfomsg {
             .field("ifi_index", &self.ifi_index)
             .field(
                 "ifi_flags",
-                &FormatFlags(self.ifi_flags.into(), IfinfoFlags::from_value),
+                &FormatFlags(self.ifi_flags as u64, IfinfoFlags::from_value),
             )
             .field("ifi_change", &self.ifi_change)
             .finish()
@@ -1241,11 +1241,11 @@ impl std::fmt::Debug for BrBooloptMulti {
         fmt.debug_struct("BrBooloptMulti")
             .field(
                 "optval",
-                &FormatFlags(self.optval.into(), BrBooloptId::from_value),
+                &FormatFlags(self.optval as u64, BrBooloptId::from_value),
             )
             .field(
                 "optmask",
-                &FormatFlags(self.optmask.into(), BrBooloptId::from_value),
+                &FormatFlags(self.optmask as u64, BrBooloptId::from_value),
             )
             .finish()
     }
@@ -1403,7 +1403,7 @@ impl std::fmt::Debug for IflaVlanFlags {
         fmt.debug_struct("IflaVlanFlags")
             .field(
                 "flags",
-                &FormatFlags(self.flags.into(), VlanFlags::from_value),
+                &FormatFlags(self.flags as u64, VlanFlags::from_value),
             )
             .field("mask", &FormatHex(self.mask.to_ne_bytes()))
             .finish()
@@ -1921,7 +1921,7 @@ impl std::fmt::Debug for IflaVfLinkState {
             .field("vf", &self.vf)
             .field(
                 "link_state",
-                &FormatEnum(self.link_state.into(), IflaVfLinkStateEnum::from_value),
+                &FormatEnum(self.link_state as u64, IflaVfLinkStateEnum::from_value),
             )
             .finish()
     }
@@ -3877,7 +3877,7 @@ impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
                 LinkAttrs::Group(val) => fmt.field("Group", &val),
                 LinkAttrs::NetNsFd(val) => fmt.field("NetNsFd", &val),
                 LinkAttrs::ExtMask(val) => {
-                    fmt.field("ExtMask", &FormatFlags(val.into(), RtextFilter::from_value))
+                    fmt.field("ExtMask", &FormatFlags(val as u64, RtextFilter::from_value))
                 }
                 LinkAttrs::Promiscuity(val) => fmt.field("Promiscuity", &val),
                 LinkAttrs::NumTxQueues(val) => fmt.field("NumTxQueues", &val),
@@ -9625,7 +9625,7 @@ impl<'a> std::fmt::Debug for IterableLinkinfoBridgeAttrs<'_> {
                 LinkinfoBridgeAttrs::FdbNLearned(val) => fmt.field("FdbNLearned", &val),
                 LinkinfoBridgeAttrs::FdbMaxLearned(val) => fmt.field("FdbMaxLearned", &val),
                 LinkinfoBridgeAttrs::StpMode(val) => {
-                    fmt.field("StpMode", &FormatEnum(val.into(), BrStpMode::from_value))
+                    fmt.field("StpMode", &FormatEnum(val as u64, BrStpMode::from_value))
                 }
             };
         }
@@ -16281,7 +16281,7 @@ impl<'a> std::fmt::Debug for IterableLinkinfoVlanAttrs<'_> {
                 LinkinfoVlanAttrs::IngressQos(val) => fmt.field("IngressQos", &val),
                 LinkinfoVlanAttrs::Protocol(val) => fmt.field(
                     "Protocol",
-                    &FormatEnum(val.into(), VlanProtocols::from_value),
+                    &FormatEnum(val as u64, VlanProtocols::from_value),
                 ),
             };
         }
@@ -18922,27 +18922,27 @@ impl<'a> std::fmt::Debug for IterableLinkinfoNetkitAttrs<'_> {
                 LinkinfoNetkitAttrs::PeerInfo(val) => fmt.field("PeerInfo", &FormatHexdump(val)),
                 LinkinfoNetkitAttrs::Primary(val) => fmt.field("Primary", &val),
                 LinkinfoNetkitAttrs::Policy(val) => {
-                    fmt.field("Policy", &FormatEnum(val.into(), NetkitPolicy::from_value))
+                    fmt.field("Policy", &FormatEnum(val as u64, NetkitPolicy::from_value))
                 }
                 LinkinfoNetkitAttrs::PeerPolicy(val) => fmt.field(
                     "PeerPolicy",
-                    &FormatEnum(val.into(), NetkitPolicy::from_value),
+                    &FormatEnum(val as u64, NetkitPolicy::from_value),
                 ),
                 LinkinfoNetkitAttrs::Mode(val) => {
-                    fmt.field("Mode", &FormatEnum(val.into(), NetkitMode::from_value))
+                    fmt.field("Mode", &FormatEnum(val as u64, NetkitMode::from_value))
                 }
                 LinkinfoNetkitAttrs::Scrub(val) => {
-                    fmt.field("Scrub", &FormatEnum(val.into(), NetkitScrub::from_value))
+                    fmt.field("Scrub", &FormatEnum(val as u64, NetkitScrub::from_value))
                 }
                 LinkinfoNetkitAttrs::PeerScrub(val) => fmt.field(
                     "PeerScrub",
-                    &FormatEnum(val.into(), NetkitScrub::from_value),
+                    &FormatEnum(val as u64, NetkitScrub::from_value),
                 ),
                 LinkinfoNetkitAttrs::Headroom(val) => fmt.field("Headroom", &val),
                 LinkinfoNetkitAttrs::Tailroom(val) => fmt.field("Tailroom", &val),
                 LinkinfoNetkitAttrs::Pairing(val) => fmt.field(
                     "Pairing",
-                    &FormatEnum(val.into(), NetkitPairing::from_value),
+                    &FormatEnum(val as u64, NetkitPairing::from_value),
                 ),
             };
         }
@@ -19152,7 +19152,7 @@ impl std::fmt::Debug for IterableLinkinfoOvpnAttrs<'_> {
             };
             match attr {
                 LinkinfoOvpnAttrs::Mode(val) => {
-                    fmt.field("Mode", &FormatEnum(val.into(), OvpnMode::from_value))
+                    fmt.field("Mode", &FormatEnum(val as u64, OvpnMode::from_value))
                 }
             };
         }
@@ -20631,7 +20631,7 @@ impl<Prev: Pusher> PushLinkinfoBondAttrs<Prev> {
         PushArrayU32 {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_arp_validate(mut self, value: u32) -> Self {
@@ -20751,7 +20751,7 @@ impl<Prev: Pusher> PushLinkinfoBondAttrs<Prev> {
         PushArrayBinary {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_coupled_control(mut self, value: u8) -> Self {
@@ -22986,7 +22986,7 @@ impl<Prev: Pusher> PushLinkOffloadXstats<Prev> {
         PushArrayHwSInfoOne {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_l3_stats(mut self, value: &[u8]) -> Self {

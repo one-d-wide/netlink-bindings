@@ -845,7 +845,7 @@ impl<'a> std::fmt::Debug for IterableVport<'_> {
             match attr {
                 Vport::PortNo(val) => fmt.field("PortNo", &val),
                 Vport::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), VportType::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, VportType::from_value))
                 }
                 Vport::Name(val) => fmt.field("Name", &val),
                 Vport::Options(val) => fmt.field("Options", &val),

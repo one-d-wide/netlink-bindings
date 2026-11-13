@@ -430,7 +430,7 @@ impl<'a> std::fmt::Debug for IterableHeader<'_> {
                 Header::DevIndex(val) => fmt.field("DevIndex", &val),
                 Header::DevName(val) => fmt.field("DevName", &val),
                 Header::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), HeaderFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, HeaderFlags::from_value))
                 }
                 Header::PhyIndex(val) => fmt.field("PhyIndex", &val),
             };
@@ -2680,7 +2680,7 @@ impl<'a> std::fmt::Debug for IterableRings<'_> {
                 Rings::RxBufLen(val) => fmt.field("RxBufLen", &val),
                 Rings::TcpDataSplit(val) => fmt.field(
                     "TcpDataSplit",
-                    &FormatEnum(val.into(), TcpDataSplit::from_value),
+                    &FormatEnum(val as u64, TcpDataSplit::from_value),
                 ),
                 Rings::CqeSize(val) => fmt.field("CqeSize", &val),
                 Rings::TxPush(val) => fmt.field("TxPush", &val),
@@ -8689,7 +8689,7 @@ impl<'a> std::fmt::Debug for IterableTsinfo<'_> {
                 Tsinfo::HwtstampProvider(val) => fmt.field("HwtstampProvider", &val),
                 Tsinfo::HwtstampSource(val) => fmt.field(
                     "HwtstampSource",
-                    &FormatEnum(val.into(), HwtstampSource::from_value),
+                    &FormatEnum(val as u64, HwtstampSource::from_value),
                 ),
                 Tsinfo::HwtstampPhyindex(val) => fmt.field("HwtstampPhyindex", &val),
             };
@@ -9550,7 +9550,7 @@ impl IterableCableTest<'_> {
 #[derive(Clone)]
 pub enum CableTestNtf<'a> {
     Header(IterableHeader<'a>),
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     Status(u8),
     Nest(IterableCableNest<'a>),
 }
@@ -9570,7 +9570,7 @@ impl<'a> IterableCableTestNtf<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     pub fn get_status(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -10530,7 +10530,7 @@ impl std::fmt::Debug for IterableTunnelUdpEntry<'_> {
             match attr {
                 TunnelUdpEntry::Port(val) => fmt.field("Port", &val),
                 TunnelUdpEntry::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), UdpTunnelType::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, UdpTunnelType::from_value))
                 }
             };
         }
@@ -14169,7 +14169,7 @@ impl<'a> std::fmt::Debug for IterablePse<'_> {
                 Pse::C33PseActualPw(val) => fmt.field("C33PseActualPw", &val),
                 Pse::C33PseExtState(val) => fmt.field(
                     "C33PseExtState",
-                    &FormatEnum(val.into(), C33PseExtState::from_value),
+                    &FormatEnum(val as u64, C33PseExtState::from_value),
                 ),
                 Pse::C33PseExtSubstate(val) => fmt.field("C33PseExtSubstate", &val),
                 Pse::C33PseAvailPwLimit(val) => fmt.field("C33PseAvailPwLimit", &val),
@@ -15043,87 +15043,87 @@ impl std::fmt::Debug for IterableFlow<'_> {
             };
             match attr {
                 Flow::Ether(val) => {
-                    fmt.field("Ether", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Ether", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Ip4(val) => {
-                    fmt.field("Ip4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Ip4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Ip6(val) => {
-                    fmt.field("Ip6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Ip6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Tcp4(val) => {
-                    fmt.field("Tcp4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Tcp4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Tcp6(val) => {
-                    fmt.field("Tcp6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Tcp6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Udp4(val) => {
-                    fmt.field("Udp4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Udp4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Udp6(val) => {
-                    fmt.field("Udp6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Udp6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Sctp4(val) => {
-                    fmt.field("Sctp4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Sctp4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Sctp6(val) => {
-                    fmt.field("Sctp6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Sctp6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Ah4(val) => {
-                    fmt.field("Ah4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Ah4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Ah6(val) => {
-                    fmt.field("Ah6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Ah6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Esp4(val) => {
-                    fmt.field("Esp4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Esp4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Esp6(val) => {
-                    fmt.field("Esp6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Esp6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::AhEsp4(val) => {
-                    fmt.field("AhEsp4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("AhEsp4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::AhEsp6(val) => {
-                    fmt.field("AhEsp6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("AhEsp6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Gtpu4(val) => {
-                    fmt.field("Gtpu4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Gtpu4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Gtpu6(val) => {
-                    fmt.field("Gtpu6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Gtpu6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Gtpc4(val) => {
-                    fmt.field("Gtpc4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Gtpc4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::Gtpc6(val) => {
-                    fmt.field("Gtpc6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("Gtpc6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::GtpcTeid4(val) => fmt.field(
                     "GtpcTeid4",
-                    &FormatFlags(val.into(), RxfhFields::from_value),
+                    &FormatFlags(val as u64, RxfhFields::from_value),
                 ),
                 Flow::GtpcTeid6(val) => fmt.field(
                     "GtpcTeid6",
-                    &FormatFlags(val.into(), RxfhFields::from_value),
+                    &FormatFlags(val as u64, RxfhFields::from_value),
                 ),
                 Flow::GtpuEh4(val) => {
-                    fmt.field("GtpuEh4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("GtpuEh4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::GtpuEh6(val) => {
-                    fmt.field("GtpuEh6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("GtpuEh6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::GtpuUl4(val) => {
-                    fmt.field("GtpuUl4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("GtpuUl4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::GtpuUl6(val) => {
-                    fmt.field("GtpuUl6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("GtpuUl6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::GtpuDl4(val) => {
-                    fmt.field("GtpuDl4", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("GtpuDl4", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
                 Flow::GtpuDl6(val) => {
-                    fmt.field("GtpuDl6", &FormatFlags(val.into(), RxfhFields::from_value))
+                    fmt.field("GtpuDl6", &FormatFlags(val as u64, RxfhFields::from_value))
                 }
             };
         }
@@ -15592,7 +15592,7 @@ impl<'a> std::fmt::Debug for IterableRss<'_> {
                 Rss::Indir(val) => fmt.field("Indir", &FormatHexdump(val)),
                 Rss::Hkey(val) => fmt.field("Hkey", &FormatHexdump(val)),
                 Rss::InputXfrm(val) => {
-                    fmt.field("InputXfrm", &FormatFlags(val.into(), InputXfrm::from_value))
+                    fmt.field("InputXfrm", &FormatFlags(val as u64, InputXfrm::from_value))
                 }
                 Rss::StartContext(val) => fmt.field("StartContext", &val),
                 Rss::FlowHash(val) => fmt.field("FlowHash", &val),
@@ -16310,7 +16310,7 @@ impl<'a> std::fmt::Debug for IterableModuleFwFlash<'_> {
                 ModuleFwFlash::Password(val) => fmt.field("Password", &val),
                 ModuleFwFlash::Status(val) => fmt.field(
                     "Status",
-                    &FormatEnum(val.into(), ModuleFwFlashStatus::from_value),
+                    &FormatEnum(val as u64, ModuleFwFlashStatus::from_value),
                 ),
                 ModuleFwFlash::StatusMsg(val) => fmt.field("StatusMsg", &val),
                 ModuleFwFlash::Done(val) => fmt.field("Done", &val),
@@ -16666,7 +16666,7 @@ impl<'a> std::fmt::Debug for IterablePhy<'_> {
                 Phy::Name(val) => fmt.field("Name", &val),
                 Phy::UpstreamType(val) => fmt.field(
                     "UpstreamType",
-                    &FormatEnum(val.into(), PhyUpstreamType::from_value),
+                    &FormatEnum(val as u64, PhyUpstreamType::from_value),
                 ),
                 Phy::UpstreamIndex(val) => fmt.field("UpstreamIndex", &val),
                 Phy::UpstreamSfpName(val) => fmt.field("UpstreamSfpName", &val),
@@ -17158,7 +17158,7 @@ impl<'a> std::fmt::Debug for IterablePseNtf<'_> {
             match attr {
                 PseNtf::Header(val) => fmt.field("Header", &val),
                 PseNtf::Events(val) => {
-                    fmt.field("Events", &FormatFlags(val.into(), PseEvent::from_value))
+                    fmt.field("Events", &FormatFlags(val as u64, PseEvent::from_value))
                 }
             };
         }
@@ -20266,7 +20266,7 @@ impl<Prev: Pusher> PushCableTestNtf<Prev> {
             header_offset: Some(header_offset),
         }
     }
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     pub fn push_status(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 2u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());

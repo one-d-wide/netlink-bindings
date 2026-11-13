@@ -4453,7 +4453,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::DevName(val) => fmt.field("DevName", &val),
                 Devlink::PortIndex(val) => fmt.field("PortIndex", &val),
                 Devlink::PortType(val) => {
-                    fmt.field("PortType", &FormatEnum(val.into(), PortType::from_value))
+                    fmt.field("PortType", &FormatEnum(val as u64, PortType::from_value))
                 }
                 Devlink::PortDesiredType(val) => fmt.field("PortDesiredType", &val),
                 Devlink::PortNetdevIfindex(val) => fmt.field("PortNetdevIfindex", &val),
@@ -4470,12 +4470,12 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::SbPoolIndex(val) => fmt.field("SbPoolIndex", &val),
                 Devlink::SbPoolType(val) => fmt.field(
                     "SbPoolType",
-                    &FormatEnum(val.into(), SbPoolType::from_value),
+                    &FormatEnum(val as u64, SbPoolType::from_value),
                 ),
                 Devlink::SbPoolSize(val) => fmt.field("SbPoolSize", &val),
                 Devlink::SbPoolThresholdType(val) => fmt.field(
                     "SbPoolThresholdType",
-                    &FormatEnum(val.into(), SbThresholdType::from_value),
+                    &FormatEnum(val as u64, SbThresholdType::from_value),
                 ),
                 Devlink::SbThreshold(val) => fmt.field("SbThreshold", &val),
                 Devlink::SbTcIndex(val) => fmt.field("SbTcIndex", &val),
@@ -4483,11 +4483,11 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::SbOccMax(val) => fmt.field("SbOccMax", &val),
                 Devlink::EswitchMode(val) => fmt.field(
                     "EswitchMode",
-                    &FormatEnum(val.into(), EswitchMode::from_value),
+                    &FormatEnum(val as u64, EswitchMode::from_value),
                 ),
                 Devlink::EswitchInlineMode(val) => fmt.field(
                     "EswitchInlineMode",
-                    &FormatEnum(val.into(), EswitchInlineMode::from_value),
+                    &FormatEnum(val as u64, EswitchInlineMode::from_value),
                 ),
                 Devlink::DpipeTables(val) => fmt.field("DpipeTables", &val),
                 Devlink::DpipeTable(val) => fmt.field("DpipeTable", &val),
@@ -4508,13 +4508,13 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::DpipeMatchValue(val) => fmt.field("DpipeMatchValue", &val),
                 Devlink::DpipeMatchType(val) => fmt.field(
                     "DpipeMatchType",
-                    &FormatEnum(val.into(), DpipeMatchType::from_value),
+                    &FormatEnum(val as u64, DpipeMatchType::from_value),
                 ),
                 Devlink::DpipeAction(val) => fmt.field("DpipeAction", &val),
                 Devlink::DpipeActionValue(val) => fmt.field("DpipeActionValue", &val),
                 Devlink::DpipeActionType(val) => fmt.field(
                     "DpipeActionType",
-                    &FormatEnum(val.into(), DpipeActionType::from_value),
+                    &FormatEnum(val as u64, DpipeActionType::from_value),
                 ),
                 Devlink::DpipeValue(val) => fmt.field("DpipeValue", &FormatHexdump(val)),
                 Devlink::DpipeValueMask(val) => fmt.field("DpipeValueMask", &FormatHexdump(val)),
@@ -4524,7 +4524,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::DpipeHeaderName(val) => fmt.field("DpipeHeaderName", &val),
                 Devlink::DpipeHeaderId(val) => fmt.field(
                     "DpipeHeaderId",
-                    &FormatEnum(val.into(), DpipeHeaderId::from_value),
+                    &FormatEnum(val as u64, DpipeHeaderId::from_value),
                 ),
                 Devlink::DpipeHeaderFields(val) => fmt.field("DpipeHeaderFields", &val),
                 Devlink::DpipeHeaderGlobal(val) => fmt.field("DpipeHeaderGlobal", &val),
@@ -4535,12 +4535,12 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::DpipeFieldBitwidth(val) => fmt.field("DpipeFieldBitwidth", &val),
                 Devlink::DpipeFieldMappingType(val) => fmt.field(
                     "DpipeFieldMappingType",
-                    &FormatEnum(val.into(), DpipeFieldMappingType::from_value),
+                    &FormatEnum(val as u64, DpipeFieldMappingType::from_value),
                 ),
                 Devlink::Pad(val) => fmt.field("Pad", &val),
                 Devlink::EswitchEncapMode(val) => fmt.field(
                     "EswitchEncapMode",
-                    &FormatEnum(val.into(), EswitchEncapMode::from_value),
+                    &FormatEnum(val as u64, EswitchEncapMode::from_value),
                 ),
                 Devlink::ResourceList(val) => fmt.field("ResourceList", &val),
                 Devlink::Resource(val) => fmt.field("Resource", &val),
@@ -4554,14 +4554,14 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::ResourceSizeGran(val) => fmt.field("ResourceSizeGran", &val),
                 Devlink::ResourceUnit(val) => fmt.field(
                     "ResourceUnit",
-                    &FormatEnum(val.into(), ResourceUnit::from_value),
+                    &FormatEnum(val as u64, ResourceUnit::from_value),
                 ),
                 Devlink::ResourceOcc(val) => fmt.field("ResourceOcc", &val),
                 Devlink::DpipeTableResourceId(val) => fmt.field("DpipeTableResourceId", &val),
                 Devlink::DpipeTableResourceUnits(val) => fmt.field("DpipeTableResourceUnits", &val),
                 Devlink::PortFlavour(val) => fmt.field(
                     "PortFlavour",
-                    &FormatEnum(val.into(), PortFlavour::from_value),
+                    &FormatEnum(val as u64, PortFlavour::from_value),
                 ),
                 Devlink::PortNumber(val) => fmt.field("PortNumber", &val),
                 Devlink::PortSplitSubportNumber(val) => fmt.field("PortSplitSubportNumber", &val),
@@ -4570,11 +4570,11 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::ParamGeneric(val) => fmt.field("ParamGeneric", &val),
                 Devlink::ParamType(val) => fmt.field(
                     "ParamType",
-                    &FormatEnum(val.into(), VarAttrType::from_value),
+                    &FormatEnum(val as u64, VarAttrType::from_value),
                 ),
                 Devlink::ParamValueCmode(val) => fmt.field(
                     "ParamValueCmode",
-                    &FormatEnum(val.into(), ParamCmode::from_value),
+                    &FormatEnum(val as u64, ParamCmode::from_value),
                 ),
                 Devlink::RegionName(val) => fmt.field("RegionName", &val),
                 Devlink::RegionSize(val) => fmt.field("RegionSize", &val),
@@ -4602,7 +4602,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::FmsgObjName(val) => fmt.field("FmsgObjName", &val),
                 Devlink::FmsgObjValueType(val) => fmt.field(
                     "FmsgObjValueType",
-                    &FormatEnum(val.into(), VarAttrType::from_value),
+                    &FormatEnum(val as u64, VarAttrType::from_value),
                 ),
                 Devlink::HealthReporter(val) => fmt.field("HealthReporter", &val),
                 Devlink::HealthReporterName(val) => fmt.field("HealthReporterName", &val),
@@ -4629,10 +4629,10 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::TrapName(val) => fmt.field("TrapName", &val),
                 Devlink::TrapAction(val) => fmt.field(
                     "TrapAction",
-                    &FormatEnum(val.into(), TrapAction::from_value),
+                    &FormatEnum(val as u64, TrapAction::from_value),
                 ),
                 Devlink::TrapType(val) => {
-                    fmt.field("TrapType", &FormatEnum(val.into(), TrapType::from_value))
+                    fmt.field("TrapType", &FormatEnum(val as u64, TrapType::from_value))
                 }
                 Devlink::TrapGeneric(val) => fmt.field("TrapGeneric", &val),
                 Devlink::TrapMetadata(val) => fmt.field("TrapMetadata", &val),
@@ -4657,23 +4657,23 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 }
                 Devlink::FlashUpdateOverwriteMask(val) => fmt.field(
                     "FlashUpdateOverwriteMask",
-                    &FormatFlags(val.value.into(), |val| {
+                    &FormatFlags(val.value as u64, |val| {
                         FlashOverwrite::from_value(val.trailing_zeros().into())
                     }),
                 ),
                 Devlink::ReloadAction(val) => fmt.field(
                     "ReloadAction",
-                    &FormatEnum(val.into(), ReloadAction::from_value),
+                    &FormatEnum(val as u64, ReloadAction::from_value),
                 ),
                 Devlink::ReloadActionsPerformed(val) => fmt.field(
                     "ReloadActionsPerformed",
-                    &FormatFlags(val.value.into(), |val| {
+                    &FormatFlags(val.value as u64, |val| {
                         ReloadAction::from_value(val.trailing_zeros().into())
                     }),
                 ),
                 Devlink::ReloadLimits(val) => fmt.field(
                     "ReloadLimits",
-                    &FormatFlags(val.value.into(), |val| {
+                    &FormatFlags(val.value as u64, |val| {
                         ReloadAction::from_value(val.trailing_zeros().into())
                     }),
                 ),
@@ -4687,7 +4687,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::ReloadActionStats(val) => fmt.field("ReloadActionStats", &val),
                 Devlink::PortPciSfNumber(val) => fmt.field("PortPciSfNumber", &val),
                 Devlink::RateType(val) => {
-                    fmt.field("RateType", &FormatEnum(val.into(), RateType::from_value))
+                    fmt.field("RateType", &FormatEnum(val as u64, RateType::from_value))
                 }
                 Devlink::RateTxShare(val) => fmt.field("RateTxShare", &val),
                 Devlink::RateTxMax(val) => fmt.field("RateTxMax", &val),
@@ -4710,7 +4710,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::Index(val) => fmt.field("Index", &val),
                 Devlink::ResourceScopeMask(val) => fmt.field(
                     "ResourceScopeMask",
-                    &FormatFlags(val.into(), |val| {
+                    &FormatFlags(val as u64, |val| {
                         ResourceScope::from_value(val.trailing_zeros().into())
                     }),
                 ),
@@ -6281,7 +6281,7 @@ impl<'a> std::fmt::Debug for IterableDlReloadActInfo<'_> {
             match attr {
                 DlReloadActInfo::ReloadAction(val) => fmt.field(
                     "ReloadAction",
-                    &FormatEnum(val.into(), ReloadAction::from_value),
+                    &FormatEnum(val as u64, ReloadAction::from_value),
                 ),
                 DlReloadActInfo::ReloadActionStats(val) => fmt.field("ReloadActionStats", &val),
             };
@@ -7015,15 +7015,15 @@ impl<'a> std::fmt::Debug for IterableDlPortFunction<'_> {
             match attr {
                 DlPortFunction::HwAddr(val) => fmt.field("HwAddr", &FormatHexdump(val)),
                 DlPortFunction::State(val) => {
-                    fmt.field("State", &FormatEnum(val.into(), PortFnState::from_value))
+                    fmt.field("State", &FormatEnum(val as u64, PortFnState::from_value))
                 }
                 DlPortFunction::Opstate(val) => fmt.field(
                     "Opstate",
-                    &FormatEnum(val.into(), PortFnOpstate::from_value),
+                    &FormatEnum(val as u64, PortFnOpstate::from_value),
                 ),
                 DlPortFunction::Caps(val) => fmt.field(
                     "Caps",
-                    &FormatFlags(val.value.into(), |val| {
+                    &FormatFlags(val.value as u64, |val| {
                         PortFnAttrCap::from_value(val.trailing_zeros().into())
                     }),
                 ),
@@ -8734,11 +8734,11 @@ impl std::fmt::Debug for IterableDlDpipeMatch<'_> {
             match attr {
                 DlDpipeMatch::DpipeMatchType(val) => fmt.field(
                     "DpipeMatchType",
-                    &FormatEnum(val.into(), DpipeMatchType::from_value),
+                    &FormatEnum(val as u64, DpipeMatchType::from_value),
                 ),
                 DlDpipeMatch::DpipeHeaderId(val) => fmt.field(
                     "DpipeHeaderId",
-                    &FormatEnum(val.into(), DpipeHeaderId::from_value),
+                    &FormatEnum(val as u64, DpipeHeaderId::from_value),
                 ),
                 DlDpipeMatch::DpipeHeaderGlobal(val) => fmt.field("DpipeHeaderGlobal", &val),
                 DlDpipeMatch::DpipeHeaderIndex(val) => fmt.field("DpipeHeaderIndex", &val),
@@ -9237,11 +9237,11 @@ impl std::fmt::Debug for IterableDlDpipeAction<'_> {
             match attr {
                 DlDpipeAction::DpipeActionType(val) => fmt.field(
                     "DpipeActionType",
-                    &FormatEnum(val.into(), DpipeActionType::from_value),
+                    &FormatEnum(val as u64, DpipeActionType::from_value),
                 ),
                 DlDpipeAction::DpipeHeaderId(val) => fmt.field(
                     "DpipeHeaderId",
-                    &FormatEnum(val.into(), DpipeHeaderId::from_value),
+                    &FormatEnum(val as u64, DpipeHeaderId::from_value),
                 ),
                 DlDpipeAction::DpipeHeaderGlobal(val) => fmt.field("DpipeHeaderGlobal", &val),
                 DlDpipeAction::DpipeHeaderIndex(val) => fmt.field("DpipeHeaderIndex", &val),
@@ -9865,7 +9865,7 @@ impl<'a> std::fmt::Debug for IterableDlDpipeHeader<'_> {
                 DlDpipeHeader::DpipeHeaderName(val) => fmt.field("DpipeHeaderName", &val),
                 DlDpipeHeader::DpipeHeaderId(val) => fmt.field(
                     "DpipeHeaderId",
-                    &FormatEnum(val.into(), DpipeHeaderId::from_value),
+                    &FormatEnum(val as u64, DpipeHeaderId::from_value),
                 ),
                 DlDpipeHeader::DpipeHeaderFields(val) => fmt.field("DpipeHeaderFields", &val),
                 DlDpipeHeader::DpipeHeaderGlobal(val) => fmt.field("DpipeHeaderGlobal", &val),
@@ -10252,7 +10252,7 @@ impl<'a> std::fmt::Debug for IterableDlDpipeField<'_> {
                 DlDpipeField::DpipeFieldBitwidth(val) => fmt.field("DpipeFieldBitwidth", &val),
                 DlDpipeField::DpipeFieldMappingType(val) => fmt.field(
                     "DpipeFieldMappingType",
-                    &FormatEnum(val.into(), DpipeFieldMappingType::from_value),
+                    &FormatEnum(val as u64, DpipeFieldMappingType::from_value),
                 ),
             };
         }
@@ -10620,7 +10620,7 @@ impl<'a> std::fmt::Debug for IterableDlResource<'_> {
                 DlResource::ResourceSizeGran(val) => fmt.field("ResourceSizeGran", &val),
                 DlResource::ResourceUnit(val) => fmt.field(
                     "ResourceUnit",
-                    &FormatEnum(val.into(), ResourceUnit::from_value),
+                    &FormatEnum(val as u64, ResourceUnit::from_value),
                 ),
                 DlResource::ResourceOcc(val) => fmt.field("ResourceOcc", &val),
             };
@@ -11015,7 +11015,7 @@ impl<'a> std::fmt::Debug for IterableDlParam<'_> {
                 DlParam::ParamGeneric(val) => fmt.field("ParamGeneric", &val),
                 DlParam::ParamType(val) => fmt.field(
                     "ParamType",
-                    &FormatEnum(val.into(), VarAttrType::from_value),
+                    &FormatEnum(val as u64, VarAttrType::from_value),
                 ),
             };
         }

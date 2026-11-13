@@ -130,7 +130,7 @@ impl std::fmt::Debug for Ifaddrmsg {
             .field("ifa_prefixlen", &self.ifa_prefixlen)
             .field(
                 "ifa_flags",
-                &FormatFlags(self.ifa_flags.into(), IfaFlags::from_value),
+                &FormatFlags(self.ifa_flags as u64, IfaFlags::from_value),
             )
             .field("ifa_scope", &self.ifa_scope)
             .field("ifa_index", &self.ifa_index)
@@ -566,7 +566,7 @@ impl<'a> std::fmt::Debug for IterableAddrAttrs<'_> {
                 AddrAttrs::Cacheinfo(val) => fmt.field("Cacheinfo", &val),
                 AddrAttrs::Multicast(val) => fmt.field("Multicast", &val),
                 AddrAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), IfaFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, IfaFlags::from_value))
                 }
                 AddrAttrs::RtPriority(val) => fmt.field("RtPriority", &val),
                 AddrAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &FormatHexdump(val)),

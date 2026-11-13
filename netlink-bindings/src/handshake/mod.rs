@@ -530,14 +530,14 @@ impl<'a> std::fmt::Debug for IterableAccept<'_> {
                 Accept::Sockfd(val) => fmt.field("Sockfd", &val),
                 Accept::HandlerClass(val) => fmt.field(
                     "HandlerClass",
-                    &FormatEnum(val.into(), HandlerClass::from_value),
+                    &FormatEnum(val as u64, HandlerClass::from_value),
                 ),
                 Accept::MessageType(val) => {
-                    fmt.field("MessageType", &FormatEnum(val.into(), MsgType::from_value))
+                    fmt.field("MessageType", &FormatEnum(val as u64, MsgType::from_value))
                 }
                 Accept::Timeout(val) => fmt.field("Timeout", &val),
                 Accept::AuthMode(val) => {
-                    fmt.field("AuthMode", &FormatEnum(val.into(), Auth::from_value))
+                    fmt.field("AuthMode", &FormatEnum(val as u64, Auth::from_value))
                 }
                 Accept::PeerIdentity(val) => fmt.field("PeerIdentity", &val),
                 Accept::Certificate(val) => fmt.field("Certificate", &val),

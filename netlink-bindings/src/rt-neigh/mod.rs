@@ -204,15 +204,15 @@ impl std::fmt::Debug for Ndmsg {
             .field("ndm_ifindex", &self.ndm_ifindex)
             .field(
                 "ndm_state",
-                &FormatFlags(self.ndm_state.into(), NudState::from_value),
+                &FormatFlags(self.ndm_state as u64, NudState::from_value),
             )
             .field(
                 "ndm_flags",
-                &FormatFlags(self.ndm_flags.into(), NtfFlags::from_value),
+                &FormatFlags(self.ndm_flags as u64, NtfFlags::from_value),
             )
             .field(
                 "ndm_type",
-                &FormatEnum(self.ndm_type.into(), RtmType::from_value),
+                &FormatEnum(self.ndm_type as u64, RtmType::from_value),
             )
             .finish()
     }
@@ -1032,7 +1032,7 @@ impl<'a> std::fmt::Debug for IterableNeighbourAttrs<'_> {
                 NeighbourAttrs::FdbExtAttrs(val) => fmt.field("FdbExtAttrs", &FormatHexdump(val)),
                 NeighbourAttrs::FlagsExt(val) => fmt.field(
                     "FlagsExt",
-                    &FormatFlags(val.into(), NtfExtFlags::from_value),
+                    &FormatFlags(val as u64, NtfExtFlags::from_value),
                 ),
                 NeighbourAttrs::NdmStateMask(val) => fmt.field("NdmStateMask", &val),
                 NeighbourAttrs::NdmFlagsMask(val) => fmt.field("NdmFlagsMask", &val),

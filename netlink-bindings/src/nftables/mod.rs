@@ -1061,7 +1061,7 @@ impl std::fmt::Debug for NatIpv4Range {
         fmt.debug_struct("NatIpv4Range")
             .field(
                 "flags",
-                &FormatFlags(self.flags.into(), NatRangeFlags::from_value),
+                &FormatFlags(self.flags as u64, NatRangeFlags::from_value),
             )
             .field("min_ip", &self.min_ip())
             .field("max_ip", &self.max_ip())
@@ -1241,11 +1241,11 @@ impl std::fmt::Debug for XtLogInfo {
         fmt.debug_struct("XtLogInfo")
             .field(
                 "level",
-                &FormatEnum(self.level.into(), LogLevel::from_value),
+                &FormatEnum(self.level as u64, LogLevel::from_value),
             )
             .field(
                 "logflags",
-                &FormatFlags(self.logflags.into(), XtLogFlag::from_value),
+                &FormatFlags(self.logflags as u64, XtLogFlag::from_value),
             )
             .field("prefix", &FormatBinStr(self.prefix))
             .finish()
@@ -1485,10 +1485,10 @@ impl<'a> std::fmt::Debug for IterableLogAttrs<'_> {
                 LogAttrs::Snaplen(val) => fmt.field("Snaplen", &val),
                 LogAttrs::Qthreshold(val) => fmt.field("Qthreshold", &val),
                 LogAttrs::Level(val) => {
-                    fmt.field("Level", &FormatEnum(val.into(), LogLevel::from_value))
+                    fmt.field("Level", &FormatEnum(val as u64, LogLevel::from_value))
                 }
                 LogAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), LogFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, LogFlags::from_value))
                 }
             };
         }
@@ -1746,11 +1746,11 @@ impl std::fmt::Debug for IterableNumgenAttrs<'_> {
             };
             match attr {
                 NumgenAttrs::Dreg(val) => {
-                    fmt.field("Dreg", &FormatEnum(val.into(), Registers::from_value))
+                    fmt.field("Dreg", &FormatEnum(val as u64, Registers::from_value))
                 }
                 NumgenAttrs::Modulus(val) => fmt.field("Modulus", &val),
                 NumgenAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), NumgenTypes::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, NumgenTypes::from_value))
                 }
                 NumgenAttrs::Offset(val) => fmt.field("Offset", &val),
             };
@@ -1997,10 +1997,10 @@ impl<'a> std::fmt::Debug for IterableRangeAttrs<'_> {
             };
             match attr {
                 RangeAttrs::Sreg(val) => {
-                    fmt.field("Sreg", &FormatEnum(val.into(), Registers::from_value))
+                    fmt.field("Sreg", &FormatEnum(val as u64, Registers::from_value))
                 }
                 RangeAttrs::Op(val) => {
-                    fmt.field("Op", &FormatEnum(val.into(), RangeOps::from_value))
+                    fmt.field("Op", &FormatEnum(val as u64, RangeOps::from_value))
                 }
                 RangeAttrs::FromData(val) => fmt.field("FromData", &val),
                 RangeAttrs::ToData(val) => fmt.field("ToData", &val),
@@ -2474,7 +2474,7 @@ impl<'a> std::fmt::Debug for IterableTableAttrs<'_> {
             match attr {
                 TableAttrs::Name(val) => fmt.field("Name", &val),
                 TableAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), TableFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, TableFlags::from_value))
                 }
                 TableAttrs::Use(val) => fmt.field("Use", &val),
                 TableAttrs::Handle(val) => fmt.field("Handle", &val),
@@ -2919,7 +2919,7 @@ impl<'a> std::fmt::Debug for IterableChainAttrs<'_> {
                 ChainAttrs::Type(val) => fmt.field("Type", &val),
                 ChainAttrs::Counters(val) => fmt.field("Counters", &val),
                 ChainAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ChainFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, ChainFlags::from_value))
                 }
                 ChainAttrs::Id(val) => fmt.field("Id", &val),
                 ChainAttrs::Userdata(val) => fmt.field("Userdata", &FormatHexdump(val)),
@@ -5398,7 +5398,7 @@ impl<'a> std::fmt::Debug for IterableSetAttrs<'_> {
                 SetAttrs::Table(val) => fmt.field("Table", &val),
                 SetAttrs::Name(val) => fmt.field("Name", &val),
                 SetAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), SetFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, SetFlags::from_value))
                 }
                 SetAttrs::KeyType(val) => fmt.field("KeyType", &val),
                 SetAttrs::KeyLen(val) => fmt.field("KeyLen", &val),
@@ -7559,7 +7559,7 @@ impl<'a> std::fmt::Debug for IterableObjAttrs<'_> {
                 ObjAttrs::Table(val) => fmt.field("Table", &val),
                 ObjAttrs::Name(val) => fmt.field("Name", &val),
                 ObjAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), ObjectType::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, ObjectType::from_value))
                 }
                 ObjAttrs::Data(val) => fmt.field("Data", &val),
                 ObjAttrs::Use(val) => fmt.field("Use", &val),
@@ -7829,7 +7829,7 @@ impl<'a> std::fmt::Debug for IterableQuotaAttrs<'_> {
             match attr {
                 QuotaAttrs::Bytes(val) => fmt.field("Bytes", &val),
                 QuotaAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), QuotaFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, QuotaFlags::from_value))
                 }
                 QuotaAttrs::Pad(val) => fmt.field("Pad", &val),
                 QuotaAttrs::Consumed(val) => fmt.field("Consumed", &val),
@@ -8680,7 +8680,7 @@ impl<'a> std::fmt::Debug for IterableExprBitwiseAttrs<'_> {
                 ExprBitwiseAttrs::Mask(val) => fmt.field("Mask", &val),
                 ExprBitwiseAttrs::Xor(val) => fmt.field("Xor", &val),
                 ExprBitwiseAttrs::Op(val) => {
-                    fmt.field("Op", &FormatEnum(val.into(), BitwiseOps::from_value))
+                    fmt.field("Op", &FormatEnum(val as u64, BitwiseOps::from_value))
                 }
                 ExprBitwiseAttrs::Data(val) => fmt.field("Data", &val),
             };
@@ -8919,7 +8919,7 @@ impl<'a> std::fmt::Debug for IterableExprCmpAttrs<'_> {
             match attr {
                 ExprCmpAttrs::Sreg(val) => fmt.field("Sreg", &val),
                 ExprCmpAttrs::Op(val) => {
-                    fmt.field("Op", &FormatEnum(val.into(), CmpOps::from_value))
+                    fmt.field("Op", &FormatEnum(val as u64, CmpOps::from_value))
                 }
                 ExprCmpAttrs::Data(val) => fmt.field("Data", &val),
             };
@@ -9319,7 +9319,7 @@ impl<'a> std::fmt::Debug for IterableVerdictAttrs<'_> {
             };
             match attr {
                 VerdictAttrs::Code(val) => {
-                    fmt.field("Code", &FormatEnum(val.into(), VerdictCode::from_value))
+                    fmt.field("Code", &FormatEnum(val as u64, VerdictCode::from_value))
                 }
                 VerdictAttrs::Chain(val) => fmt.field("Chain", &val),
                 VerdictAttrs::ChainId(val) => fmt.field("ChainId", &val),
@@ -9750,10 +9750,10 @@ impl std::fmt::Debug for IterableExprFibAttrs<'_> {
             match attr {
                 ExprFibAttrs::Dreg(val) => fmt.field("Dreg", &val),
                 ExprFibAttrs::Result(val) => {
-                    fmt.field("Result", &FormatEnum(val.into(), FibResult::from_value))
+                    fmt.field("Result", &FormatEnum(val as u64, FibResult::from_value))
                 }
                 ExprFibAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), FibFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, FibFlags::from_value))
                 }
             };
         }
@@ -9990,11 +9990,11 @@ impl std::fmt::Debug for IterableExprCtAttrs<'_> {
             match attr {
                 ExprCtAttrs::Dreg(val) => fmt.field("Dreg", &val),
                 ExprCtAttrs::Key(val) => {
-                    fmt.field("Key", &FormatEnum(val.into(), CtKeys::from_value))
+                    fmt.field("Key", &FormatEnum(val as u64, CtKeys::from_value))
                 }
                 ExprCtAttrs::Direction(val) => fmt.field(
                     "Direction",
-                    &FormatEnum(val.into(), CtDirection::from_value),
+                    &FormatEnum(val as u64, CtDirection::from_value),
                 ),
                 ExprCtAttrs::Sreg(val) => fmt.field("Sreg", &val),
             };
@@ -10601,7 +10601,7 @@ impl<'a> std::fmt::Debug for IterableExprLookupAttrs<'_> {
                 ExprLookupAttrs::Sreg(val) => fmt.field("Sreg", &val),
                 ExprLookupAttrs::Dreg(val) => fmt.field("Dreg", &val),
                 ExprLookupAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), LookupFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, LookupFlags::from_value))
                 }
             };
         }
@@ -10829,15 +10829,15 @@ impl std::fmt::Debug for IterableExprMasqAttrs<'_> {
             };
             match attr {
                 ExprMasqAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), NatRangeFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, NatRangeFlags::from_value))
                 }
                 ExprMasqAttrs::RegProtoMin(val) => fmt.field(
                     "RegProtoMin",
-                    &FormatEnum(val.into(), Registers::from_value),
+                    &FormatEnum(val as u64, Registers::from_value),
                 ),
                 ExprMasqAttrs::RegProtoMax(val) => fmt.field(
                     "RegProtoMax",
-                    &FormatEnum(val.into(), Registers::from_value),
+                    &FormatEnum(val as u64, Registers::from_value),
                 ),
             };
         }
@@ -11050,7 +11050,7 @@ impl std::fmt::Debug for IterableExprMetaAttrs<'_> {
             match attr {
                 ExprMetaAttrs::Dreg(val) => fmt.field("Dreg", &val),
                 ExprMetaAttrs::Key(val) => {
-                    fmt.field("Key", &FormatEnum(val.into(), MetaKeys::from_value))
+                    fmt.field("Key", &FormatEnum(val as u64, MetaKeys::from_value))
                 }
                 ExprMetaAttrs::Sreg(val) => fmt.field("Sreg", &val),
             };
@@ -11357,7 +11357,7 @@ impl std::fmt::Debug for IterableExprNatAttrs<'_> {
                 ExprNatAttrs::RegProtoMin(val) => fmt.field("RegProtoMin", &val),
                 ExprNatAttrs::RegProtoMax(val) => fmt.field("RegProtoMax", &val),
                 ExprNatAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), NatRangeFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, NatRangeFlags::from_value))
                 }
             };
         }
@@ -11717,15 +11717,15 @@ impl std::fmt::Debug for IterableExprPayloadAttrs<'_> {
             };
             match attr {
                 ExprPayloadAttrs::Dreg(val) => {
-                    fmt.field("Dreg", &FormatEnum(val.into(), Registers::from_value))
+                    fmt.field("Dreg", &FormatEnum(val as u64, Registers::from_value))
                 }
                 ExprPayloadAttrs::Base(val) => {
-                    fmt.field("Base", &FormatEnum(val.into(), PayloadBase::from_value))
+                    fmt.field("Base", &FormatEnum(val as u64, PayloadBase::from_value))
                 }
                 ExprPayloadAttrs::Offset(val) => fmt.field("Offset", &val),
                 ExprPayloadAttrs::Len(val) => fmt.field("Len", &val),
                 ExprPayloadAttrs::Sreg(val) => {
-                    fmt.field("Sreg", &FormatEnum(val.into(), Registers::from_value))
+                    fmt.field("Sreg", &FormatEnum(val as u64, Registers::from_value))
                 }
                 ExprPayloadAttrs::CsumType(val) => fmt.field("CsumType", &val),
                 ExprPayloadAttrs::CsumOffset(val) => fmt.field("CsumOffset", &val),
@@ -11948,7 +11948,7 @@ impl std::fmt::Debug for IterableExprRejectAttrs<'_> {
             };
             match attr {
                 ExprRejectAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), RejectTypes::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, RejectTypes::from_value))
                 }
                 ExprRejectAttrs::IcmpCode(val) => fmt.field("IcmpCode", &val),
             };

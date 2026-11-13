@@ -468,7 +468,7 @@ impl<'a> std::fmt::Debug for IterableWgdevice<'_> {
                 Wgdevice::PrivateKey(val) => fmt.field("PrivateKey", &FormatHex(val)),
                 Wgdevice::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
                 Wgdevice::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), WgdeviceFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, WgdeviceFlags::from_value))
                 }
                 Wgdevice::ListenPort(val) => fmt.field("ListenPort", &val),
                 Wgdevice::Fwmark(val) => fmt.field("Fwmark", &val),
@@ -940,7 +940,7 @@ impl<'a> std::fmt::Debug for IterableWgpeer<'_> {
                 Wgpeer::PublicKey(val) => fmt.field("PublicKey", &FormatHex(val)),
                 Wgpeer::PresharedKey(val) => fmt.field("PresharedKey", &FormatHex(val)),
                 Wgpeer::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), WgpeerFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, WgpeerFlags::from_value))
                 }
                 Wgpeer::Endpoint(val) => fmt.field("Endpoint", &val),
                 Wgpeer::PersistentKeepaliveInterval(val) => {
@@ -1239,7 +1239,7 @@ impl std::fmt::Debug for IterableWgallowedip<'_> {
                 Wgallowedip::CidrMask(val) => fmt.field("CidrMask", &val),
                 Wgallowedip::Flags(val) => fmt.field(
                     "Flags",
-                    &FormatFlags(val.into(), WgallowedipFlags::from_value),
+                    &FormatFlags(val as u64, WgallowedipFlags::from_value),
                 ),
             };
         }
@@ -1431,7 +1431,7 @@ impl<Prev: Pusher> PushWgdevice<Prev> {
         PushArrayWgpeer {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
 }
@@ -1572,7 +1572,7 @@ impl<Prev: Pusher> PushWgpeer<Prev> {
         PushArrayWgallowedip {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     #[doc = "Should not be set or used at all by most users of this API, as the most\nrecent protocol will be used when this is unset. Otherwise, must be set\nto `1`.\n"]

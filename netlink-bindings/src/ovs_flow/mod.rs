@@ -494,7 +494,7 @@ impl std::fmt::Debug for OvsKeyIpv4 {
             .field("ipv4_ttl", &self.ipv4_ttl)
             .field(
                 "ipv4_frag",
-                &FormatEnum(self.ipv4_frag.into(), OvsFragType::from_value),
+                &FormatEnum(self.ipv4_frag as u64, OvsFragType::from_value),
             )
             .finish()
     }
@@ -1986,7 +1986,7 @@ impl<'a> std::fmt::Debug for IterableFlowAttrs<'_> {
                 FlowAttrs::Ufid(val) => fmt.field("Ufid", &val),
                 FlowAttrs::UfidFlags(val) => fmt.field(
                     "UfidFlags",
-                    &FormatFlags(val.into(), OvsUfidFlags::from_value),
+                    &FormatFlags(val as u64, OvsUfidFlags::from_value),
                 ),
                 FlowAttrs::Pad(val) => fmt.field("Pad", &FormatHexdump(val)),
             };
@@ -2934,7 +2934,7 @@ impl<'a> std::fmt::Debug for IterableKeyAttrs<'_> {
                 KeyAttrs::Mpls(val) => fmt.field("Mpls", &val),
                 KeyAttrs::CtState(val) => fmt.field(
                     "CtState",
-                    &FormatFlags(val.into(), CtStateFlags::from_value),
+                    &FormatFlags(val as u64, CtStateFlags::from_value),
                 ),
                 KeyAttrs::CtZone(val) => fmt.field("CtZone", &val),
                 KeyAttrs::CtMark(val) => fmt.field("CtMark", &val),

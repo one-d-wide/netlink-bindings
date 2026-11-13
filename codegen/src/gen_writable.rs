@@ -307,12 +307,13 @@ pub fn gen_writable_attrset(
             let func = writable_array_attr(&next.name);
 
             let array_type = gen_writable_index_array(tokens, ctx, spec, sub_type);
+            let index_start = next.array_index_start.unwrap_or(0);
 
             impls.extend(quote! {
                 pub fn #func(mut self) -> #array_type<Self> {
                     let header_offset = push_nested_header(self.as_vec_mut(), #id);
 
-                    #array_type { prev: Some(self), header_offset: Some(header_offset), counter: 0 }
+                    #array_type { prev: Some(self), header_offset: Some(header_offset), counter: #index_start }
                 }
             });
 

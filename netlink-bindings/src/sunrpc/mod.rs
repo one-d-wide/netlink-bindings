@@ -140,7 +140,7 @@ impl std::fmt::Debug for IterableCacheNotify<'_> {
             };
             match attr {
                 CacheNotify::CacheType(val) => {
-                    fmt.field("CacheType", &FormatFlags(val.into(), CacheType::from_value))
+                    fmt.field("CacheType", &FormatFlags(val as u64, CacheType::from_value))
                 }
             };
         }
@@ -1141,7 +1141,7 @@ impl std::fmt::Debug for IterableCacheFlush<'_> {
             };
             match attr {
                 CacheFlush::Mask(val) => {
-                    fmt.field("Mask", &FormatFlags(val.into(), CacheType::from_value))
+                    fmt.field("Mask", &FormatFlags(val as u64, CacheType::from_value))
                 }
             };
         }

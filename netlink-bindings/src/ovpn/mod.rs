@@ -746,7 +746,7 @@ impl<'a> std::fmt::Debug for IterablePeer<'_> {
                 Peer::KeepaliveTimeout(val) => fmt.field("KeepaliveTimeout", &val),
                 Peer::DelReason(val) => fmt.field(
                     "DelReason",
-                    &FormatEnum(val.into(), DelPeerReason::from_value),
+                    &FormatEnum(val as u64, DelPeerReason::from_value),
                 ),
                 Peer::VpnRxBytes(val) => fmt.field("VpnRxBytes", &val),
                 Peer::VpnTxBytes(val) => fmt.field("VpnTxBytes", &val),
@@ -2307,11 +2307,11 @@ impl<'a> std::fmt::Debug for IterableKeyconf<'_> {
             match attr {
                 Keyconf::PeerId(val) => fmt.field("PeerId", &val),
                 Keyconf::Slot(val) => {
-                    fmt.field("Slot", &FormatEnum(val.into(), KeySlot::from_value))
+                    fmt.field("Slot", &FormatEnum(val as u64, KeySlot::from_value))
                 }
                 Keyconf::KeyId(val) => fmt.field("KeyId", &val),
                 Keyconf::CipherAlg(val) => {
-                    fmt.field("CipherAlg", &FormatEnum(val.into(), CipherAlg::from_value))
+                    fmt.field("CipherAlg", &FormatEnum(val as u64, CipherAlg::from_value))
                 }
                 Keyconf::EncryptDir(val) => fmt.field("EncryptDir", &val),
                 Keyconf::DecryptDir(val) => fmt.field("DecryptDir", &val),
@@ -2745,11 +2745,11 @@ impl std::fmt::Debug for IterableKeyconfGet<'_> {
             match attr {
                 KeyconfGet::PeerId(val) => fmt.field("PeerId", &val),
                 KeyconfGet::Slot(val) => {
-                    fmt.field("Slot", &FormatEnum(val.into(), KeySlot::from_value))
+                    fmt.field("Slot", &FormatEnum(val as u64, KeySlot::from_value))
                 }
                 KeyconfGet::KeyId(val) => fmt.field("KeyId", &val),
                 KeyconfGet::CipherAlg(val) => {
-                    fmt.field("CipherAlg", &FormatEnum(val.into(), CipherAlg::from_value))
+                    fmt.field("CipherAlg", &FormatEnum(val as u64, CipherAlg::from_value))
                 }
             };
         }
@@ -3093,7 +3093,7 @@ impl std::fmt::Debug for IterableKeyconfDelInput<'_> {
             match attr {
                 KeyconfDelInput::PeerId(val) => fmt.field("PeerId", &val),
                 KeyconfDelInput::Slot(val) => {
-                    fmt.field("Slot", &FormatEnum(val.into(), KeySlot::from_value))
+                    fmt.field("Slot", &FormatEnum(val as u64, KeySlot::from_value))
                 }
             };
         }

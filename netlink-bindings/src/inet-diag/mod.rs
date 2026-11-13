@@ -328,7 +328,7 @@ impl std::fmt::Debug for Req {
             .field("sockid", &self.sockid)
             .field(
                 "states",
-                &FormatFlags(self.states.into(), |val| {
+                &FormatFlags(self.states as u64, |val| {
                     TcpState::from_value(val.trailing_zeros().into())
                 }),
             )
@@ -418,7 +418,7 @@ impl std::fmt::Debug for ReqV2 {
             .field("pad", &self.pad)
             .field(
                 "states",
-                &FormatFlags(self.states.into(), |val| {
+                &FormatFlags(self.states as u64, |val| {
                     TcpState::from_value(val.trailing_zeros().into())
                 }),
             )
@@ -509,7 +509,7 @@ impl std::fmt::Debug for ReqRaw {
             .field("raw_protocol", &self.raw_protocol)
             .field(
                 "states",
-                &FormatFlags(self.states.into(), |val| {
+                &FormatFlags(self.states as u64, |val| {
                     TcpState::from_value(val.trailing_zeros().into())
                 }),
             )
@@ -601,7 +601,7 @@ impl std::fmt::Debug for Msg {
             .field("family", &self.family)
             .field(
                 "state",
-                &FormatEnum(self.state.into(), TcpState::from_value),
+                &FormatEnum(self.state as u64, TcpState::from_value),
             )
             .field("timer", &self.timer)
             .field("retrans", &self.retrans)
@@ -692,7 +692,7 @@ impl std::fmt::Debug for BytecodeOp {
         fmt.debug_struct("BytecodeOp")
             .field(
                 "code",
-                &FormatEnum(self.code.into(), BytecodeOpCode::from_value),
+                &FormatEnum(self.code as u64, BytecodeOpCode::from_value),
             )
             .field("yes", &self.yes)
             .field("no", &self.no)
@@ -1384,7 +1384,7 @@ impl std::fmt::Debug for TcpInfo {
         fmt.debug_struct("TcpInfo")
             .field(
                 "state",
-                &FormatEnum(self.state.into(), TcpState::from_value),
+                &FormatEnum(self.state as u64, TcpState::from_value),
             )
             .field("ca_state", &self.ca_state)
             .field("retransmits", &self.retransmits)
@@ -2519,7 +2519,7 @@ impl<'a> std::fmt::Debug for IterableReplyAttrs<'_> {
                 ReplyAttrs::CgroupId(val) => fmt.field("CgroupId", &val),
                 ReplyAttrs::SockoptFlags(val) => fmt.field(
                     "SockoptFlags",
-                    &FormatFlags(val.into(), SockoptFlag::from_value),
+                    &FormatFlags(val as u64, SockoptFlag::from_value),
                 ),
             };
         }

@@ -124,13 +124,93 @@ impl Dualpi2SplitGso {
         })
     }
 }
+#[doc = "Minor values at or above this are reserved for internal pseudo-classids.\n"]
+pub const TC_H_MIN_PRIORITY: u64 = 65504u64;
+#[doc = "Special values for `handle` and `parent`.\n"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy)]
+pub enum TcHandle {
+    Unspec = 0,
+    #[doc = "Parent of a standalone `ingress` qdisc.\n"]
+    Ingress = 4294967281,
+    #[doc = "Parent for filters on a `clsact` qdisc\\'s ingress hook.\n"]
+    ClsactIngress = 4294967282,
+    #[doc = "Parent for filters on a `clsact` qdisc\\'s egress hook.\n"]
+    ClsactEgress = 4294967283,
+    Root = 4294967295,
+}
+impl TcHandle {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Unspec,
+            4294967281 => Self::Ingress,
+            4294967282 => Self::ClsactIngress,
+            4294967283 => Self::ClsactEgress,
+            4294967295 => Self::Root,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Verdict applied to the packet after an action runs.\n"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy)]
+pub enum TcActionType {
+    Ok = 0,
+    Reclassify = 1,
+    Shot = 2,
+    Pipe = 3,
+    Stolen = 4,
+    Queued = 5,
+    Repeat = 6,
+    Redirect = 7,
+    Trap = 8,
+}
+impl TcActionType {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Ok,
+            1 => Self::Reclassify,
+            2 => Self::Shot,
+            3 => Self::Pipe,
+            4 => Self::Stolen,
+            5 => Self::Queued,
+            6 => Self::Repeat,
+            7 => Self::Redirect,
+            8 => Self::Trap,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Mirred direction and mode.\n"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy)]
+pub enum TcMirredEaction {
+    EgressRedir = 1,
+    EgressMirror = 2,
+    IngressRedir = 3,
+    IngressMirror = 4,
+}
+impl TcMirredEaction {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            1 => Self::EgressRedir,
+            2 => Self::EgressMirror,
+            3 => Self::IngressRedir,
+            4 => Self::IngressMirror,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Fixed header for qdisc, class and chain operations.\n"]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)]
 pub struct Tcmsg {
     pub family: u8,
     pub _pad: [u8; 3usize],
     pub ifindex: i32,
+    #[doc = "Associated type: [`TcHandle`] (enum)"]
     pub handle: u32,
+    #[doc = "Associated type: [`TcHandle`] (enum)"]
     pub parent: u32,
     pub info: u32,
 }
@@ -201,8 +281,14 @@ impl std::fmt::Debug for Tcmsg {
         fmt.debug_struct("Tcmsg")
             .field("family", &self.family)
             .field("ifindex", &self.ifindex)
-            .field("handle", &self.handle)
-            .field("parent", &self.parent)
+            .field(
+                "handle",
+                &FormatEnum(self.handle as u64, TcHandle::from_value),
+            )
+            .field(
+                "parent",
+                &FormatEnum(self.parent as u64, TcHandle::from_value),
+            )
             .field("info", &self.info)
             .finish()
     }
@@ -4927,6 +5013,276 @@ impl TcVlan {
         24usize
     }
 }
+#[doc = "Filter `tcm_info`, holding the classifier protocol and priority.\n"]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
+pub struct TcClassifierInfo {
+    pub _protocol_be: u16,
+    pub priority: u16,
+}
+#[doc = "Create zero-initialized struct"]
+impl Default for TcClassifierInfo {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl TcClassifierInfo {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self::new_from_array([0u8; Self::len()])
+    }
+    #[doc = "Copy from contents from slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self::new_from_array(buf))
+    }
+    #[doc = "Copy from contents from another slice, padding with zeros or truncating when needed"]
+    pub fn new_from_zeroed(other: &[u8]) -> Self {
+        let mut buf = [0u8; Self::len()];
+        let len = buf.len().min(other.len());
+        buf[..len].clone_from_slice(&other[..len]);
+        Self::new_from_array(buf)
+    }
+    pub fn new_from_array(buf: [u8; 4usize]) -> Self {
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        unsafe {
+            let ptr: *const u8 = std::mem::transmute(self as *const Self);
+            std::slice::from_raw_parts(ptr, Self::len())
+        }
+    }
+    pub fn from_slice(buf: &[u8]) -> &Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn as_array(&self) -> &[u8; 4usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub fn from_array(buf: &[u8; 4usize]) -> &Self {
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn into_array(self) -> [u8; 4usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub const fn len() -> usize {
+        const _: () = assert!(std::mem::size_of::<TcClassifierInfo>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<TcClassifierInfo>() == 2usize);
+        4usize
+    }
+    pub fn protocol(&self) -> u16 {
+        u16::from_be(self._protocol_be)
+    }
+    pub fn set_protocol(&mut self, value: u16) {
+        self._protocol_be = value.to_be();
+    }
+}
+impl std::fmt::Debug for TcClassifierInfo {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("TcClassifierInfo")
+            .field("protocol", &self.protocol())
+            .field("priority", &self.priority)
+            .finish()
+    }
+}
+#[doc = "Fixed header for filter operations.\n"]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
+pub struct TcmsgFilter {
+    pub family: u8,
+    pub _pad: [u8; 3usize],
+    pub ifindex: i32,
+    #[doc = "Associated type: [`TcHandle`] (enum)"]
+    pub handle: u32,
+    #[doc = "Associated type: [`TcHandle`] (enum)"]
+    pub parent: u32,
+    pub info: TcClassifierInfo,
+}
+#[doc = "Create zero-initialized struct"]
+impl Default for TcmsgFilter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl TcmsgFilter {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self::new_from_array([0u8; Self::len()])
+    }
+    #[doc = "Copy from contents from slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self::new_from_array(buf))
+    }
+    #[doc = "Copy from contents from another slice, padding with zeros or truncating when needed"]
+    pub fn new_from_zeroed(other: &[u8]) -> Self {
+        let mut buf = [0u8; Self::len()];
+        let len = buf.len().min(other.len());
+        buf[..len].clone_from_slice(&other[..len]);
+        Self::new_from_array(buf)
+    }
+    pub fn new_from_array(buf: [u8; 20usize]) -> Self {
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        unsafe {
+            let ptr: *const u8 = std::mem::transmute(self as *const Self);
+            std::slice::from_raw_parts(ptr, Self::len())
+        }
+    }
+    pub fn from_slice(buf: &[u8]) -> &Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn as_array(&self) -> &[u8; 20usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub fn from_array(buf: &[u8; 20usize]) -> &Self {
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn into_array(self) -> [u8; 20usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub const fn len() -> usize {
+        const _: () = assert!(std::mem::size_of::<TcmsgFilter>() == 20usize);
+        const _: () = assert!(std::mem::align_of::<TcmsgFilter>() == 4usize);
+        20usize
+    }
+}
+impl std::fmt::Debug for TcmsgFilter {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("TcmsgFilter")
+            .field("family", &self.family)
+            .field("ifindex", &self.ifindex)
+            .field(
+                "handle",
+                &FormatEnum(self.handle as u64, TcHandle::from_value),
+            )
+            .field(
+                "parent",
+                &FormatEnum(self.parent as u64, TcHandle::from_value),
+            )
+            .field("info", &self.info)
+            .finish()
+    }
+}
+#[doc = "Payload of `TCA_MIRRED_PARMS`.\n"]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
+pub struct TcMirred {
+    pub index: u32,
+    pub capab: u32,
+    #[doc = "Associated type: [`TcActionType`] (enum)"]
+    pub action: i32,
+    pub refcnt: i32,
+    pub bindcnt: i32,
+    #[doc = "Associated type: [`TcMirredEaction`] (enum)"]
+    pub eaction: i32,
+    pub ifindex: u32,
+}
+#[doc = "Create zero-initialized struct"]
+impl Default for TcMirred {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl TcMirred {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self::new_from_array([0u8; Self::len()])
+    }
+    #[doc = "Copy from contents from slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self::new_from_array(buf))
+    }
+    #[doc = "Copy from contents from another slice, padding with zeros or truncating when needed"]
+    pub fn new_from_zeroed(other: &[u8]) -> Self {
+        let mut buf = [0u8; Self::len()];
+        let len = buf.len().min(other.len());
+        buf[..len].clone_from_slice(&other[..len]);
+        Self::new_from_array(buf)
+    }
+    pub fn new_from_array(buf: [u8; 28usize]) -> Self {
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        unsafe {
+            let ptr: *const u8 = std::mem::transmute(self as *const Self);
+            std::slice::from_raw_parts(ptr, Self::len())
+        }
+    }
+    pub fn from_slice(buf: &[u8]) -> &Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn as_array(&self) -> &[u8; 28usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub fn from_array(buf: &[u8; 28usize]) -> &Self {
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn into_array(self) -> [u8; 28usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub const fn len() -> usize {
+        const _: () = assert!(std::mem::size_of::<TcMirred>() == 28usize);
+        const _: () = assert!(std::mem::align_of::<TcMirred>() == 4usize);
+        28usize
+    }
+}
+impl std::fmt::Debug for TcMirred {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("TcMirred")
+            .field("index", &self.index)
+            .field("capab", &self.capab)
+            .field(
+                "action",
+                &FormatEnum(self.action as u64, TcActionType::from_value),
+            )
+            .field("refcnt", &self.refcnt)
+            .field("bindcnt", &self.bindcnt)
+            .field(
+                "eaction",
+                &FormatEnum(self.eaction as u64, TcMirredEaction::from_value),
+            )
+            .field("ifindex", &self.ifindex)
+            .finish()
+    }
+}
 #[derive(Clone)]
 pub enum Attrs<'a> {
     Kind(&'a CStr),
@@ -8789,7 +9145,7 @@ impl IterableActIfeAttrs<'_> {
 #[derive(Clone)]
 pub enum ActMirredAttrs<'a> {
     Tm(TcfT),
-    Parms(&'a [u8]),
+    Parms(TcMirred),
     Pad(&'a [u8]),
     Blockid(&'a [u8]),
 }
@@ -8809,7 +9165,7 @@ impl<'a> IterableActMirredAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_parms(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_parms(&self) -> Result<TcMirred, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -8911,7 +9267,7 @@ impl<'a> Iterator for IterableActMirredAttrs<'a> {
                     val
                 }),
                 2u16 => ActMirredAttrs::Parms({
-                    let res = Some(next);
+                    let res = Some(TcMirred::new_from_zeroed(next));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -8960,7 +9316,7 @@ impl<'a> std::fmt::Debug for IterableActMirredAttrs<'_> {
             };
             match attr {
                 ActMirredAttrs::Tm(val) => fmt.field("Tm", &val),
-                ActMirredAttrs::Parms(val) => fmt.field("Parms", &FormatHexdump(val)),
+                ActMirredAttrs::Parms(val) => fmt.field("Parms", &val),
                 ActMirredAttrs::Pad(val) => fmt.field("Pad", &val),
                 ActMirredAttrs::Blockid(val) => fmt.field("Blockid", &FormatHexdump(val)),
             };
@@ -11720,6 +12076,7 @@ impl IterableActVlanAttrs<'_> {
 pub enum BasicAttrs<'a> {
     Classid(u32),
     Ematches(IterableEmatchAttrs<'a>),
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     Police(IterablePoliceAttrs<'a>),
     Pcnt(TcBasicPcnt),
@@ -11756,6 +12113,7 @@ impl<'a> IterableBasicAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -12074,6 +12432,7 @@ impl IterableBasicAttrs<'_> {
 }
 #[derive(Clone)]
 pub enum BpfAttrs<'a> {
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     Police(IterablePoliceAttrs<'a>),
     Classid(u32),
@@ -12087,6 +12446,7 @@ pub enum BpfAttrs<'a> {
     Id(u32),
 }
 impl<'a> IterableBpfAttrs<'a> {
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -14850,11 +15210,13 @@ impl IterableCbsAttrs<'_> {
 }
 #[derive(Clone)]
 pub enum CgroupAttrs<'a> {
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     Police(IterablePoliceAttrs<'a>),
     Ematches(&'a [u8]),
 }
 impl<'a> IterableCgroupAttrs<'a> {
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -16153,20 +16515,20 @@ impl std::fmt::Debug for IterableDualpi2Attrs<'_> {
                 Dualpi2Attrs::Coupling(val) => fmt.field("Coupling", &val),
                 Dualpi2Attrs::DropOverload(val) => fmt.field(
                     "DropOverload",
-                    &FormatEnum(val.into(), Dualpi2DropOverload::from_value),
+                    &FormatEnum(val as u64, Dualpi2DropOverload::from_value),
                 ),
                 Dualpi2Attrs::DropEarly(val) => fmt.field(
                     "DropEarly",
-                    &FormatEnum(val.into(), Dualpi2DropEarly::from_value),
+                    &FormatEnum(val as u64, Dualpi2DropEarly::from_value),
                 ),
                 Dualpi2Attrs::CProtection(val) => fmt.field("CProtection", &val),
                 Dualpi2Attrs::EcnMask(val) => fmt.field(
                     "EcnMask",
-                    &FormatEnum(val.into(), Dualpi2EcnMask::from_value),
+                    &FormatEnum(val as u64, Dualpi2EcnMask::from_value),
                 ),
                 Dualpi2Attrs::SplitGso(val) => fmt.field(
                     "SplitGso",
-                    &FormatEnum(val.into(), Dualpi2SplitGso::from_value),
+                    &FormatEnum(val as u64, Dualpi2SplitGso::from_value),
                 ),
             };
         }
@@ -16953,6 +17315,7 @@ impl IterableFlowAttrs<'_> {
 pub enum FlowerAttrs<'a> {
     Classid(u32),
     Indev(&'a CStr),
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     KeyEthDst(&'a [u8]),
     KeyEthDstMask(&'a [u8]),
@@ -17099,6 +17462,7 @@ impl<'a> IterableFlowerAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -19508,7 +19872,7 @@ impl<'a> std::fmt::Debug for IterableFlowerAttrs<'_> {
                 FlowerAttrs::KeyUdpSrc(val) => fmt.field("KeyUdpSrc", &val),
                 FlowerAttrs::KeyUdpDst(val) => fmt.field("KeyUdpDst", &val),
                 FlowerAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ClsFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, ClsFlags::from_value))
                 }
                 FlowerAttrs::KeyVlanId(val) => fmt.field("KeyVlanId", &val),
                 FlowerAttrs::KeyVlanPrio(val) => fmt.field("KeyVlanPrio", &val),
@@ -19536,11 +19900,11 @@ impl<'a> std::fmt::Debug for IterableFlowerAttrs<'_> {
                 FlowerAttrs::KeyEncUdpDstPortMask(val) => fmt.field("KeyEncUdpDstPortMask", &val),
                 FlowerAttrs::KeyFlags(val) => fmt.field(
                     "KeyFlags",
-                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                    &FormatFlags(val as u64, FlowerKeyCtrlFlags::from_value),
                 ),
                 FlowerAttrs::KeyFlagsMask(val) => fmt.field(
                     "KeyFlagsMask",
-                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                    &FormatFlags(val as u64, FlowerKeyCtrlFlags::from_value),
                 ),
                 FlowerAttrs::KeyIcmpv4Code(val) => fmt.field("KeyIcmpv4Code", &val),
                 FlowerAttrs::KeyIcmpv4CodeMask(val) => fmt.field("KeyIcmpv4CodeMask", &val),
@@ -19607,11 +19971,11 @@ impl<'a> std::fmt::Debug for IterableFlowerAttrs<'_> {
                 FlowerAttrs::KeySpiMask(val) => fmt.field("KeySpiMask", &val),
                 FlowerAttrs::KeyEncFlags(val) => fmt.field(
                     "KeyEncFlags",
-                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                    &FormatFlags(val as u64, FlowerKeyCtrlFlags::from_value),
                 ),
                 FlowerAttrs::KeyEncFlagsMask(val) => fmt.field(
                     "KeyEncFlagsMask",
-                    &FormatFlags(val.into(), FlowerKeyCtrlFlags::from_value),
+                    &FormatFlags(val as u64, FlowerKeyCtrlFlags::from_value),
                 ),
             };
         }
@@ -21813,6 +22177,7 @@ pub enum FwAttrs<'a> {
     Classid(u32),
     Police(IterablePoliceAttrs<'a>),
     Indev(&'a CStr),
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     Mask(u32),
 }
@@ -21862,6 +22227,7 @@ impl<'a> IterableFwAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -23920,6 +24286,7 @@ impl IterableHtbAttrs<'_> {
 #[derive(Clone)]
 pub enum MatchallAttrs<'a> {
     Classid(u32),
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     Flags(u32),
     Pcnt(TcMatchallPcnt),
@@ -23941,6 +24308,7 @@ impl<'a> IterableMatchallAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -28188,6 +28556,7 @@ pub enum RouteAttrs<'a> {
     From(u32),
     Iif(u32),
     Police(IterablePoliceAttrs<'a>),
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
 }
 impl<'a> IterableRouteAttrs<'a> {
@@ -28266,6 +28635,7 @@ impl<'a> IterableRouteAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -30990,6 +31360,7 @@ pub enum U32Attrs<'a> {
     Divisor(u32),
     Sel(TcU32Sel),
     Police(IterablePoliceAttrs<'a>),
+    #[doc = "Actions to run on match.\n"]
     Act(IterableArrayActAttrs<'a>),
     Indev(&'a CStr),
     Pcnt(TcU32Pcnt),
@@ -31088,6 +31459,7 @@ impl<'a> IterableU32Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn get_act(
         &self,
     ) -> Result<ArrayIterable<IterableArrayActAttrs<'a>, IterableActAttrs<'a>>, ErrorContext> {
@@ -33173,9 +33545,9 @@ impl<Prev: Pusher> PushActMirredAttrs<Prev> {
         self.as_vec_mut().extend(value.as_slice());
         self
     }
-    pub fn push_parms(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 2u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_parms(mut self, value: TcMirred) -> Self {
+        push_header(self.as_vec_mut(), 2u16, value.as_slice().len() as u16);
+        self.as_vec_mut().extend(value.as_slice());
         self
     }
     pub fn push_pad(mut self, value: &[u8]) -> Self {
@@ -33865,12 +34237,13 @@ impl<Prev: Pusher> PushBasicAttrs<Prev> {
             header_offset: Some(header_offset),
         }
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 3u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn nested_police(mut self) -> PushPoliceAttrs<Self> {
@@ -33926,12 +34299,13 @@ impl<Prev: Pusher> PushBpfAttrs<Prev> {
         }
         prev
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 1u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn nested_police(mut self) -> PushPoliceAttrs<Self> {
@@ -34255,7 +34629,7 @@ impl<Prev: Pusher> PushCakeStatsAttrs<Prev> {
         PushArrayCakeTinStatsAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_deficit(mut self, value: i32) -> Self {
@@ -34531,12 +34905,13 @@ impl<Prev: Pusher> PushCgroupAttrs<Prev> {
         }
         prev
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 1u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn nested_police(mut self) -> PushPoliceAttrs<Self> {
@@ -35030,12 +35405,13 @@ impl<Prev: Pusher> PushFlowerAttrs<Prev> {
         self.as_vec_mut().push(0);
         self
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 3u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn push_key_eth_dst(mut self, value: &[u8]) -> Self {
@@ -36019,12 +36395,13 @@ impl<Prev: Pusher> PushFwAttrs<Prev> {
         self.as_vec_mut().push(0);
         self
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 4u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn push_mask(mut self, value: u32) -> Self {
@@ -36483,12 +36860,13 @@ impl<Prev: Pusher> PushMatchallAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 2u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn push_flags(mut self, value: u32) -> Self {
@@ -37440,12 +37818,13 @@ impl<Prev: Pusher> PushRouteAttrs<Prev> {
             header_offset: Some(header_offset),
         }
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 6u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
 }
@@ -38084,12 +38463,13 @@ impl<Prev: Pusher> PushU32Attrs<Prev> {
             header_offset: Some(header_offset),
         }
     }
+    #[doc = "Actions to run on match.\n"]
     pub fn array_act(mut self) -> PushArrayActAttrs<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 7u16);
         PushArrayActAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 1u16,
         }
     }
     pub fn push_indev(mut self, value: &CStr) -> Self {
@@ -38628,13 +39008,13 @@ pub struct OpNewtfilterDo<'r> {
     request: Request<'r>,
 }
 impl<'r> OpNewtfilterDo<'r> {
-    pub fn new(mut request: Request<'r>, header: &Tcmsg) -> Self {
+    pub fn new(mut request: Request<'r>, header: &TcmsgFilter) -> Self {
         Self::write_header(request.buf_mut(), header);
         Self { request: request }
     }
     pub fn encode_request<'buf>(
         buf: &'buf mut Vec<u8>,
-        header: &Tcmsg,
+        header: &TcmsgFilter,
     ) -> PushAttrs<&'buf mut Vec<u8>> {
         Self::write_header(buf, header);
         PushAttrs::new(buf)
@@ -38645,23 +39025,23 @@ impl<'r> OpNewtfilterDo<'r> {
     pub fn into_encoder(self) -> PushAttrs<RequestBuf<'r>> {
         PushAttrs::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> (Tcmsg, IterableAttrs<'a>) {
-        let (header, attrs) = buf.split_at(buf.len().min(Tcmsg::len()));
+    pub fn decode_request<'a>(buf: &'a [u8]) -> (TcmsgFilter, IterableAttrs<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(TcmsgFilter::len()));
         (
-            Tcmsg::new_from_slice(header).unwrap_or_default(),
+            TcmsgFilter::new_from_slice(header).unwrap_or_default(),
             IterableAttrs::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
-    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
+    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &TcmsgFilter) {
         prev.as_vec_mut().extend(header.as_slice());
     }
-    pub fn header(&self) -> &Tcmsg {
+    pub fn header(&self) -> &TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice(&self.request.buf()[pos..])
+        TcmsgFilter::from_slice(&self.request.buf()[pos..])
     }
-    pub fn header_mut(&mut self) -> &mut Tcmsg {
+    pub fn header_mut(&mut self) -> &mut TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+        TcmsgFilter::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpNewtfilterDo<'_> {
@@ -38677,7 +39057,7 @@ impl NetlinkRequest for OpNewtfilterDo<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = (Tcmsg, IterableAttrs<'buf>);
+    type ReplyType<'buf> = (TcmsgFilter, IterableAttrs<'buf>);
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -38697,13 +39077,13 @@ pub struct OpDeltfilterDo<'r> {
     request: Request<'r>,
 }
 impl<'r> OpDeltfilterDo<'r> {
-    pub fn new(mut request: Request<'r>, header: &Tcmsg) -> Self {
+    pub fn new(mut request: Request<'r>, header: &TcmsgFilter) -> Self {
         Self::write_header(request.buf_mut(), header);
         Self { request: request }
     }
     pub fn encode_request<'buf>(
         buf: &'buf mut Vec<u8>,
-        header: &Tcmsg,
+        header: &TcmsgFilter,
     ) -> PushAttrs<&'buf mut Vec<u8>> {
         Self::write_header(buf, header);
         PushAttrs::new(buf)
@@ -38714,23 +39094,23 @@ impl<'r> OpDeltfilterDo<'r> {
     pub fn into_encoder(self) -> PushAttrs<RequestBuf<'r>> {
         PushAttrs::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> (Tcmsg, IterableAttrs<'a>) {
-        let (header, attrs) = buf.split_at(buf.len().min(Tcmsg::len()));
+    pub fn decode_request<'a>(buf: &'a [u8]) -> (TcmsgFilter, IterableAttrs<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(TcmsgFilter::len()));
         (
-            Tcmsg::new_from_slice(header).unwrap_or_default(),
+            TcmsgFilter::new_from_slice(header).unwrap_or_default(),
             IterableAttrs::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
-    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
+    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &TcmsgFilter) {
         prev.as_vec_mut().extend(header.as_slice());
     }
-    pub fn header(&self) -> &Tcmsg {
+    pub fn header(&self) -> &TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice(&self.request.buf()[pos..])
+        TcmsgFilter::from_slice(&self.request.buf()[pos..])
     }
-    pub fn header_mut(&mut self) -> &mut Tcmsg {
+    pub fn header_mut(&mut self) -> &mut TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+        TcmsgFilter::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpDeltfilterDo<'_> {
@@ -38746,7 +39126,7 @@ impl NetlinkRequest for OpDeltfilterDo<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = (Tcmsg, IterableAttrs<'buf>);
+    type ReplyType<'buf> = (TcmsgFilter, IterableAttrs<'buf>);
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -38766,7 +39146,7 @@ pub struct OpGettfilterDump<'r> {
     request: Request<'r>,
 }
 impl<'r> OpGettfilterDump<'r> {
-    pub fn new(mut request: Request<'r>, header: &Tcmsg) -> Self {
+    pub fn new(mut request: Request<'r>, header: &TcmsgFilter) -> Self {
         Self::write_header(request.buf_mut(), header);
         Self {
             request: request.set_dump(),
@@ -38774,7 +39154,7 @@ impl<'r> OpGettfilterDump<'r> {
     }
     pub fn encode_request<'buf>(
         buf: &'buf mut Vec<u8>,
-        header: &Tcmsg,
+        header: &TcmsgFilter,
     ) -> PushAttrs<&'buf mut Vec<u8>> {
         Self::write_header(buf, header);
         PushAttrs::new(buf)
@@ -38785,23 +39165,23 @@ impl<'r> OpGettfilterDump<'r> {
     pub fn into_encoder(self) -> PushAttrs<RequestBuf<'r>> {
         PushAttrs::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> (Tcmsg, IterableAttrs<'a>) {
-        let (header, attrs) = buf.split_at(buf.len().min(Tcmsg::len()));
+    pub fn decode_request<'a>(buf: &'a [u8]) -> (TcmsgFilter, IterableAttrs<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(TcmsgFilter::len()));
         (
-            Tcmsg::new_from_slice(header).unwrap_or_default(),
+            TcmsgFilter::new_from_slice(header).unwrap_or_default(),
             IterableAttrs::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
-    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
+    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &TcmsgFilter) {
         prev.as_vec_mut().extend(header.as_slice());
     }
-    pub fn header(&self) -> &Tcmsg {
+    pub fn header(&self) -> &TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice(&self.request.buf()[pos..])
+        TcmsgFilter::from_slice(&self.request.buf()[pos..])
     }
-    pub fn header_mut(&mut self) -> &mut Tcmsg {
+    pub fn header_mut(&mut self) -> &mut TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+        TcmsgFilter::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGettfilterDump<'_> {
@@ -38817,7 +39197,7 @@ impl NetlinkRequest for OpGettfilterDump<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = (Tcmsg, IterableAttrs<'buf>);
+    type ReplyType<'buf> = (TcmsgFilter, IterableAttrs<'buf>);
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -38837,13 +39217,13 @@ pub struct OpGettfilterDo<'r> {
     request: Request<'r>,
 }
 impl<'r> OpGettfilterDo<'r> {
-    pub fn new(mut request: Request<'r>, header: &Tcmsg) -> Self {
+    pub fn new(mut request: Request<'r>, header: &TcmsgFilter) -> Self {
         Self::write_header(request.buf_mut(), header);
         Self { request: request }
     }
     pub fn encode_request<'buf>(
         buf: &'buf mut Vec<u8>,
-        header: &Tcmsg,
+        header: &TcmsgFilter,
     ) -> PushAttrs<&'buf mut Vec<u8>> {
         Self::write_header(buf, header);
         PushAttrs::new(buf)
@@ -38854,23 +39234,23 @@ impl<'r> OpGettfilterDo<'r> {
     pub fn into_encoder(self) -> PushAttrs<RequestBuf<'r>> {
         PushAttrs::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> (Tcmsg, IterableAttrs<'a>) {
-        let (header, attrs) = buf.split_at(buf.len().min(Tcmsg::len()));
+    pub fn decode_request<'a>(buf: &'a [u8]) -> (TcmsgFilter, IterableAttrs<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(TcmsgFilter::len()));
         (
-            Tcmsg::new_from_slice(header).unwrap_or_default(),
+            TcmsgFilter::new_from_slice(header).unwrap_or_default(),
             IterableAttrs::with_loc(attrs, buf.as_ptr() as usize),
         )
     }
-    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Tcmsg) {
+    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &TcmsgFilter) {
         prev.as_vec_mut().extend(header.as_slice());
     }
-    pub fn header(&self) -> &Tcmsg {
+    pub fn header(&self) -> &TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice(&self.request.buf()[pos..])
+        TcmsgFilter::from_slice(&self.request.buf()[pos..])
     }
-    pub fn header_mut(&mut self) -> &mut Tcmsg {
+    pub fn header_mut(&mut self) -> &mut TcmsgFilter {
         let pos = self.request.pos;
-        Tcmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+        TcmsgFilter::from_slice_mut(&mut self.request.buf_mut()[pos..])
     }
 }
 impl NetlinkRequest for OpGettfilterDo<'_> {
@@ -38886,7 +39266,7 @@ impl NetlinkRequest for OpGettfilterDo<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = (Tcmsg, IterableAttrs<'buf>);
+    type ReplyType<'buf> = (TcmsgFilter, IterableAttrs<'buf>);
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -39406,21 +39786,21 @@ impl<'buf> Request<'buf> {
         res
     }
     #[doc = "Get / dump tc filter information.\n\nRequest attributes:\n- [.push_kind()](PushAttrs::push_kind)\n- [.nested_options_basic()](PushAttrs::nested_options_basic)\n- [.nested_options_bpf()](PushAttrs::nested_options_bpf)\n- [.nested_options_bfifo()](PushAttrs::nested_options_bfifo)\n- [.nested_options_cake()](PushAttrs::nested_options_cake)\n- [.nested_options_cbs()](PushAttrs::nested_options_cbs)\n- [.nested_options_cgroup()](PushAttrs::nested_options_cgroup)\n- [.nested_options_choke()](PushAttrs::nested_options_choke)\n- [.nested_options_clsact()](PushAttrs::nested_options_clsact)\n- [.nested_options_codel()](PushAttrs::nested_options_codel)\n- [.nested_options_drr()](PushAttrs::nested_options_drr)\n- [.nested_options_dualpi2()](PushAttrs::nested_options_dualpi2)\n- [.nested_options_etf()](PushAttrs::nested_options_etf)\n- [.nested_options_ets()](PushAttrs::nested_options_ets)\n- [.nested_options_flow()](PushAttrs::nested_options_flow)\n- [.nested_options_flower()](PushAttrs::nested_options_flower)\n- [.nested_options_fq()](PushAttrs::nested_options_fq)\n- [.nested_options_fq_codel()](PushAttrs::nested_options_fq_codel)\n- [.nested_options_fq_pie()](PushAttrs::nested_options_fq_pie)\n- [.nested_options_fw()](PushAttrs::nested_options_fw)\n- [.nested_options_gred()](PushAttrs::nested_options_gred)\n- [.nested_options_hfsc()](PushAttrs::nested_options_hfsc)\n- [.nested_options_hhf()](PushAttrs::nested_options_hhf)\n- [.nested_options_htb()](PushAttrs::nested_options_htb)\n- [.nested_options_ingress()](PushAttrs::nested_options_ingress)\n- [.nested_options_matchall()](PushAttrs::nested_options_matchall)\n- [.nested_options_mq()](PushAttrs::nested_options_mq)\n- [.nested_options_mqprio()](PushAttrs::nested_options_mqprio)\n- [.nested_options_multiq()](PushAttrs::nested_options_multiq)\n- [.nested_options_netem()](PushAttrs::nested_options_netem)\n- [.nested_options_pfifo()](PushAttrs::nested_options_pfifo)\n- [.nested_options_pfifo_fast()](PushAttrs::nested_options_pfifo_fast)\n- [.nested_options_pfifo_head_drop()](PushAttrs::nested_options_pfifo_head_drop)\n- [.nested_options_pie()](PushAttrs::nested_options_pie)\n- [.nested_options_plug()](PushAttrs::nested_options_plug)\n- [.nested_options_prio()](PushAttrs::nested_options_prio)\n- [.nested_options_qfq()](PushAttrs::nested_options_qfq)\n- [.nested_options_red()](PushAttrs::nested_options_red)\n- [.nested_options_route()](PushAttrs::nested_options_route)\n- [.nested_options_sfb()](PushAttrs::nested_options_sfb)\n- [.nested_options_sfq()](PushAttrs::nested_options_sfq)\n- [.nested_options_taprio()](PushAttrs::nested_options_taprio)\n- [.nested_options_tbf()](PushAttrs::nested_options_tbf)\n- [.nested_options_u32()](PushAttrs::nested_options_u32)\n- [.push_rate()](PushAttrs::push_rate)\n- [.push_chain()](PushAttrs::push_chain)\n- [.push_ingress_block()](PushAttrs::push_ingress_block)\n- [.push_egress_block()](PushAttrs::push_egress_block)\n\n"]
-    pub fn op_newtfilter_do(self, header: &Tcmsg) -> OpNewtfilterDo<'buf> {
+    pub fn op_newtfilter_do(self, header: &TcmsgFilter) -> OpNewtfilterDo<'buf> {
         let mut res = OpNewtfilterDo::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-newtfilter-do", OpNewtfilterDo::lookup);
         res
     }
     #[doc = "Get / dump tc filter information.\n\nRequest attributes:\n- [.push_kind()](PushAttrs::push_kind)\n- [.push_chain()](PushAttrs::push_chain)\n\n"]
-    pub fn op_deltfilter_do(self, header: &Tcmsg) -> OpDeltfilterDo<'buf> {
+    pub fn op_deltfilter_do(self, header: &TcmsgFilter) -> OpDeltfilterDo<'buf> {
         let mut res = OpDeltfilterDo::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-deltfilter-do", OpDeltfilterDo::lookup);
         res
     }
     #[doc = "Get / dump tc filter information.\n\nRequest attributes:\n- [.push_chain()](PushAttrs::push_chain)\n- [.push_dump_flags()](PushAttrs::push_dump_flags)\n\nReply attributes:\n- [.get_kind()](IterableAttrs::get_kind)\n- [.get_options()](IterableAttrs::get_options)\n- [.get_stats()](IterableAttrs::get_stats)\n- [.get_xstats()](IterableAttrs::get_xstats)\n- [.get_rate()](IterableAttrs::get_rate)\n- [.get_fcnt()](IterableAttrs::get_fcnt)\n- [.get_stats2()](IterableAttrs::get_stats2)\n- [.get_stab()](IterableAttrs::get_stab)\n- [.get_chain()](IterableAttrs::get_chain)\n- [.get_ingress_block()](IterableAttrs::get_ingress_block)\n- [.get_egress_block()](IterableAttrs::get_egress_block)\n\n"]
-    pub fn op_gettfilter_dump(self, header: &Tcmsg) -> OpGettfilterDump<'buf> {
+    pub fn op_gettfilter_dump(self, header: &TcmsgFilter) -> OpGettfilterDump<'buf> {
         let mut res = OpGettfilterDump::new(self, header);
         res.request.do_writeback(
             res.protocol(),
@@ -39430,7 +39810,7 @@ impl<'buf> Request<'buf> {
         res
     }
     #[doc = "Get / dump tc filter information.\n\nRequest attributes:\n- [.push_kind()](PushAttrs::push_kind)\n- [.push_chain()](PushAttrs::push_chain)\n\nReply attributes:\n- [.get_kind()](IterableAttrs::get_kind)\n- [.get_options()](IterableAttrs::get_options)\n- [.get_stats()](IterableAttrs::get_stats)\n- [.get_xstats()](IterableAttrs::get_xstats)\n- [.get_rate()](IterableAttrs::get_rate)\n- [.get_fcnt()](IterableAttrs::get_fcnt)\n- [.get_stats2()](IterableAttrs::get_stats2)\n- [.get_stab()](IterableAttrs::get_stab)\n- [.get_chain()](IterableAttrs::get_chain)\n- [.get_ingress_block()](IterableAttrs::get_ingress_block)\n- [.get_egress_block()](IterableAttrs::get_egress_block)\n\n"]
-    pub fn op_gettfilter_do(self, header: &Tcmsg) -> OpGettfilterDo<'buf> {
+    pub fn op_gettfilter_do(self, header: &TcmsgFilter) -> OpGettfilterDo<'buf> {
         let mut res = OpGettfilterDo::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-gettfilter-do", OpGettfilterDo::lookup);
