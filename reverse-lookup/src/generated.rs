@@ -52,6 +52,94 @@ impl Debug for ReverseLookup {
             Protocol::Raw { protonum, .. } => {
                 if protonum == 0u16 {
                     let pat = (value, request_value, is_dump);
+                    #[cfg(feature = "rt-route")]
+                    if let (26u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpGetrouteDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (26u16, None, true) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (24u16, Some(26u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpGetrouteDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (24u16, Some(26u16), true) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (26u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpGetrouteDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (26u16, None, false) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (24u16, Some(26u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpGetrouteDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (24u16, Some(26u16), false) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (24u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpNewrouteDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (24u16, None, false) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (24u16, Some(24u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpNewrouteDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (24u16, Some(24u16), false) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (25u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpDelrouteDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (25u16, None, false) = pat {
+                        return consider(fmt, "rt-route");
+                    }
+                    #[cfg(feature = "rt-route")]
+                    if let (25u16, Some(25u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_route::OpDelrouteDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-route"))]
+                    if let (25u16, Some(25u16), false) = pat {
+                        return consider(fmt, "rt-route");
+                    }
                     #[cfg(feature = "rt-addr")]
                     if let (20u16, None, false) = pat {
                         return Debug::fmt(
@@ -316,6 +404,72 @@ impl Debug for ReverseLookup {
                     if let (92u16, Some(94u16), false) = pat {
                         return consider(fmt, "rt-link");
                     }
+                    #[cfg(feature = "rt-rule")]
+                    if let (32u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_rule::OpNewruleDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-rule"))]
+                    if let (32u16, None, false) = pat {
+                        return consider(fmt, "rt-rule");
+                    }
+                    #[cfg(feature = "rt-rule")]
+                    if let (32u16, Some(32u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_rule::OpNewruleDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-rule"))]
+                    if let (32u16, Some(32u16), false) = pat {
+                        return consider(fmt, "rt-rule");
+                    }
+                    #[cfg(feature = "rt-rule")]
+                    if let (33u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_rule::OpDelruleDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-rule"))]
+                    if let (33u16, None, false) = pat {
+                        return consider(fmt, "rt-rule");
+                    }
+                    #[cfg(feature = "rt-rule")]
+                    if let (33u16, Some(33u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_rule::OpDelruleDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-rule"))]
+                    if let (33u16, Some(33u16), false) = pat {
+                        return consider(fmt, "rt-rule");
+                    }
+                    #[cfg(feature = "rt-rule")]
+                    if let (34u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_rule::OpGetruleDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-rule"))]
+                    if let (34u16, None, true) = pat {
+                        return consider(fmt, "rt-rule");
+                    }
+                    #[cfg(feature = "rt-rule")]
+                    if let (32u16, Some(34u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_rule::OpGetruleDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-rule"))]
+                    if let (32u16, Some(34u16), true) = pat {
+                        return consider(fmt, "rt-rule");
+                    }
                     #[cfg(feature = "rt-neigh")]
                     if let (28u16, None, false) = pat {
                         return Debug::fmt(
@@ -447,160 +601,6 @@ impl Debug for ReverseLookup {
                     #[cfg(not(feature = "rt-neigh"))]
                     if let (67u16, Some(67u16), false) = pat {
                         return consider(fmt, "rt-neigh");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (26u16, None, true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpGetrouteDump::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (26u16, None, true) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (24u16, Some(26u16), true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpGetrouteDump::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (24u16, Some(26u16), true) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (26u16, None, false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpGetrouteDo::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (26u16, None, false) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (24u16, Some(26u16), false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpGetrouteDo::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (24u16, Some(26u16), false) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (24u16, None, false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpNewrouteDo::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (24u16, None, false) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (24u16, Some(24u16), false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpNewrouteDo::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (24u16, Some(24u16), false) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (25u16, None, false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpDelrouteDo::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (25u16, None, false) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-route")]
-                    if let (25u16, Some(25u16), false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_route::OpDelrouteDo::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-route"))]
-                    if let (25u16, Some(25u16), false) = pat {
-                        return consider(fmt, "rt-route");
-                    }
-                    #[cfg(feature = "rt-rule")]
-                    if let (32u16, None, false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_rule::OpNewruleDo::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-rule"))]
-                    if let (32u16, None, false) = pat {
-                        return consider(fmt, "rt-rule");
-                    }
-                    #[cfg(feature = "rt-rule")]
-                    if let (32u16, Some(32u16), false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_rule::OpNewruleDo::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-rule"))]
-                    if let (32u16, Some(32u16), false) = pat {
-                        return consider(fmt, "rt-rule");
-                    }
-                    #[cfg(feature = "rt-rule")]
-                    if let (33u16, None, false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_rule::OpDelruleDo::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-rule"))]
-                    if let (33u16, None, false) = pat {
-                        return consider(fmt, "rt-rule");
-                    }
-                    #[cfg(feature = "rt-rule")]
-                    if let (33u16, Some(33u16), false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_rule::OpDelruleDo::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-rule"))]
-                    if let (33u16, Some(33u16), false) = pat {
-                        return consider(fmt, "rt-rule");
-                    }
-                    #[cfg(feature = "rt-rule")]
-                    if let (34u16, None, true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_rule::OpGetruleDump::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-rule"))]
-                    if let (34u16, None, true) = pat {
-                        return consider(fmt, "rt-rule");
-                    }
-                    #[cfg(feature = "rt-rule")]
-                    if let (32u16, Some(34u16), true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::rt_rule::OpGetruleDump::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "rt-rule"))]
-                    if let (32u16, Some(34u16), true) = pat {
-                        return consider(fmt, "rt-rule");
                     }
                     #[cfg(feature = "tc")]
                     if let (36u16, None, false) = pat {
@@ -910,6 +910,144 @@ impl Debug for ReverseLookup {
                     if let (100u16, Some(102u16), false) = pat {
                         return consider(fmt, "tc");
                     }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpNewnexthopDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, Some(104u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpNewnexthopDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, Some(104u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (105u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpDelnexthopDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (105u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (105u16, Some(105u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpDelnexthopDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (105u16, Some(105u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (106u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (106u16, None, true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, Some(106u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, Some(106u16), true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (106u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (106u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, Some(106u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, Some(106u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (118u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDump::decode_request(
+                                buf,
+                            ),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (118u16, None, true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (116u16, Some(118u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDump::decode_reply(
+                                buf,
+                            ),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (116u16, Some(118u16), true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (118u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDo::decode_request(
+                                buf,
+                            ),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (118u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (116u16, Some(118u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (116u16, Some(118u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
                     write!(
                         fmt,
                         "(Unknown operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
@@ -1031,72 +1169,6 @@ impl Debug for ReverseLookup {
                 }
                 if protonum == 12u16 {
                     let pat = (value, request_value, is_dump);
-                    #[cfg(feature = "conntrack")]
-                    if let (257u16, None, true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::conntrack::OpGetDump::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "conntrack"))]
-                    if let (257u16, None, true) = pat {
-                        return consider(fmt, "conntrack");
-                    }
-                    #[cfg(feature = "conntrack")]
-                    if let (256u16, Some(257u16), true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::conntrack::OpGetDump::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "conntrack"))]
-                    if let (256u16, Some(257u16), true) = pat {
-                        return consider(fmt, "conntrack");
-                    }
-                    #[cfg(feature = "conntrack")]
-                    if let (257u16, None, false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::conntrack::OpGetDo::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "conntrack"))]
-                    if let (257u16, None, false) = pat {
-                        return consider(fmt, "conntrack");
-                    }
-                    #[cfg(feature = "conntrack")]
-                    if let (256u16, Some(257u16), false) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::conntrack::OpGetDo::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "conntrack"))]
-                    if let (256u16, Some(257u16), false) = pat {
-                        return consider(fmt, "conntrack");
-                    }
-                    #[cfg(feature = "conntrack")]
-                    if let (260u16, None, true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::conntrack::OpGetStatsDump::decode_request(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "conntrack"))]
-                    if let (260u16, None, true) = pat {
-                        return consider(fmt, "conntrack");
-                    }
-                    #[cfg(feature = "conntrack")]
-                    if let (260u16, Some(260u16), true) = pat {
-                        return Debug::fmt(
-                            &netlink_bindings::conntrack::OpGetStatsDump::decode_reply(buf),
-                            fmt,
-                        );
-                    }
-                    #[cfg(not(feature = "conntrack"))]
-                    if let (260u16, Some(260u16), true) = pat {
-                        return consider(fmt, "conntrack");
-                    }
                     #[cfg(feature = "nftables")]
                     if let (16u16, None, false) = pat {
                         return Debug::fmt(
@@ -2086,6 +2158,72 @@ impl Debug for ReverseLookup {
                     #[cfg(not(feature = "nftables"))]
                     if let (2816u16, Some(2816u16), false) = pat {
                         return consider(fmt, "nftables");
+                    }
+                    #[cfg(feature = "conntrack")]
+                    if let (257u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::conntrack::OpGetDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "conntrack"))]
+                    if let (257u16, None, true) = pat {
+                        return consider(fmt, "conntrack");
+                    }
+                    #[cfg(feature = "conntrack")]
+                    if let (256u16, Some(257u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::conntrack::OpGetDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "conntrack"))]
+                    if let (256u16, Some(257u16), true) = pat {
+                        return consider(fmt, "conntrack");
+                    }
+                    #[cfg(feature = "conntrack")]
+                    if let (257u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::conntrack::OpGetDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "conntrack"))]
+                    if let (257u16, None, false) = pat {
+                        return consider(fmt, "conntrack");
+                    }
+                    #[cfg(feature = "conntrack")]
+                    if let (256u16, Some(257u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::conntrack::OpGetDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "conntrack"))]
+                    if let (256u16, Some(257u16), false) = pat {
+                        return consider(fmt, "conntrack");
+                    }
+                    #[cfg(feature = "conntrack")]
+                    if let (260u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::conntrack::OpGetStatsDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "conntrack"))]
+                    if let (260u16, None, true) = pat {
+                        return consider(fmt, "conntrack");
+                    }
+                    #[cfg(feature = "conntrack")]
+                    if let (260u16, Some(260u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::conntrack::OpGetStatsDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "conntrack"))]
+                    if let (260u16, Some(260u16), true) = pat {
+                        return consider(fmt, "conntrack");
                     }
                     write!(
                         fmt,
@@ -5839,6 +5977,18 @@ impl Debug for ReverseLookup {
 pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str> {
     let mut res = Vec::new();
     if protonum == 0u16 {
+        if request_value == 26u16 {
+            res.push(stringify!(rt_route::OpGetrouteDump));
+        }
+        if request_value == 26u16 {
+            res.push(stringify!(rt_route::OpGetrouteDo));
+        }
+        if request_value == 24u16 {
+            res.push(stringify!(rt_route::OpNewrouteDo));
+        }
+        if request_value == 25u16 {
+            res.push(stringify!(rt_route::OpDelrouteDo));
+        }
         if request_value == 20u16 {
             res.push(stringify!(rt_addr::OpNewaddrDo));
         }
@@ -5875,6 +6025,15 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         if request_value == 94u16 {
             res.push(stringify!(rt_link::OpGetstatsDo));
         }
+        if request_value == 32u16 {
+            res.push(stringify!(rt_rule::OpNewruleDo));
+        }
+        if request_value == 33u16 {
+            res.push(stringify!(rt_rule::OpDelruleDo));
+        }
+        if request_value == 34u16 {
+            res.push(stringify!(rt_rule::OpGetruleDump));
+        }
         if request_value == 28u16 {
             res.push(stringify!(rt_neigh::OpNewneighDo));
         }
@@ -5892,27 +6051,6 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         }
         if request_value == 67u16 {
             res.push(stringify!(rt_neigh::OpSetneightblDo));
-        }
-        if request_value == 26u16 {
-            res.push(stringify!(rt_route::OpGetrouteDump));
-        }
-        if request_value == 26u16 {
-            res.push(stringify!(rt_route::OpGetrouteDo));
-        }
-        if request_value == 24u16 {
-            res.push(stringify!(rt_route::OpNewrouteDo));
-        }
-        if request_value == 25u16 {
-            res.push(stringify!(rt_route::OpDelrouteDo));
-        }
-        if request_value == 32u16 {
-            res.push(stringify!(rt_rule::OpNewruleDo));
-        }
-        if request_value == 33u16 {
-            res.push(stringify!(rt_rule::OpDelruleDo));
-        }
-        if request_value == 34u16 {
-            res.push(stringify!(rt_rule::OpGetruleDump));
         }
         if request_value == 36u16 {
             res.push(stringify!(tc::OpNewqdiscDo));
@@ -5956,6 +6094,24 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         if request_value == 102u16 {
             res.push(stringify!(tc::OpGetchainDo));
         }
+        if request_value == 104u16 {
+            res.push(stringify!(rt_nexthop::OpNewnexthopDo));
+        }
+        if request_value == 105u16 {
+            res.push(stringify!(rt_nexthop::OpDelnexthopDo));
+        }
+        if request_value == 106u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopDump));
+        }
+        if request_value == 106u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopDo));
+        }
+        if request_value == 118u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopbucketDump));
+        }
+        if request_value == 118u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopbucketDo));
+        }
     }
     if protonum == 4u16 {
         if request_value == 20u16 {
@@ -5969,15 +6125,6 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         }
     }
     if protonum == 12u16 {
-        if request_value == 257u16 {
-            res.push(stringify!(conntrack::OpGetDump));
-        }
-        if request_value == 257u16 {
-            res.push(stringify!(conntrack::OpGetDo));
-        }
-        if request_value == 260u16 {
-            res.push(stringify!(conntrack::OpGetStatsDump));
-        }
         if request_value == 16u16 {
             res.push(stringify!(nftables::OpBatchBeginDo));
         }
@@ -6112,6 +6259,15 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         }
         if request_value == 2816u16 {
             res.push(stringify!(nftables::OpGetcompatDo));
+        }
+        if request_value == 257u16 {
+            res.push(stringify!(conntrack::OpGetDump));
+        }
+        if request_value == 257u16 {
+            res.push(stringify!(conntrack::OpGetDo));
+        }
+        if request_value == 260u16 {
+            res.push(stringify!(conntrack::OpGetStatsDump));
         }
     }
     res

@@ -6534,7 +6534,7 @@ pub enum LinkinfoBondAttrs<'a> {
     PeerNotifDelay(u32),
     AdLacpActive(u8),
     MissedMax(u8),
-    NsIp6Target(IterableArrayBinary<'a>),
+    NsIp6Target(IterableArrayIpv6Addr<'a>),
     CoupledControl(u8),
     BroadcastNeigh(u8),
     LacpStrict(u8),
@@ -6992,7 +6992,7 @@ impl<'a> IterableLinkinfoBondAttrs<'a> {
     }
     pub fn get_ns_ip6_target(
         &self,
-    ) -> Result<ArrayIterable<IterableArrayBinary<'a>, &'a [u8]>, ErrorContext> {
+    ) -> Result<ArrayIterable<IterableArrayIpv6Addr<'a>, std::net::Ipv6Addr>, ErrorContext> {
         for attr in self.clone() {
             if let Ok(LinkinfoBondAttrs::NsIp6Target(val)) = attr {
                 return Ok(ArrayIterable::new(val));
@@ -7094,12 +7094,12 @@ impl<'a> Iterator for IterableArrayIpv4Addr<'a> {
     }
 }
 #[derive(Clone, Copy, Default)]
-pub struct IterableArrayBinary<'a> {
+pub struct IterableArrayIpv6Addr<'a> {
     buf: &'a [u8],
     pos: usize,
     orig_loc: usize,
 }
-impl<'a> IterableArrayBinary<'a> {
+impl<'a> IterableArrayIpv6Addr<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
         Self {
             buf,
@@ -7111,22 +7111,24 @@ impl<'a> IterableArrayBinary<'a> {
         self.buf
     }
 }
-impl<'a> Iterator for IterableArrayBinary<'a> {
-    type Item = Result<&'a [u8], ErrorContext>;
+impl<'a> Iterator for IterableArrayIpv6Addr<'a> {
+    type Item = Result<std::net::Ipv6Addr, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
         }
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             {
-                let Some(res) = Some(next) else { break };
+                let Some(res) = parse_u128(next).map(Ipv6Addr::from_bits) else {
+                    break;
+                };
                 return Some(Ok(res));
             }
         }
         let pos = self.pos;
         self.pos = self.buf.len();
         Some(Err(ErrorContext::new(
-            "Binary",
+            "Ipv6Addr",
             None,
             self.orig_loc,
             self.buf.as_ptr().wrapping_add(pos) as usize,
@@ -7364,7 +7366,7 @@ impl<'a> Iterator for IterableLinkinfoBondAttrs<'a> {
                     val
                 }),
                 31u16 => LinkinfoBondAttrs::NsIp6Target({
-                    let res = Some(IterableArrayBinary::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayIpv6Addr::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7403,7 +7405,7 @@ impl std::fmt::Debug for IterableArrayIpv4Addr<'_> {
             .finish()
     }
 }
-impl std::fmt::Debug for IterableArrayBinary<'_> {
+impl std::fmt::Debug for IterableArrayIpv6Addr<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list()
             .entries(self.clone().map(FlattenErrorContext))
@@ -12207,14 +12209,14 @@ impl IterableLinkinfoGreAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoGre6Attrs<'a> {
+pub enum LinkinfoGre6Attrs {
     Link(u32),
     Iflags(u16),
     Oflags(u16),
     Ikey(u32),
     Okey(u32),
-    Local(&'a [u8]),
-    Remote(&'a [u8]),
+    Local(std::net::Ipv6Addr),
+    Remote(std::net::Ipv6Addr),
     Ttl(u8),
     EncapLimit(u8),
     Flowinfo(u32),
@@ -12306,7 +12308,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -12321,7 +12323,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -12547,7 +12549,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
         ))
     }
 }
-impl LinkinfoGre6Attrs<'_> {
+impl LinkinfoGre6Attrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGre6Attrs<'a> {
         IterableLinkinfoGre6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -12574,7 +12576,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
-    type Item = Result<LinkinfoGre6Attrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoGre6Attrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -12616,12 +12618,12 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
                     val
                 }),
                 6u16 => LinkinfoGre6Attrs::Local({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 7u16 => LinkinfoGre6Attrs::Remote({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -12704,7 +12706,7 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoGre6Attrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoGre6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGre6Attrs");
         let mut iter = IterableLinkinfoGre6Attrs::with_loc(&[], self.orig_loc);
@@ -13208,12 +13210,12 @@ impl IterableLinkinfoVtiAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoVti6Attrs<'a> {
+pub enum LinkinfoVti6Attrs {
     Link(u32),
     Ikey(u32),
     Okey(u32),
-    Local(&'a [u8]),
-    Remote(&'a [u8]),
+    Local(std::net::Ipv6Addr),
+    Remote(std::net::Ipv6Addr),
     Fwmark(u32),
 }
 impl<'a> IterableLinkinfoVti6Attrs<'a> {
@@ -13262,7 +13264,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13277,7 +13279,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13308,7 +13310,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
         ))
     }
 }
-impl LinkinfoVti6Attrs<'_> {
+impl LinkinfoVti6Attrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVti6Attrs<'a> {
         IterableLinkinfoVti6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -13335,7 +13337,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
-    type Item = Result<LinkinfoVti6Attrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoVti6Attrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -13367,12 +13369,12 @@ impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
                     val
                 }),
                 4u16 => LinkinfoVti6Attrs::Local({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => LinkinfoVti6Attrs::Remote({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13394,7 +13396,7 @@ impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoVti6Attrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoVti6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVti6Attrs");
         let mut iter = IterableLinkinfoVti6Attrs::with_loc(&[], self.orig_loc);
@@ -13496,14 +13498,14 @@ impl IterableLinkinfoVti6Attrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoGeneveAttrs<'a> {
+pub enum LinkinfoGeneveAttrs {
     Id(u32),
     Remote(std::net::Ipv4Addr),
     Ttl(u8),
     Tos(u8),
     Port(u16),
     CollectMetadata(()),
-    Remote6(&'a [u8]),
+    Remote6(std::net::Ipv6Addr),
     UdpCsum(u8),
     UdpZeroCsum6Tx(u8),
     UdpZeroCsum6Rx(u8),
@@ -13514,7 +13516,7 @@ pub enum LinkinfoGeneveAttrs<'a> {
     PortRange(IflaGenevePortRange),
     GroHint(()),
     Local(std::net::Ipv4Addr),
-    Local6(&'a [u8]),
+    Local6(std::net::Ipv6Addr),
 }
 impl<'a> IterableLinkinfoGeneveAttrs<'a> {
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -13607,7 +13609,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13772,7 +13774,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13788,7 +13790,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
         ))
     }
 }
-impl LinkinfoGeneveAttrs<'_> {
+impl LinkinfoGeneveAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGeneveAttrs<'a> {
         IterableLinkinfoGeneveAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -13836,7 +13838,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
-    type Item = Result<LinkinfoGeneveAttrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoGeneveAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -13879,7 +13881,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
                 }),
                 6u16 => LinkinfoGeneveAttrs::CollectMetadata(()),
                 7u16 => LinkinfoGeneveAttrs::Remote6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13926,7 +13928,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
                     val
                 }),
                 18u16 => LinkinfoGeneveAttrs::Local6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13943,7 +13945,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoGeneveAttrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoGeneveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGeneveAttrs");
         let mut iter = IterableLinkinfoGeneveAttrs::with_loc(&[], self.orig_loc);
@@ -14486,7 +14488,7 @@ impl IterableLinkinfoHsrAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoIptunAttrs<'a> {
+pub enum LinkinfoIptunAttrs {
     Link(u32),
     Local(std::net::IpAddr),
     Remote(std::net::IpAddr),
@@ -14497,7 +14499,7 @@ pub enum LinkinfoIptunAttrs<'a> {
     Flags(u16),
     Proto(u8),
     Pmtudisc(u8),
-    _6rdPrefix(&'a [u8]),
+    _6rdPrefix(std::net::Ipv6Addr),
     _6rdRelayPrefix(std::net::Ipv4Addr),
     _6rdPrefixlen(u16),
     _6rdRelayPrefixlen(u16),
@@ -14659,7 +14661,7 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_6rd_prefix(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_6rd_prefix(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -14810,7 +14812,7 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
         ))
     }
 }
-impl LinkinfoIptunAttrs<'_> {
+impl LinkinfoIptunAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoIptunAttrs<'a> {
         IterableLinkinfoIptunAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -14860,7 +14862,7 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
-    type Item = Result<LinkinfoIptunAttrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoIptunAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -14927,7 +14929,7 @@ impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
                     val
                 }),
                 11u16 => LinkinfoIptunAttrs::_6rdPrefix({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -14985,7 +14987,7 @@ impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoIptunAttrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoIptunAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIptunAttrs");
         let mut iter = IterableLinkinfoIptunAttrs::with_loc(&[], self.orig_loc);
@@ -15187,10 +15189,10 @@ impl IterableLinkinfoIptunAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoIp6tnlAttrs<'a> {
+pub enum LinkinfoIp6tnlAttrs {
     Link(u32),
-    Local(&'a [u8]),
-    Remote(&'a [u8]),
+    Local(std::net::Ipv6Addr),
+    Remote(std::net::Ipv6Addr),
     Ttl(u8),
     EncapLimit(u8),
     Flowinfo(u32),
@@ -15219,7 +15221,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -15234,7 +15236,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -15415,7 +15417,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
         ))
     }
 }
-impl LinkinfoIp6tnlAttrs<'_> {
+impl LinkinfoIp6tnlAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoIp6tnlAttrs<'a> {
         IterableLinkinfoIp6tnlAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -15442,7 +15444,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
-    type Item = Result<LinkinfoIp6tnlAttrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoIp6tnlAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -15464,12 +15466,12 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
                     val
                 }),
                 2u16 => LinkinfoIp6tnlAttrs::Local({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 3u16 => LinkinfoIp6tnlAttrs::Remote({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -15537,7 +15539,7 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoIp6tnlAttrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoIp6tnlAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIp6tnlAttrs");
         let mut iter = IterableLinkinfoIp6tnlAttrs::with_loc(&[], self.orig_loc);
@@ -20560,11 +20562,11 @@ impl<Prev: Pusher> PushArrayBinary<Prev> {
         }
         prev
     }
-    pub fn entry(mut self, value: &[u8]) -> Self {
+    pub fn entry(mut self, value: std::net::Ipv6Addr) -> Self {
         let index = self.counter;
         self.counter += 1;
-        push_header(self.as_vec_mut(), index, value.len() as u16);
-        self.as_vec_mut().extend(value);
+        push_header(self.as_vec_mut(), index, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
 }
@@ -21684,14 +21686,14 @@ impl<Prev: Pusher> PushLinkinfoGre6Attrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 6u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_remote(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 7u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_ttl(mut self, value: u8) -> Self {
@@ -21890,14 +21892,14 @@ impl<Prev: Pusher> PushLinkinfoVti6Attrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 4u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_remote(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 5u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_fwmark(mut self, value: u32) -> Self {
@@ -21970,9 +21972,9 @@ impl<Prev: Pusher> PushLinkinfoGeneveAttrs<Prev> {
         push_header(self.as_vec_mut(), 6u16, 0 as u16);
         self
     }
-    pub fn push_remote6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 7u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_udp_csum(mut self, value: u8) -> Self {
@@ -22023,9 +22025,9 @@ impl<Prev: Pusher> PushLinkinfoGeneveAttrs<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_local6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 18u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 18u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
 }
@@ -22200,9 +22202,9 @@ impl<Prev: Pusher> PushLinkinfoIptunAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_6rd_prefix(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 11u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_6rd_prefix(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_6rd_relay_prefix(mut self, value: std::net::Ipv4Addr) -> Self {
@@ -22290,14 +22292,14 @@ impl<Prev: Pusher> PushLinkinfoIp6tnlAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 2u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_remote(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 3u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_ttl(mut self, value: u8) -> Self {

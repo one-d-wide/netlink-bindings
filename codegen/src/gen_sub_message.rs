@@ -5,7 +5,7 @@ use syn::Ident;
 use crate::{
     gen_cstruct::struct_type,
     gen_iterable::iterable_name,
-    gen_utils::{kebab_to_rust, kebab_to_type, lifetime_needed_sub_message},
+    gen_utils::{attr_type_to_tokens, kebab_to_rust, kebab_to_type, lifetime_needed_sub_message},
     parse_spec::{AttrProp, AttrSet, Spec, SubMessage, SubMessageFormat},
     Context, WARNING,
 };
@@ -41,8 +41,15 @@ pub fn sub_message<'a>(
         .attributes
         .iter()
         .find(|attr| attr.name == *selector)
-        .and_then(|attr| attr.r#enum.clone())
-        .map(|enum_name| SelectorType::U32 { enum_name })
+        .and_then(|attr| {
+            attr.r#enum.clone().map(|enum_name| {
+                let (rust_type, _) = attr_type_to_tokens(&attr.r#type);
+                SelectorType::Integer {
+                    rust_type,
+                    enum_name,
+                }
+            })
+        })
         .unwrap_or(SelectorType::CStr);
 
     let sub = spec.find_sub_message(sub_message);
@@ -52,7 +59,10 @@ pub fn sub_message<'a>(
 
 #[derive(Debug, Clone)]
 pub enum SelectorType {
-    U32 { enum_name: String },
+    Integer {
+        rust_type: TokenStream,
+        enum_name: String,
+    },
     CStr,
 }
 
@@ -115,7 +125,7 @@ pub fn gen_sub(
     });
 
     let sel_type = match &sub_ctx.selector_type {
-        SelectorType::U32 { .. } => quote!(u32),
+        SelectorType::Integer { rust_type, .. } => rust_type.clone(),
         SelectorType::CStr => quote!(&'_ [u8]),
     };
 
@@ -163,10 +173,14 @@ pub fn gen_sub_attr(
     }
 
     let value: TokenStream = match selector_type {
-        SelectorType::U32 { enum_name } => {
+        SelectorType::Integer {
+            rust_type,
+            enum_name,
+            ..
+        } => {
             let enum_name = format_ident!("{}", kebab_to_type(enum_name));
             let value_name = format_ident!("{}", kebab_to_type(&sub_attr.value));
-            quote!(val if val == #enum_name::#value_name as u32)
+            quote!(val if val == #enum_name::#value_name as #rust_type)
         }
         SelectorType::CStr => {
             Literal::byte_string(sub_attr.value.clone().as_bytes()).into_token_stream()

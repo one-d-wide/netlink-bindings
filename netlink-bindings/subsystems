@@ -25,6 +25,7 @@ psp
 rt-addr
 rt-link
 rt-neigh
+rt-nexthop
 rt-route
 rt-rule
 sunrpc

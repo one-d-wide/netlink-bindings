@@ -5,7 +5,8 @@ use std::{
     time::Duration,
 };
 
-use quote::format_ident;
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
 use syn::Ident;
 
 use crate::{
@@ -262,4 +263,18 @@ pub fn lifetime_needed_sub_message(spec: &Spec, sub: &SubMessage) -> bool {
 
 pub const fn align_up(len: usize, alignment: usize) -> usize {
     ((len) + alignment - 1) & !(alignment - 1)
+}
+
+pub fn attr_type_to_tokens(r#type: &AttrType) -> (TokenStream, usize) {
+    match r#type {
+        AttrType::U8 => (quote!(u8), 1),
+        AttrType::U16 => (quote!(u16), 2),
+        AttrType::U32 => (quote!(u32), 4),
+        AttrType::U64 => (quote!(u64), 8),
+        AttrType::S8 => (quote!(i8), 1),
+        AttrType::S16 => (quote!(i16), 2),
+        AttrType::S32 => (quote!(i32), 4),
+        AttrType::S64 => (quote!(i64), 8),
+        r#type => unimplemented!("{:?}", r#type),
+    }
 }
