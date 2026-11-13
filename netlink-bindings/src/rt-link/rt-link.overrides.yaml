@@ -1,4 +1,16 @@
 definitions:
+  - name: ifla-vxlan-port-range
+    type: struct
+    members:
+      -
+        name: low
+        type: u16
+        byte-order: big-endian
+      -
+        name: high
+        type: u16
+        byte-order: big-endian
+
   - name: br-boolopt-multi
     members:
       -
@@ -56,3 +68,127 @@ attribute-sets:
       -
         name: vlan-protocol
         byte-order: big-endian
+
+  -
+    name: linkinfo-vxlan-attrs
+    name-prefix: ifla-vxlan-
+    attributes:
+      -
+        name: id
+        type: u32
+      -
+        name: group
+        type: u32
+        byte-order: big-endian
+        display-hint: ipv4
+      -
+        name: link
+        type: u32
+      -
+        name: local
+        type: u32
+        byte-order: big-endian
+        display-hint: ipv4
+      -
+        name: ttl
+        type: u8
+      -
+        name: tos
+        type: u8
+      -
+        name: learning
+        type: u8
+      -
+        name: ageing
+        type: u32
+      -
+        name: limit
+        type: u32
+      -
+        name: port-range
+        type: binary
+        struct: ifla-vxlan-port-range
+      -
+        name: proxy
+        type: u8
+      -
+        name: rsc
+        type: u8
+      -
+        name: l2miss
+        type: u8
+      -
+        name: l3miss
+        type: u8
+      -
+        name: port
+        type: u16
+        byte-order: big-endian
+      -
+        name: group6
+        type: binary
+        byte-order: big-endian
+        checks:
+          min-len: 16
+        display-hint: ipv6
+      -
+        name: local6
+        type: binary
+        byte-order: big-endian
+        checks:
+          min-len: 16
+        display-hint: ipv6
+      -
+        name: udp-csum
+        type: u8
+      -
+        name: udp-zero-csum6-tx
+        type: u8
+      -
+        name: udp-zero-csum6-rx
+        type: u8
+      -
+        name: remcsum-tx
+        type: u8
+      -
+        name: remcsum-rx
+        type: u8
+      -
+        name: gbp
+        type: flag
+      -
+        name: remcsum-nopartial
+        type: flag
+      -
+        name: collect-metadata
+        type: flag
+      -
+        name: label
+        type: u32
+        byte-order: big-endian
+      -
+        name: gpe
+        type: flag
+      -
+        name: ttl-inherit
+        type: flag
+      -
+        name: df
+        type: u8
+      -
+        name: vnifilter
+        type: u8
+      -
+        name: localbypass
+        type: u8
+      -
+        name: label-policy
+        type: u32
+
+sub-messages:
+  -
+    name: linkinfo-data-msg
+    formats:
+      -
+        value: vxlan
+        attribute-set: linkinfo-vxlan-attrs
