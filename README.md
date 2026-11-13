@@ -42,7 +42,7 @@ All [upstream specifications][list-of-specs] are supported as of Linux 7.3.
 [wireguard](./netlink-socket/examples/wireguard-setup.rs).
 - ✔️ compiles, testing needed: binder, dev-energymodel, devlink, dpll, drm-ras,
 ethtool, fou, handshake, lockd, mptcp_pm, netdev, net-shaper, nfsd, ovpn,
-ovs_datapath, ovs_flow, ovs_packet, ovs_vport, psp, rt-neigh, rt-rule, sunrpc,
+ovs_datapath, ovs_flow, ovs_packet, ovs_vport, psp, rt-neigh, rt-nsid, rt-rule, sunrpc,
 tcp_metrics, team, unix-diag.
 
 ## Installation

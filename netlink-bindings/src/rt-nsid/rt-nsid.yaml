@@ -1,0 +1,92 @@
+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
+---
+name: rt-nsid
+protocol: netlink-raw
+uapi-header: linux/net_namespace.h
+protonum: 0
+
+doc: >-
+  Network namespace id management over rtnetlink. Ids are relative to the
+  network namespace of the socket making the request, and are the values
+  reported by e.g. IFLA_LINK_NETNSID.
+
+definitions:
+  -
+    name: rtgenmsg
+    type: struct
+    members:
+      -
+        name: family
+        type: u8
+      -
+        name: pad
+        type: pad
+        len: 3
+
+attribute-sets:
+  -
+    name: nsid-attrs
+    name-prefix: netnsa-
+    attributes:
+      -
+        name: nsid
+        type: s32
+        doc: Id of the namespace, -1 if none is assigned
+      -
+        name: pid
+        type: u32
+        doc: Identify the target namespace by process id
+      -
+        name: fd
+        type: u32
+        doc: Identify the target namespace by file descriptor
+      -
+        name: target-nsid
+        type: s32
+        doc: Query / assign from the point of view of this namespace
+      -
+        name: current-nsid
+        type: s32
+
+operations:
+  enum-model: directional
+  fixed-header: rtgenmsg
+  name-prefix: rtm-
+  list:
+    -
+      name: newnsid
+      doc: Assign an id to a network namespace
+      attribute-set: nsid-attrs
+      do:
+        request:
+          value: 88
+          attributes:
+            - nsid
+            - pid
+            - fd
+            - target-nsid
+    -
+      name: getnsid
+      doc: Get / dump network namespace ids
+      attribute-set: nsid-attrs
+      do:
+        request:
+          value: 90
+          attributes:
+            - nsid
+            - pid
+            - fd
+            - target-nsid
+        reply:
+          value: 88
+          attributes: &nsid-reply
+            - nsid
+            - current-nsid
+      dump:
+        request:
+          value: 90
+          attributes:
+            - target-nsid
+        reply:
+          value: 88
+          attributes: *nsid-reply
