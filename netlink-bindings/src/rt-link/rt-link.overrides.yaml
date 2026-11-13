@@ -1,4 +1,16 @@
 definitions:
+  - name: ifla-vxlan-port-range
+    type: struct
+    members:
+      -
+        name: low
+        type: u16
+        byte-order: big-endian
+      -
+        name: high
+        type: u16
+        byte-order: big-endian
+
   - name: br-boolopt-multi
     members:
       -
@@ -28,10 +40,184 @@ definitions:
           local FDB entries installed by the bridge driver itself should only
           be added on VLAN 0
 
+  - name: if-oper-state
+    enum-name: if-oper-state
+    name-prefix: if-oper-
+    type: enum
+    header: linux/if.h
+    entries:
+      - unknown
+      - notpresent
+      - down
+      - lowerlayerdown
+      - testing
+      - dormant
+      - up
+
 attribute-sets:
+  -
+    name: link-attrs
+    attributes:
+      -
+        name: operstate
+        enum: if-oper-state
+
   -
     name: linkinfo-bridge-attrs
     attributes:
       -
         name: vlan-protocol
         byte-order: big-endian
+
+  -
+    name: linkinfo-vxlan-attrs
+    name-prefix: ifla-vxlan-
+    attributes:
+      -
+        name: id
+        type: u32
+      -
+        name: group
+        type: u32
+        byte-order: big-endian
+        display-hint: ipv4
+      -
+        name: link
+        type: u32
+      -
+        name: local
+        type: u32
+        byte-order: big-endian
+        display-hint: ipv4
+      -
+        name: ttl
+        type: u8
+      -
+        name: tos
+        type: u8
+      -
+        name: learning
+        type: u8
+      -
+        name: ageing
+        type: u32
+      -
+        name: limit
+        type: u32
+      -
+        name: port-range
+        type: binary
+        struct: ifla-vxlan-port-range
+      -
+        name: proxy
+        type: u8
+      -
+        name: rsc
+        type: u8
+      -
+        name: l2miss
+        type: u8
+      -
+        name: l3miss
+        type: u8
+      -
+        name: port
+        type: u16
+        byte-order: big-endian
+      -
+        name: group6
+        type: binary
+        byte-order: big-endian
+        checks:
+          min-len: 16
+        display-hint: ipv6
+      -
+        name: local6
+        type: binary
+        byte-order: big-endian
+        checks:
+          min-len: 16
+        display-hint: ipv6
+      -
+        name: udp-csum
+        type: u8
+      -
+        name: udp-zero-csum6-tx
+        type: u8
+      -
+        name: udp-zero-csum6-rx
+        type: u8
+      -
+        name: remcsum-tx
+        type: u8
+      -
+        name: remcsum-rx
+        type: u8
+      -
+        name: gbp
+        type: flag
+      -
+        name: remcsum-nopartial
+        type: flag
+      -
+        name: collect-metadata
+        type: flag
+      -
+        name: label
+        type: u32
+        byte-order: big-endian
+      -
+        name: gpe
+        type: flag
+      -
+        name: ttl-inherit
+        type: flag
+      -
+        name: df
+        type: u8
+      -
+        name: vnifilter
+        type: u8
+      -
+        name: localbypass
+        type: u8
+      -
+        name: label-policy
+        type: u32
+
+operations:
+  list:
+    -
+      name: newlinkprop
+      doc: >-
+        Add one or more alternative names (altname) to an existing link,
+        without a full link replace/update.
+      attribute-set: link-attrs
+      fixed-header: ifinfomsg
+      do:
+        request:
+          value: 108
+          attributes:
+            - ifname
+            - prop-list
+    -
+      name: dellinkprop
+      doc: >-
+        Remove one or more alternative names (altname) from an existing
+        link.
+      attribute-set: link-attrs
+      fixed-header: ifinfomsg
+      do:
+        request:
+          value: 109
+          attributes:
+            - ifname
+            - prop-list
+
+sub-messages:
+  -
+    name: linkinfo-data-msg
+    formats:
+      -
+        value: vxlan
+        attribute-set: linkinfo-vxlan-attrs
