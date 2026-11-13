@@ -9550,7 +9550,7 @@ impl IterableCableTest<'_> {
 #[derive(Clone)]
 pub enum CableTestNtf<'a> {
     Header(IterableHeader<'a>),
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     Status(u8),
     Nest(IterableCableNest<'a>),
 }
@@ -9570,7 +9570,7 @@ impl<'a> IterableCableTestNtf<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     pub fn get_status(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -20266,7 +20266,7 @@ impl<Prev: Pusher> PushCableTestNtf<Prev> {
             header_offset: Some(header_offset),
         }
     }
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     pub fn push_status(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 2u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
