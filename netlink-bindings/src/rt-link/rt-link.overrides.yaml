@@ -185,6 +185,35 @@ attribute-sets:
         name: label-policy
         type: u32
 
+operations:
+  list:
+    -
+      name: newlinkprop
+      doc: >-
+        Add one or more alternative names (altname) to an existing link,
+        without a full link replace/update.
+      attribute-set: link-attrs
+      fixed-header: ifinfomsg
+      do:
+        request:
+          value: 108
+          attributes:
+            - ifname
+            - prop-list
+    -
+      name: dellinkprop
+      doc: >-
+        Remove one or more alternative names (altname) from an existing
+        link.
+      attribute-set: link-attrs
+      fixed-header: ifinfomsg
+      do:
+        request:
+          value: 109
+          attributes:
+            - ifname
+            - prop-list
+
 sub-messages:
   -
     name: linkinfo-data-msg
