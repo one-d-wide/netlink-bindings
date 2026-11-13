@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "dpll";
 pub const PROTONAME_CSTR: &CStr = c"dpll";
 #[doc = "working modes a dpll can support, differentiates if and how dpll selects\none of its inputs to syntonize with it, valid values for DPLL_A_MODE\nattribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Mode {
     #[doc = "input can be only selected by sending a request to dpll\n"]
     Manual = 1,
@@ -35,7 +35,7 @@ impl Mode {
 }
 #[doc = "provides information of dpll device lock status, valid values for\nDPLL_A_LOCK_STATUS attribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum LockStatus {
     #[doc = "dpll was not yet locked to any valid input (or forced by setting\nDPLL_A_MODE to DPLL_MODE_DETACHED)\n"]
     Unlocked = 1,
@@ -59,7 +59,7 @@ impl LockStatus {
 }
 #[doc = "if previous status change was done due to a failure, this provides\ninformation of dpll device lock status error. Valid values for\nDPLL_A_LOCK_STATUS_ERROR attribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum LockStatusError {
     #[doc = "dpll device lock status was changed without any error\n"]
     None = 1,
@@ -83,7 +83,7 @@ impl LockStatusError {
 }
 #[doc = "level of quality of a clock device. This mainly applies when the dpll\nlock-status is DPLL_LOCK_STATUS_HOLDOVER. The current list is defined\naccording to the table 11-7 contained in ITU-T G.8264/Y.1364 document.\nOne may extend this list freely by other ITU-T defined clock qualities,\nor different ones defined by another standardization body (for those,\nplease use different prefix).\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ClockQualityLevel {
     ItuOpt1Prc = 1,
     ItuOpt1SsuA = 2,
@@ -113,7 +113,7 @@ impl ClockQualityLevel {
 pub const TEMP_DIVIDER: u64 = 1000u64;
 #[doc = "type of dpll, valid values for DPLL_A_TYPE attribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Type {
     #[doc = "dpll produces Pulse-Per-Second signal\n"]
     Pps = 1,
@@ -134,7 +134,7 @@ impl Type {
 }
 #[doc = "defines possible types of a pin, valid values for DPLL_A_PIN_TYPE\nattribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PinType {
     #[doc = "aggregates another layer of selectable pins\n"]
     Mux = 1,
@@ -164,7 +164,7 @@ impl PinType {
 }
 #[doc = "defines possible direction of a pin, valid values for\nDPLL_A_PIN_DIRECTION attribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PinDirection {
     #[doc = "pin used as a input of a signal\n"]
     Input = 1,
@@ -186,7 +186,7 @@ pub const PIN_FREQUENCY_77_5_KHZ: u64 = 77500u64;
 pub const PIN_FREQUENCY_10_MHZ: u64 = 10000000u64;
 #[doc = "defines possible states of a pin, valid values for DPLL_A_PIN_STATE\nattribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PinState {
     #[doc = "pin connected, active input of phase locked loop\n"]
     Connected = 1,
@@ -207,7 +207,7 @@ impl PinState {
 }
 #[doc = "defines possible operational states of a pin with respect to its parent\nDPLL device, valid values for DPLL_A_PIN_OPERSTATE attribute\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PinOperstate {
     #[doc = "pin is qualified and actively used by the DPLL\n"]
     Active = 1,
@@ -231,7 +231,7 @@ impl PinOperstate {
 }
 #[doc = "defines possible capabilities of a pin, valid flags on\nDPLL_A_PIN_CAPABILITIES attribute\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PinCapabilities {
     #[doc = "pin direction can be changed\n"]
     DirectionCanChange = 1 << 0,
@@ -259,7 +259,7 @@ pub const PHASE_OFFSET_DIVIDER: u64 = 1000u64;
 pub const PIN_MEASURED_FREQUENCY_DIVIDER: u64 = 1000u64;
 #[doc = "Allow control (enable/disable) and status checking over features.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FeatureState {
     #[doc = "feature shall be disabled\n"]
     Disable = 0,

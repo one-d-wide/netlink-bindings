@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "ethtool";
 pub const PROTONAME_CSTR: &CStr = c"ethtool";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum UdpTunnelType {
     Vxlan = 0,
     Geneve = 1,
@@ -34,7 +34,7 @@ impl UdpTunnelType {
 }
 #[doc = "common ethtool header flags\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HeaderFlags {
     #[doc = "use compact bitsets in reply\n"]
     CompactBitsets = 1 << 0,
@@ -55,7 +55,7 @@ impl HeaderFlags {
 }
 #[doc = "plug-in module firmware flashing status\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ModuleFwFlashStatus {
     #[doc = "The firmware flashing process has started.\n"]
     Started = 0,
@@ -79,7 +79,7 @@ impl ModuleFwFlashStatus {
 }
 #[doc = "\\\"groups of PSE extended states functions. IEEE 802.3-2022 33.2.4.4\nVariables\\\"\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum C33PseExtState {
     #[doc = "none\n"]
     None = 0,
@@ -117,7 +117,7 @@ impl C33PseExtState {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PhyUpstreamType {
     Mac = 0,
     Phy = 1,
@@ -132,7 +132,7 @@ impl PhyUpstreamType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TcpDataSplit {
     Unknown = 0,
     Disabled = 1,
@@ -150,7 +150,7 @@ impl TcpDataSplit {
 }
 #[doc = "Source of the hardware timestamp\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HwtstampSource {
     #[doc = "Hardware timestamp comes from a MAC or a device which has MAC and PHY\nintegrated\n"]
     Netdev = 1,
@@ -168,7 +168,7 @@ impl HwtstampSource {
 }
 #[doc = "PSE event list for the PSE controller\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PseEvent {
     #[doc = "PSE output current is too high\n"]
     PseEventOverCurrent = 1 << 0,
@@ -201,7 +201,7 @@ impl PseEvent {
 }
 #[doc = "RSS hash function transformations.\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum InputXfrm {
     #[doc = "XOR the corresponding source and destination fields of each specified\nprotocol. Both copies of the XOR\\'ed fields are fed into the RSS and\nRXHASH calculation. Note that this XORing reduces the input set entropy\nand could be exploited to reduce the RSS queue spread.\n"]
     SymXor = 1 << 0,
@@ -218,7 +218,7 @@ impl InputXfrm {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RxfhFields {
     L2da = 1 << 1,
     Vlan = 1 << 2,
@@ -9550,7 +9550,7 @@ impl IterableCableTest<'_> {
 #[derive(Clone)]
 pub enum CableTestNtf<'a> {
     Header(IterableHeader<'a>),
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     Status(u8),
     Nest(IterableCableNest<'a>),
 }
@@ -9570,7 +9570,7 @@ impl<'a> IterableCableTestNtf<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     pub fn get_status(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -20266,7 +20266,7 @@ impl<Prev: Pusher> PushCableTestNtf<Prev> {
             header_offset: Some(header_offset),
         }
     }
-    #[doc = "[STARTED]{#started}/\\_COMPLETE\n"]
+    #[doc = "[STARTED]{#started}/[COMPLETE]{#complete}\n"]
     pub fn push_status(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 2u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());

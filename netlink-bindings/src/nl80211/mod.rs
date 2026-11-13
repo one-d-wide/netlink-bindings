@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "nl80211";
 pub const PROTONAME_CSTR: &CStr = c"nl80211";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Commands {
     Unspec = 0,
     GetWiphy = 1,
@@ -339,7 +339,7 @@ impl Commands {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FeatureFlags {
     SkTxStatus = 1 << 0,
     HtIbss = 1 << 1,
@@ -414,7 +414,7 @@ impl FeatureFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ChannelType {
     NoHt = 0,
     Ht20 = 1,
@@ -433,7 +433,7 @@ impl ChannelType {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ProtocolFeatures {
     SplitWiphyDump = 1 << 0,
 }
@@ -446,7 +446,7 @@ impl ProtocolFeatures {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Iftype {
     Unspecified = 0,
     Adhoc = 1,
@@ -487,7 +487,7 @@ impl Iftype {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum StaFlag {
     Authorized = 1,
     ShortPreamble = 2,

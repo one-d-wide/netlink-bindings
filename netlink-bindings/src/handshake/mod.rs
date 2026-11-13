@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "handshake";
 pub const PROTONAME_CSTR: &CStr = c"handshake";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HandlerClass {
     None = 0,
     Tlshd = 1,
@@ -33,7 +33,7 @@ impl HandlerClass {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum MsgType {
     Unspec = 0,
     Clienthello = 1,
@@ -50,7 +50,7 @@ impl MsgType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Auth {
     Unspec = 0,
     Unauth = 1,

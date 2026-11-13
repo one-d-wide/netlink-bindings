@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "sunrpc";
 pub const PROTONAME_CSTR: &CStr = c"sunrpc";
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CacheType {
     IpMap = 1 << 0,
     UnixGid = 1 << 1,

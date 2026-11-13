@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "ovs_flow";
 pub const PROTONAME_CSTR: &CStr = c"ovs_flow";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OvsFragType {
     #[doc = "Packet is not a fragment.\n"]
     None = 0,
@@ -38,7 +38,7 @@ impl OvsFragType {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OvsUfidFlags {
     OmitKey = 1 << 0,
     OmitMask = 1 << 1,
@@ -56,7 +56,7 @@ impl OvsUfidFlags {
 }
 #[doc = "Data path hash algorithm for computing Datapath hash. The algorithm type\nonly specifies the fields in a flow will be used as part of the hash.\nEach datapath is free to use its own hash algorithm. The hash value will\nbe opaque to the user space daemon.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OvsHashAlg {
     OvsHashAlgL4 = 0,
 }
@@ -69,7 +69,7 @@ impl OvsHashAlg {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CtStateFlags {
     #[doc = "Beginning of a new connection.\n"]
     New = 1 << 0,

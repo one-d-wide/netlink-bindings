@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "ovpn";
 pub const PROTONAME_CSTR: &CStr = c"ovpn";
 pub const NONCE_TAIL_SIZE: u64 = 8u64;
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CipherAlg {
     None = 0,
     AesGcm = 1,
@@ -34,7 +34,7 @@ impl CipherAlg {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DelPeerReason {
     Teardown = 0,
     Userspace = 1,
@@ -55,7 +55,7 @@ impl DelPeerReason {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum KeySlot {
     Primary = 0,
     Secondary = 1,

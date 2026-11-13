@@ -19,7 +19,7 @@ pub const PROTONAME: &str = "wireguard";
 pub const PROTONAME_CSTR: &CStr = c"wireguard";
 pub const KEY_LEN: u64 = 32u64;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum WgdeviceFlags {
     ReplacePeers = 1 << 0,
 }
@@ -32,7 +32,7 @@ impl WgdeviceFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum WgpeerFlags {
     RemoveMe = 1 << 0,
     ReplaceAllowedips = 1 << 1,
@@ -49,7 +49,7 @@ impl WgpeerFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum WgallowedipFlags {
     RemoveMe = 1 << 0,
 }

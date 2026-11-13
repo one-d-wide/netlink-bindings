@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "mptcp_pm";
 pub const PROTONAME_CSTR: &CStr = c"mptcp_pm";
 #[doc = "Netlink MPTCP event types\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EventType {
     #[doc = "unused event\n"]
     Unspec = 0,

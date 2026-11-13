@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "rt-neigh";
 pub const PROTONAME_CSTR: &CStr = c"rt-neigh";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NudState {
     Incomplete = 1 << 0,
     Reachable = 1 << 1,
@@ -44,7 +44,7 @@ impl NudState {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NtfFlags {
     Use = 1 << 0,
     _Self = 1 << 1,
@@ -71,7 +71,7 @@ impl NtfFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NtfExtFlags {
     Managed = 1 << 0,
     Locked = 1 << 1,
@@ -88,7 +88,7 @@ impl NtfExtFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RtmType {
     Unspec = 0,
     Unicast = 1,

@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "unix-diag";
 pub const PROTONAME_CSTR: &CStr = c"unix-diag";
 pub const PROTONUM: u16 = 4u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ShowFlags {
     #[doc = "show name (not path)\n"]
     Name = 1 << 0,

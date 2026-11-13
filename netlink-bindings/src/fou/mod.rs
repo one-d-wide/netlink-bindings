@@ -16,7 +16,7 @@ use crate::{
 pub const PROTONAME: &str = "fou";
 pub const PROTONAME_CSTR: &CStr = c"fou";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EncapType {
     Unspec = 0,
     Direct = 1,

@@ -17,7 +17,7 @@ pub const PROTONAME: &str = "conntrack";
 pub const PROTONAME_CSTR: &CStr = c"conntrack";
 pub const PROTONUM: u16 = 12u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtTcpFlags {
     WindowScale = 1 << 0,
     SackPerm = 1 << 1,
@@ -44,7 +44,7 @@ impl NfCtTcpFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtTcpState {
     None = 0,
     SynSent = 1,
@@ -85,7 +85,7 @@ impl NfCtTcpState {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtSctpState {
     None = 0,
     Cloned = 1,
@@ -114,7 +114,7 @@ impl NfCtSctpState {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtStatus {
     Expected = 1 << 0,
     SeenReply = 1 << 1,

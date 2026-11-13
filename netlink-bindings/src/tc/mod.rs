@@ -19,7 +19,7 @@ pub const PROTONAME: &str = "tc";
 pub const PROTONAME_CSTR: &CStr = c"tc";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ClsFlags {
     SkipHw = 1 << 0,
     SkipSw = 1 << 1,
@@ -40,7 +40,7 @@ impl ClsFlags {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FlowerKeyCtrlFlags {
     Frag = 1 << 0,
     Firstfrag = 1 << 1,
@@ -63,7 +63,7 @@ impl FlowerKeyCtrlFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Dualpi2DropOverload {
     Overflow = 0,
     Drop = 1,
@@ -78,7 +78,7 @@ impl Dualpi2DropOverload {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Dualpi2DropEarly {
     DropDequeue = 0,
     DropEnqueue = 1,
@@ -93,7 +93,7 @@ impl Dualpi2DropEarly {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Dualpi2EcnMask {
     L4sEct = 1,
     ClaEct = 2,
@@ -110,7 +110,7 @@ impl Dualpi2EcnMask {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Dualpi2SplitGso {
     NoSplitGso = 0,
     SplitGso = 1,
