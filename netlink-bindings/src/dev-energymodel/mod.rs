@@ -226,7 +226,7 @@ impl<'a> std::fmt::Debug for IterablePerfDomain<'_> {
                 PerfDomain::PerfDomainId(val) => fmt.field("PerfDomainId", &val),
                 PerfDomain::Flags(val) => fmt.field(
                     "Flags",
-                    &FormatFlags(val.into(), PerfDomainFlags::from_value),
+                    &FormatFlags(val as u64, PerfDomainFlags::from_value),
                 ),
                 PerfDomain::Cpus(val) => fmt.field("Cpus", &val),
             };
@@ -705,7 +705,7 @@ impl<'a> std::fmt::Debug for IterablePerfState<'_> {
                 PerfState::Cost(val) => fmt.field("Cost", &val),
                 PerfState::Flags(val) => fmt.field(
                     "Flags",
-                    &FormatFlags(val.into(), PerfStateFlags::from_value),
+                    &FormatFlags(val as u64, PerfStateFlags::from_value),
                 ),
             };
         }

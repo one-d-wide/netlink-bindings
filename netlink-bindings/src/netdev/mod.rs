@@ -362,16 +362,16 @@ impl<'a> std::fmt::Debug for IterableDev<'_> {
                 Dev::Ifindex(val) => fmt.field("Ifindex", &val),
                 Dev::Pad(val) => fmt.field("Pad", &val),
                 Dev::XdpFeatures(val) => {
-                    fmt.field("XdpFeatures", &FormatFlags(val.into(), XdpAct::from_value))
+                    fmt.field("XdpFeatures", &FormatFlags(val as u64, XdpAct::from_value))
                 }
                 Dev::XdpZcMaxSegs(val) => fmt.field("XdpZcMaxSegs", &val),
                 Dev::XdpRxMetadataFeatures(val) => fmt.field(
                     "XdpRxMetadataFeatures",
-                    &FormatFlags(val.into(), XdpRxMetadata::from_value),
+                    &FormatFlags(val as u64, XdpRxMetadata::from_value),
                 ),
                 Dev::XskFeatures(val) => fmt.field(
                     "XskFeatures",
-                    &FormatFlags(val.into(), XskFlags::from_value),
+                    &FormatFlags(val as u64, XskFlags::from_value),
                 ),
             };
         }
@@ -1912,7 +1912,7 @@ impl std::fmt::Debug for IterableNapi<'_> {
                 Napi::IrqSuspendTimeout(val) => fmt.field("IrqSuspendTimeout", &val),
                 Napi::Threaded(val) => fmt.field(
                     "Threaded",
-                    &FormatEnum(val.into(), NapiThreaded::from_value),
+                    &FormatEnum(val as u64, NapiThreaded::from_value),
                 ),
             };
         }
@@ -2376,7 +2376,7 @@ impl<'a> std::fmt::Debug for IterableQueue<'_> {
                 Queue::Id(val) => fmt.field("Id", &val),
                 Queue::Ifindex(val) => fmt.field("Ifindex", &val),
                 Queue::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), QueueType::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, QueueType::from_value))
                 }
                 Queue::NapiId(val) => fmt.field("NapiId", &val),
                 Queue::Dmabuf(val) => fmt.field("Dmabuf", &val),
@@ -3298,11 +3298,11 @@ impl std::fmt::Debug for IterableQstats<'_> {
             match attr {
                 Qstats::Ifindex(val) => fmt.field("Ifindex", &val),
                 Qstats::QueueType(val) => {
-                    fmt.field("QueueType", &FormatEnum(val.into(), QueueType::from_value))
+                    fmt.field("QueueType", &FormatEnum(val as u64, QueueType::from_value))
                 }
                 Qstats::QueueId(val) => fmt.field("QueueId", &val),
                 Qstats::Scope(val) => {
-                    fmt.field("Scope", &FormatFlags(val.into(), QstatsScope::from_value))
+                    fmt.field("Scope", &FormatFlags(val as u64, QstatsScope::from_value))
                 }
                 Qstats::RxPackets(val) => fmt.field("RxPackets", &val),
                 Qstats::RxBytes(val) => fmt.field("RxBytes", &val),
@@ -3682,7 +3682,7 @@ impl std::fmt::Debug for IterableQueueId<'_> {
             match attr {
                 QueueId::Id(val) => fmt.field("Id", &val),
                 QueueId::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), QueueType::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, QueueType::from_value))
                 }
             };
         }

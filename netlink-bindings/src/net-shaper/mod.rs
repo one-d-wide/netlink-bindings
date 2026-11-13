@@ -378,7 +378,7 @@ impl<'a> std::fmt::Debug for IterableNetShaper<'_> {
             match attr {
                 NetShaper::Handle(val) => fmt.field("Handle", &val),
                 NetShaper::Metric(val) => {
-                    fmt.field("Metric", &FormatEnum(val.into(), Metric::from_value))
+                    fmt.field("Metric", &FormatEnum(val as u64, Metric::from_value))
                 }
                 NetShaper::BwMin(val) => fmt.field("BwMin", &val),
                 NetShaper::BwMax(val) => fmt.field("BwMax", &val),
@@ -621,7 +621,7 @@ impl std::fmt::Debug for IterableHandle<'_> {
             };
             match attr {
                 Handle::Scope(val) => {
-                    fmt.field("Scope", &FormatEnum(val.into(), Scope::from_value))
+                    fmt.field("Scope", &FormatEnum(val as u64, Scope::from_value))
                 }
                 Handle::Id(val) => fmt.field("Id", &val),
             };
@@ -1176,7 +1176,7 @@ impl std::fmt::Debug for IterableCaps<'_> {
             };
             match attr {
                 Caps::Ifindex(val) => fmt.field("Ifindex", &val),
-                Caps::Scope(val) => fmt.field("Scope", &FormatEnum(val.into(), Scope::from_value)),
+                Caps::Scope(val) => fmt.field("Scope", &FormatEnum(val as u64, Scope::from_value)),
                 Caps::SupportMetricBps(val) => fmt.field("SupportMetricBps", &val),
                 Caps::SupportMetricPps(val) => fmt.field("SupportMetricPps", &val),
                 Caps::SupportNesting(val) => fmt.field("SupportNesting", &val),

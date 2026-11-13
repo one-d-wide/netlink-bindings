@@ -678,32 +678,32 @@ impl<'a> std::fmt::Debug for IterableDpll<'_> {
                 Dpll::ModuleName(val) => fmt.field("ModuleName", &val),
                 Dpll::Pad(val) => fmt.field("Pad", &val),
                 Dpll::ClockId(val) => fmt.field("ClockId", &val),
-                Dpll::Mode(val) => fmt.field("Mode", &FormatEnum(val.into(), Mode::from_value)),
+                Dpll::Mode(val) => fmt.field("Mode", &FormatEnum(val as u64, Mode::from_value)),
                 Dpll::ModeSupported(val) => {
-                    fmt.field("ModeSupported", &FormatEnum(val.into(), Mode::from_value))
+                    fmt.field("ModeSupported", &FormatEnum(val as u64, Mode::from_value))
                 }
                 Dpll::LockStatus(val) => fmt.field(
                     "LockStatus",
-                    &FormatEnum(val.into(), LockStatus::from_value),
+                    &FormatEnum(val as u64, LockStatus::from_value),
                 ),
                 Dpll::Temp(val) => fmt.field("Temp", &val),
-                Dpll::Type(val) => fmt.field("Type", &FormatEnum(val.into(), Type::from_value)),
+                Dpll::Type(val) => fmt.field("Type", &FormatEnum(val as u64, Type::from_value)),
                 Dpll::LockStatusError(val) => fmt.field(
                     "LockStatusError",
-                    &FormatEnum(val.into(), LockStatusError::from_value),
+                    &FormatEnum(val as u64, LockStatusError::from_value),
                 ),
                 Dpll::ClockQualityLevel(val) => fmt.field(
                     "ClockQualityLevel",
-                    &FormatEnum(val.into(), ClockQualityLevel::from_value),
+                    &FormatEnum(val as u64, ClockQualityLevel::from_value),
                 ),
                 Dpll::PhaseOffsetMonitor(val) => fmt.field(
                     "PhaseOffsetMonitor",
-                    &FormatEnum(val.into(), FeatureState::from_value),
+                    &FormatEnum(val as u64, FeatureState::from_value),
                 ),
                 Dpll::PhaseOffsetAvgFactor(val) => fmt.field("PhaseOffsetAvgFactor", &val),
                 Dpll::FrequencyMonitor(val) => fmt.field(
                     "FrequencyMonitor",
-                    &FormatEnum(val.into(), FeatureState::from_value),
+                    &FormatEnum(val as u64, FeatureState::from_value),
                 ),
             };
         }
@@ -1631,10 +1631,10 @@ impl<'a> std::fmt::Debug for IterablePin<'_> {
                 Pin::BoardLabel(val) => fmt.field("BoardLabel", &val),
                 Pin::PanelLabel(val) => fmt.field("PanelLabel", &val),
                 Pin::PackageLabel(val) => fmt.field("PackageLabel", &val),
-                Pin::Type(val) => fmt.field("Type", &FormatEnum(val.into(), PinType::from_value)),
+                Pin::Type(val) => fmt.field("Type", &FormatEnum(val as u64, PinType::from_value)),
                 Pin::Direction(val) => fmt.field(
                     "Direction",
-                    &FormatEnum(val.into(), PinDirection::from_value),
+                    &FormatEnum(val as u64, PinDirection::from_value),
                 ),
                 Pin::Frequency(val) => fmt.field("Frequency", &val),
                 Pin::FrequencySupported(val) => fmt.field("FrequencySupported", &val),
@@ -1642,11 +1642,11 @@ impl<'a> std::fmt::Debug for IterablePin<'_> {
                 Pin::FrequencyMax(val) => fmt.field("FrequencyMax", &val),
                 Pin::Prio(val) => fmt.field("Prio", &val),
                 Pin::State(val) => {
-                    fmt.field("State", &FormatEnum(val.into(), PinState::from_value))
+                    fmt.field("State", &FormatEnum(val as u64, PinState::from_value))
                 }
                 Pin::Capabilities(val) => fmt.field(
                     "Capabilities",
-                    &FormatFlags(val.into(), PinCapabilities::from_value),
+                    &FormatFlags(val as u64, PinCapabilities::from_value),
                 ),
                 Pin::ParentDevice(val) => fmt.field("ParentDevice", &val),
                 Pin::ParentPin(val) => fmt.field("ParentPin", &val),
@@ -1666,7 +1666,7 @@ impl<'a> std::fmt::Debug for IterablePin<'_> {
                 Pin::MeasuredFrequency(val) => fmt.field("MeasuredFrequency", &val),
                 Pin::Operstate(val) => fmt.field(
                     "Operstate",
-                    &FormatEnum(val.into(), PinOperstate::from_value),
+                    &FormatEnum(val as u64, PinOperstate::from_value),
                 ),
             };
         }
@@ -2159,11 +2159,11 @@ impl std::fmt::Debug for IterablePinParentDevice<'_> {
                 PinParentDevice::ParentId(val) => fmt.field("ParentId", &val),
                 PinParentDevice::Direction(val) => fmt.field(
                     "Direction",
-                    &FormatEnum(val.into(), PinDirection::from_value),
+                    &FormatEnum(val as u64, PinDirection::from_value),
                 ),
                 PinParentDevice::Prio(val) => fmt.field("Prio", &val),
                 PinParentDevice::State(val) => {
-                    fmt.field("State", &FormatEnum(val.into(), PinState::from_value))
+                    fmt.field("State", &FormatEnum(val as u64, PinState::from_value))
                 }
                 PinParentDevice::PhaseOffset(val) => fmt.field("PhaseOffset", &val),
                 PinParentDevice::FractionalFrequencyOffset(val) => {
@@ -2174,7 +2174,7 @@ impl std::fmt::Debug for IterablePinParentDevice<'_> {
                 }
                 PinParentDevice::Operstate(val) => fmt.field(
                     "Operstate",
-                    &FormatEnum(val.into(), PinOperstate::from_value),
+                    &FormatEnum(val as u64, PinOperstate::from_value),
                 ),
             };
         }
@@ -2390,7 +2390,7 @@ impl std::fmt::Debug for IterablePinParentPin<'_> {
             match attr {
                 PinParentPin::ParentId(val) => fmt.field("ParentId", &val),
                 PinParentPin::State(val) => {
-                    fmt.field("State", &FormatEnum(val.into(), PinState::from_value))
+                    fmt.field("State", &FormatEnum(val as u64, PinState::from_value))
                 }
             };
         }
@@ -2746,7 +2746,7 @@ impl std::fmt::Debug for IterableReferenceSync<'_> {
             match attr {
                 ReferenceSync::Id(val) => fmt.field("Id", &val),
                 ReferenceSync::State(val) => {
-                    fmt.field("State", &FormatEnum(val.into(), PinState::from_value))
+                    fmt.field("State", &FormatEnum(val as u64, PinState::from_value))
                 }
             };
         }

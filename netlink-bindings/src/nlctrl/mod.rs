@@ -931,7 +931,7 @@ impl std::fmt::Debug for IterableOpAttrs<'_> {
             match attr {
                 OpAttrs::Id(val) => fmt.field("Id", &val),
                 OpAttrs::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), OpFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, OpFlags::from_value))
                 }
             };
         }
@@ -1332,7 +1332,7 @@ impl<'a> std::fmt::Debug for IterablePolicyAttrs<'_> {
             };
             match attr {
                 PolicyAttrs::Type(val) => {
-                    fmt.field("Type", &FormatEnum(val.into(), AttrType::from_value))
+                    fmt.field("Type", &FormatEnum(val as u64, AttrType::from_value))
                 }
                 PolicyAttrs::MinValueS(val) => fmt.field("MinValueS", &val),
                 PolicyAttrs::MaxValueS(val) => fmt.field("MaxValueS", &val),
@@ -1796,7 +1796,7 @@ impl<Prev: Pusher> PushCtrlAttrs<Prev> {
         PushArrayOpAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn array_mcast_groups(mut self) -> PushArrayMcastGroupAttrs<Self> {
@@ -1804,7 +1804,7 @@ impl<Prev: Pusher> PushCtrlAttrs<Prev> {
         PushArrayMcastGroupAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn nested_policy(mut self) -> PushPolicyAttrs<Self> {

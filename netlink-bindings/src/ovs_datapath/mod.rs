@@ -541,7 +541,7 @@ impl<'a> std::fmt::Debug for IterableDatapath<'_> {
                 Datapath::MegaflowStats(val) => fmt.field("MegaflowStats", &val),
                 Datapath::UserFeatures(val) => fmt.field(
                     "UserFeatures",
-                    &FormatFlags(val.into(), UserFeatures::from_value),
+                    &FormatFlags(val as u64, UserFeatures::from_value),
                 ),
                 Datapath::MasksCacheSize(val) => fmt.field("MasksCacheSize", &val),
                 Datapath::PerCpuPids(val) => fmt.field("PerCpuPids", &FormatHexdump(val)),

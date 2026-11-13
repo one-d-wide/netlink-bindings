@@ -588,13 +588,13 @@ impl std::fmt::Debug for StaFlagUpdate {
         fmt.debug_struct("StaFlagUpdate")
             .field(
                 "mask",
-                &FormatFlags(self.mask.into(), |val| {
+                &FormatFlags(self.mask as u64, |val| {
                     StaFlag::from_value(val.trailing_zeros().into())
                 }),
             )
             .field(
                 "set",
-                &FormatFlags(self.set.into(), |val| {
+                &FormatFlags(self.set as u64, |val| {
                     StaFlag::from_value(val.trailing_zeros().into())
                 }),
             )
@@ -7935,7 +7935,7 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::Ifindex(val) => fmt.field("Ifindex", &val),
                 Nl80211Attrs::Ifname(val) => fmt.field("Ifname", &val),
                 Nl80211Attrs::Iftype(val) => {
-                    fmt.field("Iftype", &FormatEnum(val.into(), Iftype::from_value))
+                    fmt.field("Iftype", &FormatEnum(val as u64, Iftype::from_value))
                 }
                 Nl80211Attrs::Mac(val) => fmt.field("Mac", &FormatMac(val)),
                 Nl80211Attrs::KeyData(val) => fmt.field("KeyData", &FormatHexdump(val)),
@@ -7976,7 +7976,7 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::WiphyFreq(val) => fmt.field("WiphyFreq", &val),
                 Nl80211Attrs::WiphyChannelType(val) => fmt.field(
                     "WiphyChannelType",
-                    &FormatEnum(val.into(), ChannelType::from_value),
+                    &FormatEnum(val as u64, ChannelType::from_value),
                 ),
                 Nl80211Attrs::KeyDefaultMgmt(val) => fmt.field("KeyDefaultMgmt", &val),
                 Nl80211Attrs::MgmtSubtype(val) => fmt.field("MgmtSubtype", &val),
@@ -7992,7 +7992,7 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::RegType(val) => fmt.field("RegType", &val),
                 Nl80211Attrs::SupportedCommands(val) => fmt.field(
                     "SupportedCommands",
-                    &MapFormatArray(val, |v| FormatEnum(v.into(), Commands::from_value)),
+                    &MapFormatArray(val, |v| FormatEnum(v as u64, Commands::from_value)),
                 ),
                 Nl80211Attrs::Frame(val) => fmt.field("Frame", &FormatHexdump(val)),
                 Nl80211Attrs::Ssid(val) => fmt.field("Ssid", &FormatHexdump(val)),
@@ -8104,7 +8104,7 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 Nl80211Attrs::DontWaitForAck(val) => fmt.field("DontWaitForAck", &val),
                 Nl80211Attrs::FeatureFlags(val) => fmt.field(
                     "FeatureFlags",
-                    &FormatFlags(val.into(), FeatureFlags::from_value),
+                    &FormatFlags(val as u64, FeatureFlags::from_value),
                 ),
                 Nl80211Attrs::ProbeRespOffload(val) => fmt.field("ProbeRespOffload", &val),
                 Nl80211Attrs::ProbeResp(val) => fmt.field("ProbeResp", &FormatHexdump(val)),
@@ -8141,7 +8141,7 @@ impl<'a> std::fmt::Debug for IterableNl80211Attrs<'_> {
                 }
                 Nl80211Attrs::ProtocolFeatures(val) => fmt.field(
                     "ProtocolFeatures",
-                    &FormatFlags(val.into(), ProtocolFeatures::from_value),
+                    &FormatFlags(val as u64, ProtocolFeatures::from_value),
                 ),
                 Nl80211Attrs::SplitWiphyDump(val) => fmt.field("SplitWiphyDump", &val),
                 Nl80211Attrs::DisableVht(val) => fmt.field("DisableVht", &val),
@@ -18597,7 +18597,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         PushArrayU32 {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_frame(mut self, value: &[u8]) -> Self {
@@ -18944,7 +18944,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         PushArrayIfCombinationAttributes {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn nested_software_iftypes(mut self) -> PushSupportedIftypes<Self> {
@@ -20287,7 +20287,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayFrequencyAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn array_rates(mut self) -> PushArrayBitrateAttrs<Self> {
@@ -20295,7 +20295,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayBitrateAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_ht_mcs_set(mut self, value: &[u8]) -> Self {
@@ -20333,7 +20333,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayIftypeDataAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_edmg_channels(mut self, value: &[u8]) -> Self {
@@ -20570,7 +20570,7 @@ impl<Prev: Pusher> PushFrequencyAttrs<Prev> {
         PushArrayWmmAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_no_he(mut self, value: &[u8]) -> Self {
@@ -20736,7 +20736,7 @@ impl<Prev: Pusher> PushIfCombinationAttributes<Prev> {
         PushArrayIfaceLimitAttributes {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_maxnum(mut self, value: u32) -> Self {
@@ -21127,7 +21127,7 @@ impl<Prev: Pusher> PushSarAttributes<Prev> {
         PushArraySarSpecs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
 }

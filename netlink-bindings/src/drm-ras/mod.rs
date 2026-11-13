@@ -214,7 +214,7 @@ impl<'a> std::fmt::Debug for IterableNodeAttrs<'_> {
                 NodeAttrs::DeviceName(val) => fmt.field("DeviceName", &val),
                 NodeAttrs::NodeName(val) => fmt.field("NodeName", &val),
                 NodeAttrs::NodeType(val) => {
-                    fmt.field("NodeType", &FormatEnum(val.into(), NodeType::from_value))
+                    fmt.field("NodeType", &FormatEnum(val as u64, NodeType::from_value))
                 }
             };
         }

@@ -466,13 +466,13 @@ impl<'a> std::fmt::Debug for IterableDev<'_> {
                 Dev::Ifindex(val) => fmt.field("Ifindex", &val),
                 Dev::PspVersionsCap(val) => fmt.field(
                     "PspVersionsCap",
-                    &FormatFlags(val.into(), |val| {
+                    &FormatFlags(val as u64, |val| {
                         Version::from_value(val.trailing_zeros().into())
                     }),
                 ),
                 Dev::PspVersionsEna(val) => fmt.field(
                     "PspVersionsEna",
-                    &FormatFlags(val.into(), |val| {
+                    &FormatFlags(val as u64, |val| {
                         Version::from_value(val.trailing_zeros().into())
                     }),
                 ),
@@ -760,7 +760,7 @@ impl<'a> std::fmt::Debug for IterableAssoc<'_> {
             match attr {
                 Assoc::DevId(val) => fmt.field("DevId", &val),
                 Assoc::Version(val) => {
-                    fmt.field("Version", &FormatEnum(val.into(), Version::from_value))
+                    fmt.field("Version", &FormatEnum(val as u64, Version::from_value))
                 }
                 Assoc::RxKey(val) => fmt.field("RxKey", &val),
                 Assoc::TxKey(val) => fmt.field("TxKey", &val),

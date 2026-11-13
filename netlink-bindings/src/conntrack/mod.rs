@@ -315,11 +315,11 @@ impl std::fmt::Debug for NfCtTcpFlagsMask {
         fmt.debug_struct("NfCtTcpFlagsMask")
             .field(
                 "flags",
-                &FormatFlags(self.flags.into(), NfCtTcpFlags::from_value),
+                &FormatFlags(self.flags as u64, NfCtTcpFlags::from_value),
             )
             .field(
                 "mask",
-                &FormatFlags(self.mask.into(), NfCtTcpFlags::from_value),
+                &FormatFlags(self.mask as u64, NfCtTcpFlags::from_value),
             )
             .finish()
     }
@@ -1653,7 +1653,7 @@ impl std::fmt::Debug for IterableProtoinfoTcpAttrs<'_> {
             match attr {
                 ProtoinfoTcpAttrs::TcpState(val) => fmt.field(
                     "TcpState",
-                    &FormatEnum(val.into(), NfCtTcpState::from_value),
+                    &FormatEnum(val as u64, NfCtTcpState::from_value),
                 ),
                 ProtoinfoTcpAttrs::TcpWscaleOriginal(val) => fmt.field("TcpWscaleOriginal", &val),
                 ProtoinfoTcpAttrs::TcpWscaleReply(val) => fmt.field("TcpWscaleReply", &val),
@@ -2123,7 +2123,7 @@ impl std::fmt::Debug for IterableProtoinfoSctpAttrs<'_> {
             match attr {
                 ProtoinfoSctpAttrs::SctpState(val) => fmt.field(
                     "SctpState",
-                    &FormatEnum(val.into(), NfCtSctpState::from_value),
+                    &FormatEnum(val as u64, NfCtSctpState::from_value),
                 ),
                 ProtoinfoSctpAttrs::VtagOriginal(val) => fmt.field("VtagOriginal", &val),
                 ProtoinfoSctpAttrs::VtagReply(val) => fmt.field("VtagReply", &val),
@@ -4455,7 +4455,7 @@ impl<'a> std::fmt::Debug for IterableConntrackAttrs<'_> {
                 ConntrackAttrs::TupleOrig(val) => fmt.field("TupleOrig", &val),
                 ConntrackAttrs::TupleReply(val) => fmt.field("TupleReply", &val),
                 ConntrackAttrs::Status(val) => {
-                    fmt.field("Status", &FormatFlags(val.into(), NfCtStatus::from_value))
+                    fmt.field("Status", &FormatFlags(val as u64, NfCtStatus::from_value))
                 }
                 ConntrackAttrs::Protoinfo(val) => fmt.field("Protoinfo", &val),
                 ConntrackAttrs::Help(val) => fmt.field("Help", &val),
@@ -4481,7 +4481,7 @@ impl<'a> std::fmt::Debug for IterableConntrackAttrs<'_> {
                 ConntrackAttrs::Filter(val) => fmt.field("Filter", &val),
                 ConntrackAttrs::StatusMask(val) => fmt.field(
                     "StatusMask",
-                    &FormatFlags(val.into(), NfCtStatus::from_value),
+                    &FormatFlags(val as u64, NfCtStatus::from_value),
                 ),
                 ConntrackAttrs::TimestampEvent(val) => fmt.field("TimestampEvent", &val),
             };

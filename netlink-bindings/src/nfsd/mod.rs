@@ -206,7 +206,7 @@ impl std::fmt::Debug for IterableCacheNotify<'_> {
             };
             match attr {
                 CacheNotify::CacheType(val) => {
-                    fmt.field("CacheType", &FormatFlags(val.into(), CacheType::from_value))
+                    fmt.field("CacheType", &FormatFlags(val as u64, CacheType::from_value))
                 }
             };
         }
@@ -2390,7 +2390,7 @@ impl std::fmt::Debug for IterableAuthFlavor<'_> {
             match attr {
                 AuthFlavor::Pseudoflavor(val) => fmt.field("Pseudoflavor", &val),
                 AuthFlavor::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ExportFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, ExportFlags::from_value))
                 }
             };
         }
@@ -2814,10 +2814,10 @@ impl<'a> std::fmt::Debug for IterableSvcExport<'_> {
                 SvcExport::Uuid(val) => fmt.field("Uuid", &FormatHexdump(val)),
                 SvcExport::Secinfo(val) => fmt.field("Secinfo", &val),
                 SvcExport::Xprtsec(val) => {
-                    fmt.field("Xprtsec", &FormatFlags(val.into(), XprtsecMode::from_value))
+                    fmt.field("Xprtsec", &FormatFlags(val as u64, XprtsecMode::from_value))
                 }
                 SvcExport::Flags(val) => {
-                    fmt.field("Flags", &FormatFlags(val.into(), ExportFlags::from_value))
+                    fmt.field("Flags", &FormatFlags(val as u64, ExportFlags::from_value))
                 }
                 SvcExport::Fsid(val) => fmt.field("Fsid", &val),
             };
@@ -3666,7 +3666,7 @@ impl std::fmt::Debug for IterableCacheFlush<'_> {
             };
             match attr {
                 CacheFlush::Mask(val) => {
-                    fmt.field("Mask", &FormatFlags(val.into(), CacheType::from_value))
+                    fmt.field("Mask", &FormatFlags(val as u64, CacheType::from_value))
                 }
             };
         }

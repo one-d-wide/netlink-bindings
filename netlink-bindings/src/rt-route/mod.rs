@@ -199,11 +199,11 @@ impl std::fmt::Debug for Rtmsg {
             .field("rtm_scope", &self.rtm_scope)
             .field(
                 "rtm_type",
-                &FormatEnum(self.rtm_type.into(), RtmType::from_value),
+                &FormatEnum(self.rtm_type as u64, RtmType::from_value),
             )
             .field(
                 "rtm_flags",
-                &FormatFlags(self.rtm_flags.into(), RtmFlag::from_value),
+                &FormatFlags(self.rtm_flags as u64, RtmFlag::from_value),
             )
             .finish()
     }
@@ -1102,7 +1102,7 @@ impl<'a> std::fmt::Debug for IterableRouteAttrs<'_> {
                 RouteAttrs::NhId(val) => fmt.field("NhId", &val),
                 RouteAttrs::Flowlabel(val) => fmt.field("Flowlabel", &val),
                 RouteAttrs::DelReason(val) => {
-                    fmt.field("DelReason", &FormatEnum(val.into(), DelReason::from_value))
+                    fmt.field("DelReason", &FormatEnum(val as u64, DelReason::from_value))
                 }
             };
         }

@@ -204,7 +204,7 @@ impl std::fmt::Debug for FibRuleHdr {
             .field("src_len", &self.src_len)
             .field("tos", &self.tos)
             .field("table", &self.table)
-            .field("action", &FormatEnum(self.action.into(), FrAct::from_value))
+            .field("action", &FormatEnum(self.action as u64, FrAct::from_value))
             .field("flags", &self.flags)
             .finish()
     }
