@@ -28,7 +28,28 @@ definitions:
           local FDB entries installed by the bridge driver itself should only
           be added on VLAN 0
 
+  - name: if-oper-state
+    enum-name: if-oper-state
+    name-prefix: if-oper-
+    type: enum
+    header: linux/if.h
+    entries:
+      - unknown
+      - notpresent
+      - down
+      - lowerlayerdown
+      - testing
+      - dormant
+      - up
+
 attribute-sets:
+  -
+    name: link-attrs
+    attributes:
+      -
+        name: operstate
+        enum: if-oper-state
+
   -
     name: linkinfo-bridge-attrs
     attributes:
