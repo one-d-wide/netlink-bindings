@@ -7,7 +7,7 @@ use std::{
 
 use netlink_bindings::traits::NetlinkChained;
 
-use super::{sock::NetlinkReplyInner, NetlinkSocket, Socket};
+use super::{sock::NetlinkReplyInner, NetlinkSocket, NetlinkSocketRaw};
 use crate::{ReplyError, RECV_BUF_SIZE};
 
 impl NetlinkSocket {
@@ -28,7 +28,7 @@ impl NetlinkSocket {
     {
         let sock = Self::get_socket_cached(&mut self.sock, request.protonum())?;
 
-        Self::write_buf(sock, &[IoSlice::new(request.payload())]).await?;
+        sock.write_buf(&[IoSlice::new(request.payload())]).await?;
 
         let mut done = Bits::with_len(request.chain_len());
         for i in 0..request.chain_len() {
@@ -56,7 +56,7 @@ impl NetlinkSocket {
 pub struct NetlinkReplyChained<'sock> {
     inner: NetlinkReplyInner,
     request: &'sock (dyn NetlinkChained + Send + Sync),
-    sock: &'sock mut Socket,
+    sock: &'sock mut NetlinkSocketRaw,
     buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
     done: Bits,
 }

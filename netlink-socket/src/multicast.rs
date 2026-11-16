@@ -2,9 +2,9 @@ use std::{io, mem::MaybeUninit, os::fd::AsRawFd, sync::Arc};
 
 use netlink_bindings::utils;
 
-use super::{sock::NetlinkReplyInner, NetlinkSocket, Socket};
+use super::sock::NetlinkReplyInner;
 #[allow(unused_imports)]
-use super::{Read, Write};
+use super::{NetlinkSocketRaw, Read, Write};
 use crate::{ReplyError, RECV_BUF_SIZE};
 
 #[derive(Debug, Clone)]
@@ -15,7 +15,7 @@ pub struct MulticastRecv {
 
 pub struct MulticastSocketRaw {
     buf: Arc<[u8; RECV_BUF_SIZE]>,
-    sock: Socket,
+    sock: NetlinkSocketRaw,
     reply: NetlinkReplyInner,
     last_group: Option<u32>,
 }
@@ -27,7 +27,7 @@ type WrapMsghdr = WrapSendUnsafe<libc::msghdr>;
 
 impl MulticastSocketRaw {
     pub fn new(protonum: u16) -> io::Result<Self> {
-        let sock = NetlinkSocket::get_socket_new(protonum)?;
+        let sock = NetlinkSocketRaw::new(protonum)?;
 
         // Enable multicast group number via recvmsg ancillary messages
         let res = unsafe {
@@ -141,7 +141,7 @@ impl MulticastSocketRaw {
 
     #[super::strip_async]
     async fn read_buf(
-        sock: &Socket,
+        sock: &NetlinkSocketRaw,
         buf: &mut [u8],
         last_group: &mut Option<u32>,
     ) -> Result<usize, ReplyError> {
@@ -198,7 +198,7 @@ impl MulticastSocketRaw {
         Ok(read)
     }
 
-    fn recvmsg_sync(sock: &Socket, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
+    fn recvmsg_sync(sock: &NetlinkSocketRaw, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
         unsafe {
             let res = libc::recvmsg(sock.as_raw_fd(), &mut msghdr.0, 0);
             if res < 0 {
@@ -209,13 +209,13 @@ impl MulticastSocketRaw {
     }
 
     #[super::only_sync]
-    fn recvmsg(sock: &Socket, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
+    fn recvmsg(sock: &NetlinkSocketRaw, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
         Self::recvmsg_sync(sock, msghdr)
     }
 
     #[super::only_async]
     #[super::not_tokio]
-    async fn recvmsg(sock: &Socket, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
+    async fn recvmsg(sock: &NetlinkSocketRaw, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
         loop {
             match Self::recvmsg_sync(sock, msghdr) {
                 Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
@@ -229,7 +229,7 @@ impl MulticastSocketRaw {
 
     #[super::only_async]
     #[super::only_tokio]
-    async fn recvmsg(sock: &Socket, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
+    async fn recvmsg(sock: &NetlinkSocketRaw, msghdr: &mut WrapMsghdr) -> io::Result<usize> {
         // Tokio attempts to be clever and doesn't poll the fd if it hasn't seen EAGAIN first hand
         sock.async_io(tokio::io::Interest::READABLE, || {
             Self::recvmsg_sync(sock, msghdr)

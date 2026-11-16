@@ -1,13 +1,11 @@
 use std::{
     collections::{hash_map::Entry, HashMap},
-    io::{self, ErrorKind, IoSlice},
+    io::{self, ErrorKind},
     marker::PhantomData,
-    os::fd::{AsRawFd, FromRawFd, OwnedFd},
     sync::Arc,
 };
 
-#[allow(unused_imports)]
-use super::{Read, Socket, Write};
+use super::{NetlinkSocketRaw, Read};
 use crate::{ReplyError, RECV_BUF_SIZE};
 
 use netlink_bindings::{
@@ -20,7 +18,7 @@ use netlink_bindings::{
 pub struct NetlinkSocket {
     pub(crate) buf: Arc<[u8; RECV_BUF_SIZE]>,
     pub(crate) cache: HashMap<&'static [u8], u16>,
-    pub(crate) sock: HashMap<u16, Socket>,
+    pub(crate) sock: HashMap<u16, NetlinkSocketRaw>,
     pub(crate) seq: u32,
 }
 
@@ -40,58 +38,32 @@ impl NetlinkSocket {
         }
     }
 
+    /// Create a new [`NetlinkSocket`] from a map of [`NetlinkSocketRaw`] keyed by their corresponding `protonum`.
+    pub fn from_raw_sockets(sock: HashMap<u16, NetlinkSocketRaw>) -> Self {
+        Self {
+            buf: Arc::new([0u8; RECV_BUF_SIZE]),
+            cache: HashMap::default(),
+            sock,
+            seq: 1,
+        }
+    }
+
+    /// Turns a [`NetlinkSocket`] back into a map of [`NetlinkSocketRaw`] keyed by their corresponding `protonum`.
+    pub fn into_raw_sockets(self) -> HashMap<u16, NetlinkSocketRaw> {
+        self.sock
+    }
+
     pub(crate) fn get_socket_cached(
-        cache: &mut HashMap<u16, Socket>,
+        cache: &mut HashMap<u16, NetlinkSocketRaw>,
         protonum: u16,
-    ) -> io::Result<&mut Socket> {
+    ) -> io::Result<&mut NetlinkSocketRaw> {
         match cache.entry(protonum) {
             Entry::Occupied(sock) => Ok(sock.into_mut()),
             Entry::Vacant(ent) => {
-                let sock = Self::get_socket_new(protonum)?;
+                let sock = NetlinkSocketRaw::new(protonum)?;
                 Ok(ent.insert(sock))
             }
         }
-    }
-
-    pub(crate) fn get_socket_new(family: u16) -> io::Result<Socket> {
-        let fd = unsafe {
-            libc::socket(
-                libc::AF_NETLINK,
-                libc::SOCK_RAW | libc::SOCK_CLOEXEC,
-                family as i32,
-            )
-        };
-        if fd < 0 {
-            return Err(io::Error::from_raw_os_error(-fd));
-        }
-        let fd = unsafe { OwnedFd::from_raw_fd(fd) };
-
-        // Enable extended attributes in libc::NLMSG_ERROR and libc::NLMSG_DONE
-        let res = unsafe {
-            libc::setsockopt(
-                fd.as_raw_fd(),
-                libc::SOL_NETLINK,
-                libc::NETLINK_EXT_ACK,
-                &1u32 as *const u32 as *const libc::c_void,
-                4,
-            )
-        };
-        if res < 0 {
-            return Err(io::Error::from_raw_os_error(-res));
-        }
-
-        Self::convert_sock(fd.into())
-    }
-
-    #[super::only_async]
-    fn convert_sock(sock: std::net::TcpStream) -> io::Result<Socket> {
-        sock.set_nonblocking(true)?;
-        Socket::try_from(sock)
-    }
-
-    #[super::only_sync]
-    fn convert_sock(sock: std::net::TcpStream) -> io::Result<Socket> {
-        Ok(sock)
     }
 
     /// Reserve a sequential chunk of `seq` values, so chained messages don't
@@ -165,73 +137,8 @@ impl NetlinkSocket {
         let seq = self.reserve_seq(1);
         let sock = Self::get_socket_cached(&mut self.sock, protonum)?;
 
-        let header = Nlmsghdr {
-            len: Nlmsghdr::len() as u32 + request.payload().len() as u32,
-            r#type: request_type,
-            flags: request.flags() | libc::NLM_F_REQUEST as u16 | libc::NLM_F_ACK as u16,
-            seq,
-            pid: 0,
-        };
-
-        Self::write_buf(
-            sock,
-            &[
-                IoSlice::new(header.as_slice()),
-                IoSlice::new(request.payload()),
-            ],
-        )
-        .await?;
-
-        Ok(NetlinkReply {
-            sock,
-            buf: &mut self.buf,
-            inner: NetlinkReplyInner {
-                buf_offset: 0,
-                buf_read: 0,
-            },
-            seq: header.seq,
-            done: false,
-            phantom: PhantomData,
-        })
-    }
-
-    #[super::not_tokio]
-    #[super::strip_async]
-    pub(crate) async fn write_buf(sock: &mut Socket, payload: &[IoSlice<'_>]) -> io::Result<()> {
-        loop {
-            match sock.write_vectored(payload).await {
-                Ok(sent) if sent != payload.iter().map(|s| s.len()).sum() => {
-                    return Err(io::Error::other("Couldn't send the whole message"));
-                }
-                Ok(_) => return Ok(()),
-                Err(err) if err.kind() == ErrorKind::Interrupted => continue,
-                Err(err) => return Err(err),
-            }
-        }
-    }
-
-    #[super::only_tokio]
-    #[super::strip_async]
-    pub(crate) async fn write_buf(sock: &mut Socket, payload: &[IoSlice<'_>]) -> io::Result<()> {
-        loop {
-            // Some subsystems don't correctly implement io notifications, which tokio runtime
-            // expects to receive before doing any actual io, hence we instead always attempt an io
-            // operation first.
-            let res = sock.try_write_vectored(payload);
-            if matches!(&res, Err(err) if err.kind() == ErrorKind::WouldBlock) {
-                sock.writable().await?;
-                continue;
-            }
-
-            match res {
-                Ok(sent) if sent != payload.iter().map(|s| s.len()).sum() => {
-                    return Err(io::Error::other("Couldn't send the whole message"));
-                }
-                Ok(_) => return Ok(()),
-                Err(err) if err.kind() == ErrorKind::Interrupted => continue,
-                Err(err) => return Err(err),
-            }
-        }
+        sock.request(request, request_type, seq, &mut self.buf)
+            .await
     }
 }
 
@@ -243,7 +150,7 @@ pub(crate) struct NetlinkReplyInner {
 impl NetlinkReplyInner {
     #[super::not_tokio]
     #[super::strip_async]
-    async fn read_buf(sock: &mut Socket, buf: &mut [u8]) -> io::Result<usize> {
+    async fn read_buf(sock: &mut NetlinkSocketRaw, buf: &mut [u8]) -> io::Result<usize> {
         loop {
             match sock.read(&mut buf[..]).await {
                 Ok(read) => return Ok(read),
@@ -255,7 +162,7 @@ impl NetlinkReplyInner {
 
     #[super::only_tokio]
     #[super::strip_async]
-    async fn read_buf(sock: &mut Socket, buf: &mut [u8]) -> io::Result<usize> {
+    async fn read_buf(sock: &mut NetlinkSocketRaw, buf: &mut [u8]) -> io::Result<usize> {
         loop {
             // Some subsystems don't correctly implement io notifications, which tokio
             // runtime expects to receive before doing any actual io, hence we instead
@@ -278,7 +185,7 @@ impl NetlinkReplyInner {
     #[super::strip_async]
     pub async fn recv(
         &mut self,
-        sock: &mut Socket,
+        sock: &mut NetlinkSocketRaw,
         buf: &mut [u8; RECV_BUF_SIZE],
     ) -> io::Result<(u32, u16, Result<(usize, usize), ReplyError>)> {
         if self.buf_offset == self.buf_read {
@@ -376,12 +283,12 @@ impl NetlinkReplyInner {
 
 #[must_use = "The request is sent, but not acknowledged. Consider .recv_ack(), .recv_one() or .recv()"]
 pub struct NetlinkReply<'sock, Request: NetlinkRequest> {
-    inner: NetlinkReplyInner,
-    sock: &'sock mut Socket,
-    buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
-    seq: u32,
-    done: bool,
-    phantom: PhantomData<Request>,
+    pub(crate) inner: NetlinkReplyInner,
+    pub(crate) sock: &'sock mut NetlinkSocketRaw,
+    pub(crate) buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
+    pub(crate) seq: u32,
+    pub(crate) done: bool,
+    pub(crate) phantom: PhantomData<Request>,
 }
 
 impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
