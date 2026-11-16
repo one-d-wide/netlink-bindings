@@ -1,0 +1,2615 @@
+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
+---
+name: drbd2
+
+protocol: genetlink
+
+doc: 'DRBD 9 management interface: configure and monitor replicated block device resources,
+  their devices, connections to peers, peer devices and network paths.'
+
+uapi-header: linux/drbd2.h
+
+definitions:
+  -
+    name: resource-name-max
+    type: const
+    value: 128
+    doc: Maximum length of a resource name including the terminating NUL.
+
+  -
+    name: connection-name-max
+    type: const
+    value: 64
+    doc: Maximum length of a connection name including the terminating NUL.
+
+  -
+    name: shared-secret-max
+    type: const
+    value: 64
+    doc: Maximum length of the shared secret including the terminating NUL.
+
+  -
+    name: alg-name-max
+    type: const
+    value: 64
+    doc: Maximum length of a crypto algorithm name including the terminating NUL.
+
+  -
+    name: transport-name-max
+    type: const
+    value: 64
+    doc: Maximum length of a network transport name including the terminating NUL.
+
+  -
+    name: device-path-max
+    type: const
+    value: 128
+    doc: Maximum length of a backing/meta device path including the terminating NUL.
+
+  -
+    name: cpu-mask-size
+    type: const
+    value: 256
+    doc: Maximum length of the cpu-mask string.
+
+  -
+    name: helper-name-max
+    type: const
+    value: 32
+    doc: Maximum length of a helper name.
+
+  -
+    name: history-uuids-size
+    type: const
+    value: 256
+    doc: Maximum size in bytes of the history UUID array (32 peer slots of 8 bytes).
+
+  -
+    name: io-error-policy
+    type: enum
+    doc: What to do when the backing device reports an I/O error (on-io-error).
+    entries:
+      -
+        name: pass-on
+        doc: Mark the failed block out of sync, change the disk state to inconsistent and retry the request on a peer.
+      -
+        name: call-local-io-error
+        doc: Call the local-io-error handler.
+      -
+        name: detach
+        doc: Detach the backing device and continue in diskless mode.
+
+  -
+    name: fencing-policy
+    type: enum
+    doc: Fencing policy (fencing).
+    entries:
+      -
+        name: dont-care
+        doc: Take no fencing action at all.
+      -
+        name: resource
+        doc: A node that becomes a disconnected primary calls the fence-peer handler to outdate the peer.
+      -
+        name: stonith
+        doc: A node that becomes a disconnected primary freezes its I/O and calls the fence-peer handler, which may have to shoot the peer.
+
+  -
+    name: after-sb-policy
+    type: enum
+    doc: Split-brain recovery policy (after-sb-0pri, after-sb-1pri, after-sb-2pri, rr-conflict).
+    entries:
+      -
+        name: disconnect
+        doc: Do not resynchronize automatically, simply disconnect.
+      -
+        name: discard-younger-primary
+        doc: Resynchronize from the node that became primary first.
+      -
+        name: discard-older-primary
+        doc: Resynchronize from the node that became primary last.
+      -
+        name: discard-zero-changes
+        doc: Resynchronize from the node that wrote data since the split brain was detected, or disconnect if both nodes wrote.
+      -
+        name: discard-least-changes
+        doc: Resynchronize from the node with more modified blocks.
+      -
+        name: discard-local
+        doc: Discard the data on this node and resynchronize it from the peer.
+      -
+        name: discard-remote
+        doc: Discard the data on the peer and resynchronize it from this node.
+      -
+        name: consensus
+        doc: Discard the data on the secondary if the after-sb-0pri policy would discard it as well, otherwise disconnect.
+      -
+        name: discard-secondary
+        doc: Discard the data on the secondary node.
+      -
+        name: call-pri-lost-after-sb
+        doc: Take the after-sb-0pri decision and call the pri-lost-after-sb handler on the node that has to give up its data.
+      -
+        name: violently-as0p
+        doc: Always take the after-sb-0pri decision, even if that changes the primary's view of the data; this can crash the primary.
+      -
+        name: retry-connect
+        doc: Disconnect now and immediately retry to connect (rr-conflict only).
+      -
+        name: auto-discard
+        doc: Reverse the resync direction so that the current primary is resynchronized from the current secondary (rr-conflict with protocol A only).
+
+  -
+    name: on-no-data-policy
+    type: enum
+    doc: What to do when no data is accessible (on-no-data-accessible).
+    entries:
+      -
+        name: io-error
+        doc: Complete the requests with an I/O error, so that system calls fail with EIO.
+      -
+        name: suspend-io
+        doc: Suspend I/O until the data becomes accessible again or the administrator forces I/O to resume.
+
+  -
+    name: on-no-quorum-policy
+    type: enum
+    doc: What to do when quorum is lost (on-no-quorum).
+    entries:
+      -
+        name: io-error
+        doc: Complete the requests with an I/O error while the resource has no quorum.
+      -
+        name: suspend-io
+        doc: Freeze I/O while the resource has no quorum.
+
+  -
+    name: on-suspended-primary-outdated-policy
+    type: enum
+    doc: What to do with a suspended primary that became outdated.
+    entries:
+      -
+        name: disconnect
+        doc: Reject connection attempts and stay isolated.
+      -
+        name: force-secondary
+        doc: Demote to secondary immediately and fail all pending and new I/O requests.
+
+  -
+    name: on-congestion-policy
+    type: enum
+    doc: What to do when the replication link is congested (on-congestion).
+    entries:
+      -
+        name: block
+        doc: Block application writes until the transport's send queue drains.
+      -
+        name: pull-ahead
+        doc: Switch into ahead/behind mode and record further changes in the bitmap instead of replicating them.
+      -
+        name: disconnect
+        doc: Disconnect from the peer instead of blocking application writes.
+
+  -
+    name: read-balancing-policy
+    type: enum
+    doc: Read balancing policy (read-balancing).
+    entries:
+      -
+        name: prefer-local
+        doc: Always read from the local disk.
+      -
+        name: prefer-remote
+        doc: Always read from a peer's disk.
+      -
+        name: round-robin
+        doc: Alternate between the local disk and a peer for consecutive reads.
+      -
+        name: least-pending
+        doc: Read from the disk with the fewest pending requests.
+      -
+        name: when-congested-remote
+        doc: Read from a peer only while the local disk is congested; deprecated since DRBD 9.1.12.
+      -
+        name: striping-32k
+        doc: Read alternating 32 KiB stripes from the local disk and from a peer.
+      -
+        name: striping-64k
+        doc: Read alternating 64 KiB stripes from the local disk and from a peer.
+      -
+        name: striping-128k
+        doc: Read alternating 128 KiB stripes from the local disk and from a peer.
+      -
+        name: striping-256k
+        doc: Read alternating 256 KiB stripes from the local disk and from a peer.
+      -
+        name: striping-512k
+        doc: Read alternating 512 KiB stripes from the local disk and from a peer.
+      -
+        name: striping-1m
+        doc: Read alternating 1 MiB stripes from the local disk and from a peer.
+
+  -
+    name: wire-protocol
+    type: enum
+    doc: Replication protocol (protocol).
+    entries:
+      -
+        name: a
+        value: 1
+        doc: Writes complete as soon as they reached the local disk and the local send buffer.
+      -
+        name: b
+        doc: Writes complete as soon as they reached the local disk and all peers acknowledged their receipt.
+      -
+        name: c
+        doc: Writes complete as soon as they reached the local disk and all remote disks.
+
+  -
+    name: role
+    type: enum
+    doc: Role of a resource on a node. Values mirror enum drbd_role in linux/drbd.h so both netlink dialects share one numbering.
+    entries:
+      -
+        name: unknown
+        doc: The role is not known, for example because the peer is not connected.
+      -
+        name: primary
+        doc: The resource is primary; its devices may be opened for writing.
+      -
+        name: secondary
+        doc: The resource is secondary; its devices may not be opened for writing.
+
+  -
+    name: connection-state
+    type: enum
+    doc: State of a connection to a peer. Values mirror enum drbd_conn_state in linux/drbd.h so both netlink dialects share one numbering.
+    entries:
+      -
+        name: standalone
+        doc: No network configuration is in effect and no connection is attempted.
+      -
+        name: disconnecting
+        doc: Temporary state on the way to standalone while the connection is torn down.
+      -
+        name: unconnected
+        doc: Temporary state before the next connection attempt starts.
+      -
+        name: timeout
+        doc: The connection was dropped because the peer did not answer in time.
+      -
+        name: broken-pipe
+        doc: The connection was dropped because the transport reported a broken connection.
+      -
+        name: network-failure
+        doc: The connection was dropped because of a network failure.
+      -
+        name: protocol-error
+        doc: The connection was dropped because the peer violated the replication protocol.
+      -
+        name: tear-down
+        doc: Temporary state while the peer closes the connection.
+      -
+        name: connecting
+        doc: Listening for the peer and trying to establish a connection.
+      -
+        name: connected
+        doc: A connection to the peer is established.
+
+  -
+    name: repl-state
+    type: enum
+    doc: Replication state of a peer device. Values mirror enum drbd_repl_state in linux/drbd.h so both netlink dialects share one numbering.
+    entries:
+      -
+        name: 'off'
+        value: 9
+        doc: The peer device does not replicate because the connection is not established.
+      -
+        name: established
+        doc: The peer device is connected and replicating normally.
+      -
+        name: starting-sync-s
+        doc: A full resynchronization was requested by the administrator and starts with this node as the source.
+      -
+        name: starting-sync-t
+        doc: A full resynchronization was requested by the administrator and starts with this node as the target.
+      -
+        name: wf-bitmap-s
+        doc: Waiting for the bitmap exchange to finish, with this node as the prospective resync source.
+      -
+        name: wf-bitmap-t
+        doc: Waiting for the bitmap exchange to finish, with this node as the prospective resync target.
+      -
+        name: wf-sync-uuid
+        doc: Waiting for the resync source to create and send the new resync UUID.
+      -
+        name: sync-source
+        doc: Resynchronization is running with this node as the source.
+      -
+        name: sync-target
+        doc: Resynchronization is running with this node as the target.
+      -
+        name: verify-s
+        doc: Online verification is running with this node as the initiator.
+      -
+        name: verify-t
+        doc: Online verification is running with this node as the target.
+      -
+        name: paused-sync-s
+        doc: Resynchronization with this node as the source is paused.
+      -
+        name: paused-sync-t
+        doc: Resynchronization with this node as the target is paused.
+      -
+        name: ahead
+        doc: Replication is suspended because the link is congested; changes are only recorded in the bitmap.
+      -
+        name: behind
+        doc: The peer is ahead of this node, which will be resynchronized once the congestion is over.
+
+  -
+    name: disk-state
+    type: enum
+    doc: State of a backing disk. Values mirror enum drbd_disk_state in linux/drbd.h so both netlink dialects share one numbering.
+    entries:
+      -
+        name: diskless
+        doc: No backing device is attached.
+      -
+        name: attaching
+        doc: The backing device's metadata is being read.
+      -
+        name: detaching
+        doc: The backing device is being detached while pending I/O drains.
+      -
+        name: failed
+        doc: The backing device failed; the disk becomes diskless once the peers have been told.
+      -
+        name: negotiating
+        doc: Attaching while connected, with the data generation still being negotiated with the peers.
+      -
+        name: inconsistent
+        doc: The data is inconsistent, for example because a resynchronization is in progress.
+      -
+        name: outdated
+        doc: The data is consistent but known to be stale relative to a peer.
+      -
+        name: unknown
+        doc: The disk state is not known; used only for a peer's disk.
+      -
+        name: consistent
+        doc: The data is consistent but it is not yet known whether it is up to date.
+      -
+        name: up-to-date
+        doc: The data is consistent and up to date; only this state allows application I/O.
+
+  -
+    name: write-ordering
+    type: enum
+    doc: Write ordering method in use for the backing device.
+    entries:
+      -
+        name: none
+        doc: No ordering between dependent writes is enforced on the backing device.
+      -
+        name: drain-io
+        doc: Dependent writes are ordered by draining the backing device's request queue.
+      -
+        name: bdev-flush
+        doc: Dependent writes are ordered by issuing flushes to the backing device.
+      -
+        name: bio-barrier
+        doc: Dependent writes are ordered with block device barriers, which the Linux block layer no longer provides.
+
+  -
+    name: timeout-type
+    type: enum
+    doc: Which wait-for-connection timeout applies (timeout-type-get reply).
+    entries:
+      -
+        name: default
+        doc: The regular wait-for-connection timeout applies.
+      -
+        name: degraded
+        doc: The degraded-cluster timeout applies because the local data is not up to date.
+      -
+        name: peer-outdated
+        doc: The timeout for an outdated peer applies.
+
+  -
+    name: helper-phase
+    type: enum
+    doc: Whether a helper notification announces the call or reports its result.
+    entries:
+      -
+        name: call
+        doc: The helper script is about to be called.
+      -
+        name: response
+        doc: The helper script has finished and its exit status is reported.
+
+  -
+    name: state-change-action
+    type: enum
+    doc: What a state-change message reports about the object it carries. Values are assigned independently of the legacy drbd_notification_type.
+    entries:
+      -
+        name: exists
+        doc: The object already existed when the notification stream was opened.
+      -
+        name: create
+        doc: The object was just created.
+      -
+        name: change
+        doc: The state or statistics of the object changed.
+      -
+        name: destroy
+        doc: The object was destroyed.
+      -
+        name: rename
+        doc: The resource was renamed; the new name is carried in resource.new-name.
+
+  -
+    name: state-result
+    type: enum
+    doc: Outcome of a state change request. Error values equal the negated kernel-internal SS_* codes (value 3 is unused); success and the other non-error outcomes follow at 29 and above.
+    entries:
+      -
+        name: unknown-error
+        doc: The state change failed for an unspecified reason.
+      -
+        name: two-primaries
+        doc: Multiple primaries are not allowed by the configuration.
+      -
+        name: no-up-to-date-disk
+        doc: The request needs access to up-to-date data.
+      -
+        name: no-local-disk
+        value: 4
+        doc: Cannot resynchronize without a local disk.
+      -
+        name: no-remote-disk
+        doc: Cannot resynchronize without a remote disk.
+      -
+        name: connected-outdates
+        doc: Refusing to become outdated while connected.
+      -
+        name: primary-nop
+        doc: Refusing to become primary while the peer is not outdated.
+      -
+        name: resync-running
+        doc: Cannot start online verify or resynchronization because one is already active.
+      -
+        name: already-standalone
+        doc: Cannot disconnect a connection that is already standalone.
+      -
+        name: cw-failed-by-peer
+        doc: The cluster-wide state change was refused by a peer node.
+      -
+        name: is-diskless
+        doc: The device is diskless but the requested operation requires a disk.
+      -
+        name: device-in-use
+        doc: The device is held open by someone.
+      -
+        name: no-net-config
+        doc: There is no network configuration for this connection.
+      -
+        name: no-verify-alg
+        doc: Starting online verify requires a verify algorithm to be configured.
+      -
+        name: need-connection
+        doc: The state change requires an established connection.
+      -
+        name: lower-than-outdated
+        doc: The disk state is lower than outdated.
+      -
+        name: not-supported
+        doc: The peer does not support the requested protocol feature.
+      -
+        name: in-transient-state
+        doc: The object is in a transient state; retry after the next state change.
+      -
+        name: concurrent-state-change
+        doc: Concurrent state changes were detected and this one was aborted.
+      -
+        name: other-volume-peer-primary
+        doc: Another volume is primary on the peer, which the configuration does not allow.
+      -
+        name: interrupted
+        doc: The state change was interrupted.
+      -
+        name: primary-reader
+        doc: The peer may not become primary while the device is open for reading here.
+      -
+        name: timeout
+        doc: The state change timed out.
+      -
+        name: weakly-connected
+        doc: Primary nodes must be strongly connected among each other.
+      -
+        name: no-quorum
+        doc: The resource does not have quorum.
+      -
+        name: attach-no-bitmap
+        doc: An intentionally diskless peer may not attach a disk.
+      -
+        name: handshake-disconnect
+        doc: Disconnect was chosen during the connection handshake.
+      -
+        name: handshake-retry
+        doc: Retry was chosen during the connection handshake.
+      -
+        name: success
+        value: 29
+        doc: The state change succeeded.
+      -
+        name: nothing-to-do
+        doc: The requested state was already in effect, so nothing had to be done.
+      -
+        name: cw-success
+        doc: The cluster-wide state change succeeded.
+      -
+        name: cw-no-need
+        doc: No cluster-wide state change was necessary.
+
+attribute-sets:
+  -
+    name: address
+    doc: A socket address.
+    attributes:
+      -
+        name: family
+        type: u16
+        doc: Address family (AF_INET or AF_INET6).
+      -
+        name: port
+        type: u16
+        byte-order: big-endian
+        doc: Port number.
+      -
+        name: ipv4
+        type: u32
+        byte-order: big-endian
+        display-hint: ipv4
+        doc: IPv4 address, present when family is AF_INET.
+      -
+        name: ipv6
+        type: binary
+        checks:
+          exact-len: 16
+        display-hint: ipv6
+        doc: IPv6 address, present when family is AF_INET6.
+
+  -
+    name: context
+    doc: Identifies the object a request, reply or notification refers to.
+    attributes:
+      -
+        name: resource-name
+        type: string
+        checks:
+          max-len: resource-name-max
+        doc: Resource name.
+      -
+        name: volume
+        type: u32
+        doc: Volume number within the resource.
+      -
+        name: minor
+        type: u32
+        doc: Minor number of the DRBD device.
+      -
+        name: peer-node-id
+        type: u32
+        doc: Node ID of the peer.
+      -
+        name: connection-name
+        type: string
+        checks:
+          max-len: connection-name-max
+        doc: Name of the connection to the peer.
+      -
+        name: my-address
+        type: nest
+        nested-attributes: address
+        doc: Local address of a path.
+      -
+        name: peer-address
+        type: nest
+        nested-attributes: address
+        doc: Peer address of a path.
+
+  -
+    name: disk-conf
+    doc: Options of an attached backing disk (drbd.conf disk section).
+    attributes:
+      -
+        name: backing-dev
+        type: string
+        checks:
+          max-len: device-path-max
+        doc: Path of the lower-level block device used to store the actual data (drbd.conf option disk).
+      -
+        name: meta-dev
+        type: string
+        checks:
+          max-len: device-path-max
+        doc: Path of the device holding the metadata, or "internal" to store it on the backing device (drbd.conf option meta-disk).
+      -
+        name: meta-dev-idx
+        type: s32
+        doc: Index selecting which slot to use on a shared external metadata device (drbd.conf option meta-disk index).
+      -
+        name: size
+        type: u64
+        doc: Size of the backing device to use, in sectors, overriding automatic detection.
+      -
+        name: on-io-error
+        type: u32
+        enum: io-error-policy
+        doc: Action to take when the backing disk reports an I/O error.
+      -
+        name: resync-after
+        type: s32
+        doc: Volume number of another volume that must finish resynchronizing before this one starts (drbd.conf option resync-after).
+      -
+        name: al-extents
+        type: u32
+        doc: Number of 4 MiB activity log extents that can be active at the same time.
+      -
+        name: disk-barrier
+        type: u8
+        doc: Whether to use disk barriers to enforce the ordering of dependent write requests on the backing device.
+      -
+        name: disk-flushes
+        type: u8
+        doc: Whether to issue disk flushes to the backing device to enforce the ordering of dependent write requests.
+      -
+        name: disk-drain
+        type: u8
+        doc: Whether to wait for the local I/O request queue to drain before completing a write barrier.
+      -
+        name: md-flushes
+        type: u8
+        doc: Whether to issue disk flushes to the metadata device.
+      -
+        name: disk-timeout
+        type: u32
+        doc: Time to wait for the backing device to complete an I/O request before treating it as failed, in units of 0.1 seconds, or 0 to disable (drbd.conf option disk-timeout).
+      -
+        name: read-balancing
+        type: u32
+        enum: read-balancing-policy
+        doc: Policy for balancing reads across the local disk and peers (drbd.conf option read-balancing).
+      -
+        name: unplug-watermark
+        type: u32
+        doc: Legacy watermark, in pages, that used to trigger an early unplug of the backing device's request queue (drbd.conf option unplug-watermark).
+      -
+        name: rs-discard-granularity
+        type: u32
+        doc: Size, in bytes, of the resync requests DRBD tries to discard on the sync target when the source's data is all zeroes (drbd.conf option rs-discard-granularity).
+      -
+        name: al-updates
+        type: u8
+        doc: Whether to update the activity log on disk, at the cost of a full resync after a primary crash if disabled (drbd.conf option al-updates).
+      -
+        name: discard-zeroes-if-aligned
+        type: u8
+        doc: Whether to treat discarded, aligned blocks on the backing device as reading back as zero (drbd.conf option discard-zeroes-if-aligned).
+      -
+        name: disable-write-same
+        type: u8
+        doc: Whether to avoid using the WRITE SAME command on the backing device, for devices that advertise support but fail such requests (drbd.conf option disable-write-same).
+      -
+        name: bitmap
+        type: u8
+        doc: Whether to allocate the on-disk change-tracking bitmap when the device is attached (drbd.conf option bitmap).
+
+  -
+    name: resource-opts
+    doc: Options of a resource (drbd.conf options section).
+    attributes:
+      -
+        name: cpu-mask
+        type: string
+        checks:
+          max-len: cpu-mask-size
+        doc: CPU affinity mask for DRBD kernel threads, as a hexadecimal number (drbd.conf option cpu-mask).
+      -
+        name: on-no-data-accessible
+        type: u32
+        enum: on-no-data-policy
+        doc: Action to take for I/O requests when the requested data is not available locally or remotely (drbd.conf option on-no-data-accessible).
+      -
+        name: auto-promote
+        type: u8
+        doc: Whether to automatically promote the resource to primary when one of its devices is mounted or opened for writing (drbd.conf option auto-promote).
+      -
+        name: node-id
+        type: u32
+        doc: Unique node identifier of this node in the cluster (drbd.conf option node-id).
+      -
+        name: peer-ack-window
+        type: u32
+        doc: Amount of data, in sectors, DRBD replicates to a peer before issuing a peer-ack for the writes in between (drbd.conf option peer-ack-window).
+      -
+        name: twopc-timeout
+        type: u32
+        doc: Timeout for a two-phase-commit cluster-wide state transition, in units of 0.1 seconds (drbd.conf option twopc-timeout).
+      -
+        name: twopc-retry-timeout
+        type: u32
+        doc: Base multiplier for the randomized backoff before retrying a conflicting two-phase commit, in units of 0.1 seconds (drbd.conf option twopc-retry-timeout).
+      -
+        name: peer-ack-delay
+        type: u32
+        doc: How long to wait after the last write request before sending a peer-ack if no new write request arrives, in milliseconds (drbd.conf option peer-ack-delay).
+      -
+        name: auto-promote-timeout
+        type: u32
+        doc: How long to wait for a device to become promotable when auto-promote triggers a promotion, in units of 0.1 seconds (drbd.conf option auto-promote-timeout).
+      -
+        name: max-io-depth
+        type: u32
+        doc: Maximum number of outstanding application I/O requests on a DRBD device.
+      -
+        name: quorum
+        type: s32
+        doc: Number of nodes with an accessible disk required for a partition to have quorum, or a symbolic value (off, majority, all) (drbd.conf option quorum).
+      -
+        name: on-no-quorum
+        type: u32
+        enum: on-no-quorum-policy
+        doc: Action to take for I/O requests when the resource loses quorum (drbd.conf option on-no-quorum).
+      -
+        name: quorum-min-redundancy
+        type: s32
+        doc: Minimum number of nodes with an UpToDate disk required for a partition to gain quorum, or a symbolic value (off, majority, all) (drbd.conf option quorum-minimum-redundancy).
+      -
+        name: on-suspended-primary-outdated
+        type: u32
+        enum: on-suspended-primary-outdated-policy
+        doc: Action to take for a primary that has I/O suspended due to lost quorum and learns its data is outdated (drbd.conf option on-suspended-primary-outdated).
+      -
+        name: drbd8-compat-mode
+        type: u8
+        doc: Whether the resource operates in DRBD 8 compatible, single-peer mode.
+      -
+        name: explicit-drbd8-compat
+        type: u8
+        doc: Whether to explicitly (re)configure DRBD 8 compatible mode whenever a node-id is configured, instead of leaving it unchanged.
+
+  -
+    name: net-conf
+    doc: Options of a connection to a peer (drbd.conf net section).
+    attributes:
+      -
+        name: shared-secret
+        type: string
+        checks:
+          max-len: shared-secret-max
+        doc: Shared secret used for peer authentication (drbd.conf option shared-secret).
+      -
+        name: cram-hmac-alg
+        type: string
+        checks:
+          max-len: alg-name-max
+        doc: Hash-based message authentication code (HMAC) algorithm used for peer authentication (drbd.conf option cram-hmac-alg).
+      -
+        name: integrity-alg
+        type: string
+        checks:
+          max-len: alg-name-max
+        doc: Data integrity algorithm used, in addition to the TCP/IP checksum, to detect corruption of data received over the network (drbd.conf option data-integrity-alg).
+      -
+        name: verify-alg
+        type: string
+        checks:
+          max-len: alg-name-max
+        doc: Hash algorithm used to compute and compare block checksums during online verification (drbd.conf option verify-alg).
+      -
+        name: csums-alg
+        type: string
+        checks:
+          max-len: alg-name-max
+        doc: Hash algorithm used to compare blocks before resending identical data during a resync (drbd.conf option csums-alg).
+      -
+        name: protocol
+        type: u32
+        enum: wire-protocol
+        doc: Replication protocol used on this connection.
+      -
+        name: connect-int
+        type: u32
+        doc: How long to wait before retrying to establish a connection to the peer, in seconds (drbd.conf option connect-int).
+      -
+        name: timeout
+        type: u32
+        doc: Timeout for replies over the network before considering a peer dead, in units of 0.1 seconds (drbd.conf option timeout).
+      -
+        name: ping-int
+        type: u32
+        doc: Interval of connection idle time after which DRBD sends a keep-alive packet, in seconds (drbd.conf option ping-int).
+      -
+        name: ping-timeo
+        type: u32
+        doc: Timeout for replies to keep-alive packets, in units of 0.1 seconds (drbd.conf option ping-timeout).
+      -
+        name: sndbuf-size
+        type: u32
+        doc: Size of the TCP/IP send buffer, in bytes, or 0 to size it automatically (drbd.conf option sndbuf-size).
+      -
+        name: rcvbuf-size
+        type: u32
+        doc: Size of the TCP/IP receive buffer, in bytes, or 0 to size it automatically (drbd.conf option rcvbuf-size).
+      -
+        name: ko-count
+        type: u32
+        doc: Number of times the timeout may be exceeded before a non-responding peer is excluded from the cluster (drbd.conf option ko-count).
+      -
+        name: max-epoch-size
+        type: u32
+        doc: Maximum number of write requests DRBD may issue before issuing a write barrier (drbd.conf option max-epoch-size).
+      -
+        name: after-sb-0pri
+        type: u32
+        enum: after-sb-policy
+        doc: Split-brain recovery policy when neither node is primary.
+      -
+        name: after-sb-1pri
+        type: u32
+        enum: after-sb-policy
+        doc: Split-brain recovery policy when exactly one node is primary.
+      -
+        name: after-sb-2pri
+        type: u32
+        enum: after-sb-policy
+        doc: Split-brain recovery policy when both nodes are primary.
+      -
+        name: rr-conflict
+        type: u32
+        enum: after-sb-policy
+        doc: Policy for resolving a role/resync conflict left over from a split-brain recovery (drbd.conf option rr-conflict).
+      -
+        name: on-congestion
+        type: u32
+        enum: on-congestion-policy
+        doc: Action to take when the replication link's TCP send queue is congested (drbd.conf option on-congestion).
+      -
+        name: cong-fill
+        type: u32
+        doc: Amount of in-flight data, in sectors, allowed on this connection before switching into ahead/behind mode, or 0 to disable (drbd.conf option congestion-fill).
+      -
+        name: cong-extents
+        type: u32
+        doc: Number of active bitmap extents allowed before switching into ahead/behind mode (drbd.conf option congestion-extents).
+      -
+        name: two-primaries
+        type: u8
+        doc: Whether to allow both nodes of this connection to be primary at the same time (drbd.conf option allow-two-primaries).
+      -
+        name: tcp-cork
+        type: u8
+        doc: Whether to use the TCP_CORK socket option to coalesce partial messages into fewer, bigger packets (drbd.conf option tcp-cork).
+      -
+        name: always-asbp
+        type: u8
+        doc: Whether to apply the automatic split-brain recovery policies even when the UUIDs indicate a third node may be involved (drbd.conf option always-asbp).
+      -
+        name: use-rle
+        type: u8
+        doc: Whether to run-length encode the bitmap exchanged with the peer when a connection is established (drbd.conf option use-rle).
+      -
+        name: fencing
+        type: u32
+        enum: fencing-policy
+        doc: Fencing policy used to avoid a split-brain when both nodes are primary and disconnected.
+      -
+        name: connection-name
+        type: string
+        checks:
+          max-len: connection-name-max
+        doc: Name of the connection this net-conf applies to.
+      -
+        name: csums-after-crash-only
+        type: u8
+        doc: Whether to compare block checksums only for the resync after a primary crash, rather than for every resync (drbd.conf option csums-after-crash-only).
+      -
+        name: sock-check-timeo
+        type: u32
+        doc: Timeout used to poll the send/receive socket for a broken TCP connection when DRBD-proxy is in use, in units of 0.1 seconds (drbd.conf option socket-check-timeout).
+      -
+        name: transport-name
+        type: string
+        checks:
+          max-len: transport-name-max
+        doc: Name of the network transport module used for this connection, e.g. tcp or rdma (drbd.conf option transport).
+      -
+        name: max-buffers
+        type: u32
+        doc: Maximum number of pages used for receive buffers and internal resync/verify buffers per device (drbd.conf option max-buffers).
+      -
+        name: allow-remote-read
+        type: u8
+        doc: Whether to allow reads to be served from a peer's disk when the local disk is not up to date (drbd.conf option allow-remote-read).
+      -
+        name: tls
+        type: u8
+        doc: Whether to encrypt this connection with TLS (drbd.conf option tls).
+      -
+        name: tls-privkey
+        type: s32
+        doc: Serial number of the kernel keyring key holding the private key used for TLS encryption (drbd.conf option tls-privkey).
+      -
+        name: tls-certificate
+        type: s32
+        doc: Serial number of the kernel keyring key holding the certificate used for TLS encryption (drbd.conf option tls-certificate).
+      -
+        name: tls-keyring
+        type: s32
+        doc: Serial number of the kernel keyring used to look up the TLS key material (drbd.conf option tls-keyring).
+      -
+        name: load-balance-paths
+        type: u8
+        doc: Whether to load-balance traffic for this connection across all configured paths instead of using only one at a time (drbd.conf option load-balance-paths).
+      -
+        name: rdma-ctrl-rcvbuf-size
+        type: u32
+        doc: Size, in bytes, of the RDMA transport's control-stream receive buffer, or 0 to derive it from rcvbuf-size (drbd.conf option rdma-ctrl-rcvbuf-size).
+      -
+        name: rdma-ctrl-sndbuf-size
+        type: u32
+        doc: Size, in bytes, of the RDMA transport's control-stream send buffer, or 0 to derive it from sndbuf-size (drbd.conf option rdma-ctrl-sndbuf-size).
+
+  -
+    name: set-role-parms
+    doc: Parameters of the set-role request.
+    attributes:
+      -
+        name: force
+        type: flag
+        doc: Request that the promotion to primary succeed even if some devices are not guaranteed to have up-to-date data (drbdsetup primary option force).
+
+  -
+    name: resize-parms
+    doc: Parameters of the resize request.
+    attributes:
+      -
+        name: size
+        type: u64
+        doc: New size of the device, in sectors, or 0 to use the full size of the backing devices (drbdsetup resize option size).
+      -
+        name: assume-peer-has-space
+        type: flag
+        doc: Request that the resize proceed even though not all peer devices are currently connected, assuming they already have enough space.
+      -
+        name: assume-clean
+        type: flag
+        doc: Request that the additional space not be resynchronized, assuming it is already identical on all nodes.
+      -
+        name: al-stripes
+        type: u32
+        doc: Number of activity log stripes to use after the resize (drbdsetup resize option al-stripes).
+      -
+        name: al-stripe-size
+        type: u32
+        doc: Size of each activity log stripe, in KiB, after the resize (drbdsetup resize option al-stripe-size).
+
+  -
+    name: start-ov-parms
+    doc: Parameters of the start-ov (online verify) request.
+    attributes:
+      -
+        name: start-sector
+        type: u64
+        doc: Sector at which to start online verification, to resume a previously stopped run.
+      -
+        name: stop-sector
+        type: u64
+        doc: Sector at which to stop online verification.
+
+  -
+    name: new-current-uuid-parms
+    doc: Parameters of the new-current-uuid request.
+    attributes:
+      -
+        name: clear-bm
+        type: flag
+        doc: Request that the peer's bitmap also be cleared, marking the peer as fully in sync without a resync (drbdsetup new-current-uuid option clear-bitmap).
+      -
+        name: force-resync
+        type: flag
+        doc: Request that the peer be marked out of sync so that a resync starts, instead of assuming it already has the same data (drbdsetup new-current-uuid option force-resync).
+
+  -
+    name: disconnect-parms
+    doc: Parameters of the disconnect request.
+    attributes:
+      -
+        name: force
+        type: flag
+        doc: Request that the connection be torn down immediately, discarding any pending, not yet acknowledged data instead of waiting for it (drbdsetup disconnect option force).
+
+  -
+    name: detach-parms
+    doc: Parameters of the detach request.
+    attributes:
+      -
+        name: force
+        type: flag
+        doc: Request that the detach proceed immediately, marking the lower-level device failed until pending I/O completes (drbdsetup detach option force).
+      -
+        name: intentional-diskless-detach
+        type: flag
+        doc: Request that the device be marked permanently, intentionally diskless instead of temporarily diskless (drbdsetup detach option diskless).
+
+  -
+    name: attach-parms
+    doc: Parameters of the attach request.
+    attributes:
+      -
+        name: discard-my-data
+        type: flag
+        doc: Request that, should the handshake with a peer find a split brain, the local data be discarded and resynchronized from that peer (drbdsetup attach option discard-my-data).
+
+  -
+    name: device-conf
+    doc: Options of a device, set when the device is created (drbdsetup new-minor).
+    attributes:
+      -
+        name: max-bio-size
+        type: u32
+        doc: Maximum size of a single I/O request the device accepts, in bytes (drbdsetup new-minor option max-bio-size).
+      -
+        name: intentional-diskless
+        type: u8
+        doc: Whether the device is deliberately created without a local disk, e.g. as a diskless client (drbdsetup new-minor option diskless).
+      -
+        name: block-size
+        type: u32
+        doc: Logical block size the device reports, needed to combine differing backing disk block sizes across nodes (drbd.conf option block-size).
+      -
+        name: discard-granularity
+        type: u32
+        doc: Discard granularity, in bytes, advertised by the device; discard requests must be aligned to and a multiple of this value (drbd.conf option discard-granularity).
+
+  -
+    name: resource-info
+    doc: State of a resource.
+    attributes:
+      -
+        name: role
+        type: u32
+        enum: role
+        doc: Role of the resource on this node.
+      -
+        name: susp
+        type: u8
+        doc: Whether I/O on the resource is suspended by the user.
+      -
+        name: susp-nod
+        type: u8
+        doc: Whether I/O on the resource is suspended because no data is accessible.
+      -
+        name: susp-fen
+        type: u8
+        doc: Whether I/O on the resource is suspended because a fence-peer handler is running.
+      -
+        name: susp-quorum
+        type: u8
+        doc: Whether I/O on the resource is suspended because it has lost quorum.
+      -
+        name: fail-io
+        type: u8
+        doc: Whether all I/O on the resource fails because it was forced to demote from primary.
+
+  -
+    name: device-info
+    doc: State of a device.
+    attributes:
+      -
+        name: disk-state
+        type: u32
+        enum: disk-state
+        doc: Current state of the backing disk.
+      -
+        name: is-intentional-diskless
+        type: u8
+        doc: Whether the device is deliberately configured without a local disk.
+      -
+        name: has-quorum
+        type: u8
+        doc: Whether the device currently has quorum.
+      -
+        name: is-open
+        type: u8
+        doc: Whether the device is currently opened by an application.
+      -
+        name: backing-dev-path
+        type: string
+        checks:
+          max-len: device-path-max
+        doc: Path of the backing device, present while it is still accessible after a disk failure.
+
+  -
+    name: connection-info
+    doc: State of a connection to a peer.
+    attributes:
+      -
+        name: connection-state
+        type: u32
+        enum: connection-state
+        doc: Current state of the connection to the peer.
+      -
+        name: role
+        type: u32
+        enum: role
+        doc: Current role of the peer.
+
+  -
+    name: peer-device-info
+    doc: State of a peer device.
+    attributes:
+      -
+        name: repl-state
+        type: u32
+        enum: repl-state
+        doc: Current replication state with the peer.
+      -
+        name: disk-state
+        type: u32
+        enum: disk-state
+        doc: Current state of the peer's disk.
+      -
+        name: resync-susp-user
+        type: u8
+        doc: Whether resynchronization with this peer is suspended by the user.
+      -
+        name: resync-susp-peer
+        type: u8
+        doc: Whether resynchronization with this peer is suspended by the peer.
+      -
+        name: resync-susp-dependency
+        type: u8
+        doc: Whether resynchronization with this peer is suspended because it depends on another volume or connection resynchronizing first.
+      -
+        name: is-intentional-diskless
+        type: u8
+        doc: Whether the peer is deliberately configured without a local disk.
+      -
+        name: resync-susp-max-parallel
+        type: u8
+        doc: Whether resynchronization with this peer is suspended to enforce the maximum number of parallel resyncs.
+
+  -
+    name: resource-statistics
+    doc: Statistics of a resource.
+    attributes:
+      -
+        name: write-ordering
+        type: u32
+        enum: write-ordering
+        doc: Write ordering method currently in use for the resource's backing devices.
+
+  -
+    name: device-statistics
+    doc: Statistics of a device.
+    attributes:
+      -
+        name: size
+        type: u64
+        doc: Capacity of the device, in sectors.
+      -
+        name: read
+        type: u64
+        doc: Total data read from the device, in sectors, since it was attached.
+      -
+        name: write
+        type: u64
+        doc: Total data written to the device, in sectors, since it was attached.
+      -
+        name: al-writes
+        type: u64
+        doc: Number of activity log metadata writes since the device was attached.
+      -
+        name: bm-writes
+        type: u64
+        doc: Number of bitmap metadata writes since the device was attached.
+      -
+        name: upper-pending
+        type: u32
+        doc: Number of application I/O requests currently in flight on the device.
+      -
+        name: lower-pending
+        type: u32
+        doc: Number of I/O requests currently in flight on the backing device.
+      -
+        name: upper-blocked
+        type: u8
+        doc: Whether application I/O to the device is currently throttled.
+      -
+        name: lower-blocked
+        type: u8
+        doc: Whether I/O to the backing device is currently blocked.
+      -
+        name: al-suspended
+        type: u8
+        doc: Whether updates to the activity log are currently suspended.
+      -
+        name: exposed-data-uuid
+        type: u64
+        doc: Data generation UUID currently exposed to peers, identifying the generation of data this node has.
+      -
+        name: current-uuid
+        type: u64
+        doc: Current data generation UUID of the device's metadata.
+      -
+        name: disk-flags
+        type: u32
+        doc: Bitmask of the backing disk's metadata flags.
+      -
+        name: history-uuids
+        type: binary
+        sub-type: u64
+        checks:
+          max-len: history-uuids-size
+        doc: Historical bitmap UUIDs of prior data generations, one slot per peer.
+
+  -
+    name: connection-statistics
+    doc: Statistics of a connection to a peer.
+    attributes:
+      -
+        name: congested
+        type: u8
+        doc: Whether the network transport to the peer is currently congested.
+      -
+        name: ap-in-flight
+        type: u64
+        doc: Application data sent to the peer but not yet acknowledged, in sectors.
+      -
+        name: rs-in-flight
+        type: u64
+        doc: Resync data sent to the peer but not yet acknowledged, in sectors.
+
+  -
+    name: peer-device-statistics
+    doc: Statistics of a peer device.
+    attributes:
+      -
+        name: received
+        type: u64
+        doc: Total data received from the peer for this device, in sectors.
+      -
+        name: sent
+        type: u64
+        doc: Total data sent to the peer for this device, in sectors.
+      -
+        name: pending
+        type: u32
+        doc: Number of requests to this peer waiting for an acknowledgement.
+      -
+        name: unacked
+        type: u32
+        doc: Number of requests from this peer that have not yet been acknowledged.
+      -
+        name: out-of-sync
+        type: u64
+        doc: Amount of data known to differ from this peer, in sectors.
+      -
+        name: resync-failed
+        type: u64
+        doc: Amount of data that failed to resynchronize with this peer, in sectors.
+      -
+        name: bitmap-uuid
+        type: u64
+        doc: Bitmap UUID recorded for this peer.
+      -
+        name: flags
+        type: u32
+        doc: Bitmask of this peer device's metadata flags.
+      -
+        name: rs-total
+        type: u64
+        doc: Total amount of data to resynchronize with this peer for the current resync, in sectors.
+      -
+        name: ov-start-sector
+        type: u64
+        doc: Sector at which the current online verify run started.
+      -
+        name: ov-stop-sector
+        type: u64
+        doc: Sector at which the current online verify run will stop.
+      -
+        name: ov-position
+        type: u64
+        doc: Current position of an ongoing online verify run, in sectors.
+      -
+        name: ov-left
+        type: u64
+        doc: Amount of data left to verify in an ongoing online verify run, in sectors.
+      -
+        name: ov-skipped
+        type: u64
+        doc: Amount of data skipped during an ongoing online verify run, in sectors.
+      -
+        name: rs-same-csum
+        type: u64
+        doc: Amount of resync data found identical by checksum comparison and not retransmitted, in sectors.
+      -
+        name: rs-dt-start-ms
+        type: u64
+        doc: Time elapsed since the current resync with this peer started, in milliseconds.
+      -
+        name: rs-paused-ms
+        type: u64
+        doc: Total time the current resync with this peer has been paused, in milliseconds.
+      -
+        name: rs-dt0-ms
+        type: u64
+        doc: Time since the most recent resync progress mark, in milliseconds.
+      -
+        name: rs-db0-sectors
+        type: u64
+        doc: Data resynchronized since the most recent resync progress mark, in sectors.
+      -
+        name: rs-dt1-ms
+        type: u64
+        doc: Time since the resync progress mark before the most recent one, in milliseconds.
+      -
+        name: rs-db1-sectors
+        type: u64
+        doc: Data resynchronized since the resync progress mark before the most recent one, in sectors.
+      -
+        name: rs-c-sync-rate
+        type: u32
+        doc: Current dynamically controlled resync rate for this peer, in KiB/s.
+      -
+        name: uuid-flags
+        type: u64
+        doc: Bitmask of UUID-related flags negotiated with this peer.
+
+  -
+    name: helper-info
+    doc: Identity and outcome of a handler script invocation.
+    attributes:
+      -
+        name: name
+        type: string
+        checks:
+          max-len: helper-name-max
+        doc: Name of the handler script being invoked.
+      -
+        name: status
+        type: u32
+        doc: Exit status of the handler script, present when phase is response.
+      -
+        name: phase
+        type: u32
+        enum: helper-phase
+        doc: Whether this notification announces the call or reports its result.
+
+  -
+    name: invalidate-parms
+    doc: Parameters of the invalidate request.
+    attributes:
+      -
+        name: sync-from-peer-node-id
+        type: u32
+        doc: Node ID of the peer to resynchronize from; if absent, the kernel chooses a peer.
+      -
+        name: reset-bitmap
+        type: u8
+        doc: Whether to mark the whole bitmap out of sync before starting the resync, instead of resyncing only the blocks already marked out of sync (drbdsetup invalidate option reset-bitmap).
+
+  -
+    name: peer-device-conf
+    doc: Options of a peer device (drbd.conf peer-device-options section).
+    attributes:
+      -
+        name: resync-rate
+        type: u32
+        doc: Bandwidth DRBD may use for resynchronizing with this peer when the dynamic resync controller is disabled, in KiB/s (drbd.conf option resync-rate).
+      -
+        name: c-plan-ahead
+        type: u32
+        doc: How fast the dynamic resync-rate controller adapts to changes in resync speed, in units of 0.1 seconds, or 0 to use a fixed resync-rate instead (drbd.conf option c-plan-ahead).
+      -
+        name: c-delay-target
+        type: u32
+        doc: Delay the dynamic resync-rate controller aims for along the resync path, in units of 0.1 seconds (drbd.conf option c-delay-target).
+      -
+        name: c-fill-target
+        type: u32
+        doc: Amount of resync data the dynamic resync-rate controller aims to keep in flight, in sectors (drbd.conf option c-fill-target).
+      -
+        name: c-max-rate
+        type: u32
+        doc: Maximum bandwidth used by the dynamic resync-rate controller, in KiB/s, or 0 for no limit (drbd.conf option c-max-rate).
+      -
+        name: c-min-rate
+        type: u32
+        doc: Bandwidth reserved for resync I/O against this peer when this node is the sync source and primary, in KiB/s (drbd.conf option c-min-rate).
+      -
+        name: bitmap
+        type: u8
+        doc: Whether to allocate a bitmap slot for this peer, overriding the automatic default for a diskless peer (drbd.conf option bitmap).
+      -
+        name: resync-without-replication
+        type: u8
+        doc: Whether to suspend replication of application writes to this peer while it is being resynchronized (drbd.conf option resync-without-replication).
+      -
+        name: peer-tiebreaker
+        type: u8
+        doc: Whether this peer participates as a tiebreaker in quorum decisions even though it is intentionally diskless (drbd.conf option peer-tiebreaker).
+
+  -
+    name: connect-parms
+    doc: Parameters of the connect request.
+    attributes:
+      -
+        name: tentative
+        type: flag
+        doc: Request that DRBD only determine whether a connection could be established and which resync direction would be used, without actually connecting or resyncing (drbdsetup connect option tentative).
+      -
+        name: discard-my-data
+        type: flag
+        doc: Request that local data be discarded and resynchronized from the peer that has the most up-to-date data (drbdsetup connect option discard-my-data).
+
+  -
+    name: path-info
+    doc: State of a path.
+    attributes:
+      -
+        name: established
+        type: u8
+        doc: Whether the path's transport connection is currently established.
+
+  -
+    name: rename-parms
+    doc: Parameters of the rename request.
+    attributes:
+      -
+        name: new-name
+        type: string
+        checks:
+          max-len: resource-name-max
+        doc: New name for the resource.
+
+  -
+    name: invalidate-peer-parms
+    doc: Parameters of the invalidate-peer request.
+    attributes:
+      -
+        name: reset-bitmap
+        type: u8
+        doc: Whether to mark the whole bitmap out of sync before starting the resync, instead of resyncing only the blocks already marked out of sync (drbdsetup invalidate-remote option reset-bitmap).
+
+  -
+    name: suspend-io-parms
+    doc: Parameters of the suspend-io request.
+    attributes:
+      -
+        name: bdev-freeze
+        type: u8
+        doc: Whether to freeze the filesystem mounted on the device to bring it into a consistent state before suspending I/O (drbdsetup suspend-io option bdev-freeze).
+      -
+        name: flush-to-peers
+        type: u8
+        doc: Whether to wait until the peers have acknowledged the barrier that closes the last epoch, so that the writes before the suspension are on their stable storage also with protocols A and B (drbdsetup suspend-io option flush-to-peers).
+
+  -
+    name: cbt-start-parms
+    doc: Parameters of the device-cbt-start request.
+    attributes:
+      -
+        name: bookmark-id
+        type: u64
+        doc: Caller-chosen identifier of the backup snapshot the new tracking interval starts at; required.
+
+  -
+    name: cbt-info
+    doc: Changed block tracking state of a device. All but active are absent while tracking is inactive.
+    attributes:
+      -
+        name: active
+        type: u8
+        doc: Whether a bitmap slot tracks the blocks changed since a bookmark.
+      -
+        name: valid
+        type: u8
+        doc: Whether the tracking bitmap holds every change since the bookmark; cleared when changes may have been missed, which requires a full backup.
+      -
+        name: bookmark-id
+        type: u64
+        doc: Identifier given to the device-cbt-start that started the interval.
+      -
+        name: since
+        type: u64
+        doc: Time of that device-cbt-start, in seconds since the epoch.
+      -
+        name: bitmap-uuid
+        type: u64
+        doc: Current UUID of the device at that device-cbt-start.
+      -
+        name: bitmap-dagtag
+        type: u64
+        doc: Data generation tag of the Primary at that device-cbt-start; on a Secondary the last one received from the Primary.
+
+  -
+    name: resource
+    doc: A resource with its context, state, statistics and options.
+    attributes:
+      -
+        name: context
+        type: nest
+        nested-attributes: context
+        doc: Identity of the object.
+      -
+        name: info
+        type: nest
+        nested-attributes: resource-info
+        doc: State of the object.
+      -
+        name: statistics
+        type: nest
+        nested-attributes: resource-statistics
+        doc: Statistics of the object.
+      -
+        name: new-name
+        type: string
+        checks:
+          max-len: resource-name-max
+        doc: New name of the resource; present in state-change messages with action
+          rename.
+      -
+        name: resource-opts
+        type: nest
+        nested-attributes: resource-opts
+        doc: Resource-wide options in effect.
+
+  -
+    name: device
+    doc: A device with its context, state, statistics and options.
+    attributes:
+      -
+        name: context
+        type: nest
+        nested-attributes: context
+        doc: Identity of the object.
+      -
+        name: info
+        type: nest
+        nested-attributes: device-info
+        doc: State of the object.
+      -
+        name: statistics
+        type: nest
+        nested-attributes: device-statistics
+        doc: Statistics of the object.
+      -
+        name: disk-conf
+        type: nest
+        nested-attributes: disk-conf
+        doc: Backing disk options in effect; absent while the device is diskless.
+      -
+        name: device-conf
+        type: nest
+        nested-attributes: device-conf
+        doc: Device options in effect.
+
+  -
+    name: connection
+    doc: A connection with its context, state, statistics, options and paths.
+    attributes:
+      -
+        name: context
+        type: nest
+        nested-attributes: context
+        doc: Identity of the object.
+      -
+        name: info
+        type: nest
+        nested-attributes: connection-info
+        doc: State of the object.
+      -
+        name: statistics
+        type: nest
+        nested-attributes: connection-statistics
+        doc: Statistics of the object.
+      -
+        name: net-conf
+        type: nest
+        nested-attributes: net-conf
+        doc: Connection options in effect; absent when the connection has none.
+      -
+        name: path
+        type: nest
+        nested-attributes: path
+        multi-attr: true
+        doc: The paths of this connection, one attribute each. Also available on
+          their own through path-get.
+
+  -
+    name: peer-device
+    doc: A peer device with its context, state, statistics and options.
+    attributes:
+      -
+        name: context
+        type: nest
+        nested-attributes: context
+        doc: Identity of the object.
+      -
+        name: info
+        type: nest
+        nested-attributes: peer-device-info
+        doc: State of the object.
+      -
+        name: statistics
+        type: nest
+        nested-attributes: peer-device-statistics
+        doc: Statistics of the object.
+      -
+        name: peer-device-conf
+        type: nest
+        nested-attributes: peer-device-conf
+        doc: Peer device options in effect; absent when the peer device has none.
+
+  -
+    name: path
+    doc: A path with its context and state.
+    attributes:
+      -
+        name: context
+        type: nest
+        nested-attributes: context
+        doc: Identity of the object.
+      -
+        name: info
+        type: nest
+        nested-attributes: path-info
+        doc: State of the object.
+
+  -
+    name: drbd2
+    doc: Top-level attributes of drbd2 requests, replies and notifications.
+    attributes:
+      -
+        name: context
+        type: nest
+        nested-attributes: context
+        doc: Object the message refers to.
+      -
+        name: set-defaults
+        type: flag
+        doc: Reset all options not given in this request to their defaults before
+          applying it.
+      -
+        name: state-result
+        type: u32
+        enum: state-result
+        doc: Outcome of the state change performed by the request.
+      -
+        name: message
+        type: string
+        doc: Human-readable explanation accompanying state-result.
+      -
+        name: timeout-type
+        type: u32
+        enum: timeout-type
+        doc: Reply of timeout-type-get.
+      -
+        name: disk-conf
+        type: nest
+        nested-attributes: disk-conf
+        doc: Backing disk options for device-attach and disk-set.
+      -
+        name: resource-opts
+        type: nest
+        nested-attributes: resource-opts
+        doc: Resource-wide options for resource-new and resource-set.
+      -
+        name: net-conf
+        type: nest
+        nested-attributes: net-conf
+        doc: Connection options for connection-new and connection-set.
+      -
+        name: set-role-parms
+        type: nest
+        nested-attributes: set-role-parms
+        doc: Parameters of resource-primary and resource-secondary.
+      -
+        name: resize-parms
+        type: nest
+        nested-attributes: resize-parms
+        doc: Parameters of device-resize.
+      -
+        name: start-ov-parms
+        type: nest
+        nested-attributes: start-ov-parms
+        doc: Parameters of peer-device-start-ov.
+      -
+        name: new-current-uuid-parms
+        type: nest
+        nested-attributes: new-current-uuid-parms
+        doc: Parameters of device-new-current-uuid.
+      -
+        name: disconnect-parms
+        type: nest
+        nested-attributes: disconnect-parms
+        doc: Parameters of connection-disconnect and connection-del.
+      -
+        name: detach-parms
+        type: nest
+        nested-attributes: detach-parms
+        doc: Parameters of device-detach.
+      -
+        name: device-conf
+        type: nest
+        nested-attributes: device-conf
+        doc: Device options set when the device is created by device-new.
+      -
+        name: helper
+        type: nest
+        nested-attributes: helper-info
+        doc: Identity and outcome of the handler script reported by helper-ntf.
+      -
+        name: invalidate-parms
+        type: nest
+        nested-attributes: invalidate-parms
+        doc: Parameters of device-invalidate.
+      -
+        name: peer-device-conf
+        type: nest
+        nested-attributes: peer-device-conf
+        doc: Peer device options for peer-device-set.
+      -
+        name: connect-parms
+        type: nest
+        nested-attributes: connect-parms
+        doc: Parameters of connection-connect.
+      -
+        name: rename-parms
+        type: nest
+        nested-attributes: rename-parms
+        doc: Parameters of resource-rename.
+      -
+        name: invalidate-peer-parms
+        type: nest
+        nested-attributes: invalidate-peer-parms
+        doc: Parameters of peer-device-invalidate.
+      -
+        name: suspend-io-parms
+        type: nest
+        nested-attributes: suspend-io-parms
+        doc: Parameters of resource-suspend-io.
+      -
+        name: resource
+        type: nest
+        nested-attributes: resource
+        doc: A resource (dump reply).
+      -
+        name: device
+        type: nest
+        nested-attributes: device
+        doc: A device (dump reply).
+      -
+        name: connection
+        type: nest
+        nested-attributes: connection
+        doc: A connection (dump reply).
+      -
+        name: peer-device
+        type: nest
+        nested-attributes: peer-device
+        doc: A peer device (dump reply).
+      -
+        name: path
+        type: nest
+        nested-attributes: path
+        doc: A path (dump reply).
+      -
+        name: cbt-start-parms
+        type: nest
+        nested-attributes: cbt-start-parms
+        doc: Parameters of device-cbt-start.
+      -
+        name: cbt-info
+        type: nest
+        nested-attributes: cbt-info
+        doc: Reply of device-cbt-status.
+      -
+        name: attach-parms
+        type: nest
+        nested-attributes: attach-parms
+        doc: Parameters of device-attach.
+
+  -
+    name: state-change
+    doc: One object of a state change or of the initial state snapshot. Exactly one
+      object nest is present.
+    attributes:
+      -
+        name: action
+        type: u32
+        enum: state-change-action
+        doc: Whether the object exists, was created, changed or destroyed.
+      -
+        name: more
+        type: flag
+        doc: Further messages belong to the same state change.
+      -
+        name: resource
+        type: nest
+        nested-attributes: resource
+        doc: Present when the message describes a resource.
+      -
+        name: device
+        type: nest
+        nested-attributes: device
+        doc: Present when the message describes a device.
+      -
+        name: connection
+        type: nest
+        nested-attributes: connection
+        doc: Present when the message describes a connection.
+      -
+        name: peer-device
+        type: nest
+        nested-attributes: peer-device
+        doc: Present when the message describes a peer device.
+      -
+        name: path
+        type: nest
+        nested-attributes: path
+        doc: Present when the message describes a path.
+
+operations:
+  list:
+    -
+      name: resource-new
+      doc: Create a new DRBD resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - resource-opts
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-del
+      doc: Delete a DRBD resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-set
+      doc: Change resource options.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - resource-opts
+            - set-defaults
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-rename
+      doc: Rename a DRBD resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - rename-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-down
+      doc: Shut down a DRBD resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-primary
+      doc: Promote the resource to primary role.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - set-role-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-secondary
+      doc: Demote the resource to secondary role.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - set-role-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-suspend-io
+      doc: Suspend I/O on a resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - suspend-io-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: resource-resume-io
+      doc: Resume I/O on a resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-new
+      doc: Add a DRBD device as a volume to a resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - device-conf
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-del
+      doc: Delete a DRBD device.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-attach
+      doc: Attach a local backing device to a DRBD device.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - disk-conf
+            - attach-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-detach
+      doc: Detach the local backing device from a DRBD device.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - detach-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: disk-set
+      doc: Change disk options. Applies to the attached backing disk; see
+        device-attach.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - disk-conf
+            - set-defaults
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-resize
+      doc: Resize the DRBD device.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - resize-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-outdate
+      doc: Mark the local data as outdated.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-invalidate
+      doc: Invalidate the local data of a DRBD device.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - invalidate-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-new-current-uuid
+      doc: Generate a new current UUID.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - new-current-uuid-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: connection-new
+      doc: Add a new peer to a resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - net-conf
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: connection-del
+      doc: Delete a peer from a resource.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - disconnect-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: connection-connect
+      doc: Connect to a peer.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - connect-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: connection-disconnect
+      doc: Disconnect from a peer.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - disconnect-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: connection-set
+      doc: Change network options.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - net-conf
+            - set-defaults
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: connection-forget
+      doc: Forget a previously connected peer. The peer is identified by
+        context.peer-node-id.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: path-new
+      doc: Add a new network path to a connection.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: path-del
+      doc: Delete a network path from a connection.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: peer-device-set
+      doc: Change peer device options.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - peer-device-conf
+            - set-defaults
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: peer-device-invalidate
+      doc: Invalidate the peer data of a DRBD peer device.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - invalidate-peer-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: peer-device-pause-sync
+      doc: Pause resynchronization.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: peer-device-resume-sync
+      doc: Resume resynchronization.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: peer-device-start-ov
+      doc: Start online verification.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - start-ov-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: timeout-type-get
+      doc: Get the timeout type for a peer device.
+      attribute-set: drbd2
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - timeout-type
+
+    -
+      name: resource-get
+      doc: Dump all DRBD resources. Optionally filtered by context.
+      attribute-set: drbd2
+      dump:
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - resource
+
+    -
+      name: device-get
+      doc: Dump all DRBD devices. Optionally filtered by context.
+      attribute-set: drbd2
+      dump:
+        post: drbd2-nl-device-get-done
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - device
+
+    -
+      name: connection-get
+      doc: Dump all DRBD connections. Optionally filtered by context.
+      attribute-set: drbd2
+      dump:
+        post: drbd2-nl-connection-get-done
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - connection
+
+    -
+      name: peer-device-get
+      doc: Dump all DRBD peer devices. Optionally filtered by context.
+      attribute-set: drbd2
+      dump:
+        post: drbd2-nl-peer-device-get-done
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - peer-device
+
+    -
+      name: path-get
+      doc: Dump all DRBD paths. Optionally filtered by context.
+      attribute-set: drbd2
+      dump:
+        post: drbd2-nl-path-get-done
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - path
+
+    -
+      name: state-get
+      doc: Dump a consistent snapshot of all resources, devices, connections, peer
+        devices and paths as state-change messages with action exists.
+      attribute-set: state-change
+      dump:
+        post: drbd2-nl-state-get-done
+        reply:
+          attributes:
+            - action
+            - more
+            - resource
+            - device
+            - connection
+            - peer-device
+            - path
+
+    -
+      name: state-change-ntf
+      doc: Notification about a state change; same layout as state-get replies. Messages
+        of one state change have more set on all but the last.
+      notify: state-get
+      mcgrp: events
+
+    -
+      name: helper-ntf
+      doc: A user-space helper is about to be called (phase call) or has finished
+        (phase response).
+      attribute-set: drbd2
+      event:
+        attributes:
+          - context
+          - helper
+      mcgrp: events
+
+    -
+      name: device-cbt-flush
+      doc: Write the bitmaps and the superblock to the meta data device, so that a
+        snapshot of the meta data taken while I/O stays suspended carries every
+        changed block. Requires I/O suspended and drained, no peer write still
+        executing, no resync running, and a disk that is at least Outdated.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-cbt-start
+      doc: Clear the changed block tracking bitmap and start a new tracking interval
+        at a bookmark. Allocates the tracking bitmap slot if needed. Requires a
+        device-cbt-flush within the same suspension of I/O and no write to the
+        backing device since.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+            - cbt-start-parms
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-cbt-stop
+      doc: Stop changed block tracking and free its bitmap slot.
+      attribute-set: drbd2
+      flags:
+        - admin-perm
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - state-result
+            - message
+
+    -
+      name: device-cbt-status
+      doc: Get the changed block tracking state of a device.
+      attribute-set: drbd2
+      do:
+        pre: drbd2-pre-doit
+        post: drbd2-post-doit
+        request:
+          attributes:
+            - context
+        reply:
+          attributes:
+            - cbt-info
+
+mcast-groups:
+  list:
+    -
+      name: events
