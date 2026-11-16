@@ -18597,7 +18597,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         PushArrayU32 {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_frame(mut self, value: &[u8]) -> Self {
@@ -18944,7 +18944,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         PushArrayIfCombinationAttributes {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn nested_software_iftypes(mut self) -> PushSupportedIftypes<Self> {
@@ -20287,7 +20287,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayFrequencyAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn array_rates(mut self) -> PushArrayBitrateAttrs<Self> {
@@ -20295,7 +20295,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayBitrateAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_ht_mcs_set(mut self, value: &[u8]) -> Self {
@@ -20333,7 +20333,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayIftypeDataAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_edmg_channels(mut self, value: &[u8]) -> Self {
@@ -20570,7 +20570,7 @@ impl<Prev: Pusher> PushFrequencyAttrs<Prev> {
         PushArrayWmmAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_no_he(mut self, value: &[u8]) -> Self {
@@ -20736,7 +20736,7 @@ impl<Prev: Pusher> PushIfCombinationAttributes<Prev> {
         PushArrayIfaceLimitAttributes {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_maxnum(mut self, value: u32) -> Self {
@@ -21127,7 +21127,7 @@ impl<Prev: Pusher> PushSarAttributes<Prev> {
         PushArraySarSpecs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
 }

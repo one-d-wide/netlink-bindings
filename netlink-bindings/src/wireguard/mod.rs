@@ -1431,7 +1431,7 @@ impl<Prev: Pusher> PushWgdevice<Prev> {
         PushArrayWgpeer {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
 }
@@ -1572,7 +1572,7 @@ impl<Prev: Pusher> PushWgpeer<Prev> {
         PushArrayWgallowedip {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     #[doc = "Should not be set or used at all by most users of this API, as the most\nrecent protocol will be used when this is unset. Otherwise, must be set\nto `1`.\n"]

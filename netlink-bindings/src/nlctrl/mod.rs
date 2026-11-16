@@ -1796,7 +1796,7 @@ impl<Prev: Pusher> PushCtrlAttrs<Prev> {
         PushArrayOpAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn array_mcast_groups(mut self) -> PushArrayMcastGroupAttrs<Self> {
@@ -1804,7 +1804,7 @@ impl<Prev: Pusher> PushCtrlAttrs<Prev> {
         PushArrayMcastGroupAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn nested_policy(mut self) -> PushPolicyAttrs<Self> {

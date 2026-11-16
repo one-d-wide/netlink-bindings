@@ -20631,7 +20631,7 @@ impl<Prev: Pusher> PushLinkinfoBondAttrs<Prev> {
         PushArrayU32 {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_arp_validate(mut self, value: u32) -> Self {
@@ -20751,7 +20751,7 @@ impl<Prev: Pusher> PushLinkinfoBondAttrs<Prev> {
         PushArrayBinary {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_coupled_control(mut self, value: u8) -> Self {
@@ -22986,7 +22986,7 @@ impl<Prev: Pusher> PushLinkOffloadXstats<Prev> {
         PushArrayHwSInfoOne {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_l3_stats(mut self, value: &[u8]) -> Self {
