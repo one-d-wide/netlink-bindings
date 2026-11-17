@@ -18,7 +18,8 @@ features="
   nl80211,
   tc,
   inet-diag,
-  netdev
+  netdev,
+  rt-nsid
 "
 
 examples="
@@ -35,6 +36,7 @@ examples="
   multicast-simple
   multicast-generic
   multicast-rtnetlink
+  netns-id
 "
 
 examples_async="

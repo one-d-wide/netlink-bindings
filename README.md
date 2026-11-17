@@ -38,6 +38,7 @@ All [upstream specifications][list-of-specs] are supported as of Linux 7.3.
 [rt-addr](./netlink-socket/examples/wireguard-setup.rs),
 [rt-route](./netlink-socket/examples/ip-route-show.rs),
 [rt-link](./netlink-socket/examples/wireguard-setup.rs),
+[rt-nsid](./netlink-socket/examples/netns-id.rs),
 [tc](./netlink-socket/examples/tc-prio.rs),
 [wireguard](./netlink-socket/examples/wireguard-setup.rs).
 - ✔️ compiles, testing needed: binder, dev-energymodel, devlink, dpll, drm-ras,
@@ -186,6 +187,8 @@ entries.
 connections, similar to `conntrack -L`.
 - [extack](./netlink-socket/examples/extack.rs) - Showcase handing of extended
 ack attributes in error reporting.
+- [netns-id](./netlink-socket/examples/netns-id.rs) - List, get, and set
+numeric ids on network namespaces.
 - [nftables](./netlink-socket/examples/nftables.rs) - Create nftables rules.
 - [nftables-api](./netlink-socket/examples/nftables-api.rs) - A high-level
 wrapper for creating nftables rules.

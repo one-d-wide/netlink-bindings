@@ -64,6 +64,10 @@ required-features = [ "netlink-bindings/rt-link" ]
 name = "multicast-simple-async"
 required-features = [ "netlink-bindings/netdev", "netlink-bindings/rt-link", "async" ]
 
+[[example]]
+name = "netns-id"
+required-features = [ "netlink-bindings/rt-nsid" ]
+
 [package.metadata.docs.rs]
 all-features = true
 
