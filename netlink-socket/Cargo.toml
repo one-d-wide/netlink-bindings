@@ -64,6 +64,10 @@ required-features = [ "netlink-bindings/rt-link" ]
 name = "multicast-simple-async"
 required-features = [ "netlink-bindings/netdev", "netlink-bindings/rt-link", "async" ]
 
+[[example]]
+name = "netns"
+required-features = [ "netlink-bindings/rt-nsid" ]
+
 [package.metadata.docs.rs]
 all-features = true
 
@@ -75,6 +79,7 @@ smol = [ "async", "dep:smol", "dep:smol-macros", "dep:macro_rules_attribute" ]
 
 [dev-dependencies]
 ip-route.workspace = true
+netns-rs = "0.2"
 
 [dependencies]
 libc = "0.2"
