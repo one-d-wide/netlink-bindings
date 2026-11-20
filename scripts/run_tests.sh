@@ -21,7 +21,8 @@ features="
   tc,
   inet-diag,
   netdev,
-  rt-nsid
+  rt-nsid,
+  drbd2
 "
 
 examples="

@@ -31,7 +31,7 @@ All [upstream specifications][list-of-specs] are supported as of Linux 7.3.
 
 - ✅ supported, has tests:
 [conntrack](./netlink-socket/examples/conntrack.rs),
-[drbd2](./netlink-socket/examples/drbd2.rs),
+[drbd2](./netlink-socket/examples/drbd2-status.rs),
 [inet-diag](./netlink-socket/examples/tcp-rtt.rs),
 [nftables](./netlink-socket/examples/nftables.rs),
 [nl80211](./netlink-socket/examples/nl80211.rs),
