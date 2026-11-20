@@ -597,12 +597,12 @@ impl<'a> Iterator for IterableRpcStatus<'a> {
                     val
                 }),
                 10u16 => RpcStatus::Saddr6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 11u16 => RpcStatus::Daddr6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5474,12 +5474,12 @@ impl<Prev: Pusher> PushRpcStatus<Prev> {
     }
     pub fn push_saddr6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 10u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_daddr6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 11u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_sport(mut self, value: u16) -> Self {

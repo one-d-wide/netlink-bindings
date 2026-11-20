@@ -298,7 +298,7 @@ impl<'a> Iterator for IterableTcpMetrics<'a> {
                     val
                 }),
                 2u16 => TcpMetrics::AddrIpv6({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -348,7 +348,7 @@ impl<'a> Iterator for IterableTcpMetrics<'a> {
                     val
                 }),
                 12u16 => TcpMetrics::SaddrIpv6({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -891,7 +891,7 @@ impl<Prev: Pusher> PushTcpMetrics<Prev> {
     }
     pub fn push_addr_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 2u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_age(mut self, value: u64) -> Self {
@@ -945,7 +945,7 @@ impl<Prev: Pusher> PushTcpMetrics<Prev> {
     }
     pub fn push_saddr_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 12u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_pad(mut self, value: &[u8]) -> Self {

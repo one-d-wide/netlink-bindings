@@ -7278,9 +7278,7 @@ impl<'a> Iterator for IterableArrayIpv6Addr<'a> {
         }
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             {
-                let Some(res) = parse_u128(next).map(Ipv6Addr::from_bits) else {
-                    break;
-                };
+                let Some(res) = parse_ipv6(next) else { break };
                 return Some(Ok(res));
             }
         }
@@ -12777,12 +12775,12 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
                     val
                 }),
                 6u16 => LinkinfoGre6Attrs::Local({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 7u16 => LinkinfoGre6Attrs::Remote({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13528,12 +13526,12 @@ impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
                     val
                 }),
                 4u16 => LinkinfoVti6Attrs::Local({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => LinkinfoVti6Attrs::Remote({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -14040,7 +14038,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
                 }),
                 6u16 => LinkinfoGeneveAttrs::CollectMetadata(()),
                 7u16 => LinkinfoGeneveAttrs::Remote6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -14087,7 +14085,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
                     val
                 }),
                 18u16 => LinkinfoGeneveAttrs::Local6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -15088,7 +15086,7 @@ impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
                     val
                 }),
                 11u16 => LinkinfoIptunAttrs::_6rdPrefix({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -15625,12 +15623,12 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
                     val
                 }),
                 2u16 => LinkinfoIp6tnlAttrs::Local({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 3u16 => LinkinfoIp6tnlAttrs::Remote({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -20030,12 +20028,12 @@ impl<'a> Iterator for IterableLinkinfoVxlanAttrs<'a> {
                     val
                 }),
                 16u16 => LinkinfoVxlanAttrs::Group6({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 17u16 => LinkinfoVxlanAttrs::Local6({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -21777,7 +21775,7 @@ impl<Prev: Pusher> PushArrayBinary<Prev> {
         let index = self.counter;
         self.counter += 1;
         push_header(self.as_vec_mut(), index, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
 }
@@ -22899,12 +22897,12 @@ impl<Prev: Pusher> PushLinkinfoGre6Attrs<Prev> {
     }
     pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 6u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 7u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_ttl(mut self, value: u8) -> Self {
@@ -23105,12 +23103,12 @@ impl<Prev: Pusher> PushLinkinfoVti6Attrs<Prev> {
     }
     pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 4u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 5u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_fwmark(mut self, value: u32) -> Self {
@@ -23185,7 +23183,7 @@ impl<Prev: Pusher> PushLinkinfoGeneveAttrs<Prev> {
     }
     pub fn push_remote6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 7u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_udp_csum(mut self, value: u8) -> Self {
@@ -23238,7 +23236,7 @@ impl<Prev: Pusher> PushLinkinfoGeneveAttrs<Prev> {
     }
     pub fn push_local6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 18u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
 }
@@ -23415,7 +23413,7 @@ impl<Prev: Pusher> PushLinkinfoIptunAttrs<Prev> {
     }
     pub fn push_6rd_prefix(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 11u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_6rd_relay_prefix(mut self, value: std::net::Ipv4Addr) -> Self {
@@ -23505,12 +23503,12 @@ impl<Prev: Pusher> PushLinkinfoIp6tnlAttrs<Prev> {
     }
     pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 2u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 3u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_ttl(mut self, value: u8) -> Self {
@@ -24541,12 +24539,12 @@ impl<Prev: Pusher> PushLinkinfoVxlanAttrs<Prev> {
     }
     pub fn push_group6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 16u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_local6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 17u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_udp_csum(mut self, value: u8) -> Self {

@@ -587,7 +587,7 @@ impl<'a> Iterator for IterablePeer<'a> {
                     val
                 }),
                 3u16 => Peer::RemoteIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -617,7 +617,7 @@ impl<'a> Iterator for IterablePeer<'a> {
                     val
                 }),
                 9u16 => Peer::VpnIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -627,7 +627,7 @@ impl<'a> Iterator for IterablePeer<'a> {
                     val
                 }),
                 11u16 => Peer::LocalIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1229,7 +1229,7 @@ impl<'a> Iterator for IterablePeerNewInput<'a> {
                     val
                 }),
                 3u16 => PeerNewInput::RemoteIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1254,7 +1254,7 @@ impl<'a> Iterator for IterablePeerNewInput<'a> {
                     val
                 }),
                 9u16 => PeerNewInput::VpnIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1264,7 +1264,7 @@ impl<'a> Iterator for IterablePeerNewInput<'a> {
                     val
                 }),
                 11u16 => PeerNewInput::LocalIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1721,7 +1721,7 @@ impl<'a> Iterator for IterablePeerSetInput<'a> {
                     val
                 }),
                 3u16 => PeerSetInput::RemoteIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1741,7 +1741,7 @@ impl<'a> Iterator for IterablePeerSetInput<'a> {
                     val
                 }),
                 9u16 => PeerSetInput::VpnIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1751,7 +1751,7 @@ impl<'a> Iterator for IterablePeerSetInput<'a> {
                     val
                 }),
                 11u16 => PeerSetInput::LocalIpv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4486,7 +4486,7 @@ impl<Prev: Pusher> PushPeer<Prev> {
     #[doc = "The remote IPv6 address of the peer\n"]
     pub fn push_remote_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 3u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The scope id of the remote IPv6 address of the peer (RFC2553)\n"]
@@ -4522,7 +4522,7 @@ impl<Prev: Pusher> PushPeer<Prev> {
     #[doc = "The IPv6 address assigned to the peer by the server\n"]
     pub fn push_vpn_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 9u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The local IPv4 to be used to send packets to the peer (UDP only)\n"]
@@ -4534,7 +4534,7 @@ impl<Prev: Pusher> PushPeer<Prev> {
     #[doc = "The local IPv6 to be used to send packets to the peer (UDP only)\n"]
     pub fn push_local_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 11u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The local port to be used to send packets to the peer (UDP only)\n"]
@@ -4666,7 +4666,7 @@ impl<Prev: Pusher> PushPeerNewInput<Prev> {
     #[doc = "The remote IPv6 address of the peer\n"]
     pub fn push_remote_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 3u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The scope id of the remote IPv6 address of the peer (RFC2553)\n"]
@@ -4696,7 +4696,7 @@ impl<Prev: Pusher> PushPeerNewInput<Prev> {
     #[doc = "The IPv6 address assigned to the peer by the server\n"]
     pub fn push_vpn_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 9u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The local IPv4 to be used to send packets to the peer (UDP only)\n"]
@@ -4708,7 +4708,7 @@ impl<Prev: Pusher> PushPeerNewInput<Prev> {
     #[doc = "The local IPv6 to be used to send packets to the peer (UDP only)\n"]
     pub fn push_local_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 11u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The number of seconds after which a keep alive message is sent to the\npeer\n"]
@@ -4780,7 +4780,7 @@ impl<Prev: Pusher> PushPeerSetInput<Prev> {
     #[doc = "The remote IPv6 address of the peer\n"]
     pub fn push_remote_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 3u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The scope id of the remote IPv6 address of the peer (RFC2553)\n"]
@@ -4804,7 +4804,7 @@ impl<Prev: Pusher> PushPeerSetInput<Prev> {
     #[doc = "The IPv6 address assigned to the peer by the server\n"]
     pub fn push_vpn_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 9u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The local IPv4 to be used to send packets to the peer (UDP only)\n"]
@@ -4816,7 +4816,7 @@ impl<Prev: Pusher> PushPeerSetInput<Prev> {
     #[doc = "The local IPv6 to be used to send packets to the peer (UDP only)\n"]
     pub fn push_local_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 11u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "The number of seconds after which a keep alive message is sent to the\npeer\n"]

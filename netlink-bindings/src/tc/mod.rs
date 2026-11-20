@@ -19327,22 +19327,22 @@ impl<'a> Iterator for IterableFlowerAttrs<'a> {
                     val
                 }),
                 14u16 => FlowerAttrs::KeyIpv6Src({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 15u16 => FlowerAttrs::KeyIpv6SrcMask({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 16u16 => FlowerAttrs::KeyIpv6Dst({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 17u16 => FlowerAttrs::KeyIpv6DstMask({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -19412,22 +19412,22 @@ impl<'a> Iterator for IterableFlowerAttrs<'a> {
                     val
                 }),
                 31u16 => FlowerAttrs::KeyEncIpv6Src({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 32u16 => FlowerAttrs::KeyEncIpv6SrcMask({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 33u16 => FlowerAttrs::KeyEncIpv6Dst({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 34u16 => FlowerAttrs::KeyEncIpv6DstMask({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -35466,22 +35466,22 @@ impl<Prev: Pusher> PushFlowerAttrs<Prev> {
     }
     pub fn push_key_ipv6_src(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 14u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_ipv6_src_mask(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 15u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_ipv6_dst(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 16u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_ipv6_dst_mask(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 17u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_tcp_src(mut self, value: u16) -> Self {
@@ -35552,22 +35552,22 @@ impl<Prev: Pusher> PushFlowerAttrs<Prev> {
     }
     pub fn push_key_enc_ipv6_src(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 31u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_enc_ipv6_src_mask(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 32u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_enc_ipv6_dst(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 33u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_enc_ipv6_dst_mask(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 34u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_key_tcp_src_mask(mut self, value: u16) -> Self {

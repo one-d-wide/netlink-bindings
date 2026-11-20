@@ -377,12 +377,12 @@ impl<'a> Iterator for IterableGtp<'a> {
                     val
                 }),
                 11u16 => Gtp::PeerAddr6({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 12u16 => Gtp::MsAddr6({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -641,13 +641,13 @@ impl<Prev: Pusher> PushGtp<Prev> {
     #[doc = "IPv6 address of the remote GSN peer (GGSN or SGSN).\n"]
     pub fn push_peer_addr6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 11u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "IPv6 prefix of the mobile subscriber served by the context: a /64\nprefix, with the lower 64 bits set to zero.\n"]
     pub fn push_ms_addr6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 12u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "Address family (AF_INET or AF_INET6) of ms-address or ms-addr6, AF_INET\nwhen absent. The peer address uses the family of the tunnel socket.\n"]

@@ -1128,12 +1128,12 @@ impl<'a> Iterator for IterableTupleIpAttrs<'a> {
                     val
                 }),
                 3u16 => TupleIpAttrs::IpV6Src({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 4u16 => TupleIpAttrs::IpV6Dst({
-                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -5717,13 +5717,13 @@ impl<Prev: Pusher> PushTupleIpAttrs<Prev> {
     #[doc = "ipv6 source address\n"]
     pub fn push_ip_v6_src(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 3u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     #[doc = "ipv6 destination address\n"]
     pub fn push_ip_v6_dst(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 4u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
 }

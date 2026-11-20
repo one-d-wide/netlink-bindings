@@ -3230,12 +3230,12 @@ impl<'a> Iterator for IterableLwtunnelIp6<'a> {
                     val
                 }),
                 2u16 => LwtunnelIp6::Dst({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
                 3u16 => LwtunnelIp6::Src({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -3501,7 +3501,7 @@ impl<'a> Iterator for IterableSeg6Iptunnel<'a> {
                     val
                 }),
                 2u16 => Seg6Iptunnel::Src({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4101,7 +4101,7 @@ impl<'a> Iterator for IterableSeg6Local<'a> {
                     val
                 }),
                 5u16 => Seg6Local::Nh6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4599,7 +4599,7 @@ impl<'a> Iterator for IterableIoam6Iptunnel<'a> {
                     val
                 }),
                 2u16 => Ioam6Iptunnel::Dst({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4619,7 +4619,7 @@ impl<'a> Iterator for IterableIoam6Iptunnel<'a> {
                     val
                 }),
                 6u16 => Ioam6Iptunnel::Src({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7069,12 +7069,12 @@ impl<Prev: Pusher> PushLwtunnelIp6<Prev> {
     }
     pub fn push_dst(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 2u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_src(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 3u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_hoplimit(mut self, value: u8) -> Self {
@@ -7147,7 +7147,7 @@ impl<Prev: Pusher> PushSeg6Iptunnel<Prev> {
     }
     pub fn push_src(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 2u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_table(mut self, value: u32) -> Self {
@@ -7276,7 +7276,7 @@ impl<Prev: Pusher> PushSeg6Local<Prev> {
     }
     pub fn push_nh6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 5u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_iif(mut self, value: u32) -> Self {
@@ -7399,7 +7399,7 @@ impl<Prev: Pusher> PushIoam6Iptunnel<Prev> {
     }
     pub fn push_dst(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 2u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
     pub fn push_trace(mut self, value: &[u8]) -> Self {
@@ -7419,7 +7419,7 @@ impl<Prev: Pusher> PushIoam6Iptunnel<Prev> {
     }
     pub fn push_src(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 6u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
 }

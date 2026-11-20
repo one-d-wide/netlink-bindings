@@ -7,6 +7,8 @@
 #![allow(irrefutable_let_patterns)]
 #![allow(unreachable_code)]
 #![allow(unreachable_patterns)]
+#[cfg(test)]
+mod tests;
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
@@ -770,7 +772,7 @@ impl<'a> Iterator for IterableAddress<'a> {
                     val
                 }),
                 4u16 => Address::Ipv6({
-                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
+                    let res = parse_ipv6(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13106,7 +13108,7 @@ impl<Prev: Pusher> PushAddress<Prev> {
     #[doc = "IPv6 address, present when family is AF_INET6.\n"]
     pub fn push_ipv6(mut self, value: std::net::Ipv6Addr) -> Self {
         push_header(self.as_vec_mut(), 4u16, 16 as u16);
-        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
+        encode_ipv6(self.as_vec_mut(), value);
         self
     }
 }
