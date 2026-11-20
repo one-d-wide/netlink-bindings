@@ -108,7 +108,7 @@ impl NetlinkSocket {
         request: &Request,
     ) -> io::Result<NetlinkReply<'sock, Request>>
     where
-        Request: NetlinkRequest,
+        Request: NetlinkRequest + ?Sized,
     {
         let (protonum, request_type) = match request.protocol() {
             Protocol::Raw {
@@ -119,6 +119,35 @@ impl NetlinkSocket {
         };
 
         self.request_raw(request, protonum, request_type).await
+    }
+
+    /// Same as `.request(&request)?.recv_ack()`
+    #[super::strip_async]
+    pub async fn request_ack<Request>(&mut self, request: &Request) -> Result<(), ReplyError>
+    where
+        Request: NetlinkRequest + ?Sized,
+    {
+        match self.request(request).await?.recv_inner().await {
+            None => Ok(()),
+            Some(Ok(_)) => Err(io::Error::other("Reply isn't just an ack").into()),
+            Some(Err(err)) => Err(err),
+        }
+    }
+
+    /// Same as `.request(&request)?.recv_one()`
+    #[super::strip_async]
+    pub async fn request_one<'sock, Request>(
+        &'sock mut self,
+        request: &Request,
+    ) -> Result<Request::ReplyType<'sock>, ReplyError>
+    where
+        Request: NetlinkRequest + ?Sized + 'sock,
+    {
+        match self.request(request).await?.recv_inner().await {
+            None => Err(io::Error::other("Reply didn't contain data").into()),
+            Some(Ok((l, r))) => Ok(Request::decode_reply(&self.buf[l..r])),
+            Some(Err(err)) => Err(err),
+        }
     }
 
     #[super::strip_async]
@@ -160,7 +189,7 @@ impl NetlinkSocket {
         request_type: u16,
     ) -> io::Result<NetlinkReply<'sock, Request>>
     where
-        Request: NetlinkRequest,
+        Request: NetlinkRequest + ?Sized,
     {
         let seq = self.reserve_seq(1);
         let sock = Self::get_socket_cached(&mut self.sock, protonum)?;
@@ -375,16 +404,16 @@ impl NetlinkReplyInner {
 }
 
 #[must_use = "The request is sent, but not acknowledged. Consider .recv_ack(), .recv_one() or .recv()"]
-pub struct NetlinkReply<'sock, Request: NetlinkRequest> {
+pub struct NetlinkReply<'sock, Request: NetlinkRequest + ?Sized> {
     inner: NetlinkReplyInner,
     sock: &'sock mut Socket,
     buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
     seq: u32,
     done: bool,
-    phantom: PhantomData<Request>,
+    phantom: PhantomData<fn() -> Request>,
 }
 
-impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
+impl<Request: NetlinkRequest + ?Sized> NetlinkReply<'_, Request> {
     #[super::strip_async]
     pub async fn recv_one(&mut self) -> Result<Request::ReplyType<'_>, ReplyError> {
         if let Some(res) = self.recv().await {
@@ -404,6 +433,15 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
 
     #[super::strip_async]
     pub async fn recv(&mut self) -> Option<Result<Request::ReplyType<'_>, ReplyError>> {
+        match self.recv_inner().await {
+            None => None,
+            Some(Ok((l, r))) => Some(Ok(Request::decode_reply(&self.buf[l..r]))),
+            Some(Err(err)) => Some(Err(err)),
+        }
+    }
+
+    #[super::strip_async]
+    async fn recv_inner(&mut self) -> Option<Result<(usize, usize), ReplyError>> {
         if self.done {
             return None;
         }
@@ -421,7 +459,7 @@ impl<Request: NetlinkRequest> NetlinkReply<'_, Request> {
                         continue;
                     }
                     return match res {
-                        Ok((l, r)) => Some(Ok(Request::decode_reply(&self.buf[l..r]))),
+                        Ok((l, r)) => Some(Ok((l, r))),
                         Err(mut err) => {
                             self.done = true;
                             if err.code.raw_os_error().unwrap() == 0 {

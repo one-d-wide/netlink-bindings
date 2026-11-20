@@ -51,8 +51,20 @@ impl NetlinkSocket {
             done,
         })
     }
+
+    #[super::strip_async]
+    pub async fn request_chained_all<Chained>(
+        &mut self,
+        request: &Chained,
+    ) -> Result<(), ReplyError>
+    where
+        Chained: NetlinkChained + Send + Sync,
+    {
+        self.request_chained(request).await?.recv_all().await
+    }
 }
 
+#[must_use = "The request is sent, but not acknowledged. Consider .recv_all() or .recv()"]
 pub struct NetlinkReplyChained<'sock> {
     inner: NetlinkReplyInner,
     request: &'sock (dyn NetlinkChained + Send + Sync),
