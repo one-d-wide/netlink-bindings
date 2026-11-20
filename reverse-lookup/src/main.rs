@@ -1,7 +1,7 @@
 fn main() {
     let res = reverse_lookup::run(
-        argh::from_env(),
-        reverse_lookup::ApiArgs {
+        &mut argh::from_env(),
+        &mut reverse_lookup::ApiArgs {
             redirect_signals: true,
             ..Default::default()
         },

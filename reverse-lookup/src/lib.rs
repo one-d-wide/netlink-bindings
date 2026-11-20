@@ -3,7 +3,7 @@ use std::{
     cell::Cell,
     collections::HashMap,
     ffi::OsStr,
-    fs::File,
+    fs::{self, File},
     io::{self, BufRead, BufReader, BufWriter, Write},
     os::unix::{ffi::OsStrExt, fs::MetadataExt, process::ExitStatusExt},
     path::{Path, PathBuf},
@@ -79,6 +79,11 @@ pub struct CliArgs {
     #[argh(usage)]
     pub dump: bool,
 
+    /// write output to a file
+    #[argh(option, arg_name = "path")]
+    #[argh(short = 'o')]
+    pub output: Option<String>,
+
     /// read strace file
     #[argh(switch)]
     #[argh(short = 'f')]
@@ -112,19 +117,36 @@ pub struct CliArgs {
     pub args: Vec<String>,
 }
 
-#[derive(Debug, Default, Clone)]
-pub struct ApiArgs {
+#[derive(Default)]
+pub struct ApiArgs<'a> {
     /// Avoid setting up signal handlers using `libc::signal()`
     pub redirect_signals: bool,
     /// Receive strace process pid (after strace attaches).
     pub strace_pid_tx: Option<std::sync::mpsc::Sender<u32>>,
     pub frames_tx: Option<mpsc::Sender<ReverseLookup>>,
+    pub logger: Option<&'a mut dyn Write>,
     pub no_follow_fork: bool,
 }
 
-pub fn run(mut args: CliArgs, api: ApiArgs) -> bool {
+pub fn run(args: &mut CliArgs, api: &mut ApiArgs) -> bool {
     args.save |= args.save_dir.is_some();
     args.command |= args.pid.is_some();
+
+    let mut output_file = None;
+    if let Some(output) = &args.output {
+        let res = fs::File::options()
+            .create(true)
+            .truncate(true)
+            .write(true)
+            .open(output);
+        match res {
+            Ok(file) => output_file = Some(file),
+            Err(err) => {
+                eprintln!("Can't open {output:?}: {err}");
+                return false;
+            }
+        };
+    }
 
     if args.command && args.file {
         eprintln!("Can't use --command and --file simultaneously");
@@ -150,7 +172,7 @@ pub fn run(mut args: CliArgs, api: ApiArgs) -> bool {
     if !args.command && (args.file || !hint_exe) {
         for path in &args.args {
             let file = File::open(path).unwrap();
-            let _ = read(&args, &mut BufReader::new(file), api.frames_tx.as_ref());
+            let _ = read(args, api, &mut BufReader::new(file), &mut output_file);
         }
         return true;
     }
@@ -245,11 +267,11 @@ pub fn run(mut args: CliArgs, api: ApiArgs) -> bool {
         // Strace has probably encountered an error
         let _ = std::io::copy(&mut buf, &mut std::io::stderr().lock());
     } else {
-        if let Some(tx) = api.strace_pid_tx {
+        if let Some(tx) = &api.strace_pid_tx {
             tx.send(proc.id()).unwrap();
         }
 
-        let _ = read(&args, &mut buf, api.frames_tx.as_ref());
+        let _ = read(args, api, &mut buf, &mut output_file);
     }
 
     let mut code = 1;
@@ -280,8 +302,9 @@ fn exe_exists(exe: impl AsRef<Path>) -> bool {
 
 fn read(
     args: &CliArgs,
+    api: &mut ApiArgs,
     reader: &mut dyn BufRead,
-    sender: Option<&mpsc::Sender<ReverseLookup>>,
+    output: &mut Option<fs::File>,
 ) -> io::Result<()> {
     let read_syscalls = ["read", "readv", "recv", "recvfrom", "recvmsg", "recvmmsg"];
     let write_syscalls = ["write", "writev", "send", "sendto", "sendmsg", "sendmmsg"];
@@ -335,9 +358,13 @@ fn read(
     let mut last_filter = Default::default();
 
     let mut stream_buf = None;
-    let out = if sender.is_some() {
+    let out = if let Some(logger) = &mut api.logger {
+        logger
+    } else if api.frames_tx.is_some() {
         stream_buf = Some(EchoOnError::default());
         stream_buf.as_mut().unwrap() as &mut dyn Write
+    } else if let Some(output) = output {
+        output as &mut dyn Write
     } else {
         &mut std::io::stderr().lock() as &mut dyn Write
     };
@@ -591,7 +618,7 @@ fn read(
                     buf: buf.into(),
                 };
 
-                if let Some(tx) = sender.as_ref() {
+                if let Some(tx) = api.frames_tx.as_ref() {
                     tx.send(lookup.clone()).unwrap(); // Clone before it's modified
                 }
 
