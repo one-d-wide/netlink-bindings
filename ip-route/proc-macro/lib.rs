@@ -126,7 +126,7 @@ fn ip_inner(input: TokenStream, is_dump: bool) -> TokenStream {
 fn is_external(ident: &Ident) -> bool {
     matches!(
         ident.to_string().as_str(),
-        "std" | "libc" | "netlink_bindings" | "netlink_socket2" | "ipnet",
+        "std" | "libc" | "netlink_bindings" | "netlink_socket2" | "ipnet" | "rand",
     )
 }
 

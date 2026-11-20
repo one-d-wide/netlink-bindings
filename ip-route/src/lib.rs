@@ -14,5 +14,6 @@ pub mod reexports {
     pub use libc;
     pub use netlink_bindings;
     pub use netlink_socket2;
+    pub use rand;
     pub use std;
 }

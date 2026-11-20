@@ -251,7 +251,15 @@ group! {
     const MAY_TABLE;
     ~ repeat: may,
     ~ init => { let mut table = "filter"; }
-    ~ fini => { attrs = attrs.push_table_bytes(table.as_bytes()); }
+    ~ fini => {
+        attrs = attrs.push_table_bytes(table.as_bytes());
+
+        chained.request()
+            .set_create()
+            .op_newtable_do(&header)
+            .encode()
+            .push_name_bytes(table.as_bytes());
+    }
     "-t", name: &str => { table = name; }
 }
 
@@ -278,6 +286,13 @@ group! {
     const CHAIN;
     chain: &str => {
         attrs = attrs.push_chain_bytes(chain.as_bytes());
+
+        chained.request()
+            .set_create()
+            .op_newchain_do(&header)
+            .encode()
+            .push_table_bytes(table.as_bytes())
+            .push_name_bytes(chain.as_bytes());
     }
 }
 
