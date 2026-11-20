@@ -127,6 +127,11 @@ pub mod rt_link;
 #[path = "rt-neigh/mod.rs"]
 pub mod rt_neigh;
 
+#[cfg(feature = "rt-nexthop")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rt-nexthop")))]
+#[path = "rt-nexthop/mod.rs"]
+pub mod rt_nexthop;
+
 #[cfg(feature = "rt-route")]
 #[cfg_attr(docsrs, doc(cfg(feature = "rt-route")))]
 #[path = "rt-route/mod.rs"]

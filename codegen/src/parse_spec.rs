@@ -335,10 +335,6 @@ impl AttrProp {
     pub fn is_ipv6(&self) -> bool {
         matches!(self.r#type, AttrType::Binary { r#struct: None, .. })
             && self.display_hint.as_ref().is_some_and(|h| h == "ipv6")
-            && self
-                .checks
-                .as_ref()
-                .is_some_and(|c| c.min_len.as_ref().is_some_and(|l| l.get_value() == 16))
     }
 
     pub fn is_ip(&self) -> bool {
@@ -346,7 +342,7 @@ impl AttrProp {
             && self
                 .display_hint
                 .as_ref()
-                .is_some_and(|h| matches!(h.as_ref(), "ipv4" | "ipv4-or-v6"))
+                .is_some_and(|h| matches!(h.as_ref(), "ipv4" | "ipv6" | "ipv4-or-v6"))
     }
 
     pub fn is_sockaddr(&self) -> bool {

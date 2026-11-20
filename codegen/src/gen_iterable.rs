@@ -4,8 +4,7 @@ use std::collections::HashSet;
 use syn::Ident;
 
 use crate::{
-    gen_attrs::GenAttrs,
-    gen_attrs::{gen_attr_type, gen_attr_type_name},
+    gen_attrs::{gen_attr_type, gen_attr_type_name, GenAttrs},
     gen_cstruct::struct_type,
     gen_ops::OpHeader,
     gen_sub_message::{self},
@@ -93,8 +92,8 @@ pub fn gen_iterable_attrs(
                 let sel_type;
                 let sel_cast;
                 match &selector_type {
-                    gen_sub_message::SelectorType::U32 { .. } => {
-                        sel_type = quote!(u32);
+                    gen_sub_message::SelectorType::Integer { rust_type, .. } => {
+                        sel_type = rust_type.clone();
                         sel_cast = quote!(*sel);
                     }
                     gen_sub_message::SelectorType::CStr => {
