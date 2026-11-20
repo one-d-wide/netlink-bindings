@@ -437,10 +437,12 @@ pub fn gen_writable_type(spec: &Spec, next: &AttrProp) -> WritableType {
             size_expr: quote!(4),
             align: 4,
         },
+        // IPv6 addresses are always in network byte order, regardless of
+        // `byte-order`, which most specs leave unset on binary attributes.
         AttrType::Binary { .. } if next.is_ipv6() => WritableType {
             rust_type: quote!(std::net::Ipv6Addr),
-            encode_expr: quote! { &#value_name.to_bits().#encode() },
-            encode_block: quote!(),
+            encode_expr: quote!(),
+            encode_block: quote! { encode_ipv6(self.as_vec_mut(), #value_name); },
             size_expr: quote!(16),
             align: 4,
         },
