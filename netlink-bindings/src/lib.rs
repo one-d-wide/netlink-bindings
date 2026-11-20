@@ -33,6 +33,10 @@ pub mod devlink;
 #[cfg_attr(docsrs, doc(cfg(feature = "dpll")))]
 pub mod dpll;
 
+#[cfg(feature = "drbd2")]
+#[cfg_attr(docsrs, doc(cfg(feature = "drbd2")))]
+pub mod drbd2;
+
 #[cfg(feature = "drm-ras")]
 #[cfg_attr(docsrs, doc(cfg(feature = "drm-ras")))]
 #[path = "drm-ras/mod.rs"]
@@ -45,6 +49,10 @@ pub mod ethtool;
 #[cfg(feature = "fou")]
 #[cfg_attr(docsrs, doc(cfg(feature = "fou")))]
 pub mod fou;
+
+#[cfg(feature = "gtp")]
+#[cfg_attr(docsrs, doc(cfg(feature = "gtp")))]
+pub mod gtp;
 
 #[cfg(feature = "handshake")]
 #[cfg_attr(docsrs, doc(cfg(feature = "handshake")))]
@@ -131,6 +139,11 @@ pub mod rt_neigh;
 #[cfg_attr(docsrs, doc(cfg(feature = "rt-nexthop")))]
 #[path = "rt-nexthop/mod.rs"]
 pub mod rt_nexthop;
+
+#[cfg(feature = "rt-nsid")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rt-nsid")))]
+#[path = "rt-nsid/mod.rs"]
+pub mod rt_nsid;
 
 #[cfg(feature = "rt-route")]
 #[cfg_attr(docsrs, doc(cfg(feature = "rt-route")))]

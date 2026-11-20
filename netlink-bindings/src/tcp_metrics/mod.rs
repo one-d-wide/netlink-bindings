@@ -10,7 +10,7 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "tcp_metrics";
@@ -523,9 +523,9 @@ impl IterableTcpMetrics<'_> {
 }
 #[derive(Clone)]
 pub enum Metrics {
-    #[doc = "Round Trip Time (RTT), in msecs with 3 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time (RTT), in msecs with 3 bits fractional.\n"]
     Rtt(u32),
-    #[doc = "Round Trip Time VARiance (RTT), in msecs with 2 bits fractional\n(left-shift by 2 to get the msec value).\n"]
+    #[doc = "Round Trip Time VARiance (RTTVAR), in msecs with 2 bits fractional.\n"]
     Rttvar(u32),
     #[doc = "Slow Start THRESHold.\n"]
     Ssthresh(u32),
@@ -533,13 +533,13 @@ pub enum Metrics {
     Cwnd(u32),
     #[doc = "Reodering metric.\n"]
     Reodering(u32),
-    #[doc = "Round Trip Time (RTT), in usecs, with 3 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time (RTT), in usecs, with 3 bits fractional.\n"]
     RttUs(u32),
-    #[doc = "Round Trip Time (RTT), in usecs, with 2 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time VARiance (RTTVAR), in usecs, with 2 bits fractional.\n"]
     RttvarUs(u32),
 }
 impl<'a> IterableMetrics<'a> {
-    #[doc = "Round Trip Time (RTT), in msecs with 3 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time (RTT), in msecs with 3 bits fractional.\n"]
     pub fn get_rtt(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -555,7 +555,7 @@ impl<'a> IterableMetrics<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "Round Trip Time VARiance (RTT), in msecs with 2 bits fractional\n(left-shift by 2 to get the msec value).\n"]
+    #[doc = "Round Trip Time VARiance (RTTVAR), in msecs with 2 bits fractional.\n"]
     pub fn get_rttvar(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -619,7 +619,7 @@ impl<'a> IterableMetrics<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "Round Trip Time (RTT), in usecs, with 3 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time (RTT), in usecs, with 3 bits fractional.\n"]
     pub fn get_rtt_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -635,7 +635,7 @@ impl<'a> IterableMetrics<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "Round Trip Time (RTT), in usecs, with 2 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time VARiance (RTTVAR), in usecs, with 2 bits fractional.\n"]
     pub fn get_rttvar_us(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -989,13 +989,13 @@ impl<Prev: Pusher> PushMetrics<Prev> {
         }
         prev
     }
-    #[doc = "Round Trip Time (RTT), in msecs with 3 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time (RTT), in msecs with 3 bits fractional.\n"]
     pub fn push_rtt(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 1u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "Round Trip Time VARiance (RTT), in msecs with 2 bits fractional\n(left-shift by 2 to get the msec value).\n"]
+    #[doc = "Round Trip Time VARiance (RTTVAR), in msecs with 2 bits fractional.\n"]
     pub fn push_rttvar(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 2u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
@@ -1019,13 +1019,13 @@ impl<Prev: Pusher> PushMetrics<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "Round Trip Time (RTT), in usecs, with 3 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time (RTT), in usecs, with 3 bits fractional.\n"]
     pub fn push_rtt_us(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 6u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "Round Trip Time (RTT), in usecs, with 2 bits fractional (left-shift by 3\nto get the msec value).\n"]
+    #[doc = "Round Trip Time VARiance (RTTVAR), in usecs, with 2 bits fractional.\n"]
     pub fn push_rttvar_us(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 7u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());

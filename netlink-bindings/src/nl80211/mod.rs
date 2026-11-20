@@ -10,13 +10,13 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "nl80211";
 pub const PROTONAME_CSTR: &CStr = c"nl80211";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Commands {
     Unspec = 0,
     GetWiphy = 1,
@@ -104,7 +104,7 @@ pub enum Commands {
     UnexpectedFrame = 83,
     ProbeClient = 84,
     RegisterBeacons = 85,
-    Unexpected4AddrFrame = 86,
+    Unexpected4addrFrame = 86,
     SetNoackMap = 87,
     ChSwitchNotify = 88,
     StartP2pDevice = 89,
@@ -264,7 +264,7 @@ impl Commands {
             83 => Self::UnexpectedFrame,
             84 => Self::ProbeClient,
             85 => Self::RegisterBeacons,
-            86 => Self::Unexpected4AddrFrame,
+            86 => Self::Unexpected4addrFrame,
             87 => Self::SetNoackMap,
             88 => Self::ChSwitchNotify,
             89 => Self::StartP2pDevice,
@@ -339,7 +339,7 @@ impl Commands {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FeatureFlags {
     SkTxStatus = 1 << 0,
     HtIbss = 1 << 1,
@@ -372,7 +372,7 @@ pub enum FeatureFlags {
     TdlsChannelSwitch = 1 << 28,
     ScanRandomMacAddr = 1 << 29,
     SchedScanRandomMacAddr = 1 << 30,
-    NoRandomMacAddr = 1 << 31,
+    NdRandomMacAddr = 1 << 31,
 }
 impl FeatureFlags {
     pub fn from_value(value: u64) -> Option<Self> {
@@ -408,13 +408,13 @@ impl FeatureFlags {
             n if n == 1 << 28 => Self::TdlsChannelSwitch,
             n if n == 1 << 29 => Self::ScanRandomMacAddr,
             n if n == 1 << 30 => Self::SchedScanRandomMacAddr,
-            n if n == 1 << 31 => Self::NoRandomMacAddr,
+            n if n == 1 << 31 => Self::NdRandomMacAddr,
             _ => return None,
         })
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ChannelType {
     NoHt = 0,
     Ht20 = 1,
@@ -433,7 +433,7 @@ impl ChannelType {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ProtocolFeatures {
     SplitWiphyDump = 1 << 0,
 }
@@ -446,7 +446,7 @@ impl ProtocolFeatures {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Iftype {
     Unspecified = 0,
     Adhoc = 1,
@@ -487,7 +487,7 @@ impl Iftype {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum StaFlag {
     Authorized = 1,
     ShortPreamble = 2,
@@ -18597,7 +18597,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         PushArrayU32 {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_frame(mut self, value: &[u8]) -> Self {
@@ -18944,7 +18944,7 @@ impl<Prev: Pusher> PushNl80211Attrs<Prev> {
         PushArrayIfCombinationAttributes {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn nested_software_iftypes(mut self) -> PushSupportedIftypes<Self> {
@@ -20287,7 +20287,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayFrequencyAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn array_rates(mut self) -> PushArrayBitrateAttrs<Self> {
@@ -20295,7 +20295,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayBitrateAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_ht_mcs_set(mut self, value: &[u8]) -> Self {
@@ -20333,7 +20333,7 @@ impl<Prev: Pusher> PushBandAttrs<Prev> {
         PushArrayIftypeDataAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_edmg_channels(mut self, value: &[u8]) -> Self {
@@ -20570,7 +20570,7 @@ impl<Prev: Pusher> PushFrequencyAttrs<Prev> {
         PushArrayWmmAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_no_he(mut self, value: &[u8]) -> Self {
@@ -20736,7 +20736,7 @@ impl<Prev: Pusher> PushIfCombinationAttributes<Prev> {
         PushArrayIfaceLimitAttributes {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_maxnum(mut self, value: u32) -> Self {
@@ -21127,7 +21127,7 @@ impl<Prev: Pusher> PushSarAttributes<Prev> {
         PushArraySarSpecs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
 }

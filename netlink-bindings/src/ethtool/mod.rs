@@ -10,13 +10,13 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "ethtool";
 pub const PROTONAME_CSTR: &CStr = c"ethtool";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum UdpTunnelType {
     Vxlan = 0,
     Geneve = 1,
@@ -34,7 +34,7 @@ impl UdpTunnelType {
 }
 #[doc = "common ethtool header flags\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HeaderFlags {
     #[doc = "use compact bitsets in reply\n"]
     CompactBitsets = 1 << 0,
@@ -55,31 +55,31 @@ impl HeaderFlags {
 }
 #[doc = "plug-in module firmware flashing status\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ModuleFwFlashStatus {
     #[doc = "The firmware flashing process has started.\n"]
-    Started = 0,
+    Started = 1,
     #[doc = "The firmware flashing process is in progress.\n"]
-    InProgress = 1,
+    InProgress = 2,
     #[doc = "The firmware flashing process was completed successfully.\n"]
-    Completed = 2,
+    Completed = 3,
     #[doc = "The firmware flashing process was stopped due to an error.\n"]
-    Error = 3,
+    Error = 4,
 }
 impl ModuleFwFlashStatus {
     pub fn from_value(value: u64) -> Option<Self> {
         Some(match value {
-            0 => Self::Started,
-            1 => Self::InProgress,
-            2 => Self::Completed,
-            3 => Self::Error,
+            1 => Self::Started,
+            2 => Self::InProgress,
+            3 => Self::Completed,
+            4 => Self::Error,
             _ => return None,
         })
     }
 }
 #[doc = "\\\"groups of PSE extended states functions. IEEE 802.3-2022 33.2.4.4\nVariables\\\"\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum C33PseExtState {
     #[doc = "none\n"]
     None = 0,
@@ -96,9 +96,9 @@ pub enum C33PseExtState {
     #[doc = "Group of ovld_detected states\n"]
     OvldDetected = 6,
     #[doc = "Group of power_not_available states\n"]
-    PowerNotAvailable = 7,
+    PowerNotAvailable = 8,
     #[doc = "Group of short_detected states\n"]
-    ShortDetected = 8,
+    ShortDetected = 9,
 }
 impl C33PseExtState {
     pub fn from_value(value: u64) -> Option<Self> {
@@ -110,14 +110,14 @@ impl C33PseExtState {
             4 => Self::OptionDetectTed,
             5 => Self::OptionVportLim,
             6 => Self::OvldDetected,
-            7 => Self::PowerNotAvailable,
-            8 => Self::ShortDetected,
+            8 => Self::PowerNotAvailable,
+            9 => Self::ShortDetected,
             _ => return None,
         })
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PhyUpstreamType {
     Mac = 0,
     Phy = 1,
@@ -132,7 +132,7 @@ impl PhyUpstreamType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TcpDataSplit {
     Unknown = 0,
     Disabled = 1,
@@ -150,7 +150,7 @@ impl TcpDataSplit {
 }
 #[doc = "Source of the hardware timestamp\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HwtstampSource {
     #[doc = "Hardware timestamp comes from a MAC or a device which has MAC and PHY\nintegrated\n"]
     Netdev = 1,
@@ -168,7 +168,7 @@ impl HwtstampSource {
 }
 #[doc = "PSE event list for the PSE controller\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PseEvent {
     #[doc = "PSE output current is too high\n"]
     PseEventOverCurrent = 1 << 0,
@@ -201,7 +201,7 @@ impl PseEvent {
 }
 #[doc = "RSS hash function transformations.\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum InputXfrm {
     #[doc = "XOR the corresponding source and destination fields of each specified\nprotocol. Both copies of the XOR\\'ed fields are fed into the RSS and\nRXHASH calculation. Note that this XORing reduces the input set entropy\nand could be exploited to reduce the RSS queue spread.\n"]
     SymXor = 1 << 0,
@@ -218,7 +218,7 @@ impl InputXfrm {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RxfhFields {
     L2da = 1 << 1,
     Vlan = 1 << 2,
@@ -247,6 +247,22 @@ impl RxfhFields {
             n if n == 1 << 8 => Self::GtpTeid,
             n if n == 1 << 9 => Self::Ip6Fl,
             n if n == 1 << 31 => Self::Discard,
+            _ => return None,
+        })
+    }
+}
+#[doc = "type of physical connector\n"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum PortType {
+    Mdi = 0,
+    Sfp = 1,
+}
+impl PortType {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Mdi,
+            1 => Self::Sfp,
             _ => return None,
         })
     }
@@ -18010,6 +18026,303 @@ impl IterableMse<'_> {
         (stack, missing)
     }
 }
+#[derive(Clone)]
+pub enum Port<'a> {
+    Header(IterableHeader<'a>),
+    Id(u32),
+    SupportedModes(IterableBitset<'a>),
+    SupportedInterfaces(IterableBitset<'a>),
+    #[doc = "Associated type: [`PortType`] (enum)"]
+    Type(u32),
+    UpstreamPort(u32),
+}
+impl<'a> IterablePort<'a> {
+    pub fn get_header(&self) -> Result<IterableHeader<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Port::Header(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Port",
+            "Header",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_id(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Port::Id(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Port",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_supported_modes(&self) -> Result<IterableBitset<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Port::SupportedModes(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Port",
+            "SupportedModes",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_supported_interfaces(&self) -> Result<IterableBitset<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Port::SupportedInterfaces(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Port",
+            "SupportedInterfaces",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Associated type: [`PortType`] (enum)"]
+    pub fn get_type(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Port::Type(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Port",
+            "Type",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_upstream_port(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Port::UpstreamPort(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Port",
+            "UpstreamPort",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl Port<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterablePort<'a> {
+        IterablePort::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Header",
+            2u16 => "Id",
+            3u16 => "SupportedModes",
+            4u16 => "SupportedInterfaces",
+            5u16 => "Type",
+            6u16 => "UpstreamPort",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterablePort<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterablePort<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterablePort<'a> {
+    type Item = Result<Port<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => Port::Header({
+                    let res = Some(IterableHeader::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => Port::Id({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => Port::SupportedModes({
+                    let res = Some(IterableBitset::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => Port::SupportedInterfaces({
+                    let res = Some(IterableBitset::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => Port::Type({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => Port::UpstreamPort({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "Port",
+            r#type.and_then(|t| Port::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterablePort<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("Port");
+        let mut iter = IterablePort::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                Port::Header(val) => fmt.field("Header", &val),
+                Port::Id(val) => fmt.field("Id", &val),
+                Port::SupportedModes(val) => fmt.field("SupportedModes", &val),
+                Port::SupportedInterfaces(val) => fmt.field("SupportedInterfaces", &val),
+                Port::Type(val) => fmt.field("Type", &FormatEnum(val.into(), PortType::from_value)),
+                Port::UpstreamPort(val) => fmt.field("UpstreamPort", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterablePort<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("Port", offset));
+            return (stack, missing_type.and_then(|t| Port::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                Port::Header(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                Port::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                Port::SupportedModes(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                Port::SupportedInterfaces(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                Port::Type(val) => {
+                    if last_off == offset {
+                        stack.push(("Type", last_off));
+                        break;
+                    }
+                }
+                Port::UpstreamPort(val) => {
+                    if last_off == offset {
+                        stack.push(("UpstreamPort", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("Port", cur));
+        }
+        (stack, missing)
+    }
+}
 pub struct PushHeader<Prev: Pusher> {
     pub(crate) prev: Option<Prev>,
     pub(crate) header_offset: Option<usize>,
@@ -22278,6 +22591,79 @@ impl<Prev: Pusher> PushMse<Prev> {
     }
 }
 impl<Prev: Pusher> Drop for PushMse<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushPort<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushPort<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushPort<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn nested_header(mut self) -> PushHeader<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 1u16);
+        PushHeader {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_id(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_supported_modes(mut self) -> PushBitset<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 3u16);
+        PushBitset {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn nested_supported_interfaces(mut self) -> PushBitset<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 4u16);
+        PushBitset {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Associated type: [`PortType`] (enum)"]
+    pub fn push_type(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_upstream_port(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushPort<Prev> {
     fn drop(&mut self) {
         if let Some(prev) = &mut self.prev {
             if let Some(header_offset) = &self.header_offset {
@@ -27166,6 +27552,130 @@ impl NetlinkRequest for OpMseGetDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
+#[doc = "Get ports attached to an interface\n\nRequest attributes:\n- [.nested_header()](PushPort::nested_header)\n\nReply attributes:\n- [.get_header()](IterablePort::get_header)\n- [.get_id()](IterablePort::get_id)\n- [.get_supported_modes()](IterablePort::get_supported_modes)\n- [.get_supported_interfaces()](IterablePort::get_supported_interfaces)\n- [.get_type()](IterablePort::get_type)\n- [.get_upstream_port()](IterablePort::get_upstream_port)\n\n"]
+#[derive(Debug)]
+pub struct OpPortGetDump<'r> {
+    request: Request<'r>,
+}
+impl<'r> OpPortGetDump<'r> {
+    pub fn new(mut request: Request<'r>) -> Self {
+        Self::write_header(request.buf_mut());
+        Self {
+            request: request.set_dump(),
+        }
+    }
+    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushPort<&'buf mut Vec<u8>> {
+        Self::write_header(buf);
+        PushPort::new(buf)
+    }
+    pub fn encode(&mut self) -> PushPort<&mut Vec<u8>> {
+        PushPort::new(self.request.buf_mut())
+    }
+    pub fn into_encoder(self) -> PushPort<RequestBuf<'r>> {
+        PushPort::new(self.request.buf)
+    }
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterablePort<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
+        IterablePort::with_loc(attrs, buf.as_ptr() as usize)
+    }
+    fn write_header<Prev: Pusher>(prev: &mut Prev) {
+        let mut header = BuiltinNfgenmsg::new();
+        header.cmd = 75u8;
+        header.version = 1u8;
+        prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
+}
+impl NetlinkRequest for OpPortGetDump<'_> {
+    fn protocol(&self) -> Protocol {
+        Protocol::Generic("ethtool".as_bytes())
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    type ReplyType<'buf> = IterablePort<'buf>;
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        Self::decode_request(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        Self::decode_request(buf).lookup_attr(offset, missing_type)
+    }
+}
+#[doc = "Get ports attached to an interface\n\nRequest attributes:\n- [.nested_header()](PushPort::nested_header)\n- [.push_id()](PushPort::push_id)\n\nReply attributes:\n- [.get_header()](IterablePort::get_header)\n- [.get_id()](IterablePort::get_id)\n- [.get_supported_modes()](IterablePort::get_supported_modes)\n- [.get_supported_interfaces()](IterablePort::get_supported_interfaces)\n- [.get_type()](IterablePort::get_type)\n- [.get_upstream_port()](IterablePort::get_upstream_port)\n\n"]
+#[derive(Debug)]
+pub struct OpPortGetDo<'r> {
+    request: Request<'r>,
+}
+impl<'r> OpPortGetDo<'r> {
+    pub fn new(mut request: Request<'r>) -> Self {
+        Self::write_header(request.buf_mut());
+        Self { request: request }
+    }
+    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushPort<&'buf mut Vec<u8>> {
+        Self::write_header(buf);
+        PushPort::new(buf)
+    }
+    pub fn encode(&mut self) -> PushPort<&mut Vec<u8>> {
+        PushPort::new(self.request.buf_mut())
+    }
+    pub fn into_encoder(self) -> PushPort<RequestBuf<'r>> {
+        PushPort::new(self.request.buf)
+    }
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterablePort<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
+        IterablePort::with_loc(attrs, buf.as_ptr() as usize)
+    }
+    fn write_header<Prev: Pusher>(prev: &mut Prev) {
+        let mut header = BuiltinNfgenmsg::new();
+        header.cmd = 75u8;
+        header.version = 1u8;
+        prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
+}
+impl NetlinkRequest for OpPortGetDo<'_> {
+    fn protocol(&self) -> Protocol {
+        Protocol::Generic("ethtool".as_bytes())
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    type ReplyType<'buf> = IterablePort<'buf>;
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        Self::decode_request(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        Self::decode_request(buf).lookup_attr(offset, missing_type)
+    }
+}
 use crate::traits::LookupFn;
 use crate::utils::RequestBuf;
 #[derive(Debug)]
@@ -27947,6 +28457,20 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-mse-get-do", OpMseGetDo::lookup);
         res
     }
+    #[doc = "Get ports attached to an interface\n\nRequest attributes:\n- [.nested_header()](PushPort::nested_header)\n\nReply attributes:\n- [.get_header()](IterablePort::get_header)\n- [.get_id()](IterablePort::get_id)\n- [.get_supported_modes()](IterablePort::get_supported_modes)\n- [.get_supported_interfaces()](IterablePort::get_supported_interfaces)\n- [.get_type()](IterablePort::get_type)\n- [.get_upstream_port()](IterablePort::get_upstream_port)\n\n"]
+    pub fn op_port_get_dump(self) -> OpPortGetDump<'buf> {
+        let mut res = OpPortGetDump::new(self);
+        res.request
+            .do_writeback(res.protocol(), "op-port-get-dump", OpPortGetDump::lookup);
+        res
+    }
+    #[doc = "Get ports attached to an interface\n\nRequest attributes:\n- [.nested_header()](PushPort::nested_header)\n- [.push_id()](PushPort::push_id)\n\nReply attributes:\n- [.get_header()](IterablePort::get_header)\n- [.get_id()](IterablePort::get_id)\n- [.get_supported_modes()](IterablePort::get_supported_modes)\n- [.get_supported_interfaces()](IterablePort::get_supported_interfaces)\n- [.get_type()](IterablePort::get_type)\n- [.get_upstream_port()](IterablePort::get_upstream_port)\n\n"]
+    pub fn op_port_get_do(self) -> OpPortGetDo<'buf> {
+        let mut res = OpPortGetDo::new(self);
+        res.request
+            .do_writeback(res.protocol(), "op-port-get-do", OpPortGetDo::lookup);
+        res
+    }
 }
 #[cfg(test)]
 mod generated_tests {
@@ -28084,6 +28608,12 @@ mod generated_tests {
         let _ = IterablePlca::get_status;
         let _ = IterablePlca::get_to_tmr;
         let _ = IterablePlca::get_version;
+        let _ = IterablePort::get_header;
+        let _ = IterablePort::get_id;
+        let _ = IterablePort::get_supported_interfaces;
+        let _ = IterablePort::get_supported_modes;
+        let _ = IterablePort::get_type;
+        let _ = IterablePort::get_upstream_port;
         let _ = IterablePrivflags::get_flags;
         let _ = IterablePrivflags::get_header;
         let _ = IterablePse::get_c33_pse_actual_pw;
@@ -28267,6 +28797,8 @@ mod generated_tests {
         let _ = PushPlca::<&mut Vec<u8>>::push_status;
         let _ = PushPlca::<&mut Vec<u8>>::push_to_tmr;
         let _ = PushPlca::<&mut Vec<u8>>::push_version;
+        let _ = PushPort::<&mut Vec<u8>>::nested_header;
+        let _ = PushPort::<&mut Vec<u8>>::push_id;
         let _ = PushPrivflags::<&mut Vec<u8>>::nested_flags;
         let _ = PushPrivflags::<&mut Vec<u8>>::nested_header;
         let _ = PushPse::<&mut Vec<u8>>::nested_header;

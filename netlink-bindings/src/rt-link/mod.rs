@@ -10,30 +10,30 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "rt-link";
 pub const PROTONAME_CSTR: &CStr = c"rt-link";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum IfinfoFlags {
     Up = 1 << 0,
     Broadcast = 1 << 1,
     Debug = 1 << 2,
     Loopback = 1 << 3,
-    PointToPoint = 1 << 4,
-    NoTrailers = 1 << 5,
+    Pointopoint = 1 << 4,
+    Notrailers = 1 << 5,
     Running = 1 << 6,
-    NoArp = 1 << 7,
+    Noarp = 1 << 7,
     Promisc = 1 << 8,
-    AllMulti = 1 << 9,
+    Allmulti = 1 << 9,
     Master = 1 << 10,
     Slave = 1 << 11,
     Multicast = 1 << 12,
     Portsel = 1 << 13,
-    AutoMedia = 1 << 14,
+    Automedia = 1 << 14,
     Dynamic = 1 << 15,
     LowerUp = 1 << 16,
     Dormant = 1 << 17,
@@ -46,17 +46,17 @@ impl IfinfoFlags {
             n if n == 1 << 1 => Self::Broadcast,
             n if n == 1 << 2 => Self::Debug,
             n if n == 1 << 3 => Self::Loopback,
-            n if n == 1 << 4 => Self::PointToPoint,
-            n if n == 1 << 5 => Self::NoTrailers,
+            n if n == 1 << 4 => Self::Pointopoint,
+            n if n == 1 << 5 => Self::Notrailers,
             n if n == 1 << 6 => Self::Running,
-            n if n == 1 << 7 => Self::NoArp,
+            n if n == 1 << 7 => Self::Noarp,
             n if n == 1 << 8 => Self::Promisc,
-            n if n == 1 << 9 => Self::AllMulti,
+            n if n == 1 << 9 => Self::Allmulti,
             n if n == 1 << 10 => Self::Master,
             n if n == 1 << 11 => Self::Slave,
             n if n == 1 << 12 => Self::Multicast,
             n if n == 1 << 13 => Self::Portsel,
-            n if n == 1 << 14 => Self::AutoMedia,
+            n if n == 1 << 14 => Self::Automedia,
             n if n == 1 << 15 => Self::Dynamic,
             n if n == 1 << 16 => Self::LowerUp,
             n if n == 1 << 17 => Self::Dormant,
@@ -66,7 +66,7 @@ impl IfinfoFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VlanProtocols {
     _8021q = 33024,
     _8021ad = 34984,
@@ -81,84 +81,84 @@ impl VlanProtocols {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Ipv4Devconf {
-    Forwarding = 0,
-    McForwarding = 1,
-    ProxyArp = 2,
-    AcceptRedirects = 3,
-    SecureRedirects = 4,
-    SendRedirects = 5,
-    SharedMedia = 6,
-    RpFilter = 7,
-    AcceptSourceRoute = 8,
-    BootpRelay = 9,
-    LogMartians = 10,
-    Tag = 11,
-    Arpfilter = 12,
-    MediumId = 13,
-    Noxfrm = 14,
-    Nopolicy = 15,
-    ForceIgmpVersion = 16,
-    ArpAnnounce = 17,
-    ArpIgnore = 18,
-    PromoteSecondaries = 19,
-    ArpAccept = 20,
-    ArpNotify = 21,
-    AcceptLocal = 22,
-    SrcVmark = 23,
-    ProxyArpPvlan = 24,
-    RouteLocalnet = 25,
-    Igmpv2UnsolicitedReportInterval = 26,
-    Igmpv3UnsolicitedReportInterval = 27,
-    IgnoreRoutesWithLinkdown = 28,
-    DropUnicastInL2Multicast = 29,
-    DropGratuitousArp = 30,
-    BcForwarding = 31,
-    ArpEvictNocarrier = 32,
+    Forwarding = 1,
+    McForwarding = 2,
+    ProxyArp = 3,
+    AcceptRedirects = 4,
+    SecureRedirects = 5,
+    SendRedirects = 6,
+    SharedMedia = 7,
+    RpFilter = 8,
+    AcceptSourceRoute = 9,
+    BootpRelay = 10,
+    LogMartians = 11,
+    Tag = 12,
+    Arpfilter = 13,
+    MediumId = 14,
+    Noxfrm = 15,
+    Nopolicy = 16,
+    ForceIgmpVersion = 17,
+    ArpAnnounce = 18,
+    ArpIgnore = 19,
+    PromoteSecondaries = 20,
+    ArpAccept = 21,
+    ArpNotify = 22,
+    AcceptLocal = 23,
+    SrcVmark = 24,
+    ProxyArpPvlan = 25,
+    RouteLocalnet = 26,
+    Igmpv2UnsolicitedReportInterval = 27,
+    Igmpv3UnsolicitedReportInterval = 28,
+    IgnoreRoutesWithLinkdown = 29,
+    DropUnicastInL2Multicast = 30,
+    DropGratuitousArp = 31,
+    BcForwarding = 32,
+    ArpEvictNocarrier = 33,
 }
 impl Ipv4Devconf {
     pub fn from_value(value: u64) -> Option<Self> {
         Some(match value {
-            0 => Self::Forwarding,
-            1 => Self::McForwarding,
-            2 => Self::ProxyArp,
-            3 => Self::AcceptRedirects,
-            4 => Self::SecureRedirects,
-            5 => Self::SendRedirects,
-            6 => Self::SharedMedia,
-            7 => Self::RpFilter,
-            8 => Self::AcceptSourceRoute,
-            9 => Self::BootpRelay,
-            10 => Self::LogMartians,
-            11 => Self::Tag,
-            12 => Self::Arpfilter,
-            13 => Self::MediumId,
-            14 => Self::Noxfrm,
-            15 => Self::Nopolicy,
-            16 => Self::ForceIgmpVersion,
-            17 => Self::ArpAnnounce,
-            18 => Self::ArpIgnore,
-            19 => Self::PromoteSecondaries,
-            20 => Self::ArpAccept,
-            21 => Self::ArpNotify,
-            22 => Self::AcceptLocal,
-            23 => Self::SrcVmark,
-            24 => Self::ProxyArpPvlan,
-            25 => Self::RouteLocalnet,
-            26 => Self::Igmpv2UnsolicitedReportInterval,
-            27 => Self::Igmpv3UnsolicitedReportInterval,
-            28 => Self::IgnoreRoutesWithLinkdown,
-            29 => Self::DropUnicastInL2Multicast,
-            30 => Self::DropGratuitousArp,
-            31 => Self::BcForwarding,
-            32 => Self::ArpEvictNocarrier,
+            1 => Self::Forwarding,
+            2 => Self::McForwarding,
+            3 => Self::ProxyArp,
+            4 => Self::AcceptRedirects,
+            5 => Self::SecureRedirects,
+            6 => Self::SendRedirects,
+            7 => Self::SharedMedia,
+            8 => Self::RpFilter,
+            9 => Self::AcceptSourceRoute,
+            10 => Self::BootpRelay,
+            11 => Self::LogMartians,
+            12 => Self::Tag,
+            13 => Self::Arpfilter,
+            14 => Self::MediumId,
+            15 => Self::Noxfrm,
+            16 => Self::Nopolicy,
+            17 => Self::ForceIgmpVersion,
+            18 => Self::ArpAnnounce,
+            19 => Self::ArpIgnore,
+            20 => Self::PromoteSecondaries,
+            21 => Self::ArpAccept,
+            22 => Self::ArpNotify,
+            23 => Self::AcceptLocal,
+            24 => Self::SrcVmark,
+            25 => Self::ProxyArpPvlan,
+            26 => Self::RouteLocalnet,
+            27 => Self::Igmpv2UnsolicitedReportInterval,
+            28 => Self::Igmpv3UnsolicitedReportInterval,
+            29 => Self::IgnoreRoutesWithLinkdown,
+            30 => Self::DropUnicastInL2Multicast,
+            31 => Self::DropGratuitousArp,
+            32 => Self::BcForwarding,
+            33 => Self::ArpEvictNocarrier,
             _ => return None,
         })
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Ipv6Devconf {
     Forwarding = 0,
     Hoplimit = 1,
@@ -218,6 +218,8 @@ pub enum Ipv6Devconf {
     Ioam6IdWide = 55,
     NdiscEvictNocarrier = 56,
     AcceptUntrackedNa = 57,
+    AcceptRaMinLft = 58,
+    ForceForwarding = 59,
 }
 impl Ipv6Devconf {
     pub fn from_value(value: u64) -> Option<Self> {
@@ -280,12 +282,14 @@ impl Ipv6Devconf {
             55 => Self::Ioam6IdWide,
             56 => Self::NdiscEvictNocarrier,
             57 => Self::AcceptUntrackedNa,
+            58 => Self::AcceptRaMinLft,
+            59 => Self::ForceForwarding,
             _ => return None,
         })
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum IflaIcmp6Stats {
     Num = 0,
     Inmsgs = 1,
@@ -310,45 +314,46 @@ impl IflaIcmp6Stats {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum IflaInet6Stats {
     Num = 0,
     Inpkts = 1,
     Inoctets = 2,
     Indelivers = 3,
-    Outforwdatagrams = 4,
-    Outpkts = 5,
-    Outoctets = 6,
-    Inhdrerrors = 7,
-    Intoobigerrors = 8,
-    Innoroutes = 9,
-    Inaddrerrors = 10,
-    Inunknownprotos = 11,
-    Intruncatedpkts = 12,
-    Indiscards = 13,
-    Outdiscards = 14,
-    Outnoroutes = 15,
-    Reasmtimeout = 16,
-    Reasmreqds = 17,
-    Reasmoks = 18,
-    Reasmfails = 19,
-    Fragoks = 20,
-    Fragfails = 21,
-    Fragcreates = 22,
-    Inmcastpkts = 23,
-    Outmcastpkts = 24,
-    Inbcastpkts = 25,
-    Outbcastpkts = 26,
-    Inmcastoctets = 27,
-    Outmcastoctets = 28,
-    Inbcastoctets = 29,
-    Outbcastoctets = 30,
-    Csumerrors = 31,
-    Noectpkts = 32,
-    Ect1Pkts = 33,
-    Ect0Pkts = 34,
-    Cepkts = 35,
-    ReasmOverlaps = 36,
+    Noectpkts = 4,
+    Ect1pkts = 5,
+    Ect0pkts = 6,
+    Cepkts = 7,
+    Outrequests = 8,
+    Outpkts = 9,
+    Outoctets = 10,
+    Outforwdatagrams = 11,
+    Inhdrerrors = 12,
+    Intoobigerrors = 13,
+    Innoroutes = 14,
+    Inaddrerrors = 15,
+    Inunknownprotos = 16,
+    Intruncatedpkts = 17,
+    Indiscards = 18,
+    Outdiscards = 19,
+    Outnoroutes = 20,
+    Reasmtimeout = 21,
+    Reasmreqds = 22,
+    Reasmoks = 23,
+    Reasmfails = 24,
+    Fragoks = 25,
+    Fragfails = 26,
+    Fragcreates = 27,
+    Inmcastpkts = 28,
+    Outmcastpkts = 29,
+    Inbcastpkts = 30,
+    Outbcastpkts = 31,
+    Inmcastoctets = 32,
+    Outmcastoctets = 33,
+    Inbcastoctets = 34,
+    Outbcastoctets = 35,
+    Csumerrors = 36,
+    ReasmOverlaps = 37,
 }
 impl IflaInet6Stats {
     pub fn from_value(value: u64) -> Option<Self> {
@@ -357,45 +362,46 @@ impl IflaInet6Stats {
             1 => Self::Inpkts,
             2 => Self::Inoctets,
             3 => Self::Indelivers,
-            4 => Self::Outforwdatagrams,
-            5 => Self::Outpkts,
-            6 => Self::Outoctets,
-            7 => Self::Inhdrerrors,
-            8 => Self::Intoobigerrors,
-            9 => Self::Innoroutes,
-            10 => Self::Inaddrerrors,
-            11 => Self::Inunknownprotos,
-            12 => Self::Intruncatedpkts,
-            13 => Self::Indiscards,
-            14 => Self::Outdiscards,
-            15 => Self::Outnoroutes,
-            16 => Self::Reasmtimeout,
-            17 => Self::Reasmreqds,
-            18 => Self::Reasmoks,
-            19 => Self::Reasmfails,
-            20 => Self::Fragoks,
-            21 => Self::Fragfails,
-            22 => Self::Fragcreates,
-            23 => Self::Inmcastpkts,
-            24 => Self::Outmcastpkts,
-            25 => Self::Inbcastpkts,
-            26 => Self::Outbcastpkts,
-            27 => Self::Inmcastoctets,
-            28 => Self::Outmcastoctets,
-            29 => Self::Inbcastoctets,
-            30 => Self::Outbcastoctets,
-            31 => Self::Csumerrors,
-            32 => Self::Noectpkts,
-            33 => Self::Ect1Pkts,
-            34 => Self::Ect0Pkts,
-            35 => Self::Cepkts,
-            36 => Self::ReasmOverlaps,
+            4 => Self::Noectpkts,
+            5 => Self::Ect1pkts,
+            6 => Self::Ect0pkts,
+            7 => Self::Cepkts,
+            8 => Self::Outrequests,
+            9 => Self::Outpkts,
+            10 => Self::Outoctets,
+            11 => Self::Outforwdatagrams,
+            12 => Self::Inhdrerrors,
+            13 => Self::Intoobigerrors,
+            14 => Self::Innoroutes,
+            15 => Self::Inaddrerrors,
+            16 => Self::Inunknownprotos,
+            17 => Self::Intruncatedpkts,
+            18 => Self::Indiscards,
+            19 => Self::Outdiscards,
+            20 => Self::Outnoroutes,
+            21 => Self::Reasmtimeout,
+            22 => Self::Reasmreqds,
+            23 => Self::Reasmoks,
+            24 => Self::Reasmfails,
+            25 => Self::Fragoks,
+            26 => Self::Fragfails,
+            27 => Self::Fragcreates,
+            28 => Self::Inmcastpkts,
+            29 => Self::Outmcastpkts,
+            30 => Self::Inbcastpkts,
+            31 => Self::Outbcastpkts,
+            32 => Self::Inmcastoctets,
+            33 => Self::Outmcastoctets,
+            34 => Self::Inbcastoctets,
+            35 => Self::Outbcastoctets,
+            36 => Self::Csumerrors,
+            37 => Self::ReasmOverlaps,
             _ => return None,
         })
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VlanFlags {
     ReorderHdr = 1 << 0,
     Gvrp = 1 << 1,
@@ -416,7 +422,7 @@ impl VlanFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum IflaVfLinkStateEnum {
     Auto = 0,
     Enable = 1,
@@ -433,7 +439,7 @@ impl IflaVfLinkStateEnum {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RtextFilter {
     Vf = 1 << 0,
     Brvlan = 1 << 1,
@@ -460,7 +466,7 @@ impl RtextFilter {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NetkitPolicy {
     Forward = 0,
     Blackhole = 2,
@@ -475,7 +481,7 @@ impl NetkitPolicy {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NetkitMode {
     L2 = 0,
     L3 = 1,
@@ -490,7 +496,7 @@ impl NetkitMode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NetkitScrub {
     None = 0,
     Default = 1,
@@ -505,7 +511,7 @@ impl NetkitScrub {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NetkitPairing {
     Pair = 0,
     Single = 1,
@@ -520,7 +526,7 @@ impl NetkitPairing {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OvpnMode {
     P2p = 0,
     Mp = 1,
@@ -535,7 +541,7 @@ impl OvpnMode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BrStpMode {
     Auto = 0,
     User = 1,
@@ -552,7 +558,7 @@ impl BrStpMode {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BrBooloptId {
     #[doc = "disable learning from link-local packets\n"]
     NoLlLearn = 1 << 0,
@@ -571,6 +577,31 @@ impl BrBooloptId {
             n if n == 1 << 2 => Self::MstEnable,
             n if n == 1 << 3 => Self::MdbOffloadFailNotification,
             n if n == 1 << 4 => Self::FdbLocalVlan0,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum IfOperState {
+    Unknown = 0,
+    Notpresent = 1,
+    Down = 2,
+    Lowerlayerdown = 3,
+    Testing = 4,
+    Dormant = 5,
+    Up = 6,
+}
+impl IfOperState {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Unknown,
+            1 => Self::Notpresent,
+            2 => Self::Down,
+            3 => Self::Lowerlayerdown,
+            4 => Self::Testing,
+            5 => Self::Dormant,
+            6 => Self::Up,
             _ => return None,
         })
     }
@@ -2279,6 +2310,94 @@ impl IflaVfVlanInfo {
         16usize
     }
 }
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(C)]
+pub struct IflaVxlanPortRange {
+    pub _low_be: u16,
+    pub _high_be: u16,
+}
+#[doc = "Create zero-initialized struct"]
+impl Default for IflaVxlanPortRange {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl IflaVxlanPortRange {
+    #[doc = "Create zero-initialized struct"]
+    pub fn new() -> Self {
+        Self::new_from_array([0u8; Self::len()])
+    }
+    #[doc = "Copy from contents from slice"]
+    pub fn new_from_slice(other: &[u8]) -> Option<Self> {
+        if other.len() != Self::len() {
+            return None;
+        }
+        let mut buf = [0u8; Self::len()];
+        buf.clone_from_slice(other);
+        Some(Self::new_from_array(buf))
+    }
+    #[doc = "Copy from contents from another slice, padding with zeros or truncating when needed"]
+    pub fn new_from_zeroed(other: &[u8]) -> Self {
+        let mut buf = [0u8; Self::len()];
+        let len = buf.len().min(other.len());
+        buf[..len].clone_from_slice(&other[..len]);
+        Self::new_from_array(buf)
+    }
+    pub fn new_from_array(buf: [u8; 4usize]) -> Self {
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn as_slice(&self) -> &[u8] {
+        unsafe {
+            let ptr: *const u8 = std::mem::transmute(self as *const Self);
+            std::slice::from_raw_parts(ptr, Self::len())
+        }
+    }
+    pub fn from_slice(buf: &[u8]) -> &Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn from_slice_mut(buf: &mut [u8]) -> &mut Self {
+        assert!(buf.len() >= Self::len());
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf.as_ptr()) }
+    }
+    pub fn as_array(&self) -> &[u8; 4usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub fn from_array(buf: &[u8; 4usize]) -> &Self {
+        assert!(buf.as_ptr() as usize % std::mem::align_of::<Self>() == 0);
+        unsafe { std::mem::transmute(buf) }
+    }
+    pub fn into_array(self) -> [u8; 4usize] {
+        unsafe { std::mem::transmute(self) }
+    }
+    pub const fn len() -> usize {
+        const _: () = assert!(std::mem::size_of::<IflaVxlanPortRange>() == 4usize);
+        const _: () = assert!(std::mem::align_of::<IflaVxlanPortRange>() == 2usize);
+        4usize
+    }
+    pub fn low(&self) -> u16 {
+        u16::from_be(self._low_be)
+    }
+    pub fn set_low(&mut self, value: u16) {
+        self._low_be = value.to_be();
+    }
+    pub fn high(&self) -> u16 {
+        u16::from_be(self._high_be)
+    }
+    pub fn set_high(&mut self, value: u16) {
+        self._high_be = value.to_be();
+    }
+}
+impl std::fmt::Debug for IflaVxlanPortRange {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fmt.debug_struct("IflaVxlanPortRange")
+            .field("low", &self.low())
+            .field("high", &self.high())
+            .finish()
+    }
+}
 #[derive(Clone)]
 pub enum LinkAttrs<'a> {
     Address(&'a [u8]),
@@ -2296,6 +2415,7 @@ pub enum LinkAttrs<'a> {
     Txqlen(u32),
     Map(RtnlLinkIfmap),
     Weight(u32),
+    #[doc = "Associated type: [`IfOperState`] (enum)"]
     Operstate(u8),
     Linkmode(u8),
     Linkinfo(IterableLinkinfoAttrs<'a>),
@@ -2353,6 +2473,8 @@ pub enum LinkAttrs<'a> {
     NetnsImmutable(u8),
     Headroom(u16),
     Tailroom(u16),
+    #[doc = "Enable EDT pacing offload (0 - disabled, 1 - enabled).\n"]
+    PacingOffload(u32),
 }
 impl<'a> IterableLinkAttrs<'a> {
     pub fn get_address(&self) -> Result<&'a [u8], ErrorContext> {
@@ -2552,6 +2674,7 @@ impl<'a> IterableLinkAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Associated type: [`IfOperState`] (enum)"]
     pub fn get_operstate(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3365,6 +3488,22 @@ impl<'a> IterableLinkAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Enable EDT pacing offload (0 - disabled, 1 - enabled).\n"]
+    pub fn get_pacing_offload(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkAttrs::PacingOffload(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkAttrs",
+            "PacingOffload",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl LinkAttrs<'_> {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkAttrs<'a> {
@@ -3441,6 +3580,7 @@ impl LinkAttrs<'_> {
             67u16 => "NetnsImmutable",
             68u16 => "Headroom",
             69u16 => "Tailroom",
+            70u16 => "PacingOffload",
             _ => return None,
         };
         Some(res)
@@ -3816,6 +3956,11 @@ impl<'a> Iterator for IterableLinkAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                70u16 => LinkAttrs::PacingOffload({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -3863,7 +4008,10 @@ impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
                 LinkAttrs::Txqlen(val) => fmt.field("Txqlen", &val),
                 LinkAttrs::Map(val) => fmt.field("Map", &val),
                 LinkAttrs::Weight(val) => fmt.field("Weight", &val),
-                LinkAttrs::Operstate(val) => fmt.field("Operstate", &val),
+                LinkAttrs::Operstate(val) => fmt.field(
+                    "Operstate",
+                    &FormatEnum(val.into(), IfOperState::from_value),
+                ),
                 LinkAttrs::Linkmode(val) => fmt.field("Linkmode", &val),
                 LinkAttrs::Linkinfo(val) => fmt.field("Linkinfo", &val),
                 LinkAttrs::NetNsPid(val) => fmt.field("NetNsPid", &val),
@@ -3921,6 +4069,7 @@ impl<'a> std::fmt::Debug for IterableLinkAttrs<'_> {
                 LinkAttrs::NetnsImmutable(val) => fmt.field("NetnsImmutable", &val),
                 LinkAttrs::Headroom(val) => fmt.field("Headroom", &val),
                 LinkAttrs::Tailroom(val) => fmt.field("Tailroom", &val),
+                LinkAttrs::PacingOffload(val) => fmt.field("PacingOffload", &val),
             };
         }
         fmt.finish()
@@ -4349,6 +4498,12 @@ impl IterableLinkAttrs<'_> {
                 LinkAttrs::Tailroom(val) => {
                     if last_off == offset {
                         stack.push(("Tailroom", last_off));
+                        break;
+                    }
+                }
+                LinkAttrs::PacingOffload(val) => {
+                    if last_off == offset {
+                        stack.push(("PacingOffload", last_off));
                         break;
                     }
                 }
@@ -6210,6 +6365,7 @@ pub enum LinkinfoDataMsg<'a> {
     Vti6(IterableLinkinfoVti6Attrs<'a>),
     Netkit(IterableLinkinfoNetkitAttrs<'a>),
     Ovpn(IterableLinkinfoOvpnAttrs<'a>),
+    Vxlan(IterableLinkinfoVxlanAttrs<'a>),
 }
 impl<'a> LinkinfoDataMsg<'a> {
     fn select_with_loc(selector: &'_ [u8], buf: &'a [u8], loc: usize) -> Option<Self> {
@@ -6268,6 +6424,9 @@ impl<'a> LinkinfoDataMsg<'a> {
             b"ovpn" => Some(LinkinfoDataMsg::Ovpn(IterableLinkinfoOvpnAttrs::with_loc(
                 buf, loc,
             ))),
+            b"vxlan" => Some(LinkinfoDataMsg::Vxlan(
+                IterableLinkinfoVxlanAttrs::with_loc(buf, loc),
+            )),
             _ => None,
         }
     }
@@ -6534,7 +6693,7 @@ pub enum LinkinfoBondAttrs<'a> {
     PeerNotifDelay(u32),
     AdLacpActive(u8),
     MissedMax(u8),
-    NsIp6Target(IterableArrayBinary<'a>),
+    NsIp6Target(IterableArrayIpv6Addr<'a>),
     CoupledControl(u8),
     BroadcastNeigh(u8),
     LacpStrict(u8),
@@ -6992,7 +7151,7 @@ impl<'a> IterableLinkinfoBondAttrs<'a> {
     }
     pub fn get_ns_ip6_target(
         &self,
-    ) -> Result<ArrayIterable<IterableArrayBinary<'a>, &'a [u8]>, ErrorContext> {
+    ) -> Result<ArrayIterable<IterableArrayIpv6Addr<'a>, std::net::Ipv6Addr>, ErrorContext> {
         for attr in self.clone() {
             if let Ok(LinkinfoBondAttrs::NsIp6Target(val)) = attr {
                 return Ok(ArrayIterable::new(val));
@@ -7094,12 +7253,12 @@ impl<'a> Iterator for IterableArrayIpv4Addr<'a> {
     }
 }
 #[derive(Clone, Copy, Default)]
-pub struct IterableArrayBinary<'a> {
+pub struct IterableArrayIpv6Addr<'a> {
     buf: &'a [u8],
     pos: usize,
     orig_loc: usize,
 }
-impl<'a> IterableArrayBinary<'a> {
+impl<'a> IterableArrayIpv6Addr<'a> {
     fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
         Self {
             buf,
@@ -7111,22 +7270,24 @@ impl<'a> IterableArrayBinary<'a> {
         self.buf
     }
 }
-impl<'a> Iterator for IterableArrayBinary<'a> {
-    type Item = Result<&'a [u8], ErrorContext>;
+impl<'a> Iterator for IterableArrayIpv6Addr<'a> {
+    type Item = Result<std::net::Ipv6Addr, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.buf.len() == self.pos {
             return None;
         }
         while let Some((header, next)) = chop_header(self.buf, &mut self.pos) {
             {
-                let Some(res) = Some(next) else { break };
+                let Some(res) = parse_u128(next).map(Ipv6Addr::from_bits) else {
+                    break;
+                };
                 return Some(Ok(res));
             }
         }
         let pos = self.pos;
         self.pos = self.buf.len();
         Some(Err(ErrorContext::new(
-            "Binary",
+            "Ipv6Addr",
             None,
             self.orig_loc,
             self.buf.as_ptr().wrapping_add(pos) as usize,
@@ -7364,7 +7525,7 @@ impl<'a> Iterator for IterableLinkinfoBondAttrs<'a> {
                     val
                 }),
                 31u16 => LinkinfoBondAttrs::NsIp6Target({
-                    let res = Some(IterableArrayBinary::with_loc(next, self.orig_loc));
+                    let res = Some(IterableArrayIpv6Addr::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -7403,7 +7564,7 @@ impl std::fmt::Debug for IterableArrayIpv4Addr<'_> {
             .finish()
     }
 }
-impl std::fmt::Debug for IterableArrayBinary<'_> {
+impl std::fmt::Debug for IterableArrayIpv6Addr<'_> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt.debug_list()
             .entries(self.clone().map(FlattenErrorContext))
@@ -12207,14 +12368,14 @@ impl IterableLinkinfoGreAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoGre6Attrs<'a> {
+pub enum LinkinfoGre6Attrs {
     Link(u32),
     Iflags(u16),
     Oflags(u16),
     Ikey(u32),
     Okey(u32),
-    Local(&'a [u8]),
-    Remote(&'a [u8]),
+    Local(std::net::Ipv6Addr),
+    Remote(std::net::Ipv6Addr),
     Ttl(u8),
     EncapLimit(u8),
     Flowinfo(u32),
@@ -12306,7 +12467,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -12321,7 +12482,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -12547,7 +12708,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
         ))
     }
 }
-impl LinkinfoGre6Attrs<'_> {
+impl LinkinfoGre6Attrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGre6Attrs<'a> {
         IterableLinkinfoGre6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -12574,7 +12735,7 @@ impl<'a> IterableLinkinfoGre6Attrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
-    type Item = Result<LinkinfoGre6Attrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoGre6Attrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -12616,12 +12777,12 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
                     val
                 }),
                 6u16 => LinkinfoGre6Attrs::Local({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 7u16 => LinkinfoGre6Attrs::Remote({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -12704,7 +12865,7 @@ impl<'a> Iterator for IterableLinkinfoGre6Attrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoGre6Attrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoGre6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGre6Attrs");
         let mut iter = IterableLinkinfoGre6Attrs::with_loc(&[], self.orig_loc);
@@ -13208,12 +13369,12 @@ impl IterableLinkinfoVtiAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoVti6Attrs<'a> {
+pub enum LinkinfoVti6Attrs {
     Link(u32),
     Ikey(u32),
     Okey(u32),
-    Local(&'a [u8]),
-    Remote(&'a [u8]),
+    Local(std::net::Ipv6Addr),
+    Remote(std::net::Ipv6Addr),
     Fwmark(u32),
 }
 impl<'a> IterableLinkinfoVti6Attrs<'a> {
@@ -13262,7 +13423,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13277,7 +13438,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13308,7 +13469,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
         ))
     }
 }
-impl LinkinfoVti6Attrs<'_> {
+impl LinkinfoVti6Attrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVti6Attrs<'a> {
         IterableLinkinfoVti6Attrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -13335,7 +13496,7 @@ impl<'a> IterableLinkinfoVti6Attrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
-    type Item = Result<LinkinfoVti6Attrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoVti6Attrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -13367,12 +13528,12 @@ impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
                     val
                 }),
                 4u16 => LinkinfoVti6Attrs::Local({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 5u16 => LinkinfoVti6Attrs::Remote({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13394,7 +13555,7 @@ impl<'a> Iterator for IterableLinkinfoVti6Attrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoVti6Attrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoVti6Attrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoVti6Attrs");
         let mut iter = IterableLinkinfoVti6Attrs::with_loc(&[], self.orig_loc);
@@ -13496,14 +13657,14 @@ impl IterableLinkinfoVti6Attrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoGeneveAttrs<'a> {
+pub enum LinkinfoGeneveAttrs {
     Id(u32),
     Remote(std::net::Ipv4Addr),
     Ttl(u8),
     Tos(u8),
     Port(u16),
     CollectMetadata(()),
-    Remote6(&'a [u8]),
+    Remote6(std::net::Ipv6Addr),
     UdpCsum(u8),
     UdpZeroCsum6Tx(u8),
     UdpZeroCsum6Rx(u8),
@@ -13514,7 +13675,7 @@ pub enum LinkinfoGeneveAttrs<'a> {
     PortRange(IflaGenevePortRange),
     GroHint(()),
     Local(std::net::Ipv4Addr),
-    Local6(&'a [u8]),
+    Local6(std::net::Ipv6Addr),
 }
 impl<'a> IterableLinkinfoGeneveAttrs<'a> {
     pub fn get_id(&self) -> Result<u32, ErrorContext> {
@@ -13607,7 +13768,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13772,7 +13933,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -13788,7 +13949,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
         ))
     }
 }
-impl LinkinfoGeneveAttrs<'_> {
+impl LinkinfoGeneveAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoGeneveAttrs<'a> {
         IterableLinkinfoGeneveAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -13836,7 +13997,7 @@ impl<'a> IterableLinkinfoGeneveAttrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
-    type Item = Result<LinkinfoGeneveAttrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoGeneveAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -13879,7 +14040,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
                 }),
                 6u16 => LinkinfoGeneveAttrs::CollectMetadata(()),
                 7u16 => LinkinfoGeneveAttrs::Remote6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13926,7 +14087,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
                     val
                 }),
                 18u16 => LinkinfoGeneveAttrs::Local6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -13943,7 +14104,7 @@ impl<'a> Iterator for IterableLinkinfoGeneveAttrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoGeneveAttrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoGeneveAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoGeneveAttrs");
         let mut iter = IterableLinkinfoGeneveAttrs::with_loc(&[], self.orig_loc);
@@ -14486,7 +14647,7 @@ impl IterableLinkinfoHsrAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoIptunAttrs<'a> {
+pub enum LinkinfoIptunAttrs {
     Link(u32),
     Local(std::net::IpAddr),
     Remote(std::net::IpAddr),
@@ -14497,7 +14658,7 @@ pub enum LinkinfoIptunAttrs<'a> {
     Flags(u16),
     Proto(u8),
     Pmtudisc(u8),
-    _6rdPrefix(&'a [u8]),
+    _6rdPrefix(std::net::Ipv6Addr),
     _6rdRelayPrefix(std::net::Ipv4Addr),
     _6rdPrefixlen(u16),
     _6rdRelayPrefixlen(u16),
@@ -14659,7 +14820,7 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_6rd_prefix(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_6rd_prefix(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -14810,7 +14971,7 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
         ))
     }
 }
-impl LinkinfoIptunAttrs<'_> {
+impl LinkinfoIptunAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoIptunAttrs<'a> {
         IterableLinkinfoIptunAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -14860,7 +15021,7 @@ impl<'a> IterableLinkinfoIptunAttrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
-    type Item = Result<LinkinfoIptunAttrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoIptunAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -14927,7 +15088,7 @@ impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
                     val
                 }),
                 11u16 => LinkinfoIptunAttrs::_6rdPrefix({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -14985,7 +15146,7 @@ impl<'a> Iterator for IterableLinkinfoIptunAttrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoIptunAttrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoIptunAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIptunAttrs");
         let mut iter = IterableLinkinfoIptunAttrs::with_loc(&[], self.orig_loc);
@@ -15187,10 +15348,10 @@ impl IterableLinkinfoIptunAttrs<'_> {
     }
 }
 #[derive(Clone)]
-pub enum LinkinfoIp6tnlAttrs<'a> {
+pub enum LinkinfoIp6tnlAttrs {
     Link(u32),
-    Local(&'a [u8]),
-    Remote(&'a [u8]),
+    Local(std::net::Ipv6Addr),
+    Remote(std::net::Ipv6Addr),
     Ttl(u8),
     EncapLimit(u8),
     Flowinfo(u32),
@@ -15219,7 +15380,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_local(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_local(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -15234,7 +15395,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_remote(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_remote(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -15415,7 +15576,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
         ))
     }
 }
-impl LinkinfoIp6tnlAttrs<'_> {
+impl LinkinfoIp6tnlAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoIp6tnlAttrs<'a> {
         IterableLinkinfoIp6tnlAttrs::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -15442,7 +15603,7 @@ impl<'a> IterableLinkinfoIp6tnlAttrs<'a> {
     }
 }
 impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
-    type Item = Result<LinkinfoIp6tnlAttrs<'a>, ErrorContext>;
+    type Item = Result<LinkinfoIp6tnlAttrs, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -15464,12 +15625,12 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
                     val
                 }),
                 2u16 => LinkinfoIp6tnlAttrs::Local({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 3u16 => LinkinfoIp6tnlAttrs::Remote({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -15537,7 +15698,7 @@ impl<'a> Iterator for IterableLinkinfoIp6tnlAttrs<'a> {
         )))
     }
 }
-impl<'a> std::fmt::Debug for IterableLinkinfoIp6tnlAttrs<'_> {
+impl std::fmt::Debug for IterableLinkinfoIp6tnlAttrs<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("LinkinfoIp6tnlAttrs");
         let mut iter = IterableLinkinfoIp6tnlAttrs::with_loc(&[], self.orig_loc);
@@ -17164,7 +17325,7 @@ impl IterableIflaAttrs<'_> {
 #[derive(Clone)]
 pub enum Ifla6Attrs<'a> {
     Flags(u32),
-    #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it\\'s a nest\n"]
+    #[doc = "u32 indexed by ipv6-devconf on output, input is not yet implemented\n"]
     Conf(&'a [u8]),
     Stats(&'a [u8]),
     Mcast(&'a [u8]),
@@ -17190,7 +17351,7 @@ impl<'a> IterableIfla6Attrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it\\'s a nest\n"]
+    #[doc = "u32 indexed by ipv6-devconf on output, input is not yet implemented\n"]
     pub fn get_conf(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -19198,6 +19359,1037 @@ impl IterableLinkinfoOvpnAttrs<'_> {
         (stack, None)
     }
 }
+#[derive(Clone)]
+pub enum LinkinfoVxlanAttrs {
+    Id(u32),
+    Group(std::net::Ipv4Addr),
+    Link(u32),
+    Local(std::net::Ipv4Addr),
+    Ttl(u8),
+    Tos(u8),
+    Learning(u8),
+    Ageing(u32),
+    Limit(u32),
+    PortRange(IflaVxlanPortRange),
+    Proxy(u8),
+    Rsc(u8),
+    L2miss(u8),
+    L3miss(u8),
+    Port(u16),
+    Group6(std::net::Ipv6Addr),
+    Local6(std::net::Ipv6Addr),
+    UdpCsum(u8),
+    UdpZeroCsum6Tx(u8),
+    UdpZeroCsum6Rx(u8),
+    RemcsumTx(u8),
+    RemcsumRx(u8),
+    Gbp(()),
+    RemcsumNopartial(()),
+    CollectMetadata(()),
+    Label(u32),
+    Gpe(()),
+    TtlInherit(()),
+    Df(u8),
+    Vnifilter(u8),
+    Localbypass(u8),
+    LabelPolicy(u32),
+}
+impl<'a> IterableLinkinfoVxlanAttrs<'a> {
+    pub fn get_id(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Id(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Id",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_group(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Group(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Group",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_link(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Link(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Link",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_local(&self) -> Result<std::net::Ipv4Addr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Local(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Local",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ttl(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Ttl(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Ttl",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_tos(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Tos(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Tos",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_learning(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Learning(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Learning",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ageing(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Ageing(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Ageing",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_limit(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Limit(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Limit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_port_range(&self) -> Result<IflaVxlanPortRange, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::PortRange(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "PortRange",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_proxy(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Proxy(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Proxy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rsc(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Rsc(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Rsc",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_l2miss(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::L2miss(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "L2miss",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_l3miss(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::L3miss(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "L3miss",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_port(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Port(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Port",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_group6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Group6(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Group6",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_local6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Local6(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Local6",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_udp_csum(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::UdpCsum(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "UdpCsum",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_udp_zero_csum6_tx(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::UdpZeroCsum6Tx(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "UdpZeroCsum6Tx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_udp_zero_csum6_rx(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::UdpZeroCsum6Rx(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "UdpZeroCsum6Rx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_remcsum_tx(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::RemcsumTx(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "RemcsumTx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_remcsum_rx(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::RemcsumRx(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "RemcsumRx",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_gbp(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Gbp(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Gbp",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_remcsum_nopartial(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::RemcsumNopartial(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "RemcsumNopartial",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_collect_metadata(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::CollectMetadata(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "CollectMetadata",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_label(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Label(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Label",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_gpe(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Gpe(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Gpe",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_ttl_inherit(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::TtlInherit(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "TtlInherit",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_df(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Df(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Df",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_vnifilter(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Vnifilter(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Vnifilter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_localbypass(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::Localbypass(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "Localbypass",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_label_policy(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(LinkinfoVxlanAttrs::LabelPolicy(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "LinkinfoVxlanAttrs",
+            "LabelPolicy",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl LinkinfoVxlanAttrs {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableLinkinfoVxlanAttrs<'a> {
+        IterableLinkinfoVxlanAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Id",
+            2u16 => "Group",
+            3u16 => "Link",
+            4u16 => "Local",
+            5u16 => "Ttl",
+            6u16 => "Tos",
+            7u16 => "Learning",
+            8u16 => "Ageing",
+            9u16 => "Limit",
+            10u16 => "PortRange",
+            11u16 => "Proxy",
+            12u16 => "Rsc",
+            13u16 => "L2miss",
+            14u16 => "L3miss",
+            15u16 => "Port",
+            16u16 => "Group6",
+            17u16 => "Local6",
+            18u16 => "UdpCsum",
+            19u16 => "UdpZeroCsum6Tx",
+            20u16 => "UdpZeroCsum6Rx",
+            21u16 => "RemcsumTx",
+            22u16 => "RemcsumRx",
+            23u16 => "Gbp",
+            24u16 => "RemcsumNopartial",
+            25u16 => "CollectMetadata",
+            26u16 => "Label",
+            27u16 => "Gpe",
+            28u16 => "TtlInherit",
+            29u16 => "Df",
+            30u16 => "Vnifilter",
+            31u16 => "Localbypass",
+            32u16 => "LabelPolicy",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableLinkinfoVxlanAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableLinkinfoVxlanAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableLinkinfoVxlanAttrs<'a> {
+    type Item = Result<LinkinfoVxlanAttrs, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => LinkinfoVxlanAttrs::Id({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => LinkinfoVxlanAttrs::Group({
+                    let res = parse_be_u32(next).map(Ipv4Addr::from_bits);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => LinkinfoVxlanAttrs::Link({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => LinkinfoVxlanAttrs::Local({
+                    let res = parse_be_u32(next).map(Ipv4Addr::from_bits);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => LinkinfoVxlanAttrs::Ttl({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => LinkinfoVxlanAttrs::Tos({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                7u16 => LinkinfoVxlanAttrs::Learning({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                8u16 => LinkinfoVxlanAttrs::Ageing({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                9u16 => LinkinfoVxlanAttrs::Limit({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                10u16 => LinkinfoVxlanAttrs::PortRange({
+                    let res = Some(IflaVxlanPortRange::new_from_zeroed(next));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                11u16 => LinkinfoVxlanAttrs::Proxy({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => LinkinfoVxlanAttrs::Rsc({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                13u16 => LinkinfoVxlanAttrs::L2miss({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                14u16 => LinkinfoVxlanAttrs::L3miss({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                15u16 => LinkinfoVxlanAttrs::Port({
+                    let res = parse_be_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                16u16 => LinkinfoVxlanAttrs::Group6({
+                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                17u16 => LinkinfoVxlanAttrs::Local6({
+                    let res = parse_be_u128(next).map(Ipv6Addr::from_bits);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                18u16 => LinkinfoVxlanAttrs::UdpCsum({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                19u16 => LinkinfoVxlanAttrs::UdpZeroCsum6Tx({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                20u16 => LinkinfoVxlanAttrs::UdpZeroCsum6Rx({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                21u16 => LinkinfoVxlanAttrs::RemcsumTx({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                22u16 => LinkinfoVxlanAttrs::RemcsumRx({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                23u16 => LinkinfoVxlanAttrs::Gbp(()),
+                24u16 => LinkinfoVxlanAttrs::RemcsumNopartial(()),
+                25u16 => LinkinfoVxlanAttrs::CollectMetadata(()),
+                26u16 => LinkinfoVxlanAttrs::Label({
+                    let res = parse_be_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                27u16 => LinkinfoVxlanAttrs::Gpe(()),
+                28u16 => LinkinfoVxlanAttrs::TtlInherit(()),
+                29u16 => LinkinfoVxlanAttrs::Df({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                30u16 => LinkinfoVxlanAttrs::Vnifilter({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                31u16 => LinkinfoVxlanAttrs::Localbypass({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                32u16 => LinkinfoVxlanAttrs::LabelPolicy({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "LinkinfoVxlanAttrs",
+            r#type.and_then(|t| LinkinfoVxlanAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableLinkinfoVxlanAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("LinkinfoVxlanAttrs");
+        let mut iter = IterableLinkinfoVxlanAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                LinkinfoVxlanAttrs::Id(val) => fmt.field("Id", &val),
+                LinkinfoVxlanAttrs::Group(val) => fmt.field("Group", &val),
+                LinkinfoVxlanAttrs::Link(val) => fmt.field("Link", &val),
+                LinkinfoVxlanAttrs::Local(val) => fmt.field("Local", &val),
+                LinkinfoVxlanAttrs::Ttl(val) => fmt.field("Ttl", &val),
+                LinkinfoVxlanAttrs::Tos(val) => fmt.field("Tos", &val),
+                LinkinfoVxlanAttrs::Learning(val) => fmt.field("Learning", &val),
+                LinkinfoVxlanAttrs::Ageing(val) => fmt.field("Ageing", &val),
+                LinkinfoVxlanAttrs::Limit(val) => fmt.field("Limit", &val),
+                LinkinfoVxlanAttrs::PortRange(val) => fmt.field("PortRange", &val),
+                LinkinfoVxlanAttrs::Proxy(val) => fmt.field("Proxy", &val),
+                LinkinfoVxlanAttrs::Rsc(val) => fmt.field("Rsc", &val),
+                LinkinfoVxlanAttrs::L2miss(val) => fmt.field("L2miss", &val),
+                LinkinfoVxlanAttrs::L3miss(val) => fmt.field("L3miss", &val),
+                LinkinfoVxlanAttrs::Port(val) => fmt.field("Port", &val),
+                LinkinfoVxlanAttrs::Group6(val) => fmt.field("Group6", &val),
+                LinkinfoVxlanAttrs::Local6(val) => fmt.field("Local6", &val),
+                LinkinfoVxlanAttrs::UdpCsum(val) => fmt.field("UdpCsum", &val),
+                LinkinfoVxlanAttrs::UdpZeroCsum6Tx(val) => fmt.field("UdpZeroCsum6Tx", &val),
+                LinkinfoVxlanAttrs::UdpZeroCsum6Rx(val) => fmt.field("UdpZeroCsum6Rx", &val),
+                LinkinfoVxlanAttrs::RemcsumTx(val) => fmt.field("RemcsumTx", &val),
+                LinkinfoVxlanAttrs::RemcsumRx(val) => fmt.field("RemcsumRx", &val),
+                LinkinfoVxlanAttrs::Gbp(val) => fmt.field("Gbp", &val),
+                LinkinfoVxlanAttrs::RemcsumNopartial(val) => fmt.field("RemcsumNopartial", &val),
+                LinkinfoVxlanAttrs::CollectMetadata(val) => fmt.field("CollectMetadata", &val),
+                LinkinfoVxlanAttrs::Label(val) => fmt.field("Label", &val),
+                LinkinfoVxlanAttrs::Gpe(val) => fmt.field("Gpe", &val),
+                LinkinfoVxlanAttrs::TtlInherit(val) => fmt.field("TtlInherit", &val),
+                LinkinfoVxlanAttrs::Df(val) => fmt.field("Df", &val),
+                LinkinfoVxlanAttrs::Vnifilter(val) => fmt.field("Vnifilter", &val),
+                LinkinfoVxlanAttrs::Localbypass(val) => fmt.field("Localbypass", &val),
+                LinkinfoVxlanAttrs::LabelPolicy(val) => fmt.field("LabelPolicy", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableLinkinfoVxlanAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("LinkinfoVxlanAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| LinkinfoVxlanAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                LinkinfoVxlanAttrs::Id(val) => {
+                    if last_off == offset {
+                        stack.push(("Id", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Group(val) => {
+                    if last_off == offset {
+                        stack.push(("Group", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Link(val) => {
+                    if last_off == offset {
+                        stack.push(("Link", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Local(val) => {
+                    if last_off == offset {
+                        stack.push(("Local", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Ttl(val) => {
+                    if last_off == offset {
+                        stack.push(("Ttl", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Tos(val) => {
+                    if last_off == offset {
+                        stack.push(("Tos", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Learning(val) => {
+                    if last_off == offset {
+                        stack.push(("Learning", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Ageing(val) => {
+                    if last_off == offset {
+                        stack.push(("Ageing", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Limit(val) => {
+                    if last_off == offset {
+                        stack.push(("Limit", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::PortRange(val) => {
+                    if last_off == offset {
+                        stack.push(("PortRange", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Proxy(val) => {
+                    if last_off == offset {
+                        stack.push(("Proxy", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Rsc(val) => {
+                    if last_off == offset {
+                        stack.push(("Rsc", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::L2miss(val) => {
+                    if last_off == offset {
+                        stack.push(("L2miss", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::L3miss(val) => {
+                    if last_off == offset {
+                        stack.push(("L3miss", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Port(val) => {
+                    if last_off == offset {
+                        stack.push(("Port", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Group6(val) => {
+                    if last_off == offset {
+                        stack.push(("Group6", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Local6(val) => {
+                    if last_off == offset {
+                        stack.push(("Local6", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::UdpCsum(val) => {
+                    if last_off == offset {
+                        stack.push(("UdpCsum", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::UdpZeroCsum6Tx(val) => {
+                    if last_off == offset {
+                        stack.push(("UdpZeroCsum6Tx", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::UdpZeroCsum6Rx(val) => {
+                    if last_off == offset {
+                        stack.push(("UdpZeroCsum6Rx", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::RemcsumTx(val) => {
+                    if last_off == offset {
+                        stack.push(("RemcsumTx", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::RemcsumRx(val) => {
+                    if last_off == offset {
+                        stack.push(("RemcsumRx", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Gbp(val) => {
+                    if last_off == offset {
+                        stack.push(("Gbp", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::RemcsumNopartial(val) => {
+                    if last_off == offset {
+                        stack.push(("RemcsumNopartial", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::CollectMetadata(val) => {
+                    if last_off == offset {
+                        stack.push(("CollectMetadata", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Label(val) => {
+                    if last_off == offset {
+                        stack.push(("Label", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Gpe(val) => {
+                    if last_off == offset {
+                        stack.push(("Gpe", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::TtlInherit(val) => {
+                    if last_off == offset {
+                        stack.push(("TtlInherit", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Df(val) => {
+                    if last_off == offset {
+                        stack.push(("Df", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Vnifilter(val) => {
+                    if last_off == offset {
+                        stack.push(("Vnifilter", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::Localbypass(val) => {
+                    if last_off == offset {
+                        stack.push(("Localbypass", last_off));
+                        break;
+                    }
+                }
+                LinkinfoVxlanAttrs::LabelPolicy(val) => {
+                    if last_off == offset {
+                        stack.push(("LabelPolicy", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("LinkinfoVxlanAttrs", cur));
+        }
+        (stack, None)
+    }
+}
 pub struct PushLinkAttrs<Prev: Pusher> {
     pub(crate) prev: Option<Prev>,
     pub(crate) header_offset: Option<usize>,
@@ -19311,6 +20503,7 @@ impl<Prev: Pusher> PushLinkAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
+    #[doc = "Associated type: [`IfOperState`] (enum)"]
     pub fn push_operstate(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 16u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
@@ -19657,6 +20850,12 @@ impl<Prev: Pusher> PushLinkAttrs<Prev> {
     }
     pub fn push_tailroom(mut self, value: u16) -> Self {
         push_header(self.as_vec_mut(), 69u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Enable EDT pacing offload (0 - disabled, 1 - enabled).\n"]
+    pub fn push_pacing_offload(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 70u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
@@ -20417,6 +21616,20 @@ impl<Prev: Pusher> PushLinkinfoAttrs<Prev> {
             header_offset: Some(new_header_offset),
         }
     }
+    #[doc = "Selector attribute `kind` is inserted automatically."]
+    #[doc = "At most one sub-message attribute is expected per attribute set."]
+    pub fn nested_data_vxlan(mut self) -> PushLinkinfoVxlanAttrs<PushDummy<Prev>> {
+        self = self.push_kind(c"vxlan");
+        let new_header_offset = push_nested_header(self.as_vec_mut(), 2u16);
+        let dummy = PushDummy {
+            prev: self.prev.take(),
+            header_offset: self.header_offset.take(),
+        };
+        PushLinkinfoVxlanAttrs {
+            prev: Some(dummy),
+            header_offset: Some(new_header_offset),
+        }
+    }
     pub fn push_xstats(mut self, value: &[u8]) -> Self {
         push_header(self.as_vec_mut(), 3u16, value.len() as u16);
         self.as_vec_mut().extend(value);
@@ -20560,11 +21773,11 @@ impl<Prev: Pusher> PushArrayBinary<Prev> {
         }
         prev
     }
-    pub fn entry(mut self, value: &[u8]) -> Self {
+    pub fn entry(mut self, value: std::net::Ipv6Addr) -> Self {
         let index = self.counter;
         self.counter += 1;
-        push_header(self.as_vec_mut(), index, value.len() as u16);
-        self.as_vec_mut().extend(value);
+        push_header(self.as_vec_mut(), index, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
 }
@@ -20631,7 +21844,7 @@ impl<Prev: Pusher> PushLinkinfoBondAttrs<Prev> {
         PushArrayU32 {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_arp_validate(mut self, value: u32) -> Self {
@@ -20751,7 +21964,7 @@ impl<Prev: Pusher> PushLinkinfoBondAttrs<Prev> {
         PushArrayBinary {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_coupled_control(mut self, value: u8) -> Self {
@@ -21684,14 +22897,14 @@ impl<Prev: Pusher> PushLinkinfoGre6Attrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 6u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_remote(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 7u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_ttl(mut self, value: u8) -> Self {
@@ -21890,14 +23103,14 @@ impl<Prev: Pusher> PushLinkinfoVti6Attrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 4u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_remote(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 5u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_fwmark(mut self, value: u32) -> Self {
@@ -21970,9 +23183,9 @@ impl<Prev: Pusher> PushLinkinfoGeneveAttrs<Prev> {
         push_header(self.as_vec_mut(), 6u16, 0 as u16);
         self
     }
-    pub fn push_remote6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 7u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_udp_csum(mut self, value: u8) -> Self {
@@ -22023,9 +23236,9 @@ impl<Prev: Pusher> PushLinkinfoGeneveAttrs<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_local6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 18u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 18u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
 }
@@ -22200,9 +23413,9 @@ impl<Prev: Pusher> PushLinkinfoIptunAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_6rd_prefix(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 11u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_6rd_prefix(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_6rd_relay_prefix(mut self, value: std::net::Ipv4Addr) -> Self {
@@ -22290,14 +23503,14 @@ impl<Prev: Pusher> PushLinkinfoIp6tnlAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_local(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 2u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_local(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_remote(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 3u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_remote(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_ttl(mut self, value: u8) -> Self {
@@ -22743,7 +23956,7 @@ impl<Prev: Pusher> PushIfla6Attrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "u32 indexed by ipv6-devconf - 1 on output, on input it\\'s a nest\n"]
+    #[doc = "u32 indexed by ipv6-devconf on output, input is not yet implemented\n"]
     pub fn push_conf(mut self, value: &[u8]) -> Self {
         push_header(self.as_vec_mut(), 2u16, value.len() as u16);
         self.as_vec_mut().extend(value);
@@ -22986,7 +24199,7 @@ impl<Prev: Pusher> PushLinkOffloadXstats<Prev> {
         PushArrayHwSInfoOne {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn push_l3_stats(mut self, value: &[u8]) -> Self {
@@ -23225,6 +24438,197 @@ impl<Prev: Pusher> Drop for PushLinkinfoOvpnAttrs<Prev> {
         }
     }
 }
+pub struct PushLinkinfoVxlanAttrs<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushLinkinfoVxlanAttrs<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushLinkinfoVxlanAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_id(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_group(mut self, value: std::net::Ipv4Addr) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 4 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        self
+    }
+    pub fn push_link(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_local(mut self, value: std::net::Ipv4Addr) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 4 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        self
+    }
+    pub fn push_ttl(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_tos(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_learning(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 7u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_ageing(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 8u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_limit(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 9u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_port_range(mut self, value: IflaVxlanPortRange) -> Self {
+        push_header(self.as_vec_mut(), 10u16, value.as_slice().len() as u16);
+        self.as_vec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_proxy(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rsc(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 12u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_l2miss(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 13u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_l3miss(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 14u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_port(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 15u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_group6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 16u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        self
+    }
+    pub fn push_local6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 17u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
+        self
+    }
+    pub fn push_udp_csum(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 18u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_udp_zero_csum6_tx(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 19u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_udp_zero_csum6_rx(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 20u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_remcsum_tx(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 21u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_remcsum_rx(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 22u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_gbp(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 23u16, 0 as u16);
+        self
+    }
+    pub fn push_remcsum_nopartial(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 24u16, 0 as u16);
+        self
+    }
+    pub fn push_collect_metadata(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 25u16, 0 as u16);
+        self
+    }
+    pub fn push_label(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 26u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_gpe(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 27u16, 0 as u16);
+        self
+    }
+    pub fn push_ttl_inherit(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 28u16, 0 as u16);
+        self
+    }
+    pub fn push_df(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 29u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_vnifilter(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 30u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_localbypass(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 31u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_label_policy(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 32u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushLinkinfoVxlanAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
 #[doc = "Create a new link.\n\nRequest attributes:\n- [.push_address()](PushLinkAttrs::push_address)\n- [.push_broadcast()](PushLinkAttrs::push_broadcast)\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_mtu()](PushLinkAttrs::push_mtu)\n- [.push_txqlen()](PushLinkAttrs::push_txqlen)\n- [.push_operstate()](PushLinkAttrs::push_operstate)\n- [.push_linkmode()](PushLinkAttrs::push_linkmode)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_net_ns_pid()](PushLinkAttrs::push_net_ns_pid)\n- [.nested_af_spec()](PushLinkAttrs::nested_af_spec)\n- [.push_group()](PushLinkAttrs::push_group)\n- [.push_net_ns_fd()](PushLinkAttrs::push_net_ns_fd)\n- [.push_num_tx_queues()](PushLinkAttrs::push_num_tx_queues)\n- [.push_num_rx_queues()](PushLinkAttrs::push_num_rx_queues)\n- [.push_link_netnsid()](PushLinkAttrs::push_link_netnsid)\n- [.push_gso_max_segs()](PushLinkAttrs::push_gso_max_segs)\n- [.push_gso_max_size()](PushLinkAttrs::push_gso_max_size)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_gro_max_size()](PushLinkAttrs::push_gro_max_size)\n- [.push_gso_ipv4_max_size()](PushLinkAttrs::push_gso_ipv4_max_size)\n- [.push_gro_ipv4_max_size()](PushLinkAttrs::push_gro_ipv4_max_size)\n\n"]
 #[derive(Debug)]
 pub struct OpNewlinkDo<'r> {
@@ -23363,7 +24767,7 @@ impl NetlinkRequest for OpDellinkDo<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_master()](PushLinkAttrs::push_master)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n\n"]
+#[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_master()](PushLinkAttrs::push_master)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n- [.get_pacing_offload()](IterableLinkAttrs::get_pacing_offload)\n\n"]
 #[derive(Debug)]
 pub struct OpGetlinkDump<'r> {
     request: Request<'r>,
@@ -23434,7 +24838,7 @@ impl NetlinkRequest for OpGetlinkDump<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_alt_ifname()](PushLinkAttrs::push_alt_ifname)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n\n"]
+#[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_alt_ifname()](PushLinkAttrs::push_alt_ifname)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n- [.get_pacing_offload()](IterableLinkAttrs::get_pacing_offload)\n\n"]
 #[derive(Debug)]
 pub struct OpGetlinkDo<'r> {
     request: Request<'r>,
@@ -23503,7 +24907,7 @@ impl NetlinkRequest for OpGetlinkDo<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Set information about a link.\n\nRequest attributes:\n- [.push_address()](PushLinkAttrs::push_address)\n- [.push_broadcast()](PushLinkAttrs::push_broadcast)\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_mtu()](PushLinkAttrs::push_mtu)\n- [.push_link()](PushLinkAttrs::push_link)\n- [.push_qdisc()](PushLinkAttrs::push_qdisc)\n- [.push_stats()](PushLinkAttrs::push_stats)\n- [.push_master()](PushLinkAttrs::push_master)\n- [.push_wireless()](PushLinkAttrs::push_wireless)\n- [.push_protinfo()](PushLinkAttrs::push_protinfo)\n- [.push_txqlen()](PushLinkAttrs::push_txqlen)\n- [.push_map()](PushLinkAttrs::push_map)\n- [.push_weight()](PushLinkAttrs::push_weight)\n- [.push_operstate()](PushLinkAttrs::push_operstate)\n- [.push_linkmode()](PushLinkAttrs::push_linkmode)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_net_ns_pid()](PushLinkAttrs::push_net_ns_pid)\n- [.push_ifalias()](PushLinkAttrs::push_ifalias)\n- [.push_num_vf()](PushLinkAttrs::push_num_vf)\n- [.nested_vfinfo_list()](PushLinkAttrs::nested_vfinfo_list)\n- [.push_stats64()](PushLinkAttrs::push_stats64)\n- [.nested_vf_ports()](PushLinkAttrs::nested_vf_ports)\n- [.nested_port_self()](PushLinkAttrs::nested_port_self)\n- [.nested_af_spec()](PushLinkAttrs::nested_af_spec)\n- [.push_group()](PushLinkAttrs::push_group)\n- [.push_net_ns_fd()](PushLinkAttrs::push_net_ns_fd)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_promiscuity()](PushLinkAttrs::push_promiscuity)\n- [.push_num_tx_queues()](PushLinkAttrs::push_num_tx_queues)\n- [.push_num_rx_queues()](PushLinkAttrs::push_num_rx_queues)\n- [.push_carrier()](PushLinkAttrs::push_carrier)\n- [.push_phys_port_id()](PushLinkAttrs::push_phys_port_id)\n- [.push_carrier_changes()](PushLinkAttrs::push_carrier_changes)\n- [.push_phys_switch_id()](PushLinkAttrs::push_phys_switch_id)\n- [.push_link_netnsid()](PushLinkAttrs::push_link_netnsid)\n- [.push_phys_port_name()](PushLinkAttrs::push_phys_port_name)\n- [.push_proto_down()](PushLinkAttrs::push_proto_down)\n- [.push_gso_max_segs()](PushLinkAttrs::push_gso_max_segs)\n- [.push_gso_max_size()](PushLinkAttrs::push_gso_max_size)\n- [.nested_xdp()](PushLinkAttrs::nested_xdp)\n- [.push_event()](PushLinkAttrs::push_event)\n- [.push_new_netnsid()](PushLinkAttrs::push_new_netnsid)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_carrier_up_count()](PushLinkAttrs::push_carrier_up_count)\n- [.push_carrier_down_count()](PushLinkAttrs::push_carrier_down_count)\n- [.push_new_ifindex()](PushLinkAttrs::push_new_ifindex)\n- [.push_min_mtu()](PushLinkAttrs::push_min_mtu)\n- [.push_max_mtu()](PushLinkAttrs::push_max_mtu)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n- [.push_perm_address()](PushLinkAttrs::push_perm_address)\n- [.push_proto_down_reason()](PushLinkAttrs::push_proto_down_reason)\n- [.push_parent_dev_name()](PushLinkAttrs::push_parent_dev_name)\n- [.push_parent_dev_bus_name()](PushLinkAttrs::push_parent_dev_bus_name)\n- [.push_gro_max_size()](PushLinkAttrs::push_gro_max_size)\n- [.push_tso_max_size()](PushLinkAttrs::push_tso_max_size)\n- [.push_tso_max_segs()](PushLinkAttrs::push_tso_max_segs)\n- [.push_allmulti()](PushLinkAttrs::push_allmulti)\n- [.push_devlink_port()](PushLinkAttrs::push_devlink_port)\n- [.push_gso_ipv4_max_size()](PushLinkAttrs::push_gso_ipv4_max_size)\n- [.push_gro_ipv4_max_size()](PushLinkAttrs::push_gro_ipv4_max_size)\n\n"]
+#[doc = "Set information about a link.\n\nRequest attributes:\n- [.push_address()](PushLinkAttrs::push_address)\n- [.push_broadcast()](PushLinkAttrs::push_broadcast)\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_mtu()](PushLinkAttrs::push_mtu)\n- [.push_link()](PushLinkAttrs::push_link)\n- [.push_qdisc()](PushLinkAttrs::push_qdisc)\n- [.push_stats()](PushLinkAttrs::push_stats)\n- [.push_master()](PushLinkAttrs::push_master)\n- [.push_wireless()](PushLinkAttrs::push_wireless)\n- [.push_protinfo()](PushLinkAttrs::push_protinfo)\n- [.push_txqlen()](PushLinkAttrs::push_txqlen)\n- [.push_map()](PushLinkAttrs::push_map)\n- [.push_weight()](PushLinkAttrs::push_weight)\n- [.push_operstate()](PushLinkAttrs::push_operstate)\n- [.push_linkmode()](PushLinkAttrs::push_linkmode)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_net_ns_pid()](PushLinkAttrs::push_net_ns_pid)\n- [.push_ifalias()](PushLinkAttrs::push_ifalias)\n- [.push_num_vf()](PushLinkAttrs::push_num_vf)\n- [.nested_vfinfo_list()](PushLinkAttrs::nested_vfinfo_list)\n- [.push_stats64()](PushLinkAttrs::push_stats64)\n- [.nested_vf_ports()](PushLinkAttrs::nested_vf_ports)\n- [.nested_port_self()](PushLinkAttrs::nested_port_self)\n- [.nested_af_spec()](PushLinkAttrs::nested_af_spec)\n- [.push_group()](PushLinkAttrs::push_group)\n- [.push_net_ns_fd()](PushLinkAttrs::push_net_ns_fd)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_promiscuity()](PushLinkAttrs::push_promiscuity)\n- [.push_num_tx_queues()](PushLinkAttrs::push_num_tx_queues)\n- [.push_num_rx_queues()](PushLinkAttrs::push_num_rx_queues)\n- [.push_carrier()](PushLinkAttrs::push_carrier)\n- [.push_phys_port_id()](PushLinkAttrs::push_phys_port_id)\n- [.push_carrier_changes()](PushLinkAttrs::push_carrier_changes)\n- [.push_phys_switch_id()](PushLinkAttrs::push_phys_switch_id)\n- [.push_link_netnsid()](PushLinkAttrs::push_link_netnsid)\n- [.push_phys_port_name()](PushLinkAttrs::push_phys_port_name)\n- [.push_proto_down()](PushLinkAttrs::push_proto_down)\n- [.push_gso_max_segs()](PushLinkAttrs::push_gso_max_segs)\n- [.push_gso_max_size()](PushLinkAttrs::push_gso_max_size)\n- [.nested_xdp()](PushLinkAttrs::nested_xdp)\n- [.push_event()](PushLinkAttrs::push_event)\n- [.push_new_netnsid()](PushLinkAttrs::push_new_netnsid)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_carrier_up_count()](PushLinkAttrs::push_carrier_up_count)\n- [.push_carrier_down_count()](PushLinkAttrs::push_carrier_down_count)\n- [.push_new_ifindex()](PushLinkAttrs::push_new_ifindex)\n- [.push_min_mtu()](PushLinkAttrs::push_min_mtu)\n- [.push_max_mtu()](PushLinkAttrs::push_max_mtu)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n- [.push_perm_address()](PushLinkAttrs::push_perm_address)\n- [.push_proto_down_reason()](PushLinkAttrs::push_proto_down_reason)\n- [.push_parent_dev_name()](PushLinkAttrs::push_parent_dev_name)\n- [.push_parent_dev_bus_name()](PushLinkAttrs::push_parent_dev_bus_name)\n- [.push_gro_max_size()](PushLinkAttrs::push_gro_max_size)\n- [.push_tso_max_size()](PushLinkAttrs::push_tso_max_size)\n- [.push_tso_max_segs()](PushLinkAttrs::push_tso_max_segs)\n- [.push_allmulti()](PushLinkAttrs::push_allmulti)\n- [.push_devlink_port()](PushLinkAttrs::push_devlink_port)\n- [.push_gso_ipv4_max_size()](PushLinkAttrs::push_gso_ipv4_max_size)\n- [.push_gro_ipv4_max_size()](PushLinkAttrs::push_gro_ipv4_max_size)\n- [.push_pacing_offload()](PushLinkAttrs::push_pacing_offload)\n\n"]
 #[derive(Debug)]
 pub struct OpSetlinkDo<'r> {
     request: Request<'r>,
@@ -23712,9 +25116,153 @@ impl NetlinkRequest for OpGetstatsDo<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
+#[doc = "Add one or more alternative names (altname) to an existing link, without\na full link replace/update.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n\n"]
+#[derive(Debug)]
+pub struct OpNewlinkpropDo<'r> {
+    request: Request<'r>,
+}
+impl<'r> OpNewlinkpropDo<'r> {
+    pub fn new(mut request: Request<'r>, header: &Ifinfomsg) -> Self {
+        Self::write_header(request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode_request<'buf>(
+        buf: &'buf mut Vec<u8>,
+        header: &Ifinfomsg,
+    ) -> PushLinkAttrs<&'buf mut Vec<u8>> {
+        Self::write_header(buf, header);
+        PushLinkAttrs::new(buf)
+    }
+    pub fn encode(&mut self) -> PushLinkAttrs<&mut Vec<u8>> {
+        PushLinkAttrs::new(self.request.buf_mut())
+    }
+    pub fn into_encoder(self) -> PushLinkAttrs<RequestBuf<'r>> {
+        PushLinkAttrs::new(self.request.buf)
+    }
+    pub fn decode_request<'a>(buf: &'a [u8]) -> (Ifinfomsg, IterableLinkAttrs<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(Ifinfomsg::len()));
+        (
+            Ifinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableLinkAttrs::with_loc(attrs, buf.as_ptr() as usize),
+        )
+    }
+    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
+        prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
+}
+impl NetlinkRequest for OpNewlinkpropDo<'_> {
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 108u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    type ReplyType<'buf> = (Ifinfomsg, IterableLinkAttrs<'buf>);
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        Self::decode_request(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        Self::decode_request(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
+#[doc = "Remove one or more alternative names (altname) from an existing link.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n\n"]
+#[derive(Debug)]
+pub struct OpDellinkpropDo<'r> {
+    request: Request<'r>,
+}
+impl<'r> OpDellinkpropDo<'r> {
+    pub fn new(mut request: Request<'r>, header: &Ifinfomsg) -> Self {
+        Self::write_header(request.buf_mut(), header);
+        Self { request: request }
+    }
+    pub fn encode_request<'buf>(
+        buf: &'buf mut Vec<u8>,
+        header: &Ifinfomsg,
+    ) -> PushLinkAttrs<&'buf mut Vec<u8>> {
+        Self::write_header(buf, header);
+        PushLinkAttrs::new(buf)
+    }
+    pub fn encode(&mut self) -> PushLinkAttrs<&mut Vec<u8>> {
+        PushLinkAttrs::new(self.request.buf_mut())
+    }
+    pub fn into_encoder(self) -> PushLinkAttrs<RequestBuf<'r>> {
+        PushLinkAttrs::new(self.request.buf)
+    }
+    pub fn decode_request<'a>(buf: &'a [u8]) -> (Ifinfomsg, IterableLinkAttrs<'a>) {
+        let (header, attrs) = buf.split_at(buf.len().min(Ifinfomsg::len()));
+        (
+            Ifinfomsg::new_from_slice(header).unwrap_or_default(),
+            IterableLinkAttrs::with_loc(attrs, buf.as_ptr() as usize),
+        )
+    }
+    fn write_header<Prev: Pusher>(prev: &mut Prev, header: &Ifinfomsg) {
+        prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut Ifinfomsg {
+        let pos = self.request.pos;
+        Ifinfomsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
+}
+impl NetlinkRequest for OpDellinkpropDo<'_> {
+    fn protocol(&self) -> Protocol {
+        Protocol::Raw {
+            protonum: 0u16,
+            request_type: 109u16,
+        }
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    type ReplyType<'buf> = (Ifinfomsg, IterableLinkAttrs<'buf>);
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        Self::decode_request(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        Self::decode_request(buf)
+            .1
+            .lookup_attr(offset, missing_type)
+    }
+}
 #[derive(Debug)]
 pub struct ChainedFinal<'a> {
     inner: Chained<'a>,
+}
+impl<'a> std::ops::Deref for ChainedFinal<'a> {
+    type Target = Chained<'a>;
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 #[derive(Debug)]
 pub struct Chained<'a> {
@@ -23813,6 +25361,34 @@ impl<'a> Chained<'a> {
         request.writeback = Some(&mut self.last_kind);
         request
     }
+    pub fn with_request<R: NetlinkRequest + ?Sized>(&mut self, request: &R) -> &mut Self {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut().extend_from_slice(Nlmsghdr::new().as_slice());
+        self.buf_mut().extend_from_slice(request.payload());
+        self.last_kind = Some(RequestInfo {
+            protocol: request.protocol(),
+            flags: request.flags(),
+            name: std::any::type_name::<R>(),
+            lookup: R::lookup,
+        });
+        self
+    }
+    pub fn with_chained(&mut self, chain: &Self) -> &mut Self {
+        self.update_header();
+        let chain_off = self.buf().len();
+        let chain_seq = self.first_seq.wrapping_add(self.lookups.len() as u32);
+        self.buf_mut().extend_from_slice(chain.buf());
+        for (i, (header, _)) in
+            IterableMessagesMut::new(&mut self.buf_mut()[chain_off..]).enumerate()
+        {
+            header.seq = chain_seq.wrapping_add(i as u32);
+        }
+        self.lookups.extend_from_slice(&chain.lookups);
+        self.last_header_offset = chain_off + chain.last_header_offset;
+        self.last_kind = chain.last_kind.clone();
+        self
+    }
     pub fn buf(&self) -> &Vec<u8> {
         self.buf.buf()
     }
@@ -23825,9 +25401,9 @@ impl<'a> Chained<'a> {
             flags,
             name,
             lookup,
-        }) = self.last_kind
+        }) = self.last_kind.take()
         else {
-            if !self.buf().is_empty() {
+            if !self.buf().is_empty() && self.buf().len() != self.last_header_offset {
                 assert_eq!(self.last_header_offset + Nlmsghdr::len(), self.buf().len());
                 self.buf.buf_mut().truncate(self.last_header_offset);
             }
@@ -23851,6 +25427,7 @@ impl<'a> Chained<'a> {
             pid: 0,
         };
         buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+        self.last_header_offset = buf.len();
     }
 }
 use crate::traits::LookupFn;
@@ -23975,21 +25552,21 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-dellink-do", OpDellinkDo::lookup);
         res
     }
-    #[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_master()](PushLinkAttrs::push_master)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n\n"]
+    #[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_master()](PushLinkAttrs::push_master)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n- [.get_pacing_offload()](IterableLinkAttrs::get_pacing_offload)\n\n"]
     pub fn op_getlink_dump(self, header: &Ifinfomsg) -> OpGetlinkDump<'buf> {
         let mut res = OpGetlinkDump::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-getlink-dump", OpGetlinkDump::lookup);
         res
     }
-    #[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_alt_ifname()](PushLinkAttrs::push_alt_ifname)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n\n"]
+    #[doc = "Get / dump information about a link.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_alt_ifname()](PushLinkAttrs::push_alt_ifname)\n\nReply attributes:\n- [.get_address()](IterableLinkAttrs::get_address)\n- [.get_broadcast()](IterableLinkAttrs::get_broadcast)\n- [.get_ifname()](IterableLinkAttrs::get_ifname)\n- [.get_mtu()](IterableLinkAttrs::get_mtu)\n- [.get_link()](IterableLinkAttrs::get_link)\n- [.get_qdisc()](IterableLinkAttrs::get_qdisc)\n- [.get_stats()](IterableLinkAttrs::get_stats)\n- [.get_master()](IterableLinkAttrs::get_master)\n- [.get_wireless()](IterableLinkAttrs::get_wireless)\n- [.get_protinfo()](IterableLinkAttrs::get_protinfo)\n- [.get_txqlen()](IterableLinkAttrs::get_txqlen)\n- [.get_map()](IterableLinkAttrs::get_map)\n- [.get_weight()](IterableLinkAttrs::get_weight)\n- [.get_operstate()](IterableLinkAttrs::get_operstate)\n- [.get_linkmode()](IterableLinkAttrs::get_linkmode)\n- [.get_linkinfo()](IterableLinkAttrs::get_linkinfo)\n- [.get_net_ns_pid()](IterableLinkAttrs::get_net_ns_pid)\n- [.get_ifalias()](IterableLinkAttrs::get_ifalias)\n- [.get_num_vf()](IterableLinkAttrs::get_num_vf)\n- [.get_vfinfo_list()](IterableLinkAttrs::get_vfinfo_list)\n- [.get_stats64()](IterableLinkAttrs::get_stats64)\n- [.get_vf_ports()](IterableLinkAttrs::get_vf_ports)\n- [.get_port_self()](IterableLinkAttrs::get_port_self)\n- [.get_af_spec()](IterableLinkAttrs::get_af_spec)\n- [.get_group()](IterableLinkAttrs::get_group)\n- [.get_net_ns_fd()](IterableLinkAttrs::get_net_ns_fd)\n- [.get_ext_mask()](IterableLinkAttrs::get_ext_mask)\n- [.get_promiscuity()](IterableLinkAttrs::get_promiscuity)\n- [.get_num_tx_queues()](IterableLinkAttrs::get_num_tx_queues)\n- [.get_num_rx_queues()](IterableLinkAttrs::get_num_rx_queues)\n- [.get_carrier()](IterableLinkAttrs::get_carrier)\n- [.get_phys_port_id()](IterableLinkAttrs::get_phys_port_id)\n- [.get_carrier_changes()](IterableLinkAttrs::get_carrier_changes)\n- [.get_phys_switch_id()](IterableLinkAttrs::get_phys_switch_id)\n- [.get_link_netnsid()](IterableLinkAttrs::get_link_netnsid)\n- [.get_phys_port_name()](IterableLinkAttrs::get_phys_port_name)\n- [.get_proto_down()](IterableLinkAttrs::get_proto_down)\n- [.get_gso_max_segs()](IterableLinkAttrs::get_gso_max_segs)\n- [.get_gso_max_size()](IterableLinkAttrs::get_gso_max_size)\n- [.get_xdp()](IterableLinkAttrs::get_xdp)\n- [.get_event()](IterableLinkAttrs::get_event)\n- [.get_new_netnsid()](IterableLinkAttrs::get_new_netnsid)\n- [.get_target_netnsid()](IterableLinkAttrs::get_target_netnsid)\n- [.get_carrier_up_count()](IterableLinkAttrs::get_carrier_up_count)\n- [.get_carrier_down_count()](IterableLinkAttrs::get_carrier_down_count)\n- [.get_new_ifindex()](IterableLinkAttrs::get_new_ifindex)\n- [.get_min_mtu()](IterableLinkAttrs::get_min_mtu)\n- [.get_max_mtu()](IterableLinkAttrs::get_max_mtu)\n- [.get_prop_list()](IterableLinkAttrs::get_prop_list)\n- [.get_perm_address()](IterableLinkAttrs::get_perm_address)\n- [.get_proto_down_reason()](IterableLinkAttrs::get_proto_down_reason)\n- [.get_parent_dev_name()](IterableLinkAttrs::get_parent_dev_name)\n- [.get_parent_dev_bus_name()](IterableLinkAttrs::get_parent_dev_bus_name)\n- [.get_gro_max_size()](IterableLinkAttrs::get_gro_max_size)\n- [.get_tso_max_size()](IterableLinkAttrs::get_tso_max_size)\n- [.get_tso_max_segs()](IterableLinkAttrs::get_tso_max_segs)\n- [.get_allmulti()](IterableLinkAttrs::get_allmulti)\n- [.get_devlink_port()](IterableLinkAttrs::get_devlink_port)\n- [.get_gso_ipv4_max_size()](IterableLinkAttrs::get_gso_ipv4_max_size)\n- [.get_gro_ipv4_max_size()](IterableLinkAttrs::get_gro_ipv4_max_size)\n- [.get_pacing_offload()](IterableLinkAttrs::get_pacing_offload)\n\n"]
     pub fn op_getlink_do(self, header: &Ifinfomsg) -> OpGetlinkDo<'buf> {
         let mut res = OpGetlinkDo::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-getlink-do", OpGetlinkDo::lookup);
         res
     }
-    #[doc = "Set information about a link.\n\nRequest attributes:\n- [.push_address()](PushLinkAttrs::push_address)\n- [.push_broadcast()](PushLinkAttrs::push_broadcast)\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_mtu()](PushLinkAttrs::push_mtu)\n- [.push_link()](PushLinkAttrs::push_link)\n- [.push_qdisc()](PushLinkAttrs::push_qdisc)\n- [.push_stats()](PushLinkAttrs::push_stats)\n- [.push_master()](PushLinkAttrs::push_master)\n- [.push_wireless()](PushLinkAttrs::push_wireless)\n- [.push_protinfo()](PushLinkAttrs::push_protinfo)\n- [.push_txqlen()](PushLinkAttrs::push_txqlen)\n- [.push_map()](PushLinkAttrs::push_map)\n- [.push_weight()](PushLinkAttrs::push_weight)\n- [.push_operstate()](PushLinkAttrs::push_operstate)\n- [.push_linkmode()](PushLinkAttrs::push_linkmode)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_net_ns_pid()](PushLinkAttrs::push_net_ns_pid)\n- [.push_ifalias()](PushLinkAttrs::push_ifalias)\n- [.push_num_vf()](PushLinkAttrs::push_num_vf)\n- [.nested_vfinfo_list()](PushLinkAttrs::nested_vfinfo_list)\n- [.push_stats64()](PushLinkAttrs::push_stats64)\n- [.nested_vf_ports()](PushLinkAttrs::nested_vf_ports)\n- [.nested_port_self()](PushLinkAttrs::nested_port_self)\n- [.nested_af_spec()](PushLinkAttrs::nested_af_spec)\n- [.push_group()](PushLinkAttrs::push_group)\n- [.push_net_ns_fd()](PushLinkAttrs::push_net_ns_fd)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_promiscuity()](PushLinkAttrs::push_promiscuity)\n- [.push_num_tx_queues()](PushLinkAttrs::push_num_tx_queues)\n- [.push_num_rx_queues()](PushLinkAttrs::push_num_rx_queues)\n- [.push_carrier()](PushLinkAttrs::push_carrier)\n- [.push_phys_port_id()](PushLinkAttrs::push_phys_port_id)\n- [.push_carrier_changes()](PushLinkAttrs::push_carrier_changes)\n- [.push_phys_switch_id()](PushLinkAttrs::push_phys_switch_id)\n- [.push_link_netnsid()](PushLinkAttrs::push_link_netnsid)\n- [.push_phys_port_name()](PushLinkAttrs::push_phys_port_name)\n- [.push_proto_down()](PushLinkAttrs::push_proto_down)\n- [.push_gso_max_segs()](PushLinkAttrs::push_gso_max_segs)\n- [.push_gso_max_size()](PushLinkAttrs::push_gso_max_size)\n- [.nested_xdp()](PushLinkAttrs::nested_xdp)\n- [.push_event()](PushLinkAttrs::push_event)\n- [.push_new_netnsid()](PushLinkAttrs::push_new_netnsid)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_carrier_up_count()](PushLinkAttrs::push_carrier_up_count)\n- [.push_carrier_down_count()](PushLinkAttrs::push_carrier_down_count)\n- [.push_new_ifindex()](PushLinkAttrs::push_new_ifindex)\n- [.push_min_mtu()](PushLinkAttrs::push_min_mtu)\n- [.push_max_mtu()](PushLinkAttrs::push_max_mtu)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n- [.push_perm_address()](PushLinkAttrs::push_perm_address)\n- [.push_proto_down_reason()](PushLinkAttrs::push_proto_down_reason)\n- [.push_parent_dev_name()](PushLinkAttrs::push_parent_dev_name)\n- [.push_parent_dev_bus_name()](PushLinkAttrs::push_parent_dev_bus_name)\n- [.push_gro_max_size()](PushLinkAttrs::push_gro_max_size)\n- [.push_tso_max_size()](PushLinkAttrs::push_tso_max_size)\n- [.push_tso_max_segs()](PushLinkAttrs::push_tso_max_segs)\n- [.push_allmulti()](PushLinkAttrs::push_allmulti)\n- [.push_devlink_port()](PushLinkAttrs::push_devlink_port)\n- [.push_gso_ipv4_max_size()](PushLinkAttrs::push_gso_ipv4_max_size)\n- [.push_gro_ipv4_max_size()](PushLinkAttrs::push_gro_ipv4_max_size)\n\n"]
+    #[doc = "Set information about a link.\n\nRequest attributes:\n- [.push_address()](PushLinkAttrs::push_address)\n- [.push_broadcast()](PushLinkAttrs::push_broadcast)\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.push_mtu()](PushLinkAttrs::push_mtu)\n- [.push_link()](PushLinkAttrs::push_link)\n- [.push_qdisc()](PushLinkAttrs::push_qdisc)\n- [.push_stats()](PushLinkAttrs::push_stats)\n- [.push_master()](PushLinkAttrs::push_master)\n- [.push_wireless()](PushLinkAttrs::push_wireless)\n- [.push_protinfo()](PushLinkAttrs::push_protinfo)\n- [.push_txqlen()](PushLinkAttrs::push_txqlen)\n- [.push_map()](PushLinkAttrs::push_map)\n- [.push_weight()](PushLinkAttrs::push_weight)\n- [.push_operstate()](PushLinkAttrs::push_operstate)\n- [.push_linkmode()](PushLinkAttrs::push_linkmode)\n- [.nested_linkinfo()](PushLinkAttrs::nested_linkinfo)\n- [.push_net_ns_pid()](PushLinkAttrs::push_net_ns_pid)\n- [.push_ifalias()](PushLinkAttrs::push_ifalias)\n- [.push_num_vf()](PushLinkAttrs::push_num_vf)\n- [.nested_vfinfo_list()](PushLinkAttrs::nested_vfinfo_list)\n- [.push_stats64()](PushLinkAttrs::push_stats64)\n- [.nested_vf_ports()](PushLinkAttrs::nested_vf_ports)\n- [.nested_port_self()](PushLinkAttrs::nested_port_self)\n- [.nested_af_spec()](PushLinkAttrs::nested_af_spec)\n- [.push_group()](PushLinkAttrs::push_group)\n- [.push_net_ns_fd()](PushLinkAttrs::push_net_ns_fd)\n- [.push_ext_mask()](PushLinkAttrs::push_ext_mask)\n- [.push_promiscuity()](PushLinkAttrs::push_promiscuity)\n- [.push_num_tx_queues()](PushLinkAttrs::push_num_tx_queues)\n- [.push_num_rx_queues()](PushLinkAttrs::push_num_rx_queues)\n- [.push_carrier()](PushLinkAttrs::push_carrier)\n- [.push_phys_port_id()](PushLinkAttrs::push_phys_port_id)\n- [.push_carrier_changes()](PushLinkAttrs::push_carrier_changes)\n- [.push_phys_switch_id()](PushLinkAttrs::push_phys_switch_id)\n- [.push_link_netnsid()](PushLinkAttrs::push_link_netnsid)\n- [.push_phys_port_name()](PushLinkAttrs::push_phys_port_name)\n- [.push_proto_down()](PushLinkAttrs::push_proto_down)\n- [.push_gso_max_segs()](PushLinkAttrs::push_gso_max_segs)\n- [.push_gso_max_size()](PushLinkAttrs::push_gso_max_size)\n- [.nested_xdp()](PushLinkAttrs::nested_xdp)\n- [.push_event()](PushLinkAttrs::push_event)\n- [.push_new_netnsid()](PushLinkAttrs::push_new_netnsid)\n- [.push_target_netnsid()](PushLinkAttrs::push_target_netnsid)\n- [.push_carrier_up_count()](PushLinkAttrs::push_carrier_up_count)\n- [.push_carrier_down_count()](PushLinkAttrs::push_carrier_down_count)\n- [.push_new_ifindex()](PushLinkAttrs::push_new_ifindex)\n- [.push_min_mtu()](PushLinkAttrs::push_min_mtu)\n- [.push_max_mtu()](PushLinkAttrs::push_max_mtu)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n- [.push_perm_address()](PushLinkAttrs::push_perm_address)\n- [.push_proto_down_reason()](PushLinkAttrs::push_proto_down_reason)\n- [.push_parent_dev_name()](PushLinkAttrs::push_parent_dev_name)\n- [.push_parent_dev_bus_name()](PushLinkAttrs::push_parent_dev_bus_name)\n- [.push_gro_max_size()](PushLinkAttrs::push_gro_max_size)\n- [.push_tso_max_size()](PushLinkAttrs::push_tso_max_size)\n- [.push_tso_max_segs()](PushLinkAttrs::push_tso_max_segs)\n- [.push_allmulti()](PushLinkAttrs::push_allmulti)\n- [.push_devlink_port()](PushLinkAttrs::push_devlink_port)\n- [.push_gso_ipv4_max_size()](PushLinkAttrs::push_gso_ipv4_max_size)\n- [.push_gro_ipv4_max_size()](PushLinkAttrs::push_gro_ipv4_max_size)\n- [.push_pacing_offload()](PushLinkAttrs::push_pacing_offload)\n\n"]
     pub fn op_setlink_do(self, header: &Ifinfomsg) -> OpSetlinkDo<'buf> {
         let mut res = OpSetlinkDo::new(self, header);
         res.request
@@ -24008,6 +25585,20 @@ impl<'buf> Request<'buf> {
         let mut res = OpGetstatsDo::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-getstats-do", OpGetstatsDo::lookup);
+        res
+    }
+    #[doc = "Add one or more alternative names (altname) to an existing link, without\na full link replace/update.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n\n"]
+    pub fn op_newlinkprop_do(self, header: &Ifinfomsg) -> OpNewlinkpropDo<'buf> {
+        let mut res = OpNewlinkpropDo::new(self, header);
+        res.request
+            .do_writeback(res.protocol(), "op-newlinkprop-do", OpNewlinkpropDo::lookup);
+        res
+    }
+    #[doc = "Remove one or more alternative names (altname) from an existing link.\n\nRequest attributes:\n- [.push_ifname()](PushLinkAttrs::push_ifname)\n- [.nested_prop_list()](PushLinkAttrs::nested_prop_list)\n\n"]
+    pub fn op_dellinkprop_do(self, header: &Ifinfomsg) -> OpDellinkpropDo<'buf> {
+        let mut res = OpDellinkpropDo::new(self, header);
+        res.request
+            .do_writeback(res.protocol(), "op-dellinkprop-do", OpDellinkpropDo::lookup);
         res
     }
 }
@@ -24052,6 +25643,7 @@ mod generated_tests {
         let _ = IterableLinkAttrs::get_num_tx_queues;
         let _ = IterableLinkAttrs::get_num_vf;
         let _ = IterableLinkAttrs::get_operstate;
+        let _ = IterableLinkAttrs::get_pacing_offload;
         let _ = IterableLinkAttrs::get_parent_dev_bus_name;
         let _ = IterableLinkAttrs::get_parent_dev_name;
         let _ = IterableLinkAttrs::get_perm_address;
@@ -24123,6 +25715,7 @@ mod generated_tests {
         let _ = PushLinkAttrs::<&mut Vec<u8>>::push_num_tx_queues;
         let _ = PushLinkAttrs::<&mut Vec<u8>>::push_num_vf;
         let _ = PushLinkAttrs::<&mut Vec<u8>>::push_operstate;
+        let _ = PushLinkAttrs::<&mut Vec<u8>>::push_pacing_offload;
         let _ = PushLinkAttrs::<&mut Vec<u8>>::push_parent_dev_bus_name;
         let _ = PushLinkAttrs::<&mut Vec<u8>>::push_parent_dev_name;
         let _ = PushLinkAttrs::<&mut Vec<u8>>::push_perm_address;

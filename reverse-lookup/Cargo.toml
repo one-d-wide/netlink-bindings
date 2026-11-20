@@ -24,9 +24,11 @@ conntrack = [ "netlink-bindings/conntrack" ]
 dev-energymodel = [ "netlink-bindings/dev-energymodel" ]
 devlink = [ "netlink-bindings/devlink" ]
 dpll = [ "netlink-bindings/dpll" ]
+drbd2 = [ "netlink-bindings/drbd2" ]
 drm-ras = [ "netlink-bindings/drm-ras" ]
 ethtool = [ "netlink-bindings/ethtool" ]
 fou = [ "netlink-bindings/fou" ]
+gtp = [ "netlink-bindings/gtp" ]
 handshake = [ "netlink-bindings/handshake" ]
 inet-diag = [ "netlink-bindings/inet-diag" ]
 lockd = [ "netlink-bindings/lockd" ]
@@ -47,6 +49,7 @@ rt-addr = [ "netlink-bindings/rt-addr" ]
 rt-link = [ "netlink-bindings/rt-link" ]
 rt-neigh = [ "netlink-bindings/rt-neigh" ]
 rt-nexthop = [ "netlink-bindings/rt-nexthop" ]
+rt-nsid = [ "netlink-bindings/rt-nsid" ]
 rt-route = [ "netlink-bindings/rt-route" ]
 rt-rule = [ "netlink-bindings/rt-rule" ]
 sunrpc = [ "netlink-bindings/sunrpc" ]
@@ -62,9 +65,11 @@ all-subsystems = [
   "dev-energymodel",
   "devlink",
   "dpll",
+  "drbd2",
   "drm-ras",
   "ethtool",
   "fou",
+  "gtp",
   "handshake",
   "inet-diag",
   "lockd",
@@ -85,6 +90,7 @@ all-subsystems = [
   "rt-link",
   "rt-neigh",
   "rt-nexthop",
+  "rt-nsid",
   "rt-route",
   "rt-rule",
   "sunrpc",

@@ -10,30 +10,28 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "handshake";
 pub const PROTONAME_CSTR: &CStr = c"handshake";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HandlerClass {
     None = 0,
     Tlshd = 1,
-    Max = 2,
 }
 impl HandlerClass {
     pub fn from_value(value: u64) -> Option<Self> {
         Some(match value {
             0 => Self::None,
             1 => Self::Tlshd,
-            2 => Self::Max,
             _ => return None,
         })
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum MsgType {
     Unspec = 0,
     Clienthello = 1,
@@ -50,7 +48,7 @@ impl MsgType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Auth {
     Unspec = 0,
     Unauth = 1,
@@ -257,11 +255,11 @@ pub enum Accept<'a> {
     #[doc = "Associated type: [`Auth`] (enum)"]
     AuthMode(u32),
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    PeerIdentity(u32),
+    PeerIdentity(i32),
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     Certificate(IterableX509<'a>),
     Peername(&'a CStr),
-    Keyring(u32),
+    Keyring(i32),
 }
 impl<'a> IterableAccept<'a> {
     pub fn get_sockfd(&self) -> Result<i32, ErrorContext> {
@@ -343,7 +341,7 @@ impl<'a> IterableAccept<'a> {
         ))
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn get_peer_identity(&self) -> MultiAttrIterable<Self, Accept<'a>, u32> {
+    pub fn get_peer_identity(&self) -> MultiAttrIterable<Self, Accept<'a>, i32> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let Accept::PeerIdentity(val) = variant {
                 Some(val)
@@ -377,7 +375,7 @@ impl<'a> IterableAccept<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_keyring(&self) -> Result<u32, ErrorContext> {
+    pub fn get_keyring(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -474,7 +472,7 @@ impl<'a> Iterator for IterableAccept<'a> {
                     val
                 }),
                 6u16 => Accept::PeerIdentity({
-                    let res = parse_u32(next);
+                    let res = parse_i32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -489,7 +487,7 @@ impl<'a> Iterator for IterableAccept<'a> {
                     val
                 }),
                 9u16 => Accept::Keyring({
-                    let res = parse_u32(next);
+                    let res = parse_i32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -638,7 +636,7 @@ pub enum Done {
     Status(u32),
     Sockfd(i32),
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    RemoteAuth(u32),
+    RemoteAuth(i32),
 }
 impl<'a> IterableDone<'a> {
     pub fn get_status(&self) -> Result<u32, ErrorContext> {
@@ -672,7 +670,7 @@ impl<'a> IterableDone<'a> {
         ))
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn get_remote_auth(&self) -> MultiAttrIterable<Self, Done, u32> {
+    pub fn get_remote_auth(&self) -> MultiAttrIterable<Self, Done, i32> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let Done::RemoteAuth(val) = variant {
                 Some(val)
@@ -742,7 +740,7 @@ impl<'a> Iterator for IterableDone<'a> {
                     val
                 }),
                 3u16 => Done::RemoteAuth({
-                    let res = parse_u32(next);
+                    let res = parse_i32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -937,7 +935,7 @@ impl<Prev: Pusher> PushAccept<Prev> {
         self
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn push_peer_identity(mut self, value: u32) -> Self {
+    pub fn push_peer_identity(mut self, value: i32) -> Self {
         push_header(self.as_vec_mut(), 6u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
@@ -965,7 +963,7 @@ impl<Prev: Pusher> PushAccept<Prev> {
         self.as_vec_mut().push(0);
         self
     }
-    pub fn push_keyring(mut self, value: u32) -> Self {
+    pub fn push_keyring(mut self, value: i32) -> Self {
         push_header(self.as_vec_mut(), 9u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
@@ -1017,7 +1015,7 @@ impl<Prev: Pusher> PushDone<Prev> {
         self
     }
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
-    pub fn push_remote_auth(mut self, value: u32) -> Self {
+    pub fn push_remote_auth(mut self, value: i32) -> Self {
         push_header(self.as_vec_mut(), 3u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self

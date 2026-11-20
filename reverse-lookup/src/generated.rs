@@ -316,6 +316,50 @@ impl Debug for ReverseLookup {
                     if let (92u16, Some(94u16), false) = pat {
                         return consider(fmt, "rt-link");
                     }
+                    #[cfg(feature = "rt-link")]
+                    if let (108u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_link::OpNewlinkpropDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-link"))]
+                    if let (108u16, None, false) = pat {
+                        return consider(fmt, "rt-link");
+                    }
+                    #[cfg(feature = "rt-link")]
+                    if let (108u16, Some(108u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_link::OpNewlinkpropDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-link"))]
+                    if let (108u16, Some(108u16), false) = pat {
+                        return consider(fmt, "rt-link");
+                    }
+                    #[cfg(feature = "rt-link")]
+                    if let (109u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_link::OpDellinkpropDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-link"))]
+                    if let (109u16, None, false) = pat {
+                        return consider(fmt, "rt-link");
+                    }
+                    #[cfg(feature = "rt-link")]
+                    if let (109u16, Some(109u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_link::OpDellinkpropDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-link"))]
+                    if let (109u16, Some(109u16), false) = pat {
+                        return consider(fmt, "rt-link");
+                    }
                     #[cfg(feature = "rt-neigh")]
                     if let (28u16, None, false) = pat {
                         return Debug::fmt(
@@ -909,6 +953,210 @@ impl Debug for ReverseLookup {
                     #[cfg(not(feature = "tc"))]
                     if let (100u16, Some(102u16), false) = pat {
                         return consider(fmt, "tc");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpNewnexthopDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, Some(104u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpNewnexthopDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, Some(104u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (105u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpDelnexthopDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (105u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (105u16, Some(105u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpDelnexthopDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (105u16, Some(105u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (106u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (106u16, None, true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, Some(106u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, Some(106u16), true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (106u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (106u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (104u16, Some(106u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (104u16, Some(106u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (118u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDump::decode_request(
+                                buf,
+                            ),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (118u16, None, true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (116u16, Some(118u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDump::decode_reply(
+                                buf,
+                            ),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (116u16, Some(118u16), true) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (118u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDo::decode_request(
+                                buf,
+                            ),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (118u16, None, false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nexthop")]
+                    if let (116u16, Some(118u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nexthop::OpGetnexthopbucketDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nexthop"))]
+                    if let (116u16, Some(118u16), false) = pat {
+                        return consider(fmt, "rt-nexthop");
+                    }
+                    #[cfg(feature = "rt-nsid")]
+                    if let (88u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nsid::OpNewnsidDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nsid"))]
+                    if let (88u16, None, false) = pat {
+                        return consider(fmt, "rt-nsid");
+                    }
+                    #[cfg(feature = "rt-nsid")]
+                    if let (88u16, Some(88u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nsid::OpNewnsidDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nsid"))]
+                    if let (88u16, Some(88u16), false) = pat {
+                        return consider(fmt, "rt-nsid");
+                    }
+                    #[cfg(feature = "rt-nsid")]
+                    if let (90u16, None, true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nsid::OpGetnsidDump::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nsid"))]
+                    if let (90u16, None, true) = pat {
+                        return consider(fmt, "rt-nsid");
+                    }
+                    #[cfg(feature = "rt-nsid")]
+                    if let (88u16, Some(90u16), true) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nsid::OpGetnsidDump::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nsid"))]
+                    if let (88u16, Some(90u16), true) = pat {
+                        return consider(fmt, "rt-nsid");
+                    }
+                    #[cfg(feature = "rt-nsid")]
+                    if let (90u16, None, false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nsid::OpGetnsidDo::decode_request(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nsid"))]
+                    if let (90u16, None, false) = pat {
+                        return consider(fmt, "rt-nsid");
+                    }
+                    #[cfg(feature = "rt-nsid")]
+                    if let (88u16, Some(90u16), false) = pat {
+                        return Debug::fmt(
+                            &netlink_bindings::rt_nsid::OpGetnsidDo::decode_reply(buf),
+                            fmt,
+                        );
+                    }
+                    #[cfg(not(feature = "rt-nsid"))]
+                    if let (88u16, Some(90u16), false) = pat {
+                        return consider(fmt, "rt-nsid");
                     }
                     write!(
                         fmt,
@@ -2186,7 +2434,7 @@ impl Debug for ReverseLookup {
                                 fmt,
                             );
                         }
-                        if let (3u8, Some(5u8), true) = pat {
+                        if let (7u8, Some(5u8), true) = pat {
                             return Debug::fmt(
                                 &netlink_bindings::devlink::OpPortGetDump::decode_reply(buf),
                                 fmt,
@@ -3184,6 +3432,543 @@ impl Debug for ReverseLookup {
                     #[cfg(not(feature = "dpll"))]
                     return consider(fmt, "dpll");
                 }
+                if name == b"drbd2" {
+                    let pat = (value, request_value, is_dump);
+                    #[cfg(feature = "drbd2")]
+                    {
+                        if let (1u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (1u8, Some(1u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (2u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (2u8, Some(2u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (3u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (3u8, Some(3u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (4u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceRenameDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (4u8, Some(4u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceRenameDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (5u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceDownDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (5u8, Some(5u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceDownDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (6u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourcePrimaryDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (6u8, Some(6u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourcePrimaryDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (7u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceSecondaryDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (7u8, Some(7u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceSecondaryDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (8u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceSuspendIoDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (8u8, Some(8u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceSuspendIoDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (9u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceResumeIoDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (9u8, Some(9u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceResumeIoDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (10u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (10u8, Some(10u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (11u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (11u8, Some(11u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (12u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceAttachDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (12u8, Some(12u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceAttachDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (13u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceDetachDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (13u8, Some(13u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceDetachDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (14u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDiskSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (14u8, Some(14u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDiskSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (15u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceResizeDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (15u8, Some(15u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceResizeDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (16u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceOutdateDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (16u8, Some(16u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceOutdateDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (17u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceInvalidateDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (17u8, Some(17u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceInvalidateDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (18u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceNewCurrentUuidDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (18u8, Some(18u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceNewCurrentUuidDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (19u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (19u8, Some(19u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (20u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (20u8, Some(20u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (21u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionConnectDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (21u8, Some(21u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionConnectDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (22u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionDisconnectDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (22u8, Some(22u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionDisconnectDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (23u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (23u8, Some(23u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (24u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionForgetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (24u8, Some(24u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionForgetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (25u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPathNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (25u8, Some(25u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPathNewDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (26u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPathDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (26u8, Some(26u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPathDelDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (27u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (27u8, Some(27u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceSetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (28u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceInvalidateDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (28u8, Some(28u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceInvalidateDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (29u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDevicePauseSyncDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (29u8, Some(29u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDevicePauseSyncDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (30u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceResumeSyncDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (30u8, Some(30u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceResumeSyncDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (31u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceStartOvDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (31u8, Some(31u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceStartOvDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (32u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpTimeoutTypeGetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (32u8, Some(32u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpTimeoutTypeGetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (33u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (33u8, Some(33u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpResourceGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (34u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (34u8, Some(34u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (35u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (35u8, Some(35u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpConnectionGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (36u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (36u8, Some(36u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPeerDeviceGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (37u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPathGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (37u8, Some(37u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpPathGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (38u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpStateGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (38u8, Some(38u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpStateGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (41u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtFlushDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (41u8, Some(41u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtFlushDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (42u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtStartDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (42u8, Some(42u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtStartDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (43u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtStopDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (43u8, Some(43u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtStopDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (44u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtStatusDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (44u8, Some(44u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drbd2::OpDeviceCbtStatusDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        write!(
+                            fmt,
+                            "(Unknown genl operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
+                        )?;
+                        return Ok(());
+                    }
+                    #[cfg(not(feature = "drbd2"))]
+                    return consider(fmt, "drbd2");
+                }
                 if name == b"drm-ras" {
                     let pat = (value, request_value, is_dump);
                     #[cfg(feature = "drm-ras")]
@@ -3239,6 +4024,38 @@ impl Debug for ReverseLookup {
                         if let (3u8, Some(3u8), false) = pat {
                             return Debug::fmt(
                                 &netlink_bindings::drm_ras::OpClearErrorCounterDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (5u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drm_ras::OpGetErrorThresholdDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (5u8, Some(5u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drm_ras::OpGetErrorThresholdDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (6u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drm_ras::OpSetErrorThresholdDo::decode_reply(
+                                    buf,
+                                ),
+                                fmt,
+                            );
+                        }
+                        if let (6u8, Some(6u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::drm_ras::OpSetErrorThresholdDo::decode_reply(
                                     buf,
                                 ),
                                 fmt,
@@ -4209,6 +5026,30 @@ impl Debug for ReverseLookup {
                                 fmt,
                             );
                         }
+                        if let (75u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::ethtool::OpPortGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (75u8, Some(75u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::ethtool::OpPortGetDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (75u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::ethtool::OpPortGetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (75u8, Some(75u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::ethtool::OpPortGetDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
                         write!(
                             fmt,
                             "(Unknown genl operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
@@ -4278,6 +5119,79 @@ impl Debug for ReverseLookup {
                     }
                     #[cfg(not(feature = "fou"))]
                     return consider(fmt, "fou");
+                }
+                if name == b"gtp" {
+                    let pat = (value, request_value, is_dump);
+                    #[cfg(feature = "gtp")]
+                    {
+                        if let (0u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpNewpdpDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (0u8, Some(0u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpNewpdpDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (1u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpDelpdpDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (1u8, Some(1u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpDelpdpDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (2u8, None, true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpGetpdpDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (2u8, Some(2u8), true) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpGetpdpDump::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (2u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpGetpdpDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (2u8, Some(2u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpGetpdpDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (3u8, None, false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpEchoreqDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        if let (3u8, Some(3u8), false) = pat {
+                            return Debug::fmt(
+                                &netlink_bindings::gtp::OpEchoreqDo::decode_reply(buf),
+                                fmt,
+                            );
+                        }
+                        write!(
+                            fmt,
+                            "(Unknown genl operation) value={value}, request_value={request_value:?}, is_dump={is_dump}"
+                        )?;
+                        return Ok(());
+                    }
+                    #[cfg(not(feature = "gtp"))]
+                    return consider(fmt, "gtp");
                 }
                 if name == b"handshake" {
                     let pat = (value, request_value, is_dump);
@@ -5875,6 +6789,12 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         if request_value == 94u16 {
             res.push(stringify!(rt_link::OpGetstatsDo));
         }
+        if request_value == 108u16 {
+            res.push(stringify!(rt_link::OpNewlinkpropDo));
+        }
+        if request_value == 109u16 {
+            res.push(stringify!(rt_link::OpDellinkpropDo));
+        }
         if request_value == 28u16 {
             res.push(stringify!(rt_neigh::OpNewneighDo));
         }
@@ -5955,6 +6875,33 @@ pub fn get_operation_raw(protonum: u16, request_value: u16) -> Vec<&'static str>
         }
         if request_value == 102u16 {
             res.push(stringify!(tc::OpGetchainDo));
+        }
+        if request_value == 104u16 {
+            res.push(stringify!(rt_nexthop::OpNewnexthopDo));
+        }
+        if request_value == 105u16 {
+            res.push(stringify!(rt_nexthop::OpDelnexthopDo));
+        }
+        if request_value == 106u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopDump));
+        }
+        if request_value == 106u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopDo));
+        }
+        if request_value == 118u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopbucketDump));
+        }
+        if request_value == 118u16 {
+            res.push(stringify!(rt_nexthop::OpGetnexthopbucketDo));
+        }
+        if request_value == 88u16 {
+            res.push(stringify!(rt_nsid::OpNewnsidDo));
+        }
+        if request_value == 90u16 {
+            res.push(stringify!(rt_nsid::OpGetnsidDump));
+        }
+        if request_value == 90u16 {
+            res.push(stringify!(rt_nsid::OpGetnsidDo));
         }
     }
     if protonum == 4u16 {
@@ -6137,7 +7084,7 @@ pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
         if cmd == 3u8 {
             res.push(stringify!(devlink::OpGetDo));
         }
-        if cmd == 3u8 {
+        if cmd == 7u8 {
             res.push(stringify!(devlink::OpPortGetDump));
         }
         if cmd == 7u8 {
@@ -6383,6 +7330,134 @@ pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
             res.push(stringify!(dpll::OpPinSetDo));
         }
     }
+    if proto == b"drbd2" {
+        if cmd == 1u8 {
+            res.push(stringify!(drbd2::OpResourceNewDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(drbd2::OpResourceDelDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(drbd2::OpResourceSetDo));
+        }
+        if cmd == 4u8 {
+            res.push(stringify!(drbd2::OpResourceRenameDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(drbd2::OpResourceDownDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(drbd2::OpResourcePrimaryDo));
+        }
+        if cmd == 7u8 {
+            res.push(stringify!(drbd2::OpResourceSecondaryDo));
+        }
+        if cmd == 8u8 {
+            res.push(stringify!(drbd2::OpResourceSuspendIoDo));
+        }
+        if cmd == 9u8 {
+            res.push(stringify!(drbd2::OpResourceResumeIoDo));
+        }
+        if cmd == 10u8 {
+            res.push(stringify!(drbd2::OpDeviceNewDo));
+        }
+        if cmd == 11u8 {
+            res.push(stringify!(drbd2::OpDeviceDelDo));
+        }
+        if cmd == 12u8 {
+            res.push(stringify!(drbd2::OpDeviceAttachDo));
+        }
+        if cmd == 13u8 {
+            res.push(stringify!(drbd2::OpDeviceDetachDo));
+        }
+        if cmd == 14u8 {
+            res.push(stringify!(drbd2::OpDiskSetDo));
+        }
+        if cmd == 15u8 {
+            res.push(stringify!(drbd2::OpDeviceResizeDo));
+        }
+        if cmd == 16u8 {
+            res.push(stringify!(drbd2::OpDeviceOutdateDo));
+        }
+        if cmd == 17u8 {
+            res.push(stringify!(drbd2::OpDeviceInvalidateDo));
+        }
+        if cmd == 18u8 {
+            res.push(stringify!(drbd2::OpDeviceNewCurrentUuidDo));
+        }
+        if cmd == 19u8 {
+            res.push(stringify!(drbd2::OpConnectionNewDo));
+        }
+        if cmd == 20u8 {
+            res.push(stringify!(drbd2::OpConnectionDelDo));
+        }
+        if cmd == 21u8 {
+            res.push(stringify!(drbd2::OpConnectionConnectDo));
+        }
+        if cmd == 22u8 {
+            res.push(stringify!(drbd2::OpConnectionDisconnectDo));
+        }
+        if cmd == 23u8 {
+            res.push(stringify!(drbd2::OpConnectionSetDo));
+        }
+        if cmd == 24u8 {
+            res.push(stringify!(drbd2::OpConnectionForgetDo));
+        }
+        if cmd == 25u8 {
+            res.push(stringify!(drbd2::OpPathNewDo));
+        }
+        if cmd == 26u8 {
+            res.push(stringify!(drbd2::OpPathDelDo));
+        }
+        if cmd == 27u8 {
+            res.push(stringify!(drbd2::OpPeerDeviceSetDo));
+        }
+        if cmd == 28u8 {
+            res.push(stringify!(drbd2::OpPeerDeviceInvalidateDo));
+        }
+        if cmd == 29u8 {
+            res.push(stringify!(drbd2::OpPeerDevicePauseSyncDo));
+        }
+        if cmd == 30u8 {
+            res.push(stringify!(drbd2::OpPeerDeviceResumeSyncDo));
+        }
+        if cmd == 31u8 {
+            res.push(stringify!(drbd2::OpPeerDeviceStartOvDo));
+        }
+        if cmd == 32u8 {
+            res.push(stringify!(drbd2::OpTimeoutTypeGetDo));
+        }
+        if cmd == 33u8 {
+            res.push(stringify!(drbd2::OpResourceGetDump));
+        }
+        if cmd == 34u8 {
+            res.push(stringify!(drbd2::OpDeviceGetDump));
+        }
+        if cmd == 35u8 {
+            res.push(stringify!(drbd2::OpConnectionGetDump));
+        }
+        if cmd == 36u8 {
+            res.push(stringify!(drbd2::OpPeerDeviceGetDump));
+        }
+        if cmd == 37u8 {
+            res.push(stringify!(drbd2::OpPathGetDump));
+        }
+        if cmd == 38u8 {
+            res.push(stringify!(drbd2::OpStateGetDump));
+        }
+        if cmd == 41u8 {
+            res.push(stringify!(drbd2::OpDeviceCbtFlushDo));
+        }
+        if cmd == 42u8 {
+            res.push(stringify!(drbd2::OpDeviceCbtStartDo));
+        }
+        if cmd == 43u8 {
+            res.push(stringify!(drbd2::OpDeviceCbtStopDo));
+        }
+        if cmd == 44u8 {
+            res.push(stringify!(drbd2::OpDeviceCbtStatusDo));
+        }
+    }
     if proto == b"drm-ras" {
         if cmd == 1u8 {
             res.push(stringify!(drm_ras::OpListNodesDump));
@@ -6395,6 +7470,12 @@ pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
         }
         if cmd == 3u8 {
             res.push(stringify!(drm_ras::OpClearErrorCounterDo));
+        }
+        if cmd == 5u8 {
+            res.push(stringify!(drm_ras::OpGetErrorThresholdDo));
+        }
+        if cmd == 6u8 {
+            res.push(stringify!(drm_ras::OpSetErrorThresholdDo));
         }
     }
     if proto == b"ethtool" {
@@ -6635,6 +7716,12 @@ pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
         if cmd == 74u8 {
             res.push(stringify!(ethtool::OpMseGetDo));
         }
+        if cmd == 75u8 {
+            res.push(stringify!(ethtool::OpPortGetDump));
+        }
+        if cmd == 75u8 {
+            res.push(stringify!(ethtool::OpPortGetDo));
+        }
     }
     if proto == b"fou" {
         if cmd == 1u8 {
@@ -6648,6 +7735,23 @@ pub fn get_operation_genl(proto: &[u8], cmd: u8) -> Vec<&'static str> {
         }
         if cmd == 3u8 {
             res.push(stringify!(fou::OpGetDo));
+        }
+    }
+    if proto == b"gtp" {
+        if cmd == 0u8 {
+            res.push(stringify!(gtp::OpNewpdpDo));
+        }
+        if cmd == 1u8 {
+            res.push(stringify!(gtp::OpDelpdpDo));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(gtp::OpGetpdpDump));
+        }
+        if cmd == 2u8 {
+            res.push(stringify!(gtp::OpGetpdpDo));
+        }
+        if cmd == 3u8 {
+            res.push(stringify!(gtp::OpEchoreqDo));
         }
     }
     if proto == b"handshake" {

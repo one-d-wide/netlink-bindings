@@ -10,14 +10,14 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "conntrack";
 pub const PROTONAME_CSTR: &CStr = c"conntrack";
 pub const PROTONUM: u16 = 12u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtTcpFlags {
     WindowScale = 1 << 0,
     SackPerm = 1 << 1,
@@ -44,7 +44,7 @@ impl NfCtTcpFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtTcpState {
     None = 0,
     SynSent = 1,
@@ -85,36 +85,36 @@ impl NfCtTcpState {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtSctpState {
     None = 0,
-    Cloned = 1,
+    Closed = 1,
     CookieWait = 2,
     CookieEchoed = 3,
     Established = 4,
     ShutdownSent = 5,
-    ShutdownReceived = 6,
+    ShutdownRecd = 6,
     ShutdownAckSent = 7,
-    ShutdownHeartbeatSent = 8,
+    HeartbeatSent = 8,
 }
 impl NfCtSctpState {
     pub fn from_value(value: u64) -> Option<Self> {
         Some(match value {
             0 => Self::None,
-            1 => Self::Cloned,
+            1 => Self::Closed,
             2 => Self::CookieWait,
             3 => Self::CookieEchoed,
             4 => Self::Established,
             5 => Self::ShutdownSent,
-            6 => Self::ShutdownReceived,
+            6 => Self::ShutdownRecd,
             7 => Self::ShutdownAckSent,
-            8 => Self::ShutdownHeartbeatSent,
+            8 => Self::HeartbeatSent,
             _ => return None,
         })
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NfCtStatus {
     Expected = 1 << 0,
     SeenReply = 1 << 1,
@@ -328,7 +328,9 @@ impl std::fmt::Debug for NfCtTcpFlagsMask {
 pub enum CounterAttrs<'a> {
     Packets(u64),
     Bytes(u64),
+    #[doc = "obsolete\n"]
     PacketsOld(u32),
+    #[doc = "obsolete\n"]
     BytesOld(u32),
     Pad(&'a [u8]),
 }
@@ -363,6 +365,7 @@ impl<'a> IterableCounterAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "obsolete\n"]
     pub fn get_packets_old(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -378,6 +381,7 @@ impl<'a> IterableCounterAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "obsolete\n"]
     pub fn get_bytes_old(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2404,6 +2408,8 @@ impl IterableProtoinfoAttrs<'_> {
 pub enum HelpAttrs<'a> {
     #[doc = "helper name\n"]
     HelpName(&'a CStr),
+    #[doc = "Private data of a user space helper, only present for helpers registered\nvia nfnetlink_cthelper with a non-zero data length.\n"]
+    HelpInfo(&'a [u8]),
 }
 impl<'a> IterableHelpAttrs<'a> {
     #[doc = "helper name\n"]
@@ -2422,6 +2428,22 @@ impl<'a> IterableHelpAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Private data of a user space helper, only present for helpers registered\nvia nfnetlink_cthelper with a non-zero data length.\n"]
+    pub fn get_help_info(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(HelpAttrs::HelpInfo(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "HelpAttrs",
+            "HelpInfo",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl HelpAttrs<'_> {
     pub fn new<'a>(buf: &'a [u8]) -> IterableHelpAttrs<'a> {
@@ -2430,6 +2452,7 @@ impl HelpAttrs<'_> {
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
             1u16 => "HelpName",
+            2u16 => "HelpInfo",
             _ => return None,
         };
         Some(res)
@@ -2475,6 +2498,11 @@ impl<'a> Iterator for IterableHelpAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                2u16 => HelpAttrs::HelpInfo({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -2510,6 +2538,7 @@ impl<'a> std::fmt::Debug for IterableHelpAttrs<'_> {
             };
             match attr {
                 HelpAttrs::HelpName(val) => fmt.field("HelpName", &val),
+                HelpAttrs::HelpInfo(val) => fmt.field("HelpInfo", &FormatHexdump(val)),
             };
         }
         fmt.finish()
@@ -2541,6 +2570,12 @@ impl IterableHelpAttrs<'_> {
                 HelpAttrs::HelpName(val) => {
                     if last_off == offset {
                         stack.push(("HelpName", last_off));
+                        break;
+                    }
+                }
+                HelpAttrs::HelpInfo(val) => {
+                    if last_off == offset {
+                        stack.push(("HelpInfo", last_off));
                         break;
                     }
                 }
@@ -2739,9 +2774,9 @@ impl IterableNatProtoAttrs<'_> {
 pub enum NatAttrs<'a> {
     NatV4Minip(u32),
     NatV4Maxip(u32),
+    NatProto(IterableNatProtoAttrs<'a>),
     NatV6Minip(&'a [u8]),
     NatV6Maxip(&'a [u8]),
-    NatProto(IterableNatProtoAttrs<'a>),
 }
 impl<'a> IterableNatAttrs<'a> {
     pub fn get_nat_v4_minip(&self) -> Result<u32, ErrorContext> {
@@ -2770,6 +2805,21 @@ impl<'a> IterableNatAttrs<'a> {
         Err(ErrorContext::new_missing(
             "NatAttrs",
             "NatV4Maxip",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_nat_proto(&self) -> Result<IterableNatProtoAttrs<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(NatAttrs::NatProto(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "NatAttrs",
+            "NatProto",
             self.orig_loc,
             self.buf.as_ptr() as usize,
         ))
@@ -2804,21 +2854,6 @@ impl<'a> IterableNatAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_nat_proto(&self) -> Result<IterableNatProtoAttrs<'a>, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(NatAttrs::NatProto(val)) = attr {
-                return Ok(val);
-            }
-        }
-        Err(ErrorContext::new_missing(
-            "NatAttrs",
-            "NatProto",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
-    }
 }
 impl NatAttrs<'_> {
     pub fn new<'a>(buf: &'a [u8]) -> IterableNatAttrs<'a> {
@@ -2828,9 +2863,9 @@ impl NatAttrs<'_> {
         let res = match r#type {
             1u16 => "NatV4Minip",
             2u16 => "NatV4Maxip",
-            3u16 => "NatV6Minip",
-            4u16 => "NatV6Maxip",
-            5u16 => "NatProto",
+            3u16 => "NatProto",
+            4u16 => "NatV6Minip",
+            5u16 => "NatV6Maxip",
             _ => return None,
         };
         Some(res)
@@ -2881,18 +2916,18 @@ impl<'a> Iterator for IterableNatAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
-                3u16 => NatAttrs::NatV6Minip({
-                    let res = Some(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                4u16 => NatAttrs::NatV6Maxip({
-                    let res = Some(next);
-                    let Some(val) = res else { break };
-                    val
-                }),
-                5u16 => NatAttrs::NatProto({
+                3u16 => NatAttrs::NatProto({
                     let res = Some(IterableNatProtoAttrs::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => NatAttrs::NatV6Minip({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => NatAttrs::NatV6Maxip({
+                    let res = Some(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -2932,9 +2967,9 @@ impl<'a> std::fmt::Debug for IterableNatAttrs<'_> {
             match attr {
                 NatAttrs::NatV4Minip(val) => fmt.field("NatV4Minip", &val),
                 NatAttrs::NatV4Maxip(val) => fmt.field("NatV4Maxip", &val),
+                NatAttrs::NatProto(val) => fmt.field("NatProto", &val),
                 NatAttrs::NatV6Minip(val) => fmt.field("NatV6Minip", &FormatHexdump(val)),
                 NatAttrs::NatV6Maxip(val) => fmt.field("NatV6Maxip", &FormatHexdump(val)),
-                NatAttrs::NatProto(val) => fmt.field("NatProto", &val),
             };
         }
         fmt.finish()
@@ -2976,6 +3011,12 @@ impl IterableNatAttrs<'_> {
                         break;
                     }
                 }
+                NatAttrs::NatProto(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
                 NatAttrs::NatV6Minip(val) => {
                     if last_off == offset {
                         stack.push(("NatV6Minip", last_off));
@@ -2985,12 +3026,6 @@ impl IterableNatAttrs<'_> {
                 NatAttrs::NatV6Maxip(val) => {
                     if last_off == offset {
                         stack.push(("NatV6Maxip", last_off));
-                        break;
-                    }
-                }
-                NatAttrs::NatProto(val) => {
-                    (stack, missing) = val.lookup_attr(offset, missing_type);
-                    if !stack.is_empty() {
                         break;
                     }
                 }
@@ -3367,6 +3402,216 @@ impl IterableSecctxAttrs<'_> {
     }
 }
 #[derive(Clone)]
+pub enum TimestampAttrs<'a> {
+    Start(u64),
+    Stop(u64),
+    Pad(&'a [u8]),
+}
+impl<'a> IterableTimestampAttrs<'a> {
+    pub fn get_start(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TimestampAttrs::Start(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TimestampAttrs",
+            "Start",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_stop(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TimestampAttrs::Stop(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TimestampAttrs",
+            "Stop",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(TimestampAttrs::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "TimestampAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl TimestampAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableTimestampAttrs<'a> {
+        IterableTimestampAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Start",
+            2u16 => "Stop",
+            3u16 => "Pad",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableTimestampAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableTimestampAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableTimestampAttrs<'a> {
+    type Item = Result<TimestampAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => TimestampAttrs::Start({
+                    let res = parse_be_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => TimestampAttrs::Stop({
+                    let res = parse_be_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => TimestampAttrs::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "TimestampAttrs",
+            r#type.and_then(|t| TimestampAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableTimestampAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("TimestampAttrs");
+        let mut iter = IterableTimestampAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                TimestampAttrs::Start(val) => fmt.field("Start", &val),
+                TimestampAttrs::Stop(val) => fmt.field("Stop", &val),
+                TimestampAttrs::Pad(val) => fmt.field("Pad", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableTimestampAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("TimestampAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| TimestampAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                TimestampAttrs::Start(val) => {
+                    if last_off == offset {
+                        stack.push(("Start", last_off));
+                        break;
+                    }
+                }
+                TimestampAttrs::Stop(val) => {
+                    if last_off == offset {
+                        stack.push(("Stop", last_off));
+                        break;
+                    }
+                }
+                TimestampAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("TimestampAttrs", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
 pub enum SynproxyAttrs {
     Isn(u32),
     Its(u32),
@@ -3582,6 +3827,8 @@ pub enum FilterAttrs {
     OrigFlags(u32),
     #[doc = "bitmask of tuple fields to filter on, reply direction\n"]
     ReplyFlags(u32),
+    #[doc = "Filter on conntrack zone id; requires the top-level zone (`CTA_ZONE`)\nattribute.\n"]
+    Zone(()),
 }
 impl<'a> IterableFilterAttrs<'a> {
     #[doc = "bitmask of tuple fields to filter on, original direction\n"]
@@ -3616,6 +3863,22 @@ impl<'a> IterableFilterAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Filter on conntrack zone id; requires the top-level zone (`CTA_ZONE`)\nattribute.\n"]
+    pub fn get_zone(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(FilterAttrs::Zone(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "FilterAttrs",
+            "Zone",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl FilterAttrs {
     pub fn new<'a>(buf: &'a [u8]) -> IterableFilterAttrs<'a> {
@@ -3625,6 +3888,7 @@ impl FilterAttrs {
         let res = match r#type {
             1u16 => "OrigFlags",
             2u16 => "ReplyFlags",
+            3u16 => "Zone",
             _ => return None,
         };
         Some(res)
@@ -3675,6 +3939,7 @@ impl<'a> Iterator for IterableFilterAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                3u16 => FilterAttrs::Zone(()),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -3711,6 +3976,7 @@ impl std::fmt::Debug for IterableFilterAttrs<'_> {
             match attr {
                 FilterAttrs::OrigFlags(val) => fmt.field("OrigFlags", &val),
                 FilterAttrs::ReplyFlags(val) => fmt.field("ReplyFlags", &val),
+                FilterAttrs::Zone(val) => fmt.field("Zone", &val),
             };
         }
         fmt.finish()
@@ -3751,6 +4017,12 @@ impl IterableFilterAttrs<'_> {
                         break;
                     }
                 }
+                FilterAttrs::Zone(val) => {
+                    if last_off == offset {
+                        stack.push(("Zone", last_off));
+                        break;
+                    }
+                }
                 _ => {}
             };
             last_off = cur + attrs.pos;
@@ -3783,11 +4055,11 @@ pub enum ConntrackAttrs<'a> {
     SeqAdjOrig(IterableSeqadjAttrs<'a>),
     SeqAdjReply(IterableSeqadjAttrs<'a>),
     #[doc = "obsolete\n"]
-    Secmark(&'a [u8]),
+    Secmark(u32),
     #[doc = "conntrack zone id\n"]
     Zone(u16),
     Secctx(IterableSecctxAttrs<'a>),
-    Timestamp(u64),
+    Timestamp(IterableTimestampAttrs<'a>),
     MarkMask(u32),
     Labels(&'a [u8]),
     LabelsMask(&'a [u8]),
@@ -4042,7 +4314,7 @@ impl<'a> IterableConntrackAttrs<'a> {
         ))
     }
     #[doc = "obsolete\n"]
-    pub fn get_secmark(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_secmark(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4088,7 +4360,7 @@ impl<'a> IterableConntrackAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_timestamp(&self) -> Result<u64, ErrorContext> {
+    pub fn get_timestamp(&self) -> Result<IterableTimestampAttrs<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -4364,7 +4636,7 @@ impl<'a> Iterator for IterableConntrackAttrs<'a> {
                     val
                 }),
                 17u16 => ConntrackAttrs::Secmark({
-                    let res = Some(next);
+                    let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4379,7 +4651,7 @@ impl<'a> Iterator for IterableConntrackAttrs<'a> {
                     val
                 }),
                 20u16 => ConntrackAttrs::Timestamp({
-                    let res = parse_be_u64(next);
+                    let res = Some(IterableTimestampAttrs::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4470,7 +4742,7 @@ impl<'a> std::fmt::Debug for IterableConntrackAttrs<'_> {
                 ConntrackAttrs::TupleMaster(val) => fmt.field("TupleMaster", &val),
                 ConntrackAttrs::SeqAdjOrig(val) => fmt.field("SeqAdjOrig", &val),
                 ConntrackAttrs::SeqAdjReply(val) => fmt.field("SeqAdjReply", &val),
-                ConntrackAttrs::Secmark(val) => fmt.field("Secmark", &FormatHexdump(val)),
+                ConntrackAttrs::Secmark(val) => fmt.field("Secmark", &val),
                 ConntrackAttrs::Zone(val) => fmt.field("Zone", &val),
                 ConntrackAttrs::Secctx(val) => fmt.field("Secctx", &val),
                 ConntrackAttrs::Timestamp(val) => fmt.field("Timestamp", &val),
@@ -4628,8 +4900,8 @@ impl IterableConntrackAttrs<'_> {
                     }
                 }
                 ConntrackAttrs::Timestamp(val) => {
-                    if last_off == offset {
-                        stack.push(("Timestamp", last_off));
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
                         break;
                     }
                 }
@@ -4692,7 +4964,7 @@ pub enum ConntrackStatsAttrs {
     Found(u32),
     #[doc = "obsolete\n"]
     New(u32),
-    #[doc = "obsolete\n"]
+    #[doc = "packets which could not be tracked\n"]
     Invalid(u32),
     #[doc = "obsolete\n"]
     Ignore(u32),
@@ -4757,7 +5029,7 @@ impl<'a> IterableConntrackStatsAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "obsolete\n"]
+    #[doc = "packets which could not be tracked\n"]
     pub fn get_invalid(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -5291,11 +5563,13 @@ impl<Prev: Pusher> PushCounterAttrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
+    #[doc = "obsolete\n"]
     pub fn push_packets_old(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 3u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
+    #[doc = "obsolete\n"]
     pub fn push_bytes_old(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 4u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
@@ -5796,6 +6070,12 @@ impl<Prev: Pusher> PushHelpAttrs<Prev> {
         self.as_vec_mut().push(0);
         self
     }
+    #[doc = "Private data of a user space helper, only present for helpers registered\nvia nfnetlink_cthelper with a non-zero data length.\n"]
+    pub fn push_help_info(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 2u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
 }
 impl<Prev: Pusher> Drop for PushHelpAttrs<Prev> {
     fn drop(&mut self) {
@@ -5888,22 +6168,22 @@ impl<Prev: Pusher> PushNatAttrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
-    pub fn push_nat_v6_minip(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 3u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
-        self
-    }
-    pub fn push_nat_v6_maxip(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 4u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
-        self
-    }
     pub fn nested_nat_proto(mut self) -> PushNatProtoAttrs<Self> {
-        let header_offset = push_nested_header(self.as_vec_mut(), 5u16);
+        let header_offset = push_nested_header(self.as_vec_mut(), 3u16);
         PushNatProtoAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
         }
+    }
+    pub fn push_nat_v6_minip(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 4u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    pub fn push_nat_v6_maxip(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 5u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
     }
 }
 impl<Prev: Pusher> Drop for PushNatAttrs<Prev> {
@@ -6017,6 +6297,57 @@ impl<Prev: Pusher> Drop for PushSecctxAttrs<Prev> {
         }
     }
 }
+pub struct PushTimestampAttrs<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushTimestampAttrs<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushTimestampAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_start(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_stop(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_be_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 3u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushTimestampAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
 pub struct PushSynproxyAttrs<Prev: Pusher> {
     pub(crate) prev: Option<Prev>,
     pub(crate) header_offset: Option<usize>,
@@ -6104,6 +6435,11 @@ impl<Prev: Pusher> PushFilterAttrs<Prev> {
     pub fn push_reply_flags(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 2u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Filter on conntrack zone id; requires the top-level zone (`CTA_ZONE`)\nattribute.\n"]
+    pub fn push_zone(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 0 as u16);
         self
     }
 }
@@ -6248,9 +6584,9 @@ impl<Prev: Pusher> PushConntrackAttrs<Prev> {
         }
     }
     #[doc = "obsolete\n"]
-    pub fn push_secmark(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 17u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_secmark(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 17u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
     #[doc = "conntrack zone id\n"]
@@ -6266,10 +6602,12 @@ impl<Prev: Pusher> PushConntrackAttrs<Prev> {
             header_offset: Some(header_offset),
         }
     }
-    pub fn push_timestamp(mut self, value: u64) -> Self {
-        push_header(self.as_vec_mut(), 20u16, 8 as u16);
-        self.as_vec_mut().extend(value.to_be_bytes());
-        self
+    pub fn nested_timestamp(mut self) -> PushTimestampAttrs<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 20u16);
+        PushTimestampAttrs {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
     }
     pub fn push_mark_mask(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 21u16, 4 as u16);
@@ -6364,7 +6702,7 @@ impl<Prev: Pusher> PushConntrackStatsAttrs<Prev> {
         self.as_vec_mut().extend(value.to_be_bytes());
         self
     }
-    #[doc = "obsolete\n"]
+    #[doc = "packets which could not be tracked\n"]
     pub fn push_invalid(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 4u16, 4 as u16);
         self.as_vec_mut().extend(value.to_be_bytes());
@@ -6438,7 +6776,7 @@ impl<Prev: Pusher> Drop for PushConntrackStatsAttrs<Prev> {
         }
     }
 }
-#[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_status()](PushConntrackAttrs::push_status)\n- [.push_mark()](PushConntrackAttrs::push_mark)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n- [.push_mark_mask()](PushConntrackAttrs::push_mark_mask)\n- [.nested_filter()](PushConntrackAttrs::nested_filter)\n- [.push_status_mask()](PushConntrackAttrs::push_status_mask)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_nat_src()](IterableConntrackAttrs::get_nat_src)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_nat_dst()](IterableConntrackAttrs::get_nat_dst)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
+#[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_status()](PushConntrackAttrs::push_status)\n- [.push_mark()](PushConntrackAttrs::push_mark)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n- [.push_mark_mask()](PushConntrackAttrs::push_mark_mask)\n- [.nested_filter()](PushConntrackAttrs::nested_filter)\n- [.push_status_mask()](PushConntrackAttrs::push_status_mask)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_timestamp()](IterableConntrackAttrs::get_timestamp)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
 #[derive(Debug)]
 pub struct OpGetDump<'r> {
     request: Request<'r>,
@@ -6509,7 +6847,7 @@ impl NetlinkRequest for OpGetDump<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_nat_src()](IterableConntrackAttrs::get_nat_src)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_nat_dst()](IterableConntrackAttrs::get_nat_dst)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
+#[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_timestamp()](IterableConntrackAttrs::get_timestamp)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
 #[derive(Debug)]
 pub struct OpGetDo<'r> {
     request: Request<'r>,
@@ -6578,7 +6916,7 @@ impl NetlinkRequest for OpGetDo<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "dump pcpu conntrack stats\n\nReply attributes:\n- [.get_searched()](IterableConntrackStatsAttrs::get_searched)\n- [.get_found()](IterableConntrackStatsAttrs::get_found)\n- [.get_insert()](IterableConntrackStatsAttrs::get_insert)\n- [.get_insert_failed()](IterableConntrackStatsAttrs::get_insert_failed)\n- [.get_drop()](IterableConntrackStatsAttrs::get_drop)\n- [.get_early_drop()](IterableConntrackStatsAttrs::get_early_drop)\n- [.get_error()](IterableConntrackStatsAttrs::get_error)\n- [.get_search_restart()](IterableConntrackStatsAttrs::get_search_restart)\n- [.get_clash_resolve()](IterableConntrackStatsAttrs::get_clash_resolve)\n- [.get_chain_toolong()](IterableConntrackStatsAttrs::get_chain_toolong)\n\n"]
+#[doc = "dump pcpu conntrack stats\n\nReply attributes:\n- [.get_found()](IterableConntrackStatsAttrs::get_found)\n- [.get_invalid()](IterableConntrackStatsAttrs::get_invalid)\n- [.get_insert()](IterableConntrackStatsAttrs::get_insert)\n- [.get_insert_failed()](IterableConntrackStatsAttrs::get_insert_failed)\n- [.get_drop()](IterableConntrackStatsAttrs::get_drop)\n- [.get_early_drop()](IterableConntrackStatsAttrs::get_early_drop)\n- [.get_error()](IterableConntrackStatsAttrs::get_error)\n- [.get_search_restart()](IterableConntrackStatsAttrs::get_search_restart)\n- [.get_clash_resolve()](IterableConntrackStatsAttrs::get_clash_resolve)\n- [.get_chain_toolong()](IterableConntrackStatsAttrs::get_chain_toolong)\n\n"]
 #[derive(Debug)]
 pub struct OpGetStatsDump<'r> {
     request: Request<'r>,
@@ -6652,6 +6990,12 @@ impl NetlinkRequest for OpGetStatsDump<'_> {
 #[derive(Debug)]
 pub struct ChainedFinal<'a> {
     inner: Chained<'a>,
+}
+impl<'a> std::ops::Deref for ChainedFinal<'a> {
+    type Target = Chained<'a>;
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 #[derive(Debug)]
 pub struct Chained<'a> {
@@ -6750,6 +7094,34 @@ impl<'a> Chained<'a> {
         request.writeback = Some(&mut self.last_kind);
         request
     }
+    pub fn with_request<R: NetlinkRequest + ?Sized>(&mut self, request: &R) -> &mut Self {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut().extend_from_slice(Nlmsghdr::new().as_slice());
+        self.buf_mut().extend_from_slice(request.payload());
+        self.last_kind = Some(RequestInfo {
+            protocol: request.protocol(),
+            flags: request.flags(),
+            name: std::any::type_name::<R>(),
+            lookup: R::lookup,
+        });
+        self
+    }
+    pub fn with_chained(&mut self, chain: &Self) -> &mut Self {
+        self.update_header();
+        let chain_off = self.buf().len();
+        let chain_seq = self.first_seq.wrapping_add(self.lookups.len() as u32);
+        self.buf_mut().extend_from_slice(chain.buf());
+        for (i, (header, _)) in
+            IterableMessagesMut::new(&mut self.buf_mut()[chain_off..]).enumerate()
+        {
+            header.seq = chain_seq.wrapping_add(i as u32);
+        }
+        self.lookups.extend_from_slice(&chain.lookups);
+        self.last_header_offset = chain_off + chain.last_header_offset;
+        self.last_kind = chain.last_kind.clone();
+        self
+    }
     pub fn buf(&self) -> &Vec<u8> {
         self.buf.buf()
     }
@@ -6762,9 +7134,9 @@ impl<'a> Chained<'a> {
             flags,
             name,
             lookup,
-        }) = self.last_kind
+        }) = self.last_kind.take()
         else {
-            if !self.buf().is_empty() {
+            if !self.buf().is_empty() && self.buf().len() != self.last_header_offset {
                 assert_eq!(self.last_header_offset + Nlmsghdr::len(), self.buf().len());
                 self.buf.buf_mut().truncate(self.last_header_offset);
             }
@@ -6788,6 +7160,7 @@ impl<'a> Chained<'a> {
             pid: 0,
         };
         buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+        self.last_header_offset = buf.len();
     }
 }
 use crate::traits::LookupFn;
@@ -6898,21 +7271,21 @@ impl<'buf> Request<'buf> {
         self.flags |= consts::NLM_F_DUMP as u16;
         self
     }
-    #[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_status()](PushConntrackAttrs::push_status)\n- [.push_mark()](PushConntrackAttrs::push_mark)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n- [.push_mark_mask()](PushConntrackAttrs::push_mark_mask)\n- [.nested_filter()](PushConntrackAttrs::nested_filter)\n- [.push_status_mask()](PushConntrackAttrs::push_status_mask)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_nat_src()](IterableConntrackAttrs::get_nat_src)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_nat_dst()](IterableConntrackAttrs::get_nat_dst)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
+    #[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_status()](PushConntrackAttrs::push_status)\n- [.push_mark()](PushConntrackAttrs::push_mark)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n- [.push_mark_mask()](PushConntrackAttrs::push_mark_mask)\n- [.nested_filter()](PushConntrackAttrs::nested_filter)\n- [.push_status_mask()](PushConntrackAttrs::push_status_mask)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_timestamp()](IterableConntrackAttrs::get_timestamp)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
     pub fn op_get_dump(self, header: &Nfgenmsg) -> OpGetDump<'buf> {
         let mut res = OpGetDump::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-get-dump", OpGetDump::lookup);
         res
     }
-    #[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_nat_src()](IterableConntrackAttrs::get_nat_src)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_nat_dst()](IterableConntrackAttrs::get_nat_dst)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
+    #[doc = "get / dump entries\n\nRequest attributes:\n- [.nested_tuple_orig()](PushConntrackAttrs::nested_tuple_orig)\n- [.nested_tuple_reply()](PushConntrackAttrs::nested_tuple_reply)\n- [.push_zone()](PushConntrackAttrs::push_zone)\n\nReply attributes:\n- [.get_tuple_orig()](IterableConntrackAttrs::get_tuple_orig)\n- [.get_tuple_reply()](IterableConntrackAttrs::get_tuple_reply)\n- [.get_status()](IterableConntrackAttrs::get_status)\n- [.get_protoinfo()](IterableConntrackAttrs::get_protoinfo)\n- [.get_help()](IterableConntrackAttrs::get_help)\n- [.get_timeout()](IterableConntrackAttrs::get_timeout)\n- [.get_mark()](IterableConntrackAttrs::get_mark)\n- [.get_counters_orig()](IterableConntrackAttrs::get_counters_orig)\n- [.get_counters_reply()](IterableConntrackAttrs::get_counters_reply)\n- [.get_use()](IterableConntrackAttrs::get_use)\n- [.get_id()](IterableConntrackAttrs::get_id)\n- [.get_tuple_master()](IterableConntrackAttrs::get_tuple_master)\n- [.get_seq_adj_orig()](IterableConntrackAttrs::get_seq_adj_orig)\n- [.get_seq_adj_reply()](IterableConntrackAttrs::get_seq_adj_reply)\n- [.get_zone()](IterableConntrackAttrs::get_zone)\n- [.get_secctx()](IterableConntrackAttrs::get_secctx)\n- [.get_timestamp()](IterableConntrackAttrs::get_timestamp)\n- [.get_labels()](IterableConntrackAttrs::get_labels)\n- [.get_synproxy()](IterableConntrackAttrs::get_synproxy)\n\n"]
     pub fn op_get_do(self, header: &Nfgenmsg) -> OpGetDo<'buf> {
         let mut res = OpGetDo::new(self, header);
         res.request
             .do_writeback(res.protocol(), "op-get-do", OpGetDo::lookup);
         res
     }
-    #[doc = "dump pcpu conntrack stats\n\nReply attributes:\n- [.get_searched()](IterableConntrackStatsAttrs::get_searched)\n- [.get_found()](IterableConntrackStatsAttrs::get_found)\n- [.get_insert()](IterableConntrackStatsAttrs::get_insert)\n- [.get_insert_failed()](IterableConntrackStatsAttrs::get_insert_failed)\n- [.get_drop()](IterableConntrackStatsAttrs::get_drop)\n- [.get_early_drop()](IterableConntrackStatsAttrs::get_early_drop)\n- [.get_error()](IterableConntrackStatsAttrs::get_error)\n- [.get_search_restart()](IterableConntrackStatsAttrs::get_search_restart)\n- [.get_clash_resolve()](IterableConntrackStatsAttrs::get_clash_resolve)\n- [.get_chain_toolong()](IterableConntrackStatsAttrs::get_chain_toolong)\n\n"]
+    #[doc = "dump pcpu conntrack stats\n\nReply attributes:\n- [.get_found()](IterableConntrackStatsAttrs::get_found)\n- [.get_invalid()](IterableConntrackStatsAttrs::get_invalid)\n- [.get_insert()](IterableConntrackStatsAttrs::get_insert)\n- [.get_insert_failed()](IterableConntrackStatsAttrs::get_insert_failed)\n- [.get_drop()](IterableConntrackStatsAttrs::get_drop)\n- [.get_early_drop()](IterableConntrackStatsAttrs::get_early_drop)\n- [.get_error()](IterableConntrackStatsAttrs::get_error)\n- [.get_search_restart()](IterableConntrackStatsAttrs::get_search_restart)\n- [.get_clash_resolve()](IterableConntrackStatsAttrs::get_clash_resolve)\n- [.get_chain_toolong()](IterableConntrackStatsAttrs::get_chain_toolong)\n\n"]
     pub fn op_get_stats_dump(self, header: &Nfgenmsg) -> OpGetStatsDump<'buf> {
         let mut res = OpGetStatsDump::new(self, header);
         res.request
@@ -6931,8 +7304,6 @@ mod generated_tests {
         let _ = IterableConntrackAttrs::get_id;
         let _ = IterableConntrackAttrs::get_labels;
         let _ = IterableConntrackAttrs::get_mark;
-        let _ = IterableConntrackAttrs::get_nat_dst;
-        let _ = IterableConntrackAttrs::get_nat_src;
         let _ = IterableConntrackAttrs::get_protoinfo;
         let _ = IterableConntrackAttrs::get_secctx;
         let _ = IterableConntrackAttrs::get_seq_adj_orig;
@@ -6940,6 +7311,7 @@ mod generated_tests {
         let _ = IterableConntrackAttrs::get_status;
         let _ = IterableConntrackAttrs::get_synproxy;
         let _ = IterableConntrackAttrs::get_timeout;
+        let _ = IterableConntrackAttrs::get_timestamp;
         let _ = IterableConntrackAttrs::get_tuple_master;
         let _ = IterableConntrackAttrs::get_tuple_orig;
         let _ = IterableConntrackAttrs::get_tuple_reply;
@@ -6953,8 +7325,8 @@ mod generated_tests {
         let _ = IterableConntrackStatsAttrs::get_found;
         let _ = IterableConntrackStatsAttrs::get_insert;
         let _ = IterableConntrackStatsAttrs::get_insert_failed;
+        let _ = IterableConntrackStatsAttrs::get_invalid;
         let _ = IterableConntrackStatsAttrs::get_search_restart;
-        let _ = IterableConntrackStatsAttrs::get_searched;
         let _ = PushConntrackAttrs::<&mut Vec<u8>>::nested_filter;
         let _ = PushConntrackAttrs::<&mut Vec<u8>>::nested_tuple_orig;
         let _ = PushConntrackAttrs::<&mut Vec<u8>>::nested_tuple_reply;

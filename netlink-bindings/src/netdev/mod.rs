@@ -10,13 +10,13 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "netdev";
 pub const PROTONAME_CSTR: &CStr = c"netdev";
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XdpAct {
     #[doc = "XDP features set supported by all drivers (XDP_ABORTED, XDP_DROP,\nXDP_PASS, XDP_TX)\n"]
     Basic = 1 << 0,
@@ -48,7 +48,7 @@ impl XdpAct {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XdpRxMetadata {
     #[doc = "Device is capable of exposing receive HW timestamp via\nbpf_xdp_metadata_rx_timestamp().\n"]
     Timestamp = 1 << 0,
@@ -68,11 +68,11 @@ impl XdpRxMetadata {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XskFlags {
     #[doc = "HW timestamping egress packets is supported by the driver.\n"]
     TxTimestamp = 1 << 0,
-    #[doc = "L3 checksum HW offload is supported by the driver.\n"]
+    #[doc = "L4 checksum HW offload is supported by the driver.\n"]
     TxChecksum = 1 << 1,
     #[doc = "Launch time HW offload is supported by the driver.\n"]
     TxLaunchTimeFifo = 1 << 2,
@@ -88,7 +88,7 @@ impl XskFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum QueueType {
     Rx = 0,
     Tx = 1,
@@ -103,7 +103,7 @@ impl QueueType {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum QstatsScope {
     Queue = 1 << 0,
 }
@@ -116,7 +116,7 @@ impl QstatsScope {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NapiThreaded {
     Disabled = 0,
     Enabled = 1,
@@ -139,7 +139,7 @@ pub enum Dev<'a> {
     Pad(&'a [u8]),
     #[doc = "Bitmask of enabled xdp-features.\n\nAssociated type: [`XdpAct`] (enum)"]
     XdpFeatures(u64),
-    #[doc = "max fragment count supported by ZC driver\n"]
+    #[doc = "max buffer count per packet supported by ZC driver, including the head\nbuffer\n"]
     XdpZcMaxSegs(u32),
     #[doc = "Bitmask of supported XDP receive metadata features. See\nDocumentation/networking/xdp-rx-metadata.rst for more details.\n\nAssociated type: [`XdpRxMetadata`] (enum)"]
     XdpRxMetadataFeatures(u64),
@@ -194,7 +194,7 @@ impl<'a> IterableDev<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "max fragment count supported by ZC driver\n"]
+    #[doc = "max buffer count per packet supported by ZC driver, including the head\nbuffer\n"]
     pub fn get_xdp_zc_max_segs(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -4258,7 +4258,7 @@ impl<Prev: Pusher> PushDev<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "max fragment count supported by ZC driver\n"]
+    #[doc = "max buffer count per packet supported by ZC driver, including the head\nbuffer\n"]
     pub fn push_xdp_zc_max_segs(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 4u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());

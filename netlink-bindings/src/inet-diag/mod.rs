@@ -10,7 +10,7 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "inet-diag";
@@ -21,7 +21,7 @@ pub const DCCPDIAG_GETSOCK_CONST: u64 = 19u64;
 pub const GETSOCK_MAX_CONST: u64 = 24u64;
 pub const NOCOOKIE_CONST: u64 = 4294967295u64;
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BytecodeOpCode {
     Nop = 0,
     #[doc = "unconditional jump. \\\"no\\\" value is ignored.\n"]
@@ -73,7 +73,7 @@ impl BytecodeOpCode {
     }
 }
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SockoptFlag {
     Recverr = 1 << 0,
     IsIcsk = 1 << 1,
@@ -106,7 +106,7 @@ impl SockoptFlag {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TcpState {
     Established = 1,
     SynSent = 2,
@@ -3798,6 +3798,12 @@ impl NetlinkRequest for OpUdpDiagDump<'_> {
 pub struct ChainedFinal<'a> {
     inner: Chained<'a>,
 }
+impl<'a> std::ops::Deref for ChainedFinal<'a> {
+    type Target = Chained<'a>;
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
 #[derive(Debug)]
 pub struct Chained<'a> {
     buf: RequestBuf<'a>,
@@ -3895,6 +3901,34 @@ impl<'a> Chained<'a> {
         request.writeback = Some(&mut self.last_kind);
         request
     }
+    pub fn with_request<R: NetlinkRequest + ?Sized>(&mut self, request: &R) -> &mut Self {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut().extend_from_slice(Nlmsghdr::new().as_slice());
+        self.buf_mut().extend_from_slice(request.payload());
+        self.last_kind = Some(RequestInfo {
+            protocol: request.protocol(),
+            flags: request.flags(),
+            name: std::any::type_name::<R>(),
+            lookup: R::lookup,
+        });
+        self
+    }
+    pub fn with_chained(&mut self, chain: &Self) -> &mut Self {
+        self.update_header();
+        let chain_off = self.buf().len();
+        let chain_seq = self.first_seq.wrapping_add(self.lookups.len() as u32);
+        self.buf_mut().extend_from_slice(chain.buf());
+        for (i, (header, _)) in
+            IterableMessagesMut::new(&mut self.buf_mut()[chain_off..]).enumerate()
+        {
+            header.seq = chain_seq.wrapping_add(i as u32);
+        }
+        self.lookups.extend_from_slice(&chain.lookups);
+        self.last_header_offset = chain_off + chain.last_header_offset;
+        self.last_kind = chain.last_kind.clone();
+        self
+    }
     pub fn buf(&self) -> &Vec<u8> {
         self.buf.buf()
     }
@@ -3907,9 +3941,9 @@ impl<'a> Chained<'a> {
             flags,
             name,
             lookup,
-        }) = self.last_kind
+        }) = self.last_kind.take()
         else {
-            if !self.buf().is_empty() {
+            if !self.buf().is_empty() && self.buf().len() != self.last_header_offset {
                 assert_eq!(self.last_header_offset + Nlmsghdr::len(), self.buf().len());
                 self.buf.buf_mut().truncate(self.last_header_offset);
             }
@@ -3933,6 +3967,7 @@ impl<'a> Chained<'a> {
             pid: 0,
         };
         buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+        self.last_header_offset = buf.len();
     }
 }
 use crate::traits::LookupFn;

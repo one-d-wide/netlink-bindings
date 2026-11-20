@@ -10,14 +10,14 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "nlctrl";
 pub const PROTONAME_CSTR: &CStr = c"nlctrl";
 pub const PROTONUM: u16 = 0x10;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum OpFlags {
     AdminPerm = 1 << 0,
     CmdCapDo = 1 << 1,
@@ -38,7 +38,7 @@ impl OpFlags {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AttrType {
     Invalid = 0,
     Flag = 1,
@@ -80,6 +80,20 @@ impl AttrType {
             15 => Self::Bitfield32,
             16 => Self::Sint,
             17 => Self::Uint,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Byte order of an integer attribute. Zero is left unused so that it can\nbe taken to mean host byte order.\n"]
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum PolicyByteOrder {
+    BigEndian = 1,
+}
+impl PolicyByteOrder {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            1 => Self::BigEndian,
             _ => return None,
         })
     }
@@ -993,8 +1007,10 @@ pub enum PolicyAttrs<'a> {
     PolicyIdx(u32),
     PolicyMaxtype(u32),
     Bitfield32Mask(u32),
-    Mask(u64),
     Pad(&'a [u8]),
+    Mask(u64),
+    #[doc = "Byte order of the attribute, absent means host byte order.\n\nAssociated type: [`PolicyByteOrder`] (enum)"]
+    ByteOrder(u32),
 }
 impl<'a> IterablePolicyAttrs<'a> {
     #[doc = "Associated type: [`AttrType`] (enum)"]
@@ -1148,6 +1164,21 @@ impl<'a> IterablePolicyAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(PolicyAttrs::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "PolicyAttrs",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
     pub fn get_mask(&self) -> Result<u64, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1163,17 +1194,18 @@ impl<'a> IterablePolicyAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+    #[doc = "Byte order of the attribute, absent means host byte order.\n\nAssociated type: [`PolicyByteOrder`] (enum)"]
+    pub fn get_byte_order(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
-            if let Ok(PolicyAttrs::Pad(val)) = attr {
+            if let Ok(PolicyAttrs::ByteOrder(val)) = attr {
                 return Ok(val);
             }
         }
         Err(ErrorContext::new_missing(
             "PolicyAttrs",
-            "Pad",
+            "ByteOrder",
             self.orig_loc,
             self.buf.as_ptr() as usize,
         ))
@@ -1195,8 +1227,9 @@ impl PolicyAttrs<'_> {
             8u16 => "PolicyIdx",
             9u16 => "PolicyMaxtype",
             10u16 => "Bitfield32Mask",
-            11u16 => "Mask",
-            12u16 => "Pad",
+            11u16 => "Pad",
+            12u16 => "Mask",
+            13u16 => "ByteOrder",
             _ => return None,
         };
         Some(res)
@@ -1287,13 +1320,18 @@ impl<'a> Iterator for IterablePolicyAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
-                11u16 => PolicyAttrs::Mask({
+                11u16 => PolicyAttrs::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                12u16 => PolicyAttrs::Mask({
                     let res = parse_u64(next);
                     let Some(val) = res else { break };
                     val
                 }),
-                12u16 => PolicyAttrs::Pad({
-                    let res = Some(next);
+                13u16 => PolicyAttrs::ByteOrder({
+                    let res = parse_u32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1343,8 +1381,12 @@ impl<'a> std::fmt::Debug for IterablePolicyAttrs<'_> {
                 PolicyAttrs::PolicyIdx(val) => fmt.field("PolicyIdx", &val),
                 PolicyAttrs::PolicyMaxtype(val) => fmt.field("PolicyMaxtype", &val),
                 PolicyAttrs::Bitfield32Mask(val) => fmt.field("Bitfield32Mask", &val),
-                PolicyAttrs::Mask(val) => fmt.field("Mask", &val),
                 PolicyAttrs::Pad(val) => fmt.field("Pad", &val),
+                PolicyAttrs::Mask(val) => fmt.field("Mask", &val),
+                PolicyAttrs::ByteOrder(val) => fmt.field(
+                    "ByteOrder",
+                    &FormatEnum(val.into(), PolicyByteOrder::from_value),
+                ),
             };
         }
         fmt.finish()
@@ -1433,15 +1475,21 @@ impl IterablePolicyAttrs<'_> {
                         break;
                     }
                 }
+                PolicyAttrs::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
                 PolicyAttrs::Mask(val) => {
                     if last_off == offset {
                         stack.push(("Mask", last_off));
                         break;
                     }
                 }
-                PolicyAttrs::Pad(val) => {
+                PolicyAttrs::ByteOrder(val) => {
                     if last_off == offset {
-                        stack.push(("Pad", last_off));
+                        stack.push(("ByteOrder", last_off));
                         break;
                     }
                 }
@@ -1796,7 +1844,7 @@ impl<Prev: Pusher> PushCtrlAttrs<Prev> {
         PushArrayOpAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn array_mcast_groups(mut self) -> PushArrayMcastGroupAttrs<Self> {
@@ -1804,7 +1852,7 @@ impl<Prev: Pusher> PushCtrlAttrs<Prev> {
         PushArrayMcastGroupAttrs {
             prev: Some(self),
             header_offset: Some(header_offset),
-            counter: 0,
+            counter: 0u16,
         }
     }
     pub fn nested_policy(mut self) -> PushPolicyAttrs<Self> {
@@ -2016,14 +2064,20 @@ impl<Prev: Pusher> PushPolicyAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 11u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
     pub fn push_mask(mut self, value: u64) -> Self {
-        push_header(self.as_vec_mut(), 11u16, 8 as u16);
+        push_header(self.as_vec_mut(), 12u16, 8 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_pad(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 12u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    #[doc = "Byte order of the attribute, absent means host byte order.\n\nAssociated type: [`PolicyByteOrder`] (enum)"]
+    pub fn push_byte_order(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 13u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
 }
@@ -2148,7 +2202,7 @@ impl NetlinkRequest for OpGetfamilyDump<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get / dump genetlink families\n\nRequest attributes:\n- [.push_family_name()](PushCtrlAttrs::push_family_name)\n\nReply attributes:\n- [.get_family_id()](IterableCtrlAttrs::get_family_id)\n- [.get_family_name()](IterableCtrlAttrs::get_family_name)\n- [.get_version()](IterableCtrlAttrs::get_version)\n- [.get_hdrsize()](IterableCtrlAttrs::get_hdrsize)\n- [.get_maxattr()](IterableCtrlAttrs::get_maxattr)\n- [.get_ops()](IterableCtrlAttrs::get_ops)\n- [.get_mcast_groups()](IterableCtrlAttrs::get_mcast_groups)\n\n"]
+#[doc = "Get / dump genetlink families\n\nRequest attributes:\n- [.push_family_id()](PushCtrlAttrs::push_family_id)\n- [.push_family_name()](PushCtrlAttrs::push_family_name)\n\nReply attributes:\n- [.get_family_id()](IterableCtrlAttrs::get_family_id)\n- [.get_family_name()](IterableCtrlAttrs::get_family_name)\n- [.get_version()](IterableCtrlAttrs::get_version)\n- [.get_hdrsize()](IterableCtrlAttrs::get_hdrsize)\n- [.get_maxattr()](IterableCtrlAttrs::get_maxattr)\n- [.get_ops()](IterableCtrlAttrs::get_ops)\n- [.get_mcast_groups()](IterableCtrlAttrs::get_mcast_groups)\n\n"]
 #[derive(Debug)]
 pub struct OpGetfamilyDo<'r> {
     request: Request<'r>,
@@ -2393,7 +2447,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-getfamily-dump", OpGetfamilyDump::lookup);
         res
     }
-    #[doc = "Get / dump genetlink families\n\nRequest attributes:\n- [.push_family_name()](PushCtrlAttrs::push_family_name)\n\nReply attributes:\n- [.get_family_id()](IterableCtrlAttrs::get_family_id)\n- [.get_family_name()](IterableCtrlAttrs::get_family_name)\n- [.get_version()](IterableCtrlAttrs::get_version)\n- [.get_hdrsize()](IterableCtrlAttrs::get_hdrsize)\n- [.get_maxattr()](IterableCtrlAttrs::get_maxattr)\n- [.get_ops()](IterableCtrlAttrs::get_ops)\n- [.get_mcast_groups()](IterableCtrlAttrs::get_mcast_groups)\n\n"]
+    #[doc = "Get / dump genetlink families\n\nRequest attributes:\n- [.push_family_id()](PushCtrlAttrs::push_family_id)\n- [.push_family_name()](PushCtrlAttrs::push_family_name)\n\nReply attributes:\n- [.get_family_id()](IterableCtrlAttrs::get_family_id)\n- [.get_family_name()](IterableCtrlAttrs::get_family_name)\n- [.get_version()](IterableCtrlAttrs::get_version)\n- [.get_hdrsize()](IterableCtrlAttrs::get_hdrsize)\n- [.get_maxattr()](IterableCtrlAttrs::get_maxattr)\n- [.get_ops()](IterableCtrlAttrs::get_ops)\n- [.get_mcast_groups()](IterableCtrlAttrs::get_mcast_groups)\n\n"]
     pub fn op_getfamily_do(self) -> OpGetfamilyDo<'buf> {
         let mut res = OpGetfamilyDo::new(self);
         res.request

@@ -10,13 +10,13 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "nfsd";
 pub const PROTONAME_CSTR: &CStr = c"nfsd";
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CacheType {
     SvcExport = 1 << 0,
     Expkey = 1 << 1,
@@ -32,7 +32,7 @@ impl CacheType {
 }
 #[doc = "These flags are ordered to match the [NFSEXP]()\\* flags in\ninclude/linux/nfsd/export.h\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ExportFlags {
     Readonly = 1 << 0,
     InsecurePort = 1 << 1,
@@ -80,7 +80,7 @@ impl ExportFlags {
 }
 #[doc = "These flags are ordered to match the [NFSEXP_XPRTSEC]()\\* flags in\ninclude/linux/nfsd/export.h\n"]
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum XprtsecMode {
     None = 1 << 0,
     Tls = 1 << 1,
@@ -92,6 +92,20 @@ impl XprtsecMode {
             n if n == 1 << 0 => Self::None,
             n if n == 1 << 1 => Self::Tls,
             n if n == 1 << 2 => Self::Mtls,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Constraints that apply to an rpcbind registration. no-udp means the\nkernel would not have registered this program and version over UDP, so\nthe caller must skip the udp and udp6 netids for it.\n"]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum RpcbindFlags {
+    NoUdp = 1 << 0,
+}
+impl RpcbindFlags {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            n if n == 1 << 0 => Self::NoUdp,
             _ => return None,
         })
     }
@@ -263,8 +277,8 @@ pub enum RpcStatus<'a> {
     Pad(&'a [u8]),
     Saddr4(std::net::Ipv4Addr),
     Daddr4(std::net::Ipv4Addr),
-    Saddr6(&'a [u8]),
-    Daddr6(&'a [u8]),
+    Saddr6(std::net::Ipv6Addr),
+    Daddr6(std::net::Ipv6Addr),
     Sport(u16),
     Dport(u16),
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
@@ -406,7 +420,7 @@ impl<'a> IterableRpcStatus<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_saddr6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_saddr6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -421,7 +435,7 @@ impl<'a> IterableRpcStatus<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_daddr6(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_daddr6(&self) -> Result<std::net::Ipv6Addr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -583,12 +597,12 @@ impl<'a> Iterator for IterableRpcStatus<'a> {
                     val
                 }),
                 10u16 => RpcStatus::Saddr6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
                 11u16 => RpcStatus::Daddr6({
-                    let res = Some(next);
+                    let res = parse_u128(next).map(Ipv6Addr::from_bits);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -1598,15 +1612,260 @@ impl IterableSock<'_> {
     }
 }
 #[derive(Clone)]
+pub enum Rpcbind {
+    #[doc = "RPC program number to register.\n"]
+    Program(u32),
+    #[doc = "RPC version number to register.\n"]
+    Version(u32),
+    #[doc = "Constraints on the listeners this entry applies to.\n\nAssociated type: [`RpcbindFlags`] (1 bit per enumeration)"]
+    Flags(u32),
+}
+impl<'a> IterableRpcbind<'a> {
+    #[doc = "RPC program number to register.\n"]
+    pub fn get_program(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Rpcbind::Program(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Rpcbind",
+            "Program",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "RPC version number to register.\n"]
+    pub fn get_version(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Rpcbind::Version(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Rpcbind",
+            "Version",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Constraints on the listeners this entry applies to.\n\nAssociated type: [`RpcbindFlags`] (1 bit per enumeration)"]
+    pub fn get_flags(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(Rpcbind::Flags(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "Rpcbind",
+            "Flags",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl Rpcbind {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableRpcbind<'a> {
+        IterableRpcbind::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "Program",
+            2u16 => "Version",
+            3u16 => "Flags",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableRpcbind<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableRpcbind<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableRpcbind<'a> {
+    type Item = Result<Rpcbind, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => Rpcbind::Program({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => Rpcbind::Version({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => Rpcbind::Flags({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "Rpcbind",
+            r#type.and_then(|t| Rpcbind::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl std::fmt::Debug for IterableRpcbind<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("Rpcbind");
+        let mut iter = IterableRpcbind::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                Rpcbind::Program(val) => fmt.field("Program", &val),
+                Rpcbind::Version(val) => fmt.field("Version", &val),
+                Rpcbind::Flags(val) => {
+                    fmt.field("Flags", &FormatFlags(val.into(), RpcbindFlags::from_value))
+                }
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableRpcbind<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("Rpcbind", offset));
+            return (stack, missing_type.and_then(|t| Rpcbind::attr_from_type(t)));
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                Rpcbind::Program(val) => {
+                    if last_off == offset {
+                        stack.push(("Program", last_off));
+                        break;
+                    }
+                }
+                Rpcbind::Version(val) => {
+                    if last_off == offset {
+                        stack.push(("Version", last_off));
+                        break;
+                    }
+                }
+                Rpcbind::Flags(val) => {
+                    if last_off == offset {
+                        stack.push(("Flags", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("Rpcbind", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
 pub enum ServerSock<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     Addr(IterableSock<'a>),
+    #[doc = "The caller registers the listeners with rpcbind itself, so the kernel\nmust not do it. The kernel echoes this attribute in the reply when it\naccepts the request. Ownership cannot change while a server exists.\n"]
+    UserspaceRpcbind(()),
+    #[doc = "A program and version that the caller should register for every listener\nreported in the same reply, except the netids that flags rules out.\nReply only. NLM is absent because lockd still registers itself.\n\nAttribute may repeat multiple times (treat it as array)"]
+    Rpcbind(IterableRpcbind<'a>),
 }
 impl<'a> IterableServerSock<'a> {
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn get_addr(&self) -> MultiAttrIterable<Self, ServerSock<'a>, IterableSock<'a>> {
         MultiAttrIterable::new(self.clone(), |variant| {
             if let ServerSock::Addr(val) = variant {
+                Some(val)
+            } else {
+                None
+            }
+        })
+    }
+    #[doc = "The caller registers the listeners with rpcbind itself, so the kernel\nmust not do it. The kernel echoes this attribute in the reply when it\naccepts the request. Ownership cannot change while a server exists.\n"]
+    pub fn get_userspace_rpcbind(&self) -> Result<(), ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ServerSock::UserspaceRpcbind(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ServerSock",
+            "UserspaceRpcbind",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "A program and version that the caller should register for every listener\nreported in the same reply, except the netids that flags rules out.\nReply only. NLM is absent because lockd still registers itself.\n\nAttribute may repeat multiple times (treat it as array)"]
+    pub fn get_rpcbind(&self) -> MultiAttrIterable<Self, ServerSock<'a>, IterableRpcbind<'a>> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let ServerSock::Rpcbind(val) = variant {
                 Some(val)
             } else {
                 None
@@ -1621,6 +1880,8 @@ impl ServerSock<'_> {
     fn attr_from_type(r#type: u16) -> Option<&'static str> {
         let res = match r#type {
             1u16 => "Addr",
+            2u16 => "UserspaceRpcbind",
+            3u16 => "Rpcbind",
             _ => return None,
         };
         Some(res)
@@ -1666,6 +1927,12 @@ impl<'a> Iterator for IterableServerSock<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                2u16 => ServerSock::UserspaceRpcbind(()),
+                3u16 => ServerSock::Rpcbind({
+                    let res = Some(IterableRpcbind::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -1701,6 +1968,8 @@ impl<'a> std::fmt::Debug for IterableServerSock<'_> {
             };
             match attr {
                 ServerSock::Addr(val) => fmt.field("Addr", &val),
+                ServerSock::UserspaceRpcbind(val) => fmt.field("UserspaceRpcbind", &val),
+                ServerSock::Rpcbind(val) => fmt.field("Rpcbind", &val),
             };
         }
         fmt.finish()
@@ -1731,6 +2000,18 @@ impl IterableServerSock<'_> {
             let Ok(attr) = attr else { break };
             match attr {
                 ServerSock::Addr(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                ServerSock::UserspaceRpcbind(val) => {
+                    if last_off == offset {
+                        stack.push(("UserspaceRpcbind", last_off));
+                        break;
+                    }
+                }
+                ServerSock::Rpcbind(val) => {
                     (stack, missing) = val.lookup_attr(offset, missing_type);
                     if !stack.is_empty() {
                         break;
@@ -5191,14 +5472,14 @@ impl<Prev: Pusher> PushRpcStatus<Prev> {
         self.as_vec_mut().extend(&value.to_bits().to_be_bytes());
         self
     }
-    pub fn push_saddr6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 10u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_saddr6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
-    pub fn push_daddr6(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 11u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_daddr6(mut self, value: std::net::Ipv6Addr) -> Self {
+        push_header(self.as_vec_mut(), 11u16, 16 as u16);
+        self.as_vec_mut().extend(&value.to_bits().to_ne_bytes());
         self
     }
     pub fn push_sport(mut self, value: u16) -> Self {
@@ -5454,6 +5735,60 @@ impl<Prev: Pusher> Drop for PushSock<Prev> {
         }
     }
 }
+pub struct PushRpcbind<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushRpcbind<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushRpcbind<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "RPC program number to register.\n"]
+    pub fn push_program(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 1u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "RPC version number to register.\n"]
+    pub fn push_version(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Constraints on the listeners this entry applies to.\n\nAssociated type: [`RpcbindFlags`] (1 bit per enumeration)"]
+    pub fn push_flags(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushRpcbind<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
 pub struct PushServerSock<Prev: Pusher> {
     pub(crate) prev: Option<Prev>,
     pub(crate) header_offset: Option<usize>,
@@ -5484,6 +5819,19 @@ impl<Prev: Pusher> PushServerSock<Prev> {
     pub fn nested_addr(mut self) -> PushSock<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 1u16);
         PushSock {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "The caller registers the listeners with rpcbind itself, so the kernel\nmust not do it. The kernel echoes this attribute in the reply when it\naccepts the request. Ownership cannot change while a server exists.\n"]
+    pub fn push_userspace_rpcbind(mut self, value: ()) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 0 as u16);
+        self
+    }
+    #[doc = "A program and version that the caller should register for every listener\nreported in the same reply, except the netids that flags rules out.\nReply only. NLM is absent because lockd still registers itself.\n\nAttribute may repeat multiple times (treat it as array)"]
+    pub fn nested_rpcbind(mut self) -> PushRpcbind<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 3u16);
+        PushRpcbind {
             prev: Some(self),
             header_offset: Some(header_offset),
         }
@@ -6734,7 +7082,7 @@ impl NetlinkRequest for OpVersionGetDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "set nfs running sockets\n\nFlags: admin-perm\n\nRequest attributes:\n- [.nested_addr()](PushServerSock::nested_addr)\n\n"]
+#[doc = "set nfs running sockets. A request that carries userspace-rpcbind is\nanswered with a reply rather than a bare ack, and the addr list in that\nreply names only the listeners that have an rpcbind netid.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.nested_addr()](PushServerSock::nested_addr)\n- [.push_userspace_rpcbind()](PushServerSock::push_userspace_rpcbind)\n\nReply attributes:\n- [.get_addr()](IterableServerSock::get_addr)\n- [.get_userspace_rpcbind()](IterableServerSock::get_userspace_rpcbind)\n- [.get_rpcbind()](IterableServerSock::get_rpcbind)\n\n"]
 #[derive(Debug)]
 pub struct OpListenerSetDo<'r> {
     request: Request<'r>,
@@ -7679,7 +8027,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-version-get-do", OpVersionGetDo::lookup);
         res
     }
-    #[doc = "set nfs running sockets\n\nFlags: admin-perm\n\nRequest attributes:\n- [.nested_addr()](PushServerSock::nested_addr)\n\n"]
+    #[doc = "set nfs running sockets. A request that carries userspace-rpcbind is\nanswered with a reply rather than a bare ack, and the addr list in that\nreply names only the listeners that have an rpcbind netid.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.nested_addr()](PushServerSock::nested_addr)\n- [.push_userspace_rpcbind()](PushServerSock::push_userspace_rpcbind)\n\nReply attributes:\n- [.get_addr()](IterableServerSock::get_addr)\n- [.get_userspace_rpcbind()](IterableServerSock::get_userspace_rpcbind)\n- [.get_rpcbind()](IterableServerSock::get_rpcbind)\n\n"]
     pub fn op_listener_set_do(self) -> OpListenerSetDo<'buf> {
         let mut res = OpListenerSetDo::new(self);
         res.request.do_writeback(
@@ -7833,6 +8181,8 @@ mod generated_tests {
         let _ = IterableServer::get_threads;
         let _ = IterableServerProto::get_version;
         let _ = IterableServerSock::get_addr;
+        let _ = IterableServerSock::get_rpcbind;
+        let _ = IterableServerSock::get_userspace_rpcbind;
         let _ = IterableServerStats::get_fh_stale;
         let _ = IterableServerStats::get_io_read;
         let _ = IterableServerStats::get_io_write;
@@ -7865,6 +8215,7 @@ mod generated_tests {
         let _ = PushServer::<&mut Vec<u8>>::push_threads;
         let _ = PushServerProto::<&mut Vec<u8>>::nested_version;
         let _ = PushServerSock::<&mut Vec<u8>>::nested_addr;
+        let _ = PushServerSock::<&mut Vec<u8>>::push_userspace_rpcbind;
         let _ = PushSvcExportReqs::<&mut Vec<u8>>::nested_requests;
         let _ = PushUnlockExport::<&mut Vec<u8>>::push_path;
         let _ = PushUnlockFilesystem::<&mut Vec<u8>>::push_path;

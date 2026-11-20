@@ -5,6 +5,7 @@
 
 ```rust
 PushOpGetfamilyDo::new(&mut vec)
+  .push_family_id(val) // u16
   .push_family_name(val) // &CStr
   .push_family_name_bytes(val) // &[u8]
   ;
@@ -103,7 +104,12 @@ attrs.get_family_id(); // u16
   attrs.get_policy_idx(); // u32
   attrs.get_policy_maxtype(); // u32
   attrs.get_bitfield32_mask(); // u32
-  attrs.get_mask(); // u64
   attrs.get_pad(); // &[u8]
+  attrs.get_mask(); // u64
+
+  // Byte order of the attribute, absent means host byte order.
+  // 
+  // Associated type: [`PolicyByteOrder`] (enum)
+  attrs.get_byte_order(); // u32
 }
 ```

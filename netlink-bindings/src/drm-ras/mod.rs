@@ -10,14 +10,14 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "drm-ras";
 pub const PROTONAME_CSTR: &CStr = c"drm-ras";
 #[doc = "Type of the node. Currently, only error-counter nodes are supported,\nwhich expose reliability counters for a hardware/software component.\n"]
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NodeType {
     ErrorCounter = 1,
 }
@@ -288,6 +288,8 @@ pub enum ErrorCounterAttrs<'a> {
     ErrorName(&'a CStr),
     #[doc = "Current value of the requested error counter.\n"]
     ErrorValue(u32),
+    #[doc = "Error threshold of the counter.\n"]
+    ErrorThreshold(u32),
 }
 impl<'a> IterableErrorCounterAttrs<'a> {
     #[doc = "Node ID targeted by this error counter operation.\n"]
@@ -354,6 +356,22 @@ impl<'a> IterableErrorCounterAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Error threshold of the counter.\n"]
+    pub fn get_error_threshold(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorCounterAttrs::ErrorThreshold(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorCounterAttrs",
+            "ErrorThreshold",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl ErrorCounterAttrs<'_> {
     pub fn new<'a>(buf: &'a [u8]) -> IterableErrorCounterAttrs<'a> {
@@ -365,6 +383,7 @@ impl ErrorCounterAttrs<'_> {
             2u16 => "ErrorId",
             3u16 => "ErrorName",
             4u16 => "ErrorValue",
+            5u16 => "ErrorThreshold",
             _ => return None,
         };
         Some(res)
@@ -425,6 +444,11 @@ impl<'a> Iterator for IterableErrorCounterAttrs<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                5u16 => ErrorCounterAttrs::ErrorThreshold({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -463,6 +487,7 @@ impl<'a> std::fmt::Debug for IterableErrorCounterAttrs<'_> {
                 ErrorCounterAttrs::ErrorId(val) => fmt.field("ErrorId", &val),
                 ErrorCounterAttrs::ErrorName(val) => fmt.field("ErrorName", &val),
                 ErrorCounterAttrs::ErrorValue(val) => fmt.field("ErrorValue", &val),
+                ErrorCounterAttrs::ErrorThreshold(val) => fmt.field("ErrorThreshold", &val),
             };
         }
         fmt.finish()
@@ -515,12 +540,327 @@ impl IterableErrorCounterAttrs<'_> {
                         break;
                     }
                 }
+                ErrorCounterAttrs::ErrorThreshold(val) => {
+                    if last_off == offset {
+                        stack.push(("ErrorThreshold", last_off));
+                        break;
+                    }
+                }
                 _ => {}
             };
             last_off = cur + attrs.pos;
         }
         if !stack.is_empty() {
             stack.push(("ErrorCounterAttrs", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
+pub enum ErrorEventAttrs<'a> {
+    #[doc = "Device (PCI BDF, UUID) that reported the error.\n"]
+    DeviceName(&'a CStr),
+    #[doc = "ID of the node that reported the error.\n"]
+    NodeId(u32),
+    #[doc = "Name of the node that reported the error.\n"]
+    NodeName(&'a CStr),
+    #[doc = "ID of the error counter.\n"]
+    ErrorId(u32),
+    #[doc = "Name of the error.\n"]
+    ErrorName(&'a CStr),
+    #[doc = "Current value of the error counter.\n"]
+    ErrorValue(u32),
+}
+impl<'a> IterableErrorEventAttrs<'a> {
+    #[doc = "Device (PCI BDF, UUID) that reported the error.\n"]
+    pub fn get_device_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorEventAttrs::DeviceName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorEventAttrs",
+            "DeviceName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "ID of the node that reported the error.\n"]
+    pub fn get_node_id(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorEventAttrs::NodeId(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorEventAttrs",
+            "NodeId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Name of the node that reported the error.\n"]
+    pub fn get_node_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorEventAttrs::NodeName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorEventAttrs",
+            "NodeName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "ID of the error counter.\n"]
+    pub fn get_error_id(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorEventAttrs::ErrorId(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorEventAttrs",
+            "ErrorId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Name of the error.\n"]
+    pub fn get_error_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorEventAttrs::ErrorName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorEventAttrs",
+            "ErrorName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Current value of the error counter.\n"]
+    pub fn get_error_value(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(ErrorEventAttrs::ErrorValue(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "ErrorEventAttrs",
+            "ErrorValue",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl ErrorEventAttrs<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableErrorEventAttrs<'a> {
+        IterableErrorEventAttrs::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        let res = match r#type {
+            1u16 => "DeviceName",
+            2u16 => "NodeId",
+            3u16 => "NodeName",
+            4u16 => "ErrorId",
+            5u16 => "ErrorName",
+            6u16 => "ErrorValue",
+            _ => return None,
+        };
+        Some(res)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableErrorEventAttrs<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableErrorEventAttrs<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableErrorEventAttrs<'a> {
+    type Item = Result<ErrorEventAttrs<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => ErrorEventAttrs::DeviceName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => ErrorEventAttrs::NodeId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => ErrorEventAttrs::NodeName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => ErrorEventAttrs::ErrorId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                5u16 => ErrorEventAttrs::ErrorName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => ErrorEventAttrs::ErrorValue({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "ErrorEventAttrs",
+            r#type.and_then(|t| ErrorEventAttrs::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableErrorEventAttrs<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("ErrorEventAttrs");
+        let mut iter = IterableErrorEventAttrs::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                ErrorEventAttrs::DeviceName(val) => fmt.field("DeviceName", &val),
+                ErrorEventAttrs::NodeId(val) => fmt.field("NodeId", &val),
+                ErrorEventAttrs::NodeName(val) => fmt.field("NodeName", &val),
+                ErrorEventAttrs::ErrorId(val) => fmt.field("ErrorId", &val),
+                ErrorEventAttrs::ErrorName(val) => fmt.field("ErrorName", &val),
+                ErrorEventAttrs::ErrorValue(val) => fmt.field("ErrorValue", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableErrorEventAttrs<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("ErrorEventAttrs", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| ErrorEventAttrs::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                ErrorEventAttrs::DeviceName(val) => {
+                    if last_off == offset {
+                        stack.push(("DeviceName", last_off));
+                        break;
+                    }
+                }
+                ErrorEventAttrs::NodeId(val) => {
+                    if last_off == offset {
+                        stack.push(("NodeId", last_off));
+                        break;
+                    }
+                }
+                ErrorEventAttrs::NodeName(val) => {
+                    if last_off == offset {
+                        stack.push(("NodeName", last_off));
+                        break;
+                    }
+                }
+                ErrorEventAttrs::ErrorId(val) => {
+                    if last_off == offset {
+                        stack.push(("ErrorId", last_off));
+                        break;
+                    }
+                }
+                ErrorEventAttrs::ErrorName(val) => {
+                    if last_off == offset {
+                        stack.push(("ErrorName", last_off));
+                        break;
+                    }
+                }
+                ErrorEventAttrs::ErrorValue(val) => {
+                    if last_off == offset {
+                        stack.push(("ErrorValue", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("ErrorEventAttrs", cur));
         }
         (stack, None)
     }
@@ -668,6 +1008,12 @@ impl<Prev: Pusher> PushErrorCounterAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
+    #[doc = "Error threshold of the counter.\n"]
+    pub fn push_error_threshold(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 5u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
 }
 impl<Prev: Pusher> Drop for PushErrorCounterAttrs<Prev> {
     fn drop(&mut self) {
@@ -677,6 +1023,128 @@ impl<Prev: Pusher> Drop for PushErrorCounterAttrs<Prev> {
             }
         }
     }
+}
+pub struct PushErrorEventAttrs<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushErrorEventAttrs<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushErrorEventAttrs<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    #[doc = "Device (PCI BDF, UUID) that reported the error.\n"]
+    pub fn push_device_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "Device (PCI BDF, UUID) that reported the error.\n"]
+    pub fn push_device_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    #[doc = "ID of the node that reported the error.\n"]
+    pub fn push_node_id(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Name of the node that reported the error.\n"]
+    pub fn push_node_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            3u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "Name of the node that reported the error.\n"]
+    pub fn push_node_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 3u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    #[doc = "ID of the error counter.\n"]
+    pub fn push_error_id(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Name of the error.\n"]
+    pub fn push_error_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            5u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    #[doc = "Name of the error.\n"]
+    pub fn push_error_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 5u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    #[doc = "Current value of the error counter.\n"]
+    pub fn push_error_value(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushErrorEventAttrs<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Notify attributes:\n- [`.get_device_name()`](IterableErrorEventAttrs::get_device_name)\n- [`.get_node_id()`](IterableErrorEventAttrs::get_node_id)\n- [`.get_node_name()`](IterableErrorEventAttrs::get_node_name)\n- [`.get_error_id()`](IterableErrorEventAttrs::get_error_id)\n- [`.get_error_name()`](IterableErrorEventAttrs::get_error_name)\n- [`.get_error_value()`](IterableErrorEventAttrs::get_error_value)\n"]
+#[derive(Debug)]
+pub struct OpErrorEventNotif;
+impl OpErrorEventNotif {
+    pub const CMD: u8 = 4u8;
+    pub fn decode_notif<'a>(buf: &'a [u8]) -> IterableErrorEventAttrs<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
+        IterableErrorEventAttrs::with_loc(attrs, buf.as_ptr() as usize)
+    }
+}
+pub struct NotifGroup;
+impl NotifGroup {
+    #[doc = "Notifications:\n- [`OpErrorEventNotif`]\n"]
+    pub const ERROR_REPORT: &str = "error-report";
+    #[doc = "Notifications:\n- [`OpErrorEventNotif`]\n"]
+    pub const ERROR_REPORT_CSTR: &CStr = c"error-report";
 }
 #[doc = "Retrieve the full list of currently registered DRM RAS nodes. Each node\nincludes its dynamically assigned ID, name, and type. **Important:**\nUser space must call this operation first to obtain the node IDs. These\nIDs are required for all subsequent operations on nodes, such as\nquerying error counters.\n\nFlags: admin-perm\n\nReply attributes:\n- [.get_node_id()](IterableNodeAttrs::get_node_id)\n- [.get_device_name()](IterableNodeAttrs::get_device_name)\n- [.get_node_name()](IterableNodeAttrs::get_node_name)\n- [.get_node_type()](IterableNodeAttrs::get_node_type)\n\n"]
 #[derive(Debug)]
@@ -932,6 +1400,132 @@ impl NetlinkRequest for OpClearErrorCounterDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
+#[doc = "Retrieve error threshold of a given counter. The response includes the\nid, the name, and current threshold of the counter.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_node_id()](PushErrorCounterAttrs::push_node_id)\n- [.push_error_id()](PushErrorCounterAttrs::push_error_id)\n\nReply attributes:\n- [.get_error_id()](IterableErrorCounterAttrs::get_error_id)\n- [.get_error_name()](IterableErrorCounterAttrs::get_error_name)\n- [.get_error_threshold()](IterableErrorCounterAttrs::get_error_threshold)\n\n"]
+#[derive(Debug)]
+pub struct OpGetErrorThresholdDo<'r> {
+    request: Request<'r>,
+}
+impl<'r> OpGetErrorThresholdDo<'r> {
+    pub fn new(mut request: Request<'r>) -> Self {
+        Self::write_header(request.buf_mut());
+        Self { request: request }
+    }
+    pub fn encode_request<'buf>(
+        buf: &'buf mut Vec<u8>,
+    ) -> PushErrorCounterAttrs<&'buf mut Vec<u8>> {
+        Self::write_header(buf);
+        PushErrorCounterAttrs::new(buf)
+    }
+    pub fn encode(&mut self) -> PushErrorCounterAttrs<&mut Vec<u8>> {
+        PushErrorCounterAttrs::new(self.request.buf_mut())
+    }
+    pub fn into_encoder(self) -> PushErrorCounterAttrs<RequestBuf<'r>> {
+        PushErrorCounterAttrs::new(self.request.buf)
+    }
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableErrorCounterAttrs<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
+        IterableErrorCounterAttrs::with_loc(attrs, buf.as_ptr() as usize)
+    }
+    fn write_header<Prev: Pusher>(prev: &mut Prev) {
+        let mut header = BuiltinNfgenmsg::new();
+        header.cmd = 5u8;
+        header.version = 1u8;
+        prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
+}
+impl NetlinkRequest for OpGetErrorThresholdDo<'_> {
+    fn protocol(&self) -> Protocol {
+        Protocol::Generic("drm-ras".as_bytes())
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    type ReplyType<'buf> = IterableErrorCounterAttrs<'buf>;
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        Self::decode_request(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        Self::decode_request(buf).lookup_attr(offset, missing_type)
+    }
+}
+#[doc = "Set error threshold of a given counter.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_node_id()](PushErrorCounterAttrs::push_node_id)\n- [.push_error_id()](PushErrorCounterAttrs::push_error_id)\n- [.push_error_threshold()](PushErrorCounterAttrs::push_error_threshold)\n\n"]
+#[derive(Debug)]
+pub struct OpSetErrorThresholdDo<'r> {
+    request: Request<'r>,
+}
+impl<'r> OpSetErrorThresholdDo<'r> {
+    pub fn new(mut request: Request<'r>) -> Self {
+        Self::write_header(request.buf_mut());
+        Self { request: request }
+    }
+    pub fn encode_request<'buf>(
+        buf: &'buf mut Vec<u8>,
+    ) -> PushErrorCounterAttrs<&'buf mut Vec<u8>> {
+        Self::write_header(buf);
+        PushErrorCounterAttrs::new(buf)
+    }
+    pub fn encode(&mut self) -> PushErrorCounterAttrs<&mut Vec<u8>> {
+        PushErrorCounterAttrs::new(self.request.buf_mut())
+    }
+    pub fn into_encoder(self) -> PushErrorCounterAttrs<RequestBuf<'r>> {
+        PushErrorCounterAttrs::new(self.request.buf)
+    }
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableErrorCounterAttrs<'a> {
+        let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
+        IterableErrorCounterAttrs::with_loc(attrs, buf.as_ptr() as usize)
+    }
+    fn write_header<Prev: Pusher>(prev: &mut Prev) {
+        let mut header = BuiltinNfgenmsg::new();
+        header.cmd = 6u8;
+        header.version = 1u8;
+        prev.as_vec_mut().extend(header.as_slice());
+    }
+    pub fn header(&self) -> &BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice(&self.request.buf()[pos..])
+    }
+    pub fn header_mut(&mut self) -> &mut BuiltinNfgenmsg {
+        let pos = self.request.pos;
+        BuiltinNfgenmsg::from_slice_mut(&mut self.request.buf_mut()[pos..])
+    }
+}
+impl NetlinkRequest for OpSetErrorThresholdDo<'_> {
+    fn protocol(&self) -> Protocol {
+        Protocol::Generic("drm-ras".as_bytes())
+    }
+    fn flags(&self) -> u16 {
+        self.request.flags
+    }
+    fn payload(&self) -> &[u8] {
+        self.request.buf()
+    }
+    type ReplyType<'buf> = IterableErrorCounterAttrs<'buf>;
+    fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
+        Self::decode_request(buf)
+    }
+    fn lookup(
+        buf: &[u8],
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        Self::decode_request(buf).lookup_attr(offset, missing_type)
+    }
+}
 use crate::traits::LookupFn;
 use crate::utils::RequestBuf;
 #[derive(Debug)]
@@ -1080,6 +1674,26 @@ impl<'buf> Request<'buf> {
         );
         res
     }
+    #[doc = "Retrieve error threshold of a given counter. The response includes the\nid, the name, and current threshold of the counter.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_node_id()](PushErrorCounterAttrs::push_node_id)\n- [.push_error_id()](PushErrorCounterAttrs::push_error_id)\n\nReply attributes:\n- [.get_error_id()](IterableErrorCounterAttrs::get_error_id)\n- [.get_error_name()](IterableErrorCounterAttrs::get_error_name)\n- [.get_error_threshold()](IterableErrorCounterAttrs::get_error_threshold)\n\n"]
+    pub fn op_get_error_threshold_do(self) -> OpGetErrorThresholdDo<'buf> {
+        let mut res = OpGetErrorThresholdDo::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-get-error-threshold-do",
+            OpGetErrorThresholdDo::lookup,
+        );
+        res
+    }
+    #[doc = "Set error threshold of a given counter.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_node_id()](PushErrorCounterAttrs::push_node_id)\n- [.push_error_id()](PushErrorCounterAttrs::push_error_id)\n- [.push_error_threshold()](PushErrorCounterAttrs::push_error_threshold)\n\n"]
+    pub fn op_set_error_threshold_do(self) -> OpSetErrorThresholdDo<'buf> {
+        let mut res = OpSetErrorThresholdDo::new(self);
+        res.request.do_writeback(
+            res.protocol(),
+            "op-set-error-threshold-do",
+            OpSetErrorThresholdDo::lookup,
+        );
+        res
+    }
 }
 #[cfg(test)]
 mod generated_tests {
@@ -1088,12 +1702,21 @@ mod generated_tests {
     fn tests() {
         let _ = IterableErrorCounterAttrs::get_error_id;
         let _ = IterableErrorCounterAttrs::get_error_name;
+        let _ = IterableErrorCounterAttrs::get_error_threshold;
         let _ = IterableErrorCounterAttrs::get_error_value;
+        let _ = IterableErrorEventAttrs::get_device_name;
+        let _ = IterableErrorEventAttrs::get_error_id;
+        let _ = IterableErrorEventAttrs::get_error_name;
+        let _ = IterableErrorEventAttrs::get_error_value;
+        let _ = IterableErrorEventAttrs::get_node_id;
+        let _ = IterableErrorEventAttrs::get_node_name;
         let _ = IterableNodeAttrs::get_device_name;
         let _ = IterableNodeAttrs::get_node_id;
         let _ = IterableNodeAttrs::get_node_name;
         let _ = IterableNodeAttrs::get_node_type;
+        let _ = OpErrorEventNotif;
         let _ = PushErrorCounterAttrs::<&mut Vec<u8>>::push_error_id;
+        let _ = PushErrorCounterAttrs::<&mut Vec<u8>>::push_error_threshold;
         let _ = PushErrorCounterAttrs::<&mut Vec<u8>>::push_node_id;
     }
 }

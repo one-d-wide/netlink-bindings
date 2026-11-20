@@ -10,13 +10,13 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "devlink";
 pub const PROTONAME_CSTR: &CStr = c"devlink";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SbPoolType {
     Ingress = 0,
     Egress = 1,
@@ -31,7 +31,7 @@ impl SbPoolType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PortType {
     Notset = 0,
     Auto = 1,
@@ -50,7 +50,7 @@ impl PortType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PortFlavour {
     Physical = 0,
     Cpu = 1,
@@ -77,7 +77,7 @@ impl PortFlavour {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PortFnState {
     Inactive = 0,
     Active = 1,
@@ -92,7 +92,7 @@ impl PortFnState {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PortFnOpstate {
     Detached = 0,
     Attached = 1,
@@ -107,7 +107,7 @@ impl PortFnOpstate {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PortFnAttrCap {
     RoceBit = 0,
     MigratableBit = 1,
@@ -126,7 +126,7 @@ impl PortFnAttrCap {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RateType {
     Leaf = 0,
     Node = 1,
@@ -141,7 +141,7 @@ impl RateType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum SbThresholdType {
     Static = 0,
     Dynamic = 1,
@@ -156,7 +156,7 @@ impl SbThresholdType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EswitchMode {
     Legacy = 0,
     Switchdev = 1,
@@ -173,7 +173,7 @@ impl EswitchMode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EswitchInlineMode {
     None = 0,
     Link = 1,
@@ -192,7 +192,7 @@ impl EswitchInlineMode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EswitchEncapMode {
     None = 0,
     Basic = 1,
@@ -207,7 +207,7 @@ impl EswitchEncapMode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DpipeHeaderId {
     Ethernet = 0,
     Ipv4 = 1,
@@ -224,7 +224,7 @@ impl DpipeHeaderId {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DpipeMatchType {
     FieldExact = 0,
 }
@@ -237,7 +237,7 @@ impl DpipeMatchType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DpipeActionType {
     FieldModify = 0,
 }
@@ -250,7 +250,7 @@ impl DpipeActionType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DpipeFieldMappingType {
     None = 0,
     Ifindex = 1,
@@ -265,7 +265,7 @@ impl DpipeFieldMappingType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ResourceUnit {
     Entry = 0,
 }
@@ -277,23 +277,23 @@ impl ResourceUnit {
         })
     }
 }
-#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ResourceScope {
-    Dev = 0,
-    Port = 1,
+    Dev = 1 << 0,
+    Port = 1 << 1,
 }
 impl ResourceScope {
     pub fn from_value(value: u64) -> Option<Self> {
         Some(match value {
-            0 => Self::Dev,
-            1 => Self::Port,
+            n if n == 1 << 0 => Self::Dev,
+            n if n == 1 << 1 => Self::Port,
             _ => return None,
         })
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ReloadAction {
     DriverReinit = 1,
     FwActivate = 2,
@@ -308,7 +308,24 @@ impl ReloadAction {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ReloadLimit {
+    #[doc = "no constraints\n"]
+    Unspec = 0,
+    #[doc = "No reset allowed, no down time allowed, no link flap and no\nconfiguration is lost.\n"]
+    NoReset = 1,
+}
+impl ReloadLimit {
+    pub fn from_value(value: u64) -> Option<Self> {
+        Some(match value {
+            0 => Self::Unspec,
+            1 => Self::NoReset,
+            _ => return None,
+        })
+    }
+}
+#[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ParamCmode {
     Runtime = 0,
     Driverinit = 1,
@@ -325,7 +342,7 @@ impl ParamCmode {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum FlashOverwrite {
     SettingsBit = 0,
     IdentifiersBit = 1,
@@ -340,7 +357,7 @@ impl FlashOverwrite {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TrapAction {
     Drop = 0,
     Trap = 1,
@@ -357,7 +374,7 @@ impl TrapAction {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TrapType {
     Drop = 0,
     Exception = 1,
@@ -374,7 +391,7 @@ impl TrapType {
     }
 }
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum VarAttrType {
     U8 = 1,
     U16 = 2,
@@ -587,12 +604,13 @@ pub enum Devlink<'a> {
     ReloadAction(u8),
     #[doc = "Associated type: [`ReloadAction`] (1 bit per enumeration)"]
     ReloadActionsPerformed(BuiltinBitfield32),
-    #[doc = "Associated type: [`ReloadAction`] (1 bit per enumeration)"]
+    #[doc = "Associated type: [`ReloadLimit`] (1 bit per enumeration)"]
     ReloadLimits(BuiltinBitfield32),
     DevStats(IterableDlDevStats<'a>),
     ReloadStats(IterableDlReloadStats<'a>),
     #[doc = "Attribute may repeat multiple times (treat it as array)"]
     ReloadStatsEntry(IterableDlReloadStatsEntry<'a>),
+    #[doc = "Associated type: [`ReloadLimit`] (enum)"]
     ReloadStatsLimit(u8),
     ReloadStatsValue(u32),
     RemoteReloadStats(IterableDlReloadStats<'a>),
@@ -612,6 +630,8 @@ pub enum Devlink<'a> {
     LinecardState(u8),
     LinecardType(&'a CStr),
     LinecardSupportedTypes(IterableDlLinecardSupportedTypes<'a>),
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    NestedDevlink(IterableDlNestedDevlink<'a>),
     Selftests(IterableDlSelftestId<'a>),
     RateTxPriority(u32),
     RateTxWeight(u32),
@@ -624,10 +644,10 @@ pub enum Devlink<'a> {
     ParamResetDefault(()),
     #[doc = "Unique devlink instance index.\n"]
     Index(u32),
-    #[doc = "Bitmask selecting which resource classes to include in a resource-dump\nresponse. Bit 0 (dev) selects device-level resources; bit 1 (port)\nselects port-level resources. When absent all classes are returned.\n\nAssociated type: [`ResourceScope`] (1 bit per enumeration)"]
+    #[doc = "Bitmask selecting which resource classes to include in a resource-dump\nresponse. Bit 0 (dev) selects device-level resources; bit 1 (port)\nselects port-level resources. When absent all classes are returned.\n\nAssociated type: [`ResourceScope`] (enum)"]
     ResourceScopeMask(u32),
     #[doc = "Identifies the devlink instance which owns the parent rate node. Used\nwith rate-set and rate-new to parent a rate object to a node on a\ndifferent devlink instance, enabling cross-device rate scheduling. When\nabsent, the parent node is resolved on the same instance.\n"]
-    ParentDev(IterableDlParentDev<'a>),
+    ParentDev(IterableDlNestedDevlink<'a>),
 }
 impl<'a> IterableDevlink<'a> {
     pub fn get_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
@@ -2866,7 +2886,7 @@ impl<'a> IterableDevlink<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "Associated type: [`ReloadAction`] (1 bit per enumeration)"]
+    #[doc = "Associated type: [`ReloadLimit`] (1 bit per enumeration)"]
     pub fn get_reload_limits(&self) -> Result<BuiltinBitfield32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -2924,6 +2944,7 @@ impl<'a> IterableDevlink<'a> {
             }
         })
     }
+    #[doc = "Associated type: [`ReloadLimit`] (enum)"]
     pub fn get_reload_stats_limit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3161,6 +3182,18 @@ impl<'a> IterableDevlink<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_nested_devlink(
+        &self,
+    ) -> MultiAttrIterable<Self, Devlink<'a>, IterableDlNestedDevlink<'a>> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let Devlink::NestedDevlink(val) = variant {
+                Some(val)
+            } else {
+                None
+            }
+        })
+    }
     pub fn get_selftests(&self) -> Result<IterableDlSelftestId<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3279,7 +3312,7 @@ impl<'a> IterableDevlink<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "Bitmask selecting which resource classes to include in a resource-dump\nresponse. Bit 0 (dev) selects device-level resources; bit 1 (port)\nselects port-level resources. When absent all classes are returned.\n\nAssociated type: [`ResourceScope`] (1 bit per enumeration)"]
+    #[doc = "Bitmask selecting which resource classes to include in a resource-dump\nresponse. Bit 0 (dev) selects device-level resources; bit 1 (port)\nselects port-level resources. When absent all classes are returned.\n\nAssociated type: [`ResourceScope`] (enum)"]
     pub fn get_resource_scope_mask(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -3296,7 +3329,7 @@ impl<'a> IterableDevlink<'a> {
         ))
     }
     #[doc = "Identifies the devlink instance which owns the parent rate node. Used\nwith rate-set and rate-new to parent a rate object to a node on a\ndifferent devlink instance, enabling cross-device rate scheduling. When\nabsent, the parent node is resolved on the same instance.\n"]
-    pub fn get_parent_dev(&self) -> Result<IterableDlParentDev<'a>, ErrorContext> {
+    pub fn get_parent_dev(&self) -> Result<IterableDlNestedDevlink<'a>, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -3488,6 +3521,7 @@ impl Devlink<'_> {
             172u16 => "LinecardState",
             173u16 => "LinecardType",
             174u16 => "LinecardSupportedTypes",
+            175u16 => "NestedDevlink",
             176u16 => "Selftests",
             177u16 => "RateTxPriority",
             178u16 => "RateTxWeight",
@@ -4373,6 +4407,11 @@ impl<'a> Iterator for IterableDevlink<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                175u16 => Devlink::NestedDevlink({
+                    let res = Some(IterableDlNestedDevlink::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
                 176u16 => Devlink::Selftests({
                     let res = Some(IterableDlSelftestId::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
@@ -4411,7 +4450,7 @@ impl<'a> Iterator for IterableDevlink<'a> {
                     val
                 }),
                 186u16 => Devlink::ParentDev({
-                    let res = Some(IterableDlParentDev::with_loc(next, self.orig_loc));
+                    let res = Some(IterableDlNestedDevlink::with_loc(next, self.orig_loc));
                     let Some(val) = res else { break };
                     val
                 }),
@@ -4674,13 +4713,16 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::ReloadLimits(val) => fmt.field(
                     "ReloadLimits",
                     &FormatFlags(val.value.into(), |val| {
-                        ReloadAction::from_value(val.trailing_zeros().into())
+                        ReloadLimit::from_value(val.trailing_zeros().into())
                     }),
                 ),
                 Devlink::DevStats(val) => fmt.field("DevStats", &val),
                 Devlink::ReloadStats(val) => fmt.field("ReloadStats", &val),
                 Devlink::ReloadStatsEntry(val) => fmt.field("ReloadStatsEntry", &val),
-                Devlink::ReloadStatsLimit(val) => fmt.field("ReloadStatsLimit", &val),
+                Devlink::ReloadStatsLimit(val) => fmt.field(
+                    "ReloadStatsLimit",
+                    &FormatEnum(val.into(), ReloadLimit::from_value),
+                ),
                 Devlink::ReloadStatsValue(val) => fmt.field("ReloadStatsValue", &val),
                 Devlink::RemoteReloadStats(val) => fmt.field("RemoteReloadStats", &val),
                 Devlink::ReloadActionInfo(val) => fmt.field("ReloadActionInfo", &val),
@@ -4698,6 +4740,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::LinecardState(val) => fmt.field("LinecardState", &val),
                 Devlink::LinecardType(val) => fmt.field("LinecardType", &val),
                 Devlink::LinecardSupportedTypes(val) => fmt.field("LinecardSupportedTypes", &val),
+                Devlink::NestedDevlink(val) => fmt.field("NestedDevlink", &val),
                 Devlink::Selftests(val) => fmt.field("Selftests", &val),
                 Devlink::RateTxPriority(val) => fmt.field("RateTxPriority", &val),
                 Devlink::RateTxWeight(val) => fmt.field("RateTxWeight", &val),
@@ -4710,9 +4753,7 @@ impl<'a> std::fmt::Debug for IterableDevlink<'_> {
                 Devlink::Index(val) => fmt.field("Index", &val),
                 Devlink::ResourceScopeMask(val) => fmt.field(
                     "ResourceScopeMask",
-                    &FormatFlags(val.into(), |val| {
-                        ResourceScope::from_value(val.trailing_zeros().into())
-                    }),
+                    &FormatFlags(val.into(), ResourceScope::from_value),
                 ),
                 Devlink::ParentDev(val) => fmt.field("ParentDev", &val),
             };
@@ -5761,6 +5802,12 @@ impl IterableDevlink<'_> {
                         break;
                     }
                 }
+                Devlink::NestedDevlink(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
                 Devlink::Selftests(val) => {
                     (stack, missing) = val.lookup_attr(offset, missing_type);
                     if !stack.is_empty() {
@@ -6484,10 +6531,12 @@ impl IterableDlReloadActStats<'_> {
 }
 #[derive(Clone)]
 pub enum DlReloadStatsEntry {
+    #[doc = "Associated type: [`ReloadLimit`] (enum)"]
     ReloadStatsLimit(u8),
     ReloadStatsValue(u32),
 }
 impl<'a> IterableDlReloadStatsEntry<'a> {
+    #[doc = "Associated type: [`ReloadLimit`] (enum)"]
     pub fn get_reload_stats_limit(&self) -> Result<u8, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -6606,7 +6655,10 @@ impl std::fmt::Debug for IterableDlReloadStatsEntry<'_> {
                 }
             };
             match attr {
-                DlReloadStatsEntry::ReloadStatsLimit(val) => fmt.field("ReloadStatsLimit", &val),
+                DlReloadStatsEntry::ReloadStatsLimit(val) => fmt.field(
+                    "ReloadStatsLimit",
+                    &FormatEnum(val.into(), ReloadLimit::from_value),
+                ),
                 DlReloadStatsEntry::ReloadStatsValue(val) => fmt.field("ReloadStatsValue", &val),
             };
         }
@@ -6843,6 +6895,9 @@ pub enum DlPortFunction<'a> {
     Opstate(u8),
     #[doc = "Associated type: [`PortFnAttrCap`] (1 bit per enumeration)"]
     Caps(BuiltinBitfield32),
+    #[doc = "Handle of the peer devlink instance instantiated for this function.\n"]
+    Devlink(IterableDlNestedDevlink<'a>),
+    MaxIoEqs(u32),
 }
 impl<'a> IterableDlPortFunction<'a> {
     pub fn get_hw_addr(&self) -> Result<&'a [u8], ErrorContext> {
@@ -6908,6 +6963,37 @@ impl<'a> IterableDlPortFunction<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    #[doc = "Handle of the peer devlink instance instantiated for this function.\n"]
+    pub fn get_devlink(&self) -> Result<IterableDlNestedDevlink<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortFunction::Devlink(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortFunction",
+            "Devlink",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_max_io_eqs(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortFunction::MaxIoEqs(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortFunction",
+            "MaxIoEqs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
 impl DlPortFunction<'_> {
     pub fn new<'a>(buf: &'a [u8]) -> IterableDlPortFunction<'a> {
@@ -6919,6 +7005,8 @@ impl DlPortFunction<'_> {
             2u16 => "State",
             3u16 => "Opstate",
             4u16 => "Caps",
+            5u16 => "Devlink",
+            6u16 => "MaxIoEqs",
             _ => return None,
         };
         Some(res)
@@ -6979,6 +7067,16 @@ impl<'a> Iterator for IterableDlPortFunction<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                5u16 => DlPortFunction::Devlink({
+                    let res = Some(IterableDlNestedDevlink::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => DlPortFunction::MaxIoEqs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -7027,6 +7125,8 @@ impl<'a> std::fmt::Debug for IterableDlPortFunction<'_> {
                         PortFnAttrCap::from_value(val.trailing_zeros().into())
                     }),
                 ),
+                DlPortFunction::Devlink(val) => fmt.field("Devlink", &val),
+                DlPortFunction::MaxIoEqs(val) => fmt.field("MaxIoEqs", &val),
             };
         }
         fmt.finish()
@@ -7052,6 +7152,7 @@ impl IterableDlPortFunction<'_> {
         }
         let mut attrs = self.clone();
         let mut last_off = cur + attrs.pos;
+        let mut missing = None;
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
@@ -7079,6 +7180,18 @@ impl IterableDlPortFunction<'_> {
                         break;
                     }
                 }
+                DlPortFunction::Devlink(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                DlPortFunction::MaxIoEqs(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxIoEqs", last_off));
+                        break;
+                    }
+                }
                 _ => {}
             };
             last_off = cur + attrs.pos;
@@ -7086,7 +7199,545 @@ impl IterableDlPortFunction<'_> {
         if !stack.is_empty() {
             stack.push(("DlPortFunction", cur));
         }
+        (stack, missing)
+    }
+}
+#[derive(Clone)]
+pub enum DlPortFunctionSet<'a> {
+    HwAddr(&'a [u8]),
+    #[doc = "Associated type: [`PortFnState`] (enum)"]
+    State(u8),
+    #[doc = "Associated type: [`PortFnAttrCap`] (1 bit per enumeration)"]
+    Caps(BuiltinBitfield32),
+    MaxIoEqs(u32),
+}
+impl<'a> IterableDlPortFunctionSet<'a> {
+    pub fn get_hw_addr(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortFunctionSet::HwAddr(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortFunctionSet",
+            "HwAddr",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Associated type: [`PortFnState`] (enum)"]
+    pub fn get_state(&self) -> Result<u8, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortFunctionSet::State(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortFunctionSet",
+            "State",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Associated type: [`PortFnAttrCap`] (1 bit per enumeration)"]
+    pub fn get_caps(&self) -> Result<BuiltinBitfield32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortFunctionSet::Caps(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortFunctionSet",
+            "Caps",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_max_io_eqs(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortFunctionSet::MaxIoEqs(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortFunctionSet",
+            "MaxIoEqs",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl DlPortFunctionSet<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableDlPortFunctionSet<'a> {
+        IterableDlPortFunctionSet::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        DlPortFunction::attr_from_type(r#type)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableDlPortFunctionSet<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableDlPortFunctionSet<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableDlPortFunctionSet<'a> {
+    type Item = Result<DlPortFunctionSet<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => DlPortFunctionSet::HwAddr({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => DlPortFunctionSet::State({
+                    let res = parse_u8(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => DlPortFunctionSet::Caps({
+                    let res = BuiltinBitfield32::new_from_slice(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                6u16 => DlPortFunctionSet::MaxIoEqs({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "DlPortFunctionSet",
+            r#type.and_then(|t| DlPortFunctionSet::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableDlPortFunctionSet<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("DlPortFunctionSet");
+        let mut iter = IterableDlPortFunctionSet::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                DlPortFunctionSet::HwAddr(val) => fmt.field("HwAddr", &FormatHexdump(val)),
+                DlPortFunctionSet::State(val) => {
+                    fmt.field("State", &FormatEnum(val.into(), PortFnState::from_value))
+                }
+                DlPortFunctionSet::Caps(val) => fmt.field(
+                    "Caps",
+                    &FormatFlags(val.value.into(), |val| {
+                        PortFnAttrCap::from_value(val.trailing_zeros().into())
+                    }),
+                ),
+                DlPortFunctionSet::MaxIoEqs(val) => fmt.field("MaxIoEqs", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableDlPortFunctionSet<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("DlPortFunctionSet", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| DlPortFunctionSet::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                DlPortFunctionSet::HwAddr(val) => {
+                    if last_off == offset {
+                        stack.push(("HwAddr", last_off));
+                        break;
+                    }
+                }
+                DlPortFunctionSet::State(val) => {
+                    if last_off == offset {
+                        stack.push(("State", last_off));
+                        break;
+                    }
+                }
+                DlPortFunctionSet::Caps(val) => {
+                    if last_off == offset {
+                        stack.push(("Caps", last_off));
+                        break;
+                    }
+                }
+                DlPortFunctionSet::MaxIoEqs(val) => {
+                    if last_off == offset {
+                        stack.push(("MaxIoEqs", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("DlPortFunctionSet", cur));
+        }
         (stack, None)
+    }
+}
+#[derive(Clone)]
+pub enum DlPortSet<'a> {
+    BusName(&'a CStr),
+    DevName(&'a CStr),
+    PortIndex(u32),
+    #[doc = "Associated type: [`PortType`] (enum)"]
+    PortType(u16),
+    PortFunction(IterableDlPortFunctionSet<'a>),
+    #[doc = "Unique devlink instance index.\n"]
+    Index(u32),
+}
+impl<'a> IterableDlPortSet<'a> {
+    pub fn get_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortSet::BusName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortSet",
+            "BusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortSet::DevName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortSet",
+            "DevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_port_index(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortSet::PortIndex(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortSet",
+            "PortIndex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Associated type: [`PortType`] (enum)"]
+    pub fn get_port_type(&self) -> Result<u16, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortSet::PortType(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortSet",
+            "PortType",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_port_function(&self) -> Result<IterableDlPortFunctionSet<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortSet::PortFunction(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortSet",
+            "PortFunction",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Unique devlink instance index.\n"]
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlPortSet::Index(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlPortSet",
+            "Index",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl DlPortSet<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableDlPortSet<'a> {
+        IterableDlPortSet::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        Devlink::attr_from_type(r#type)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableDlPortSet<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableDlPortSet<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableDlPortSet<'a> {
+    type Item = Result<DlPortSet<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => DlPortSet::BusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => DlPortSet::DevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => DlPortSet::PortIndex({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                4u16 => DlPortSet::PortType({
+                    let res = parse_u16(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                145u16 => DlPortSet::PortFunction({
+                    let res = Some(IterableDlPortFunctionSet::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                184u16 => DlPortSet::Index({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "DlPortSet",
+            r#type.and_then(|t| DlPortSet::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableDlPortSet<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("DlPortSet");
+        let mut iter = IterableDlPortSet::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                DlPortSet::BusName(val) => fmt.field("BusName", &val),
+                DlPortSet::DevName(val) => fmt.field("DevName", &val),
+                DlPortSet::PortIndex(val) => fmt.field("PortIndex", &val),
+                DlPortSet::PortType(val) => {
+                    fmt.field("PortType", &FormatEnum(val.into(), PortType::from_value))
+                }
+                DlPortSet::PortFunction(val) => fmt.field("PortFunction", &val),
+                DlPortSet::Index(val) => fmt.field("Index", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableDlPortSet<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("DlPortSet", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| DlPortSet::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                DlPortSet::BusName(val) => {
+                    if last_off == offset {
+                        stack.push(("BusName", last_off));
+                        break;
+                    }
+                }
+                DlPortSet::DevName(val) => {
+                    if last_off == offset {
+                        stack.push(("DevName", last_off));
+                        break;
+                    }
+                }
+                DlPortSet::PortIndex(val) => {
+                    if last_off == offset {
+                        stack.push(("PortIndex", last_off));
+                        break;
+                    }
+                }
+                DlPortSet::PortType(val) => {
+                    if last_off == offset {
+                        stack.push(("PortType", last_off));
+                        break;
+                    }
+                }
+                DlPortSet::PortFunction(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                DlPortSet::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("DlPortSet", cur));
+        }
+        (stack, missing)
     }
 }
 #[derive(Clone)]
@@ -7243,6 +7894,7 @@ pub enum DlDpipeTable<'a> {
     DpipeTableMatches(IterableDlDpipeTableMatches<'a>),
     DpipeTableActions(IterableDlDpipeTableActions<'a>),
     DpipeTableCountersEnabled(u8),
+    Pad(&'a [u8]),
     DpipeTableResourceId(u64),
     DpipeTableResourceUnits(u64),
 }
@@ -7318,6 +7970,21 @@ impl<'a> IterableDlDpipeTable<'a> {
         Err(ErrorContext::new_missing(
             "DlDpipeTable",
             "DpipeTableCountersEnabled",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlDpipeTable::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlDpipeTable",
+            "Pad",
             self.orig_loc,
             self.buf.as_ptr() as usize,
         ))
@@ -7421,6 +8088,11 @@ impl<'a> Iterator for IterableDlDpipeTable<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                61u16 => DlDpipeTable::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 75u16 => DlDpipeTable::DpipeTableResourceId({
                     let res = parse_u64(next);
                     let Some(val) = res else { break };
@@ -7472,6 +8144,7 @@ impl<'a> std::fmt::Debug for IterableDlDpipeTable<'_> {
                 DlDpipeTable::DpipeTableCountersEnabled(val) => {
                     fmt.field("DpipeTableCountersEnabled", &val)
                 }
+                DlDpipeTable::Pad(val) => fmt.field("Pad", &val),
                 DlDpipeTable::DpipeTableResourceId(val) => fmt.field("DpipeTableResourceId", &val),
                 DlDpipeTable::DpipeTableResourceUnits(val) => {
                     fmt.field("DpipeTableResourceUnits", &val)
@@ -7532,6 +8205,12 @@ impl IterableDlDpipeTable<'_> {
                 DlDpipeTable::DpipeTableCountersEnabled(val) => {
                     if last_off == offset {
                         stack.push(("DpipeTableCountersEnabled", last_off));
+                        break;
+                    }
+                }
+                DlDpipeTable::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
                         break;
                     }
                 }
@@ -8004,6 +8683,7 @@ pub enum DlDpipeEntry<'a> {
     DpipeEntryMatchValues(IterableDlDpipeEntryMatchValues<'a>),
     DpipeEntryActionValues(IterableDlDpipeEntryActionValues<'a>),
     DpipeEntryCounter(u64),
+    Pad(&'a [u8]),
 }
 impl<'a> IterableDlDpipeEntry<'a> {
     pub fn get_dpipe_entry_index(&self) -> Result<u64, ErrorContext> {
@@ -8066,6 +8746,21 @@ impl<'a> IterableDlDpipeEntry<'a> {
         Err(ErrorContext::new_missing(
             "DlDpipeEntry",
             "DpipeEntryCounter",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlDpipeEntry::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlDpipeEntry",
+            "Pad",
             self.orig_loc,
             self.buf.as_ptr() as usize,
         ))
@@ -8140,6 +8835,11 @@ impl<'a> Iterator for IterableDlDpipeEntry<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                61u16 => DlDpipeEntry::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -8182,6 +8882,7 @@ impl<'a> std::fmt::Debug for IterableDlDpipeEntry<'_> {
                     fmt.field("DpipeEntryActionValues", &val)
                 }
                 DlDpipeEntry::DpipeEntryCounter(val) => fmt.field("DpipeEntryCounter", &val),
+                DlDpipeEntry::Pad(val) => fmt.field("Pad", &val),
             };
         }
         fmt.finish()
@@ -8232,6 +8933,12 @@ impl IterableDlDpipeEntry<'_> {
                 DlDpipeEntry::DpipeEntryCounter(val) => {
                     if last_off == offset {
                         stack.push(("DpipeEntryCounter", last_off));
+                        break;
+                    }
+                }
+                DlDpipeEntry::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
                         break;
                     }
                 }
@@ -10318,6 +11025,7 @@ impl IterableDlDpipeField<'_> {
 }
 #[derive(Clone)]
 pub enum DlResource<'a> {
+    Pad(&'a [u8]),
     ResourceName(&'a CStr),
     ResourceId(u64),
     ResourceSize(u64),
@@ -10331,6 +11039,21 @@ pub enum DlResource<'a> {
     ResourceOcc(u64),
 }
 impl<'a> IterableDlResource<'a> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlResource::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlResource",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
     pub fn get_resource_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -10526,6 +11249,11 @@ impl<'a> Iterator for IterableDlResource<'a> {
             };
             r#type = Some(header.r#type);
             let res = match header.r#type {
+                61u16 => DlResource::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 65u16 => DlResource::ResourceName({
                     let res = CStr::from_bytes_with_nul(next).ok();
                     let Some(val) = res else { break };
@@ -10610,6 +11338,7 @@ impl<'a> std::fmt::Debug for IterableDlResource<'_> {
                 }
             };
             match attr {
+                DlResource::Pad(val) => fmt.field("Pad", &val),
                 DlResource::ResourceName(val) => fmt.field("ResourceName", &val),
                 DlResource::ResourceId(val) => fmt.field("ResourceId", &val),
                 DlResource::ResourceSize(val) => fmt.field("ResourceSize", &val),
@@ -10651,6 +11380,12 @@ impl IterableDlResource<'_> {
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
+                DlResource::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
                 DlResource::ResourceName(val) => {
                     if last_off == offset {
                         stack.push(("ResourceName", last_off));
@@ -11072,23 +11807,21 @@ impl IterableDlParam<'_> {
 }
 #[derive(Clone)]
 pub enum DlRegionSnapshots<'a> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     RegionSnapshot(IterableDlRegionSnapshot<'a>),
 }
 impl<'a> IterableDlRegionSnapshots<'a> {
-    pub fn get_region_snapshot(&self) -> Result<IterableDlRegionSnapshot<'a>, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(DlRegionSnapshots::RegionSnapshot(val)) = attr {
-                return Ok(val);
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_region_snapshot(
+        &self,
+    ) -> MultiAttrIterable<Self, DlRegionSnapshots<'a>, IterableDlRegionSnapshot<'a>> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let DlRegionSnapshots::RegionSnapshot(val) = variant {
+                Some(val)
+            } else {
+                None
             }
-        }
-        Err(ErrorContext::new_missing(
-            "DlRegionSnapshots",
-            "RegionSnapshot",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
+        })
     }
 }
 impl DlRegionSnapshots<'_> {
@@ -11369,23 +12102,21 @@ impl IterableDlRegionSnapshot<'_> {
 }
 #[derive(Clone)]
 pub enum DlRegionChunks<'a> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     RegionChunk(IterableDlRegionChunk<'a>),
 }
 impl<'a> IterableDlRegionChunks<'a> {
-    pub fn get_region_chunk(&self) -> Result<IterableDlRegionChunk<'a>, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(DlRegionChunks::RegionChunk(val)) = attr {
-                return Ok(val);
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_region_chunk(
+        &self,
+    ) -> MultiAttrIterable<Self, DlRegionChunks<'a>, IterableDlRegionChunk<'a>> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let DlRegionChunks::RegionChunk(val) = variant {
+                Some(val)
+            } else {
+                None
             }
-        }
-        Err(ErrorContext::new_missing(
-            "DlRegionChunks",
-            "RegionChunk",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
+        })
     }
 }
 impl DlRegionChunks<'_> {
@@ -11518,10 +12249,26 @@ impl IterableDlRegionChunks<'_> {
 }
 #[derive(Clone)]
 pub enum DlRegionChunk<'a> {
+    Pad(&'a [u8]),
     RegionChunkData(&'a [u8]),
     RegionChunkAddr(u64),
 }
 impl<'a> IterableDlRegionChunk<'a> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRegionChunk::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRegionChunk",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
     pub fn get_region_chunk_data(&self) -> Result<&'a [u8], ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -11596,6 +12343,11 @@ impl<'a> Iterator for IterableDlRegionChunk<'a> {
             };
             r#type = Some(header.r#type);
             let res = match header.r#type {
+                61u16 => DlRegionChunk::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 95u16 => DlRegionChunk::RegionChunkData({
                     let res = Some(next);
                     let Some(val) = res else { break };
@@ -11640,6 +12392,7 @@ impl<'a> std::fmt::Debug for IterableDlRegionChunk<'_> {
                 }
             };
             match attr {
+                DlRegionChunk::Pad(val) => fmt.field("Pad", &val),
                 DlRegionChunk::RegionChunkData(val) => {
                     fmt.field("RegionChunkData", &FormatHexdump(val))
                 }
@@ -11672,6 +12425,12 @@ impl IterableDlRegionChunk<'_> {
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
+                DlRegionChunk::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
                 DlRegionChunk::RegionChunkData(val) => {
                     if last_off == offset {
                         stack.push(("RegionChunkData", last_off));
@@ -11937,6 +12696,7 @@ impl IterableDlFmsg<'_> {
 }
 #[derive(Clone)]
 pub enum DlHealthReporter<'a> {
+    Pad(&'a [u8]),
     HealthReporterName(&'a CStr),
     HealthReporterState(u8),
     HealthReporterErrCount(u64),
@@ -11950,6 +12710,21 @@ pub enum DlHealthReporter<'a> {
     HealthReporterBurstPeriod(u64),
 }
 impl<'a> IterableDlHealthReporter<'a> {
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlHealthReporter::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlHealthReporter",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
     pub fn get_health_reporter_name(&self) -> Result<&'a CStr, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -12145,6 +12920,11 @@ impl<'a> Iterator for IterableDlHealthReporter<'a> {
             };
             r#type = Some(header.r#type);
             let res = match header.r#type {
+                61u16 => DlHealthReporter::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 115u16 => DlHealthReporter::HealthReporterName({
                     let res = CStr::from_bytes_with_nul(next).ok();
                     let Some(val) = res else { break };
@@ -12229,6 +13009,7 @@ impl<'a> std::fmt::Debug for IterableDlHealthReporter<'_> {
                 }
             };
             match attr {
+                DlHealthReporter::Pad(val) => fmt.field("Pad", &val),
                 DlHealthReporter::HealthReporterName(val) => fmt.field("HealthReporterName", &val),
                 DlHealthReporter::HealthReporterState(val) => {
                     fmt.field("HealthReporterState", &val)
@@ -12285,6 +13066,12 @@ impl IterableDlHealthReporter<'_> {
         while let Some(attr) = attrs.next() {
             let Ok(attr) = attr else { break };
             match attr {
+                DlHealthReporter::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
+                        break;
+                    }
+                }
                 DlHealthReporter::HealthReporterName(val) => {
                     if last_off == offset {
                         stack.push(("HealthReporterName", last_off));
@@ -12356,10 +13143,11 @@ impl IterableDlHealthReporter<'_> {
     }
 }
 #[derive(Clone)]
-pub enum DlAttrStats {
+pub enum DlAttrStats<'a> {
     StatsRxPackets(u64),
     StatsRxBytes(u64),
     StatsRxDropped(u64),
+    Pad(&'a [u8]),
 }
 impl<'a> IterableDlAttrStats<'a> {
     pub fn get_stats_rx_packets(&self) -> Result<u64, ErrorContext> {
@@ -12407,8 +13195,23 @@ impl<'a> IterableDlAttrStats<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
+    pub fn get_pad(&self) -> Result<&'a [u8], ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlAttrStats::Pad(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlAttrStats",
+            "Pad",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
 }
-impl DlAttrStats {
+impl DlAttrStats<'_> {
     pub fn new<'a>(buf: &'a [u8]) -> IterableDlAttrStats<'a> {
         IterableDlAttrStats::with_loc(buf, buf.as_ptr() as usize)
     }
@@ -12417,6 +13220,7 @@ impl DlAttrStats {
             0u16 => "StatsRxPackets",
             1u16 => "StatsRxBytes",
             2u16 => "StatsRxDropped",
+            61u16 => "Pad",
             _ => return None,
         };
         Some(res)
@@ -12441,7 +13245,7 @@ impl<'a> IterableDlAttrStats<'a> {
     }
 }
 impl<'a> Iterator for IterableDlAttrStats<'a> {
-    type Item = Result<DlAttrStats, ErrorContext>;
+    type Item = Result<DlAttrStats<'a>, ErrorContext>;
     fn next(&mut self) -> Option<Self::Item> {
         let mut pos;
         let mut r#type;
@@ -12472,6 +13276,11 @@ impl<'a> Iterator for IterableDlAttrStats<'a> {
                     let Some(val) = res else { break };
                     val
                 }),
+                61u16 => DlAttrStats::Pad({
+                    let res = Some(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
                 n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
                 n => continue,
             };
@@ -12485,7 +13294,7 @@ impl<'a> Iterator for IterableDlAttrStats<'a> {
         )))
     }
 }
-impl std::fmt::Debug for IterableDlAttrStats<'_> {
+impl<'a> std::fmt::Debug for IterableDlAttrStats<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut fmt = f.debug_struct("DlAttrStats");
         let mut iter = IterableDlAttrStats::with_loc(&[], self.orig_loc);
@@ -12509,6 +13318,7 @@ impl std::fmt::Debug for IterableDlAttrStats<'_> {
                 DlAttrStats::StatsRxPackets(val) => fmt.field("StatsRxPackets", &val),
                 DlAttrStats::StatsRxBytes(val) => fmt.field("StatsRxBytes", &val),
                 DlAttrStats::StatsRxDropped(val) => fmt.field("StatsRxDropped", &val),
+                DlAttrStats::Pad(val) => fmt.field("Pad", &val),
             };
         }
         fmt.finish()
@@ -12552,6 +13362,12 @@ impl IterableDlAttrStats<'_> {
                 DlAttrStats::StatsRxDropped(val) => {
                     if last_off == offset {
                         stack.push(("StatsRxDropped", last_off));
+                        break;
+                    }
+                }
+                DlAttrStats::Pad(val) => {
+                    if last_off == offset {
+                        stack.push(("Pad", last_off));
                         break;
                     }
                 }
@@ -12744,23 +13560,21 @@ impl IterableDlTrapMetadata<'_> {
 }
 #[derive(Clone)]
 pub enum DlLinecardSupportedTypes<'a> {
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     LinecardType(&'a CStr),
 }
 impl<'a> IterableDlLinecardSupportedTypes<'a> {
-    pub fn get_linecard_type(&self) -> Result<&'a CStr, ErrorContext> {
-        let mut iter = self.clone();
-        iter.pos = 0;
-        for attr in iter {
-            if let Ok(DlLinecardSupportedTypes::LinecardType(val)) = attr {
-                return Ok(val);
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_linecard_type(
+        &self,
+    ) -> MultiAttrIterable<Self, DlLinecardSupportedTypes<'a>, &'a CStr> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let DlLinecardSupportedTypes::LinecardType(val) = variant {
+                Some(val)
+            } else {
+                None
             }
-        }
-        Err(ErrorContext::new_missing(
-            "DlLinecardSupportedTypes",
-            "LinecardType",
-            self.orig_loc,
-            self.buf.as_ptr() as usize,
-        ))
+        })
     }
 }
 impl DlLinecardSupportedTypes<'_> {
@@ -13423,6 +14237,699 @@ impl IterableDlParentDev<'_> {
         }
         if !stack.is_empty() {
             stack.push(("DlParentDev", cur));
+        }
+        (stack, None)
+    }
+}
+#[derive(Clone)]
+pub enum DlRateSet<'a> {
+    BusName(&'a CStr),
+    DevName(&'a CStr),
+    PortIndex(u32),
+    RateTxShare(u64),
+    RateTxMax(u64),
+    RateNodeName(&'a CStr),
+    RateParentNodeName(&'a CStr),
+    RateTxPriority(u32),
+    RateTxWeight(u32),
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    RateTcBws(IterableDlRateTcBws<'a>),
+    #[doc = "Unique devlink instance index.\n"]
+    Index(u32),
+    #[doc = "Identifies the devlink instance which owns the parent rate node. Used\nwith rate-set and rate-new to parent a rate object to a node on a\ndifferent devlink instance, enabling cross-device rate scheduling. When\nabsent, the parent node is resolved on the same instance.\n"]
+    ParentDev(IterableDlParentDev<'a>),
+}
+impl<'a> IterableDlRateSet<'a> {
+    pub fn get_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::BusName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "BusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::DevName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "DevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_port_index(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::PortIndex(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "PortIndex",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rate_tx_share(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::RateTxShare(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "RateTxShare",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rate_tx_max(&self) -> Result<u64, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::RateTxMax(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "RateTxMax",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rate_node_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::RateNodeName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "RateNodeName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rate_parent_node_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::RateParentNodeName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "RateParentNodeName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rate_tx_priority(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::RateTxPriority(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "RateTxPriority",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_rate_tx_weight(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::RateTxWeight(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "RateTxWeight",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn get_rate_tc_bws(
+        &self,
+    ) -> MultiAttrIterable<Self, DlRateSet<'a>, IterableDlRateTcBws<'a>> {
+        MultiAttrIterable::new(self.clone(), |variant| {
+            if let DlRateSet::RateTcBws(val) = variant {
+                Some(val)
+            } else {
+                None
+            }
+        })
+    }
+    #[doc = "Unique devlink instance index.\n"]
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::Index(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "Index",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Identifies the devlink instance which owns the parent rate node. Used\nwith rate-set and rate-new to parent a rate object to a node on a\ndifferent devlink instance, enabling cross-device rate scheduling. When\nabsent, the parent node is resolved on the same instance.\n"]
+    pub fn get_parent_dev(&self) -> Result<IterableDlParentDev<'a>, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlRateSet::ParentDev(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlRateSet",
+            "ParentDev",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl DlRateSet<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableDlRateSet<'a> {
+        IterableDlRateSet::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        Devlink::attr_from_type(r#type)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableDlRateSet<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableDlRateSet<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableDlRateSet<'a> {
+    type Item = Result<DlRateSet<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => DlRateSet::BusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => DlRateSet::DevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                3u16 => DlRateSet::PortIndex({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                166u16 => DlRateSet::RateTxShare({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                167u16 => DlRateSet::RateTxMax({
+                    let res = parse_u64(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                168u16 => DlRateSet::RateNodeName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                169u16 => DlRateSet::RateParentNodeName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                177u16 => DlRateSet::RateTxPriority({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                178u16 => DlRateSet::RateTxWeight({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                180u16 => DlRateSet::RateTcBws({
+                    let res = Some(IterableDlRateTcBws::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                184u16 => DlRateSet::Index({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                186u16 => DlRateSet::ParentDev({
+                    let res = Some(IterableDlParentDev::with_loc(next, self.orig_loc));
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "DlRateSet",
+            r#type.and_then(|t| DlRateSet::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableDlRateSet<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("DlRateSet");
+        let mut iter = IterableDlRateSet::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                DlRateSet::BusName(val) => fmt.field("BusName", &val),
+                DlRateSet::DevName(val) => fmt.field("DevName", &val),
+                DlRateSet::PortIndex(val) => fmt.field("PortIndex", &val),
+                DlRateSet::RateTxShare(val) => fmt.field("RateTxShare", &val),
+                DlRateSet::RateTxMax(val) => fmt.field("RateTxMax", &val),
+                DlRateSet::RateNodeName(val) => fmt.field("RateNodeName", &val),
+                DlRateSet::RateParentNodeName(val) => fmt.field("RateParentNodeName", &val),
+                DlRateSet::RateTxPriority(val) => fmt.field("RateTxPriority", &val),
+                DlRateSet::RateTxWeight(val) => fmt.field("RateTxWeight", &val),
+                DlRateSet::RateTcBws(val) => fmt.field("RateTcBws", &val),
+                DlRateSet::Index(val) => fmt.field("Index", &val),
+                DlRateSet::ParentDev(val) => fmt.field("ParentDev", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableDlRateSet<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("DlRateSet", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| DlRateSet::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        let mut missing = None;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                DlRateSet::BusName(val) => {
+                    if last_off == offset {
+                        stack.push(("BusName", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::DevName(val) => {
+                    if last_off == offset {
+                        stack.push(("DevName", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::PortIndex(val) => {
+                    if last_off == offset {
+                        stack.push(("PortIndex", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateTxShare(val) => {
+                    if last_off == offset {
+                        stack.push(("RateTxShare", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateTxMax(val) => {
+                    if last_off == offset {
+                        stack.push(("RateTxMax", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateNodeName(val) => {
+                    if last_off == offset {
+                        stack.push(("RateNodeName", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateParentNodeName(val) => {
+                    if last_off == offset {
+                        stack.push(("RateParentNodeName", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateTxPriority(val) => {
+                    if last_off == offset {
+                        stack.push(("RateTxPriority", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateTxWeight(val) => {
+                    if last_off == offset {
+                        stack.push(("RateTxWeight", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::RateTcBws(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                DlRateSet::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                DlRateSet::ParentDev(val) => {
+                    (stack, missing) = val.lookup_attr(offset, missing_type);
+                    if !stack.is_empty() {
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("DlRateSet", cur));
+        }
+        (stack, missing)
+    }
+}
+#[derive(Clone)]
+pub enum DlNestedDevlink<'a> {
+    BusName(&'a CStr),
+    DevName(&'a CStr),
+    NetnsId(u32),
+    #[doc = "Unique devlink instance index.\n"]
+    Index(u32),
+}
+impl<'a> IterableDlNestedDevlink<'a> {
+    pub fn get_bus_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlNestedDevlink::BusName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlNestedDevlink",
+            "BusName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_dev_name(&self) -> Result<&'a CStr, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlNestedDevlink::DevName(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlNestedDevlink",
+            "DevName",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    pub fn get_netns_id(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlNestedDevlink::NetnsId(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlNestedDevlink",
+            "NetnsId",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+    #[doc = "Unique devlink instance index.\n"]
+    pub fn get_index(&self) -> Result<u32, ErrorContext> {
+        let mut iter = self.clone();
+        iter.pos = 0;
+        for attr in iter {
+            if let Ok(DlNestedDevlink::Index(val)) = attr {
+                return Ok(val);
+            }
+        }
+        Err(ErrorContext::new_missing(
+            "DlNestedDevlink",
+            "Index",
+            self.orig_loc,
+            self.buf.as_ptr() as usize,
+        ))
+    }
+}
+impl DlNestedDevlink<'_> {
+    pub fn new<'a>(buf: &'a [u8]) -> IterableDlNestedDevlink<'a> {
+        IterableDlNestedDevlink::with_loc(buf, buf.as_ptr() as usize)
+    }
+    fn attr_from_type(r#type: u16) -> Option<&'static str> {
+        Devlink::attr_from_type(r#type)
+    }
+}
+#[derive(Clone, Copy, Default)]
+pub struct IterableDlNestedDevlink<'a> {
+    buf: &'a [u8],
+    pos: usize,
+    orig_loc: usize,
+}
+impl<'a> IterableDlNestedDevlink<'a> {
+    fn with_loc(buf: &'a [u8], orig_loc: usize) -> Self {
+        Self {
+            buf,
+            pos: 0,
+            orig_loc,
+        }
+    }
+    pub fn get_buf(&self) -> &'a [u8] {
+        self.buf
+    }
+}
+impl<'a> Iterator for IterableDlNestedDevlink<'a> {
+    type Item = Result<DlNestedDevlink<'a>, ErrorContext>;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut pos;
+        let mut r#type;
+        loop {
+            pos = self.pos;
+            r#type = None;
+            if self.buf.len() == self.pos {
+                return None;
+            }
+            let Some((header, next)) = chop_header(self.buf, &mut self.pos) else {
+                self.pos = self.buf.len();
+                break;
+            };
+            r#type = Some(header.r#type);
+            let res = match header.r#type {
+                1u16 => DlNestedDevlink::BusName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                2u16 => DlNestedDevlink::DevName({
+                    let res = CStr::from_bytes_with_nul(next).ok();
+                    let Some(val) = res else { break };
+                    val
+                }),
+                140u16 => DlNestedDevlink::NetnsId({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                184u16 => DlNestedDevlink::Index({
+                    let res = parse_u32(next);
+                    let Some(val) = res else { break };
+                    val
+                }),
+                n if cfg!(any(test, feature = "deny-unknown-attrs")) => break,
+                n => continue,
+            };
+            return Some(Ok(res));
+        }
+        Some(Err(ErrorContext::new(
+            "DlNestedDevlink",
+            r#type.and_then(|t| DlNestedDevlink::attr_from_type(t)),
+            self.orig_loc,
+            self.buf.as_ptr().wrapping_add(pos) as usize,
+        )))
+    }
+}
+impl<'a> std::fmt::Debug for IterableDlNestedDevlink<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut fmt = f.debug_struct("DlNestedDevlink");
+        let mut iter = IterableDlNestedDevlink::with_loc(&[], self.orig_loc);
+        for attr in IterateAttrs::new(self.get_buf()) {
+            iter.buf = attr;
+            iter.pos = 0;
+            let Some(attr) = iter.next() else {
+                fmt.field("Err", &FormatUnrecognized(attr));
+                continue;
+            };
+            let attr = match attr {
+                Ok(a) => a,
+                Err(err) => {
+                    fmt.finish()?;
+                    f.write_str("Err(")?;
+                    err.fmt(f)?;
+                    return f.write_str(")");
+                }
+            };
+            match attr {
+                DlNestedDevlink::BusName(val) => fmt.field("BusName", &val),
+                DlNestedDevlink::DevName(val) => fmt.field("DevName", &val),
+                DlNestedDevlink::NetnsId(val) => fmt.field("NetnsId", &val),
+                DlNestedDevlink::Index(val) => fmt.field("Index", &val),
+            };
+        }
+        fmt.finish()
+    }
+}
+impl IterableDlNestedDevlink<'_> {
+    pub fn lookup_attr(
+        &self,
+        offset: usize,
+        missing_type: Option<u16>,
+    ) -> (Vec<(&'static str, usize)>, Option<&'static str>) {
+        let mut stack = Vec::new();
+        let cur = ErrorContext::calc_offset(self.orig_loc, self.buf.as_ptr() as usize);
+        if missing_type.is_some() && cur == offset {
+            stack.push(("DlNestedDevlink", offset));
+            return (
+                stack,
+                missing_type.and_then(|t| DlNestedDevlink::attr_from_type(t)),
+            );
+        }
+        if cur > offset || cur + self.buf.len() < offset {
+            return (stack, None);
+        }
+        let mut attrs = self.clone();
+        let mut last_off = cur + attrs.pos;
+        while let Some(attr) = attrs.next() {
+            let Ok(attr) = attr else { break };
+            match attr {
+                DlNestedDevlink::BusName(val) => {
+                    if last_off == offset {
+                        stack.push(("BusName", last_off));
+                        break;
+                    }
+                }
+                DlNestedDevlink::DevName(val) => {
+                    if last_off == offset {
+                        stack.push(("DevName", last_off));
+                        break;
+                    }
+                }
+                DlNestedDevlink::NetnsId(val) => {
+                    if last_off == offset {
+                        stack.push(("NetnsId", last_off));
+                        break;
+                    }
+                }
+                DlNestedDevlink::Index(val) => {
+                    if last_off == offset {
+                        stack.push(("Index", last_off));
+                        break;
+                    }
+                }
+                _ => {}
+            };
+            last_off = cur + attrs.pos;
+        }
+        if !stack.is_empty() {
+            stack.push(("DlNestedDevlink", cur));
         }
         (stack, None)
     }
@@ -14511,7 +16018,7 @@ impl<Prev: Pusher> PushDevlink<Prev> {
         self.as_vec_mut().extend(value.as_slice());
         self
     }
-    #[doc = "Associated type: [`ReloadAction`] (1 bit per enumeration)"]
+    #[doc = "Associated type: [`ReloadLimit`] (1 bit per enumeration)"]
     pub fn push_reload_limits(mut self, value: BuiltinBitfield32) -> Self {
         push_header(self.as_vec_mut(), 155u16, value.as_slice().len() as u16);
         self.as_vec_mut().extend(value.as_slice());
@@ -14539,6 +16046,7 @@ impl<Prev: Pusher> PushDevlink<Prev> {
             header_offset: Some(header_offset),
         }
     }
+    #[doc = "Associated type: [`ReloadLimit`] (enum)"]
     pub fn push_reload_stats_limit(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 159u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
@@ -14660,6 +16168,14 @@ impl<Prev: Pusher> PushDevlink<Prev> {
             header_offset: Some(header_offset),
         }
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn nested_nested_devlink(mut self) -> PushDlNestedDevlink<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 175u16);
+        PushDlNestedDevlink {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
     pub fn nested_selftests(mut self) -> PushDlSelftestId<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 176u16);
         PushDlSelftestId {
@@ -14706,16 +16222,16 @@ impl<Prev: Pusher> PushDevlink<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "Bitmask selecting which resource classes to include in a resource-dump\nresponse. Bit 0 (dev) selects device-level resources; bit 1 (port)\nselects port-level resources. When absent all classes are returned.\n\nAssociated type: [`ResourceScope`] (1 bit per enumeration)"]
+    #[doc = "Bitmask selecting which resource classes to include in a resource-dump\nresponse. Bit 0 (dev) selects device-level resources; bit 1 (port)\nselects port-level resources. When absent all classes are returned.\n\nAssociated type: [`ResourceScope`] (enum)"]
     pub fn push_resource_scope_mask(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 185u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
     #[doc = "Identifies the devlink instance which owns the parent rate node. Used\nwith rate-set and rate-new to parent a rate object to a node on a\ndifferent devlink instance, enabling cross-device rate scheduling. When\nabsent, the parent node is resolved on the same instance.\n"]
-    pub fn nested_parent_dev(mut self) -> PushDlParentDev<Self> {
+    pub fn nested_parent_dev(mut self) -> PushDlNestedDevlink<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 186u16);
-        PushDlParentDev {
+        PushDlNestedDevlink {
             prev: Some(self),
             header_offset: Some(header_offset),
         }
@@ -14944,6 +16460,7 @@ impl<Prev: Pusher> PushDlReloadStatsEntry<Prev> {
         }
         prev
     }
+    #[doc = "Associated type: [`ReloadLimit`] (enum)"]
     pub fn push_reload_stats_limit(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 159u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
@@ -15079,8 +16596,169 @@ impl<Prev: Pusher> PushDlPortFunction<Prev> {
         self.as_vec_mut().extend(value.as_slice());
         self
     }
+    #[doc = "Handle of the peer devlink instance instantiated for this function.\n"]
+    pub fn nested_devlink(mut self) -> PushDlNestedDevlink<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 5u16);
+        PushDlNestedDevlink {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    pub fn push_max_io_eqs(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
 }
 impl<Prev: Pusher> Drop for PushDlPortFunction<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushDlPortFunctionSet<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushDlPortFunctionSet<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushDlPortFunctionSet<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_hw_addr(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 1u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
+    #[doc = "Associated type: [`PortFnState`] (enum)"]
+    pub fn push_state(mut self, value: u8) -> Self {
+        push_header(self.as_vec_mut(), 2u16, 1 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: [`PortFnAttrCap`] (1 bit per enumeration)"]
+    pub fn push_caps(mut self, value: BuiltinBitfield32) -> Self {
+        push_header(self.as_vec_mut(), 4u16, value.as_slice().len() as u16);
+        self.as_vec_mut().extend(value.as_slice());
+        self
+    }
+    pub fn push_max_io_eqs(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 6u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushDlPortFunctionSet<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushDlPortSet<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushDlPortSet<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushDlPortSet<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_bus_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            2u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_dev_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 2u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_port_index(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Associated type: [`PortType`] (enum)"]
+    pub fn push_port_type(mut self, value: u16) -> Self {
+        push_header(self.as_vec_mut(), 4u16, 2 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn nested_port_function(mut self) -> PushDlPortFunctionSet<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 145u16);
+        PushDlPortFunctionSet {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Unique devlink instance index.\n"]
+    pub fn push_index(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 184u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushDlPortSet<Prev> {
     fn drop(&mut self) {
         if let Some(prev) = &mut self.prev {
             if let Some(header_offset) = &self.header_offset {
@@ -15196,6 +16874,11 @@ impl<Prev: Pusher> PushDlDpipeTable<Prev> {
     pub fn push_dpipe_table_counters_enabled(mut self, value: u8) -> Self {
         push_header(self.as_vec_mut(), 33u16, 1 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 61u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
         self
     }
     pub fn push_dpipe_table_resource_id(mut self, value: u64) -> Self {
@@ -15398,6 +17081,11 @@ impl<Prev: Pusher> PushDlDpipeEntry<Prev> {
     pub fn push_dpipe_entry_counter(mut self, value: u64) -> Self {
         push_header(self.as_vec_mut(), 39u16, 8 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 61u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
         self
     }
 }
@@ -15992,6 +17680,11 @@ impl<Prev: Pusher> PushDlResource<Prev> {
         }
         prev
     }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 61u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
     pub fn push_resource_name(mut self, value: &CStr) -> Self {
         push_header(
             self.as_vec_mut(),
@@ -16194,6 +17887,7 @@ impl<Prev: Pusher> PushDlRegionSnapshots<Prev> {
         }
         prev
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn nested_region_snapshot(mut self) -> PushDlRegionSnapshot<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 91u16);
         PushDlRegionSnapshot {
@@ -16278,6 +17972,7 @@ impl<Prev: Pusher> PushDlRegionChunks<Prev> {
         }
         prev
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn nested_region_chunk(mut self) -> PushDlRegionChunk<Self> {
         let header_offset = push_nested_header(self.as_vec_mut(), 94u16);
         PushDlRegionChunk {
@@ -16320,6 +18015,11 @@ impl<Prev: Pusher> PushDlRegionChunk<Prev> {
             finalize_nested_header(prev.as_vec_mut(), *header_offset);
         }
         prev
+    }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 61u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
     }
     pub fn push_region_chunk_data(mut self, value: &[u8]) -> Self {
         push_header(self.as_vec_mut(), 95u16, value.len() as u16);
@@ -16434,6 +18134,11 @@ impl<Prev: Pusher> PushDlHealthReporter<Prev> {
         }
         prev
     }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 61u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
     pub fn push_health_reporter_name(mut self, value: &CStr) -> Self {
         push_header(
             self.as_vec_mut(),
@@ -16546,6 +18251,11 @@ impl<Prev: Pusher> PushDlAttrStats<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
+    pub fn push_pad(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 61u16, value.len() as u16);
+        self.as_vec_mut().extend(value);
+        self
+    }
 }
 impl<Prev: Pusher> Drop for PushDlAttrStats<Prev> {
     fn drop(&mut self) {
@@ -16626,6 +18336,7 @@ impl<Prev: Pusher> PushDlLinecardSupportedTypes<Prev> {
         }
         prev
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn push_linecard_type(mut self, value: &CStr) -> Self {
         push_header(
             self.as_vec_mut(),
@@ -16635,6 +18346,7 @@ impl<Prev: Pusher> PushDlLinecardSupportedTypes<Prev> {
         self.as_vec_mut().extend(value.to_bytes_with_nul());
         self
     }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
     pub fn push_linecard_type_bytes(mut self, value: &[u8]) -> Self {
         push_header(self.as_vec_mut(), 173u16, (value.len() + 1) as u16);
         self.as_vec_mut().extend(value);
@@ -16810,7 +18522,227 @@ impl<Prev: Pusher> Drop for PushDlParentDev<Prev> {
         }
     }
 }
-#[doc = "Get devlink instances.\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+pub struct PushDlRateSet<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushDlRateSet<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushDlRateSet<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_bus_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            2u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_dev_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 2u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_port_index(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 3u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rate_tx_share(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 166u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rate_tx_max(mut self, value: u64) -> Self {
+        push_header(self.as_vec_mut(), 167u16, 8 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rate_node_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            168u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_rate_node_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 168u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_rate_parent_node_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            169u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_rate_parent_node_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 169u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_rate_tx_priority(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 177u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    pub fn push_rate_tx_weight(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 178u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Attribute may repeat multiple times (treat it as array)"]
+    pub fn nested_rate_tc_bws(mut self) -> PushDlRateTcBws<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 180u16);
+        PushDlRateTcBws {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+    #[doc = "Unique devlink instance index.\n"]
+    pub fn push_index(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 184u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Identifies the devlink instance which owns the parent rate node. Used\nwith rate-set and rate-new to parent a rate object to a node on a\ndifferent devlink instance, enabling cross-device rate scheduling. When\nabsent, the parent node is resolved on the same instance.\n"]
+    pub fn nested_parent_dev(mut self) -> PushDlParentDev<Self> {
+        let header_offset = push_nested_header(self.as_vec_mut(), 186u16);
+        PushDlParentDev {
+            prev: Some(self),
+            header_offset: Some(header_offset),
+        }
+    }
+}
+impl<Prev: Pusher> Drop for PushDlRateSet<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+pub struct PushDlNestedDevlink<Prev: Pusher> {
+    pub(crate) prev: Option<Prev>,
+    pub(crate) header_offset: Option<usize>,
+}
+impl<Prev: Pusher> Pusher for PushDlNestedDevlink<Prev> {
+    fn as_vec_mut(&mut self) -> &mut Vec<u8> {
+        self.prev.as_mut().unwrap().as_vec_mut()
+    }
+    fn as_vec(&self) -> &Vec<u8> {
+        self.prev.as_ref().unwrap().as_vec()
+    }
+}
+impl<Prev: Pusher> PushDlNestedDevlink<Prev> {
+    pub fn new(prev: Prev) -> Self {
+        Self {
+            prev: Some(prev),
+            header_offset: None,
+        }
+    }
+    pub fn end_nested(mut self) -> Prev {
+        let mut prev = self.prev.take().unwrap();
+        if let Some(header_offset) = &self.header_offset {
+            finalize_nested_header(prev.as_vec_mut(), *header_offset);
+        }
+        prev
+    }
+    pub fn push_bus_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            1u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_bus_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 1u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_dev_name(mut self, value: &CStr) -> Self {
+        push_header(
+            self.as_vec_mut(),
+            2u16,
+            value.to_bytes_with_nul().len() as u16,
+        );
+        self.as_vec_mut().extend(value.to_bytes_with_nul());
+        self
+    }
+    pub fn push_dev_name_bytes(mut self, value: &[u8]) -> Self {
+        push_header(self.as_vec_mut(), 2u16, (value.len() + 1) as u16);
+        self.as_vec_mut().extend(value);
+        self.as_vec_mut().push(0);
+        self
+    }
+    pub fn push_netns_id(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 140u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+    #[doc = "Unique devlink instance index.\n"]
+    pub fn push_index(mut self, value: u32) -> Self {
+        push_header(self.as_vec_mut(), 184u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
+        self
+    }
+}
+impl<Prev: Pusher> Drop for PushDlNestedDevlink<Prev> {
+    fn drop(&mut self) {
+        if let Some(prev) = &mut self.prev {
+            if let Some(header_offset) = &self.header_offset {
+                finalize_nested_header(prev.as_vec_mut(), *header_offset);
+            }
+        }
+    }
+}
+#[doc = "Get devlink instances.\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpGetDump<'r> {
     request: Request<'r>,
@@ -16873,7 +18805,7 @@ impl NetlinkRequest for OpGetDump<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get devlink instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+#[doc = "Get devlink instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpGetDo<'r> {
     request: Request<'r>,
@@ -17058,7 +18990,7 @@ impl NetlinkRequest for OpPortGetDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Set devlink port instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_port_type()](PushDevlink::push_port_type)\n- [.nested_port_function()](PushDevlink::nested_port_function)\n- [.push_index()](PushDevlink::push_index)\n\n"]
+#[doc = "Set devlink port instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDlPortSet::push_bus_name)\n- [.push_dev_name()](PushDlPortSet::push_dev_name)\n- [.push_port_index()](PushDlPortSet::push_port_index)\n- [.push_port_type()](PushDlPortSet::push_port_type)\n- [.nested_port_function()](PushDlPortSet::nested_port_function)\n- [.push_index()](PushDlPortSet::push_index)\n\n"]
 #[derive(Debug)]
 pub struct OpPortSetDo<'r> {
     request: Request<'r>,
@@ -17068,19 +19000,19 @@ impl<'r> OpPortSetDo<'r> {
         Self::write_header(request.buf_mut());
         Self { request: request }
     }
-    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushDevlink<&'buf mut Vec<u8>> {
+    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushDlPortSet<&'buf mut Vec<u8>> {
         Self::write_header(buf);
-        PushDevlink::new(buf)
+        PushDlPortSet::new(buf)
     }
-    pub fn encode(&mut self) -> PushDevlink<&mut Vec<u8>> {
-        PushDevlink::new(self.request.buf_mut())
+    pub fn encode(&mut self) -> PushDlPortSet<&mut Vec<u8>> {
+        PushDlPortSet::new(self.request.buf_mut())
     }
-    pub fn into_encoder(self) -> PushDevlink<RequestBuf<'r>> {
-        PushDevlink::new(self.request.buf)
+    pub fn into_encoder(self) -> PushDlPortSet<RequestBuf<'r>> {
+        PushDlPortSet::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableDevlink<'a> {
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableDlPortSet<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
-        IterableDevlink::with_loc(attrs, buf.as_ptr() as usize)
+        IterableDlPortSet::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev) {
         let mut header = BuiltinNfgenmsg::new();
@@ -17107,7 +19039,7 @@ impl NetlinkRequest for OpPortSetDo<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = IterableDevlink<'buf>;
+    type ReplyType<'buf> = IterableDlPortSet<'buf>;
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -18961,7 +20893,7 @@ impl NetlinkRequest for OpParamSetDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+#[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_region_size()](IterableDevlink::get_region_size)\n- [.get_region_snapshots()](IterableDevlink::get_region_snapshots)\n- [.get_region_max_snapshots()](IterableDevlink::get_region_max_snapshots)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpRegionGetDump<'r> {
     request: Request<'r>,
@@ -19024,7 +20956,7 @@ impl NetlinkRequest for OpRegionGetDump<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+#[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_region_size()](IterableDevlink::get_region_size)\n- [.get_region_snapshots()](IterableDevlink::get_region_snapshots)\n- [.get_region_max_snapshots()](IterableDevlink::get_region_max_snapshots)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpRegionGetDo<'r> {
     request: Request<'r>,
@@ -19207,7 +21139,7 @@ impl NetlinkRequest for OpRegionDelDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Read region data.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_region_snapshot_id()](PushDevlink::push_region_snapshot_id)\n- [.push_region_chunk_addr()](PushDevlink::push_region_chunk_addr)\n- [.push_region_chunk_len()](PushDevlink::push_region_chunk_len)\n- [.push_region_direct()](PushDevlink::push_region_direct)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+#[doc = "Read region data.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_region_snapshot_id()](PushDevlink::push_region_snapshot_id)\n- [.push_region_chunk_addr()](PushDevlink::push_region_chunk_addr)\n- [.push_region_chunk_len()](PushDevlink::push_region_chunk_len)\n- [.push_region_direct()](PushDevlink::push_region_direct)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_region_chunks()](IterableDevlink::get_region_chunks)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpRegionReadDump<'r> {
     request: Request<'r>,
@@ -20811,7 +22743,7 @@ impl NetlinkRequest for OpRateGetDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Set rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_rate_tx_share()](PushDevlink::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDevlink::push_rate_tx_max)\n- [.push_rate_node_name()](PushDevlink::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDevlink::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDevlink::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDevlink::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDevlink::nested_rate_tc_bws)\n- [.push_index()](PushDevlink::push_index)\n- [.nested_parent_dev()](PushDevlink::nested_parent_dev)\n\n"]
+#[doc = "Set rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDlRateSet::push_bus_name)\n- [.push_dev_name()](PushDlRateSet::push_dev_name)\n- [.push_port_index()](PushDlRateSet::push_port_index)\n- [.push_rate_tx_share()](PushDlRateSet::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDlRateSet::push_rate_tx_max)\n- [.push_rate_node_name()](PushDlRateSet::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDlRateSet::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDlRateSet::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDlRateSet::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDlRateSet::nested_rate_tc_bws)\n- [.push_index()](PushDlRateSet::push_index)\n- [.nested_parent_dev()](PushDlRateSet::nested_parent_dev)\n\n"]
 #[derive(Debug)]
 pub struct OpRateSetDo<'r> {
     request: Request<'r>,
@@ -20821,19 +22753,19 @@ impl<'r> OpRateSetDo<'r> {
         Self::write_header(request.buf_mut());
         Self { request: request }
     }
-    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushDevlink<&'buf mut Vec<u8>> {
+    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushDlRateSet<&'buf mut Vec<u8>> {
         Self::write_header(buf);
-        PushDevlink::new(buf)
+        PushDlRateSet::new(buf)
     }
-    pub fn encode(&mut self) -> PushDevlink<&mut Vec<u8>> {
-        PushDevlink::new(self.request.buf_mut())
+    pub fn encode(&mut self) -> PushDlRateSet<&mut Vec<u8>> {
+        PushDlRateSet::new(self.request.buf_mut())
     }
-    pub fn into_encoder(self) -> PushDevlink<RequestBuf<'r>> {
-        PushDevlink::new(self.request.buf)
+    pub fn into_encoder(self) -> PushDlRateSet<RequestBuf<'r>> {
+        PushDlRateSet::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableDevlink<'a> {
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableDlRateSet<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
-        IterableDevlink::with_loc(attrs, buf.as_ptr() as usize)
+        IterableDlRateSet::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev) {
         let mut header = BuiltinNfgenmsg::new();
@@ -20860,7 +22792,7 @@ impl NetlinkRequest for OpRateSetDo<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = IterableDevlink<'buf>;
+    type ReplyType<'buf> = IterableDlRateSet<'buf>;
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -20872,7 +22804,7 @@ impl NetlinkRequest for OpRateSetDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Create rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_rate_tx_share()](PushDevlink::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDevlink::push_rate_tx_max)\n- [.push_rate_node_name()](PushDevlink::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDevlink::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDevlink::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDevlink::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDevlink::nested_rate_tc_bws)\n- [.push_index()](PushDevlink::push_index)\n- [.nested_parent_dev()](PushDevlink::nested_parent_dev)\n\n"]
+#[doc = "Create rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDlRateSet::push_bus_name)\n- [.push_dev_name()](PushDlRateSet::push_dev_name)\n- [.push_rate_tx_share()](PushDlRateSet::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDlRateSet::push_rate_tx_max)\n- [.push_rate_node_name()](PushDlRateSet::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDlRateSet::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDlRateSet::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDlRateSet::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDlRateSet::nested_rate_tc_bws)\n- [.push_index()](PushDlRateSet::push_index)\n- [.nested_parent_dev()](PushDlRateSet::nested_parent_dev)\n\n"]
 #[derive(Debug)]
 pub struct OpRateNewDo<'r> {
     request: Request<'r>,
@@ -20882,19 +22814,19 @@ impl<'r> OpRateNewDo<'r> {
         Self::write_header(request.buf_mut());
         Self { request: request }
     }
-    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushDevlink<&'buf mut Vec<u8>> {
+    pub fn encode_request<'buf>(buf: &'buf mut Vec<u8>) -> PushDlRateSet<&'buf mut Vec<u8>> {
         Self::write_header(buf);
-        PushDevlink::new(buf)
+        PushDlRateSet::new(buf)
     }
-    pub fn encode(&mut self) -> PushDevlink<&mut Vec<u8>> {
-        PushDevlink::new(self.request.buf_mut())
+    pub fn encode(&mut self) -> PushDlRateSet<&mut Vec<u8>> {
+        PushDlRateSet::new(self.request.buf_mut())
     }
-    pub fn into_encoder(self) -> PushDevlink<RequestBuf<'r>> {
-        PushDevlink::new(self.request.buf)
+    pub fn into_encoder(self) -> PushDlRateSet<RequestBuf<'r>> {
+        PushDlRateSet::new(self.request.buf)
     }
-    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableDevlink<'a> {
+    pub fn decode_request<'a>(buf: &'a [u8]) -> IterableDlRateSet<'a> {
         let (_header, attrs) = buf.split_at(buf.len().min(BuiltinNfgenmsg::len()));
-        IterableDevlink::with_loc(attrs, buf.as_ptr() as usize)
+        IterableDlRateSet::with_loc(attrs, buf.as_ptr() as usize)
     }
     fn write_header<Prev: Pusher>(prev: &mut Prev) {
         let mut header = BuiltinNfgenmsg::new();
@@ -20921,7 +22853,7 @@ impl NetlinkRequest for OpRateNewDo<'_> {
     fn payload(&self) -> &[u8] {
         self.request.buf()
     }
-    type ReplyType<'buf> = IterableDevlink<'buf>;
+    type ReplyType<'buf> = IterableDlRateSet<'buf>;
     fn decode_reply<'buf>(buf: &'buf [u8]) -> Self::ReplyType<'buf> {
         Self::decode_request(buf)
     }
@@ -20994,7 +22926,7 @@ impl NetlinkRequest for OpRateDelDo<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+#[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_linecard_state()](IterableDevlink::get_linecard_state)\n- [.get_linecard_type()](IterableDevlink::get_linecard_type)\n- [.get_linecard_supported_types()](IterableDevlink::get_linecard_supported_types)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpLinecardGetDump<'r> {
     request: Request<'r>,
@@ -21057,7 +22989,7 @@ impl NetlinkRequest for OpLinecardGetDump<'_> {
         Self::decode_request(buf).lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_linecard_index()](PushDevlink::push_linecard_index)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+#[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_linecard_index()](PushDevlink::push_linecard_index)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_linecard_state()](IterableDevlink::get_linecard_state)\n- [.get_linecard_type()](IterableDevlink::get_linecard_type)\n- [.get_linecard_supported_types()](IterableDevlink::get_linecard_supported_types)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
 #[derive(Debug)]
 pub struct OpLinecardGetDo<'r> {
     request: Request<'r>,
@@ -21533,14 +23465,14 @@ impl<'buf> Request<'buf> {
         self.flags |= consts::NLM_F_DUMP as u16;
         self
     }
-    #[doc = "Get devlink instances.\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Get devlink instances.\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_get_dump(self) -> OpGetDump<'buf> {
         let mut res = OpGetDump::new(self);
         res.request
             .do_writeback(res.protocol(), "op-get-dump", OpGetDump::lookup);
         res
     }
-    #[doc = "Get devlink instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Get devlink instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_reload_failed()](IterableDevlink::get_reload_failed)\n- [.get_dev_stats()](IterableDevlink::get_dev_stats)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_get_do(self) -> OpGetDo<'buf> {
         let mut res = OpGetDo::new(self);
         res.request
@@ -21561,7 +23493,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-port-get-do", OpPortGetDo::lookup);
         res
     }
-    #[doc = "Set devlink port instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_port_type()](PushDevlink::push_port_type)\n- [.nested_port_function()](PushDevlink::nested_port_function)\n- [.push_index()](PushDevlink::push_index)\n\n"]
+    #[doc = "Set devlink port instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDlPortSet::push_bus_name)\n- [.push_dev_name()](PushDlPortSet::push_dev_name)\n- [.push_port_index()](PushDlPortSet::push_port_index)\n- [.push_port_type()](PushDlPortSet::push_port_type)\n- [.nested_port_function()](PushDlPortSet::nested_port_function)\n- [.push_index()](PushDlPortSet::push_index)\n\n"]
     pub fn op_port_set_do(self) -> OpPortSetDo<'buf> {
         let mut res = OpPortSetDo::new(self);
         res.request
@@ -21829,7 +23761,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-param-set-do", OpParamSetDo::lookup);
         res
     }
-    #[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_region_size()](IterableDevlink::get_region_size)\n- [.get_region_snapshots()](IterableDevlink::get_region_snapshots)\n- [.get_region_max_snapshots()](IterableDevlink::get_region_max_snapshots)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_region_get_dump(self) -> OpRegionGetDump<'buf> {
         let mut res = OpRegionGetDump::new(self);
         res.request.do_writeback(
@@ -21839,7 +23771,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    #[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Get region instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_region_size()](IterableDevlink::get_region_size)\n- [.get_region_snapshots()](IterableDevlink::get_region_snapshots)\n- [.get_region_max_snapshots()](IterableDevlink::get_region_max_snapshots)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_region_get_do(self) -> OpRegionGetDo<'buf> {
         let mut res = OpRegionGetDo::new(self);
         res.request
@@ -21860,7 +23792,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-region-del-do", OpRegionDelDo::lookup);
         res
     }
-    #[doc = "Read region data.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_region_snapshot_id()](PushDevlink::push_region_snapshot_id)\n- [.push_region_chunk_addr()](PushDevlink::push_region_chunk_addr)\n- [.push_region_chunk_len()](PushDevlink::push_region_chunk_len)\n- [.push_region_direct()](PushDevlink::push_region_direct)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Read region data.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_port_index()](PushDevlink::push_port_index)\n- [.push_region_name()](PushDevlink::push_region_name)\n- [.push_region_snapshot_id()](PushDevlink::push_region_snapshot_id)\n- [.push_region_chunk_addr()](PushDevlink::push_region_chunk_addr)\n- [.push_region_chunk_len()](PushDevlink::push_region_chunk_len)\n- [.push_region_direct()](PushDevlink::push_region_direct)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_port_index()](IterableDevlink::get_port_index)\n- [.get_region_name()](IterableDevlink::get_region_name)\n- [.get_region_chunks()](IterableDevlink::get_region_chunks)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_region_read_dump(self) -> OpRegionReadDump<'buf> {
         let mut res = OpRegionReadDump::new(self);
         res.request.do_writeback(
@@ -22099,14 +24031,14 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-rate-get-do", OpRateGetDo::lookup);
         res
     }
-    #[doc = "Set rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_rate_tx_share()](PushDevlink::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDevlink::push_rate_tx_max)\n- [.push_rate_node_name()](PushDevlink::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDevlink::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDevlink::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDevlink::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDevlink::nested_rate_tc_bws)\n- [.push_index()](PushDevlink::push_index)\n- [.nested_parent_dev()](PushDevlink::nested_parent_dev)\n\n"]
+    #[doc = "Set rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDlRateSet::push_bus_name)\n- [.push_dev_name()](PushDlRateSet::push_dev_name)\n- [.push_port_index()](PushDlRateSet::push_port_index)\n- [.push_rate_tx_share()](PushDlRateSet::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDlRateSet::push_rate_tx_max)\n- [.push_rate_node_name()](PushDlRateSet::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDlRateSet::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDlRateSet::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDlRateSet::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDlRateSet::nested_rate_tc_bws)\n- [.push_index()](PushDlRateSet::push_index)\n- [.nested_parent_dev()](PushDlRateSet::nested_parent_dev)\n\n"]
     pub fn op_rate_set_do(self) -> OpRateSetDo<'buf> {
         let mut res = OpRateSetDo::new(self);
         res.request
             .do_writeback(res.protocol(), "op-rate-set-do", OpRateSetDo::lookup);
         res
     }
-    #[doc = "Create rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_rate_tx_share()](PushDevlink::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDevlink::push_rate_tx_max)\n- [.push_rate_node_name()](PushDevlink::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDevlink::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDevlink::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDevlink::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDevlink::nested_rate_tc_bws)\n- [.push_index()](PushDevlink::push_index)\n- [.nested_parent_dev()](PushDevlink::nested_parent_dev)\n\n"]
+    #[doc = "Create rate instances.\n\nFlags: admin-perm\n\nRequest attributes:\n- [.push_bus_name()](PushDlRateSet::push_bus_name)\n- [.push_dev_name()](PushDlRateSet::push_dev_name)\n- [.push_rate_tx_share()](PushDlRateSet::push_rate_tx_share)\n- [.push_rate_tx_max()](PushDlRateSet::push_rate_tx_max)\n- [.push_rate_node_name()](PushDlRateSet::push_rate_node_name)\n- [.push_rate_parent_node_name()](PushDlRateSet::push_rate_parent_node_name)\n- [.push_rate_tx_priority()](PushDlRateSet::push_rate_tx_priority)\n- [.push_rate_tx_weight()](PushDlRateSet::push_rate_tx_weight)\n- [.nested_rate_tc_bws()](PushDlRateSet::nested_rate_tc_bws)\n- [.push_index()](PushDlRateSet::push_index)\n- [.nested_parent_dev()](PushDlRateSet::nested_parent_dev)\n\n"]
     pub fn op_rate_new_do(self) -> OpRateNewDo<'buf> {
         let mut res = OpRateNewDo::new(self);
         res.request
@@ -22120,7 +24052,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-rate-del-do", OpRateDelDo::lookup);
         res
     }
-    #[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_linecard_state()](IterableDevlink::get_linecard_state)\n- [.get_linecard_type()](IterableDevlink::get_linecard_type)\n- [.get_linecard_supported_types()](IterableDevlink::get_linecard_supported_types)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_linecard_get_dump(self) -> OpLinecardGetDump<'buf> {
         let mut res = OpLinecardGetDump::new(self);
         res.request.do_writeback(
@@ -22130,7 +24062,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    #[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_linecard_index()](PushDevlink::push_linecard_index)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
+    #[doc = "Get line card instances.\n\nRequest attributes:\n- [.push_bus_name()](PushDevlink::push_bus_name)\n- [.push_dev_name()](PushDevlink::push_dev_name)\n- [.push_linecard_index()](PushDevlink::push_linecard_index)\n- [.push_index()](PushDevlink::push_index)\n\nReply attributes:\n- [.get_bus_name()](IterableDevlink::get_bus_name)\n- [.get_dev_name()](IterableDevlink::get_dev_name)\n- [.get_linecard_index()](IterableDevlink::get_linecard_index)\n- [.get_linecard_state()](IterableDevlink::get_linecard_state)\n- [.get_linecard_type()](IterableDevlink::get_linecard_type)\n- [.get_linecard_supported_types()](IterableDevlink::get_linecard_supported_types)\n- [.get_nested_devlink()](IterableDevlink::get_nested_devlink)\n- [.get_index()](IterableDevlink::get_index)\n\n"]
     pub fn op_linecard_get_do(self) -> OpLinecardGetDo<'buf> {
         let mut res = OpLinecardGetDo::new(self);
         res.request.do_writeback(
@@ -22215,11 +24147,19 @@ mod generated_tests {
         let _ = IterableDevlink::get_info_version_running;
         let _ = IterableDevlink::get_info_version_stored;
         let _ = IterableDevlink::get_linecard_index;
+        let _ = IterableDevlink::get_linecard_state;
+        let _ = IterableDevlink::get_linecard_supported_types;
+        let _ = IterableDevlink::get_linecard_type;
+        let _ = IterableDevlink::get_nested_devlink;
         let _ = IterableDevlink::get_param_name;
         let _ = IterableDevlink::get_port_index;
         let _ = IterableDevlink::get_rate_node_name;
+        let _ = IterableDevlink::get_region_chunks;
+        let _ = IterableDevlink::get_region_max_snapshots;
         let _ = IterableDevlink::get_region_name;
+        let _ = IterableDevlink::get_region_size;
         let _ = IterableDevlink::get_region_snapshot_id;
+        let _ = IterableDevlink::get_region_snapshots;
         let _ = IterableDevlink::get_reload_actions_performed;
         let _ = IterableDevlink::get_reload_failed;
         let _ = IterableDevlink::get_resource_list;
@@ -22230,9 +24170,6 @@ mod generated_tests {
         let _ = IterableDevlink::get_trap_group_name;
         let _ = IterableDevlink::get_trap_name;
         let _ = IterableDevlink::get_trap_policer_id;
-        let _ = PushDevlink::<&mut Vec<u8>>::nested_parent_dev;
-        let _ = PushDevlink::<&mut Vec<u8>>::nested_port_function;
-        let _ = PushDevlink::<&mut Vec<u8>>::nested_rate_tc_bws;
         let _ = PushDevlink::<&mut Vec<u8>>::nested_selftests;
         let _ = PushDevlink::<&mut Vec<u8>>::push_bus_name;
         let _ = PushDevlink::<&mut Vec<u8>>::push_dev_name;
@@ -22265,13 +24202,7 @@ mod generated_tests {
         let _ = PushDevlink::<&mut Vec<u8>>::push_port_pci_pf_number;
         let _ = PushDevlink::<&mut Vec<u8>>::push_port_pci_sf_number;
         let _ = PushDevlink::<&mut Vec<u8>>::push_port_split_count;
-        let _ = PushDevlink::<&mut Vec<u8>>::push_port_type;
         let _ = PushDevlink::<&mut Vec<u8>>::push_rate_node_name;
-        let _ = PushDevlink::<&mut Vec<u8>>::push_rate_parent_node_name;
-        let _ = PushDevlink::<&mut Vec<u8>>::push_rate_tx_max;
-        let _ = PushDevlink::<&mut Vec<u8>>::push_rate_tx_priority;
-        let _ = PushDevlink::<&mut Vec<u8>>::push_rate_tx_share;
-        let _ = PushDevlink::<&mut Vec<u8>>::push_rate_tx_weight;
         let _ = PushDevlink::<&mut Vec<u8>>::push_region_chunk_addr;
         let _ = PushDevlink::<&mut Vec<u8>>::push_region_chunk_len;
         let _ = PushDevlink::<&mut Vec<u8>>::push_region_direct;
@@ -22295,5 +24226,23 @@ mod generated_tests {
         let _ = PushDevlink::<&mut Vec<u8>>::push_trap_policer_burst;
         let _ = PushDevlink::<&mut Vec<u8>>::push_trap_policer_id;
         let _ = PushDevlink::<&mut Vec<u8>>::push_trap_policer_rate;
+        let _ = PushDlPortSet::<&mut Vec<u8>>::nested_port_function;
+        let _ = PushDlPortSet::<&mut Vec<u8>>::push_bus_name;
+        let _ = PushDlPortSet::<&mut Vec<u8>>::push_dev_name;
+        let _ = PushDlPortSet::<&mut Vec<u8>>::push_index;
+        let _ = PushDlPortSet::<&mut Vec<u8>>::push_port_index;
+        let _ = PushDlPortSet::<&mut Vec<u8>>::push_port_type;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::nested_parent_dev;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::nested_rate_tc_bws;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_bus_name;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_dev_name;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_index;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_port_index;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_rate_node_name;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_rate_parent_node_name;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_rate_tx_max;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_rate_tx_priority;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_rate_tx_share;
+        let _ = PushDlRateSet::<&mut Vec<u8>>::push_rate_tx_weight;
     }
 }

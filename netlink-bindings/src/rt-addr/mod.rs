@@ -10,14 +10,14 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "rt-addr";
 pub const PROTONAME_CSTR: &CStr = c"rt-addr";
 pub const PROTONUM: u16 = 0u16;
 #[doc = "Flags - defines an integer enumeration, with values for each entry occupying a bit, starting from bit 0, (e.g. 1, 2, 4, 8)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum IfaFlags {
     Secondary = 1 << 0,
     Nodad = 1 << 1,
@@ -31,6 +31,7 @@ pub enum IfaFlags {
     Noprefixroute = 1 << 9,
     Mcautojoin = 1 << 10,
     StablePrivacy = 1 << 11,
+    Global = 1 << 12,
 }
 impl IfaFlags {
     pub fn from_value(value: u64) -> Option<Self> {
@@ -47,6 +48,7 @@ impl IfaFlags {
             n if n == 1 << 9 => Self::Noprefixroute,
             n if n == 1 << 10 => Self::Mcautojoin,
             n if n == 1 << 11 => Self::StablePrivacy,
+            n if n == 1 << 12 => Self::Global,
             _ => return None,
         })
     }
@@ -219,7 +221,7 @@ pub enum AddrAttrs<'a> {
     #[doc = "Associated type: [`IfaFlags`] (1 bit per enumeration)"]
     Flags(u32),
     RtPriority(u32),
-    TargetNetnsid(&'a [u8]),
+    TargetNetnsid(i32),
     Proto(u8),
     McUsers(u32),
 }
@@ -360,7 +362,7 @@ impl<'a> IterableAddrAttrs<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    pub fn get_target_netnsid(&self) -> Result<&'a [u8], ErrorContext> {
+    pub fn get_target_netnsid(&self) -> Result<i32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
         for attr in iter {
@@ -510,7 +512,7 @@ impl<'a> Iterator for IterableAddrAttrs<'a> {
                     val
                 }),
                 10u16 => AddrAttrs::TargetNetnsid({
-                    let res = Some(next);
+                    let res = parse_i32(next);
                     let Some(val) = res else { break };
                     val
                 }),
@@ -569,7 +571,7 @@ impl<'a> std::fmt::Debug for IterableAddrAttrs<'_> {
                     fmt.field("Flags", &FormatFlags(val.into(), IfaFlags::from_value))
                 }
                 AddrAttrs::RtPriority(val) => fmt.field("RtPriority", &val),
-                AddrAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &FormatHexdump(val)),
+                AddrAttrs::TargetNetnsid(val) => fmt.field("TargetNetnsid", &val),
                 AddrAttrs::Proto(val) => fmt.field("Proto", &val),
                 AddrAttrs::McUsers(val) => fmt.field("McUsers", &val),
             };
@@ -784,9 +786,9 @@ impl<Prev: Pusher> PushAddrAttrs<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    pub fn push_target_netnsid(mut self, value: &[u8]) -> Self {
-        push_header(self.as_vec_mut(), 10u16, value.len() as u16);
-        self.as_vec_mut().extend(value);
+    pub fn push_target_netnsid(mut self, value: i32) -> Self {
+        push_header(self.as_vec_mut(), 10u16, 4 as u16);
+        self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
     pub fn push_proto(mut self, value: u8) -> Self {
@@ -1018,7 +1020,7 @@ impl NetlinkRequest for OpGetaddrDump<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get / dump IPv4/IPv6 multicast addresses.\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
+#[doc = "Get / dump multicast addresses. ifa-family must select the address\nfamily: AF_INET or AF_INET6 for the IP multicast groups joined on a\ndevice, AF_PACKET for the link-layer multicast addresses in the device\nfilter. Link-layer entries added explicitly, e.g. with SIOCADDMULTI or\n\\\"bridge fdb add \\... self\\\", rather than by a protocol join are\nreported with the global flag set. For AF_PACKET a non-zero ifa-index\nrestricts the dump to that device and ifa-prefixlen, ifa-flags and\nifa-scope must be zero, AF_INET and AF_INET6 apply this and\ntarget-netnsid with NETLINK_GET_STRICT_CHK only.\n\nRequest attributes:\n- [.push_target_netnsid()](PushAddrAttrs::push_target_netnsid)\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_flags()](IterableAddrAttrs::get_flags)\n- [.get_target_netnsid()](IterableAddrAttrs::get_target_netnsid)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
 #[derive(Debug)]
 pub struct OpGetmulticastDump<'r> {
     request: Request<'r>,
@@ -1089,7 +1091,7 @@ impl NetlinkRequest for OpGetmulticastDump<'_> {
             .lookup_attr(offset, missing_type)
     }
 }
-#[doc = "Get / dump IPv4/IPv6 multicast addresses.\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
+#[doc = "Get / dump multicast addresses. ifa-family must select the address\nfamily: AF_INET or AF_INET6 for the IP multicast groups joined on a\ndevice, AF_PACKET for the link-layer multicast addresses in the device\nfilter. Link-layer entries added explicitly, e.g. with SIOCADDMULTI or\n\\\"bridge fdb add \\... self\\\", rather than by a protocol join are\nreported with the global flag set. For AF_PACKET a non-zero ifa-index\nrestricts the dump to that device and ifa-prefixlen, ifa-flags and\nifa-scope must be zero, AF_INET and AF_INET6 apply this and\ntarget-netnsid with NETLINK_GET_STRICT_CHK only.\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_flags()](IterableAddrAttrs::get_flags)\n- [.get_target_netnsid()](IterableAddrAttrs::get_target_netnsid)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
 #[derive(Debug)]
 pub struct OpGetmulticastDo<'r> {
     request: Request<'r>,
@@ -1161,6 +1163,12 @@ impl NetlinkRequest for OpGetmulticastDo<'_> {
 #[derive(Debug)]
 pub struct ChainedFinal<'a> {
     inner: Chained<'a>,
+}
+impl<'a> std::ops::Deref for ChainedFinal<'a> {
+    type Target = Chained<'a>;
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 #[derive(Debug)]
 pub struct Chained<'a> {
@@ -1259,6 +1267,34 @@ impl<'a> Chained<'a> {
         request.writeback = Some(&mut self.last_kind);
         request
     }
+    pub fn with_request<R: NetlinkRequest + ?Sized>(&mut self, request: &R) -> &mut Self {
+        self.update_header();
+        self.last_header_offset = self.buf().len();
+        self.buf_mut().extend_from_slice(Nlmsghdr::new().as_slice());
+        self.buf_mut().extend_from_slice(request.payload());
+        self.last_kind = Some(RequestInfo {
+            protocol: request.protocol(),
+            flags: request.flags(),
+            name: std::any::type_name::<R>(),
+            lookup: R::lookup,
+        });
+        self
+    }
+    pub fn with_chained(&mut self, chain: &Self) -> &mut Self {
+        self.update_header();
+        let chain_off = self.buf().len();
+        let chain_seq = self.first_seq.wrapping_add(self.lookups.len() as u32);
+        self.buf_mut().extend_from_slice(chain.buf());
+        for (i, (header, _)) in
+            IterableMessagesMut::new(&mut self.buf_mut()[chain_off..]).enumerate()
+        {
+            header.seq = chain_seq.wrapping_add(i as u32);
+        }
+        self.lookups.extend_from_slice(&chain.lookups);
+        self.last_header_offset = chain_off + chain.last_header_offset;
+        self.last_kind = chain.last_kind.clone();
+        self
+    }
     pub fn buf(&self) -> &Vec<u8> {
         self.buf.buf()
     }
@@ -1271,9 +1307,9 @@ impl<'a> Chained<'a> {
             flags,
             name,
             lookup,
-        }) = self.last_kind
+        }) = self.last_kind.take()
         else {
-            if !self.buf().is_empty() {
+            if !self.buf().is_empty() && self.buf().len() != self.last_header_offset {
                 assert_eq!(self.last_header_offset + Nlmsghdr::len(), self.buf().len());
                 self.buf.buf_mut().truncate(self.last_header_offset);
             }
@@ -1297,6 +1333,7 @@ impl<'a> Chained<'a> {
             pid: 0,
         };
         buf[header_offset..(header_offset + 16)].clone_from_slice(header.as_slice());
+        self.last_header_offset = buf.len();
     }
 }
 use crate::traits::LookupFn;
@@ -1428,7 +1465,7 @@ impl<'buf> Request<'buf> {
             .do_writeback(res.protocol(), "op-getaddr-dump", OpGetaddrDump::lookup);
         res
     }
-    #[doc = "Get / dump IPv4/IPv6 multicast addresses.\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
+    #[doc = "Get / dump multicast addresses. ifa-family must select the address\nfamily: AF_INET or AF_INET6 for the IP multicast groups joined on a\ndevice, AF_PACKET for the link-layer multicast addresses in the device\nfilter. Link-layer entries added explicitly, e.g. with SIOCADDMULTI or\n\\\"bridge fdb add \\... self\\\", rather than by a protocol join are\nreported with the global flag set. For AF_PACKET a non-zero ifa-index\nrestricts the dump to that device and ifa-prefixlen, ifa-flags and\nifa-scope must be zero, AF_INET and AF_INET6 apply this and\ntarget-netnsid with NETLINK_GET_STRICT_CHK only.\n\nRequest attributes:\n- [.push_target_netnsid()](PushAddrAttrs::push_target_netnsid)\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_flags()](IterableAddrAttrs::get_flags)\n- [.get_target_netnsid()](IterableAddrAttrs::get_target_netnsid)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
     pub fn op_getmulticast_dump(self, header: &Ifaddrmsg) -> OpGetmulticastDump<'buf> {
         let mut res = OpGetmulticastDump::new(self, header);
         res.request.do_writeback(
@@ -1438,7 +1475,7 @@ impl<'buf> Request<'buf> {
         );
         res
     }
-    #[doc = "Get / dump IPv4/IPv6 multicast addresses.\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
+    #[doc = "Get / dump multicast addresses. ifa-family must select the address\nfamily: AF_INET or AF_INET6 for the IP multicast groups joined on a\ndevice, AF_PACKET for the link-layer multicast addresses in the device\nfilter. Link-layer entries added explicitly, e.g. with SIOCADDMULTI or\n\\\"bridge fdb add \\... self\\\", rather than by a protocol join are\nreported with the global flag set. For AF_PACKET a non-zero ifa-index\nrestricts the dump to that device and ifa-prefixlen, ifa-flags and\nifa-scope must be zero, AF_INET and AF_INET6 apply this and\ntarget-netnsid with NETLINK_GET_STRICT_CHK only.\n\nReply attributes:\n- [.get_cacheinfo()](IterableAddrAttrs::get_cacheinfo)\n- [.get_multicast()](IterableAddrAttrs::get_multicast)\n- [.get_flags()](IterableAddrAttrs::get_flags)\n- [.get_target_netnsid()](IterableAddrAttrs::get_target_netnsid)\n- [.get_mc_users()](IterableAddrAttrs::get_mc_users)\n\n"]
     pub fn op_getmulticast_do(self, header: &Ifaddrmsg) -> OpGetmulticastDo<'buf> {
         let mut res = OpGetmulticastDo::new(self, header);
         res.request.do_writeback(
@@ -1456,13 +1493,16 @@ mod generated_tests {
     fn tests() {
         let _ = IterableAddrAttrs::get_address;
         let _ = IterableAddrAttrs::get_cacheinfo;
+        let _ = IterableAddrAttrs::get_flags;
         let _ = IterableAddrAttrs::get_label;
         let _ = IterableAddrAttrs::get_local;
         let _ = IterableAddrAttrs::get_mc_users;
         let _ = IterableAddrAttrs::get_multicast;
+        let _ = IterableAddrAttrs::get_target_netnsid;
         let _ = PushAddrAttrs::<&mut Vec<u8>>::push_address;
         let _ = PushAddrAttrs::<&mut Vec<u8>>::push_cacheinfo;
         let _ = PushAddrAttrs::<&mut Vec<u8>>::push_label;
         let _ = PushAddrAttrs::<&mut Vec<u8>>::push_local;
+        let _ = PushAddrAttrs::<&mut Vec<u8>>::push_target_netnsid;
     }
 }

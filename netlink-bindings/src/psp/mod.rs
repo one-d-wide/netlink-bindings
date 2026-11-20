@@ -10,13 +10,13 @@
 use crate::builtin::{BuiltinBitfield32, BuiltinNfgenmsg, Nlmsghdr, PushDummy};
 use crate::{
     consts,
-    traits::{NetlinkRequest, Protocol},
+    traits::{self, NetlinkRequest, Protocol},
     utils::*,
 };
 pub const PROTONAME: &str = "psp";
 pub const PROTONAME_CSTR: &CStr = c"psp";
 #[doc = "Enum - defines an integer enumeration, with values for each entry incrementing by 1, (e.g. 0, 1, 2, 3)"]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Version {
     Hdr0AesGcm128 = 0,
     Hdr0AesGcm256 = 1,
@@ -223,7 +223,7 @@ impl IterableAssocDevInfo<'_> {
 pub enum Dev<'a> {
     #[doc = "PSP device ID.\n"]
     Id(u32),
-    #[doc = "ifindex of the main netdevice linked to the PSP device, or the ifindex\nto associate with the PSP device.\n"]
+    #[doc = "ifindex of the main netdevice linked to the PSP device, or the ifindex\nto associate with the PSP device. Only reported to the network namespace\nthe main netdevice lives in, an ifindex has no meaning outside of it.\n"]
     Ifindex(u32),
     #[doc = "Bitmask of PSP versions supported by the device.\n\nAssociated type: [`Version`] (1 bit per enumeration)"]
     PspVersionsCap(u32),
@@ -253,7 +253,7 @@ impl<'a> IterableDev<'a> {
             self.buf.as_ptr() as usize,
         ))
     }
-    #[doc = "ifindex of the main netdevice linked to the PSP device, or the ifindex\nto associate with the PSP device.\n"]
+    #[doc = "ifindex of the main netdevice linked to the PSP device, or the ifindex\nto associate with the PSP device. Only reported to the network namespace\nthe main netdevice lives in, an ifindex has no meaning outside of it.\n"]
     pub fn get_ifindex(&self) -> Result<u32, ErrorContext> {
         let mut iter = self.clone();
         iter.pos = 0;
@@ -1552,7 +1552,7 @@ impl<Prev: Pusher> PushDev<Prev> {
         self.as_vec_mut().extend(value.to_ne_bytes());
         self
     }
-    #[doc = "ifindex of the main netdevice linked to the PSP device, or the ifindex\nto associate with the PSP device.\n"]
+    #[doc = "ifindex of the main netdevice linked to the PSP device, or the ifindex\nto associate with the PSP device. Only reported to the network namespace\nthe main netdevice lives in, an ifindex has no meaning outside of it.\n"]
     pub fn push_ifindex(mut self, value: u32) -> Self {
         push_header(self.as_vec_mut(), 2u16, 4 as u16);
         self.as_vec_mut().extend(value.to_ne_bytes());
