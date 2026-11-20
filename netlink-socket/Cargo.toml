@@ -13,6 +13,10 @@ name = "wireguard-setup"
 required-features = [ "netlink-bindings/wireguard", "netlink-bindings/rt-link", "netlink-bindings/rt-addr" ]
 
 [[example]]
+name = "drbd2-status"
+required-features = [ "netlink-bindings/drbd2" ]
+
+[[example]]
 name = "conntrack"
 required-features = [ "netlink-bindings/conntrack" ]
 
