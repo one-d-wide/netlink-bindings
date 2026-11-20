@@ -5,8 +5,8 @@ use netlink_bindings::utils::{self, IterableChunks};
 use netlink_bindings::{consts, nftables, rt_addr, rt_link, rt_route, rt_rule};
 use netlink_socket2::NetlinkSocket;
 use reverse_lookup::{self as rl, ReverseLookup};
-use std::io::ErrorKind;
-use std::sync::mpsc;
+use std::io::{ErrorKind, Write};
+use std::sync::{Arc, Mutex, mpsc};
 use std::thread::JoinHandle;
 
 pub fn setup() {
@@ -27,11 +27,61 @@ pub fn setup() {
 }
 
 fn filter_message(r: &rl::ReverseLookup) -> bool {
-    r.request_value.is_none()
-}
+    // Skip replies
+    if r.request_value.is_some() {
+        return false;
+    }
 
-fn is_nftables(r: &ReverseLookup) -> bool {
-    matches!(r.proto, Protocol::Raw { protonum, .. } if protonum == libc::NETLINK_NETFILTER as u16)
+    // Skip batch-{begin,end}
+    if let Protocol::Raw {
+        protonum,
+        request_type,
+    } = r.proto
+        && protonum == libc::NETLINK_NETFILTER as u16
+        && (request_type == 0x10 /* batch-begin */ || request_type == 0x11/* batch-end */)
+    {
+        return false;
+    }
+
+    // Skip new-table
+    if let Protocol::Raw {
+            protonum,
+            request_type,
+        } = r.proto
+            && protonum == libc::NETLINK_NETFILTER as u16
+            && request_type == 0xa00 /* new-table */
+            && r.header.flags
+                == consts::NLM_F_CREATE as u16
+                    | consts::NLM_F_ACK as u16
+                    | consts::NLM_F_REQUEST as u16
+            && utils::IterableChunks::new(&r.buf[4..])
+                .map(|(h, _)| h.r#type)
+                .collect::<Vec<_>>()
+                == &[1 /* table */]
+    {
+        return false;
+    }
+
+    // Skip new-chain
+    if let Protocol::Raw {
+            protonum,
+            request_type,
+        } = r.proto
+            && protonum == libc::NETLINK_NETFILTER as u16
+            && request_type == 0xa03 /* new-chain */
+            && r.header.flags
+                == consts::NLM_F_CREATE as u16
+                    | consts::NLM_F_ACK as u16
+                    | consts::NLM_F_REQUEST as u16
+            && utils::IterableChunks::new(&r.buf[4..])
+                .map(|(h, _)| h.r#type)
+                .collect::<Vec<_>>()
+                == &[1 /* table */, 3 /* name */]
+    {
+        return false;
+    }
+
+    true
 }
 
 fn skip(r: &rl::ReverseLookup) -> usize {
@@ -56,16 +106,6 @@ fn skip(r: &rl::ReverseLookup) -> usize {
 
 pub fn compare_recurse_slice(l: &[rl::ReverseLookup], r: &[rl::ReverseLookup]) {
     'next: for (_ri, r) in r.iter().enumerate() {
-        if let Protocol::Raw {
-            protonum,
-            request_type,
-        } = r.proto
-            && protonum == libc::NETLINK_NETFILTER as u16
-            && matches!(request_type, 0x10 | 0x11)
-        {
-            continue; // Skip batch-{begin,end}
-        }
-
         for (_li, l) in l.iter().enumerate() {
             // eprintln!("Comparing request l[{_li}] with r[{_ri}]");
 
@@ -107,9 +147,14 @@ pub fn compare_recurse_slice(l: &[rl::ReverseLookup], r: &[rl::ReverseLookup]) {
 
 fn attrs_sort_shallow(rl: &ReverseLookup, buf: &[u8], skip: usize, stack: &Vec<u16>) -> Vec<u8> {
     let mut vec = Vec::new();
+
+    fn is_nftables(r: &ReverseLookup) -> bool {
+        matches!(r.proto, Protocol::Raw { protonum, .. } if protonum == libc::NETLINK_NETFILTER as u16)
+    }
+
     for (header, buf) in IterableChunks::new(&buf[skip..]) {
         // Skip rule-attrs.compat
-        if is_nftables(rl) && stack == &[] && header.r#type == 5 {
+        if is_nftables(rl) && stack.is_empty() && header.r#type == 5 {
             continue;
         }
 
@@ -294,19 +339,19 @@ pub fn trace_cmd(cmd: Vec<String>) -> Vec<rl::ReverseLookup> {
 
     let frames = mpsc::channel();
 
-    let args = rl::CliArgs {
+    let mut args = rl::CliArgs {
         command: true,
         // echo: true,
         args: cmd.clone(),
         ..Default::default()
     };
 
-    let api = rl::ApiArgs {
+    let mut api = rl::ApiArgs {
         frames_tx: Some(frames.0),
         ..Default::default()
     };
 
-    if !rl::run(args, api) {
+    if !rl::run(&mut args, &mut api) {
         eprintln!("EXITED WITH ERROR: {:?}", cmd.join(" "));
     }
 
@@ -324,32 +369,53 @@ pub fn trace_cmd(cmd: Vec<String>) -> Vec<rl::ReverseLookup> {
 pub struct TraceCtx {
     strace_pid: u32,
     frames_rx: mpsc::Receiver<rl::ReverseLookup>,
-    join: JoinHandle<()>,
+    join: Option<JoinHandle<()>>,
+    print_logs: Arc<Mutex<bool>>,
+}
+
+impl Drop for TraceCtx {
+    fn drop(&mut self) {
+        *self.print_logs.lock().unwrap() = true;
+
+        unsafe { libc::kill(self.strace_pid as i32, libc::SIGINT) };
+        self.join.take().map(|h| h.join().unwrap());
+    }
 }
 
 pub fn trace_start() -> TraceCtx {
+    let pid = unsafe { libc::gettid() as u32 };
     let strace_pid = mpsc::channel();
     let frames = mpsc::channel();
-
-    let args = rl::CliArgs {
-        pid: Some(unsafe { libc::gettid() as u32 }),
-        ..Default::default()
-    };
-
-    let api = rl::ApiArgs {
-        strace_pid_tx: Some(strace_pid.0),
-        frames_tx: Some(frames.0),
-        no_follow_fork: true,
-        ..Default::default()
-    };
+    let mut print_logs = Arc::new(Mutex::new(false));
 
     unsafe {
         libc::prctl(libc::PR_SET_PTRACER, libc::PR_SET_PTRACER_ANY);
     }
 
-    let join = std::thread::spawn(|| {
-        if !rl::run(args, api) {
-            eprintln!("Process exited with error!");
+    let join = std::thread::spawn({
+        let is_error = print_logs.clone();
+        move || {
+            let mut args = rl::CliArgs {
+                pid: Some(pid),
+                ..Default::default()
+            };
+
+            let mut logger = Vec::new();
+            let mut api = rl::ApiArgs {
+                strace_pid_tx: Some(strace_pid.0),
+                frames_tx: Some(frames.0),
+                no_follow_fork: true,
+                logger: Some(&mut logger),
+                ..Default::default()
+            };
+
+            if !rl::run(&mut args, &mut api) {
+                eprintln!("Process exited with error!");
+            }
+
+            if *is_error.lock().unwrap() {
+                std::io::stderr().write_all(&logger).unwrap();
+            }
         }
     });
 
@@ -358,13 +424,14 @@ pub fn trace_start() -> TraceCtx {
     TraceCtx {
         strace_pid,
         frames_rx: frames.1,
-        join,
+        join: Some(join),
+        print_logs,
     }
 }
 
-pub fn trace_stop(c: TraceCtx) -> Vec<rl::ReverseLookup> {
+pub fn trace_stop(mut c: TraceCtx) -> Vec<rl::ReverseLookup> {
     unsafe { libc::kill(c.strace_pid as i32, libc::SIGINT) };
-    c.join.join().unwrap();
+    c.join.take().map(|h| h.join().unwrap());
 
     let mut res = Vec::new();
     while let Ok(f) = c.frames_rx.try_recv() {
@@ -373,6 +440,8 @@ pub fn trace_stop(c: TraceCtx) -> Vec<rl::ReverseLookup> {
         }
         res.push(f);
     }
+
+    std::mem::forget(c);
 
     res
 }
