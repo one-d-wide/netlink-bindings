@@ -235,6 +235,7 @@ pub enum NumOrName {
 }
 
 impl NumOrName {
+    #[allow(unused)]
     pub fn get_value(&self) -> usize {
         match self {
             Self::Num(val) => *val,
