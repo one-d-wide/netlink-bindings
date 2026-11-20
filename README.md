@@ -31,20 +31,45 @@ All [upstream specifications][list-of-specs] are supported as of Linux 7.3.
 
 - ✅ supported, has tests:
 [conntrack](./netlink-socket/examples/conntrack.rs),
+[drbd2](./netlink-socket/examples/drbd2.rs),
 [inet-diag](./netlink-socket/examples/tcp-rtt.rs),
 [nftables](./netlink-socket/examples/nftables.rs),
 [nl80211](./netlink-socket/examples/nl80211.rs),
 [nlctrl](./netlink-bindings/src/nlctrl/nlctrl.md),
 [rt-addr](./netlink-socket/examples/wireguard-setup.rs),
-[rt-route](./netlink-socket/examples/ip-route-show.rs),
 [rt-link](./netlink-socket/examples/wireguard-setup.rs),
 [rt-nsid](./netlink-socket/examples/netns-id.rs),
+[rt-route](./netlink-socket/examples/ip-route-show.rs),
 [tc](./netlink-socket/examples/tc-prio.rs),
 [wireguard](./netlink-socket/examples/wireguard-setup.rs).
-- ✔️ compiles, testing needed: binder, dev-energymodel, devlink, dpll, drm-ras,
-ethtool, fou, handshake, lockd, mptcp_pm, netdev, net-shaper, nfsd, ovpn,
-ovs_datapath, ovs_flow, ovs_packet, ovs_vport, psp, rt-neigh, rt-nexthop, rt-rule, sunrpc,
-tcp_metrics, team, unix-diag.
+- ✔️ compiles, testing needed:
+binder,
+dev-energymodel,
+devlink,
+dpll,
+drm-ras,
+ethtool,
+fou,
+gtp,
+handshake,
+lockd,
+mptcp_pm,
+net-shaper,
+netdev,
+nfsd,
+ovpn,
+ovs_datapath,
+ovs_flow,
+ovs_packet,
+ovs_vport,
+psp,
+rt-neigh,
+rt-nexthop,
+rt-rule,
+sunrpc,
+tcp_metrics,
+team,
+unix-diag.
 
 ## Installation
 
