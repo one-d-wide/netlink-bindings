@@ -2,6 +2,8 @@
 set -euo pipefail
 
 if test -z "${UNSHARE:-}"; then
+  cargo fetch
+
   export UNSHARE=1
   exec unshare --user --net --keep-caps -- bash -c "$0" -- "$@"
 fi
