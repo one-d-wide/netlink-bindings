@@ -2,7 +2,7 @@ use std::{io, mem::MaybeUninit, os::fd::AsRawFd, sync::Arc};
 
 use netlink_bindings::utils;
 
-use super::{sock::NetlinkReplyInner, NetlinkSocket, Socket};
+use super::{reply::NetlinkReplyInner, NetlinkSocket, Socket};
 #[allow(unused_imports)]
 use super::{Read, Write};
 use crate::{ReplyError, RECV_BUF_SIZE};

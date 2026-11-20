@@ -40,12 +40,14 @@ pub mod std {
 
     pub(crate) mod chained;
     pub(crate) mod multicast;
+    pub(crate) mod reply;
     pub(crate) mod sock;
 
     pub use {
         chained::NetlinkReplyChained,
         multicast::{MulticastRecv, MulticastSocketRaw},
-        sock::{NetlinkReply, NetlinkSocket},
+        reply::NetlinkReply,
+        sock::NetlinkSocket,
     };
 }
 
@@ -67,12 +69,14 @@ pub mod tokio {
 
     pub(crate) mod chained;
     pub(crate) mod multicast;
+    pub(crate) mod reply;
     pub(crate) mod sock;
 
     pub use {
         chained::NetlinkReplyChained,
         multicast::{MulticastRecv, MulticastSocketRaw},
-        sock::{NetlinkReply, NetlinkSocket},
+        reply::NetlinkReply,
+        sock::NetlinkSocket,
     };
 }
 
@@ -92,11 +96,13 @@ pub mod smol {
 
     pub(crate) mod chained;
     pub(crate) mod multicast;
+    pub(crate) mod reply;
     pub(crate) mod sock;
 
     pub use {
         chained::NetlinkReplyChained,
         multicast::{MulticastRecv, MulticastSocketRaw},
-        sock::{NetlinkReply, NetlinkSocket},
+        reply::NetlinkReply,
+        sock::NetlinkSocket,
     };
 }

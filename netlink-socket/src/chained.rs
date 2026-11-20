@@ -7,7 +7,7 @@ use std::{
 
 use netlink_bindings::traits::NetlinkChained;
 
-use super::{sock::NetlinkReplyInner, NetlinkSocket, Socket};
+use super::{reply::NetlinkReplyInner, NetlinkSocket, Socket};
 use crate::{ReplyError, RECV_BUF_SIZE};
 
 impl NetlinkSocket {
