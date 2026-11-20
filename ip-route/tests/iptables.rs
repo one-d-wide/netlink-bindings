@@ -52,7 +52,7 @@ macro_rules! test_mod {
         let ctx = testbed::trace_start();
         let req = ip!($str $(, $args )* );
         let mut sock = NetlinkSocket::new();
-        ip_route::utils::iptables_request(&mut sock, &req).unwrap();
+        ip_route::utils::iptables_request_chained(&mut sock, &req).unwrap();
         let r = testbed::trace_stop(ctx);
 
         testbed::compare_recurse_slice(&l, &r);

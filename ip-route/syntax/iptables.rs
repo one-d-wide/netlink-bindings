@@ -140,6 +140,8 @@ command! {
                     .end_nested();
             };
         }
+
+        let mut chained = nftables::Chained::new(rand::random());
     }
     "iptables/ip6tables -L/--list": [FLAGS, MAY_TABLE, CHAIN.may()],
     filter_map |desc, tok| => {
@@ -164,7 +166,8 @@ command! {
             #tok
             let mut req = nftables::Request::new().set_create().op_newrule_do(&header);
             req.encode().as_vec_mut().extend_from_slice(attrs.as_vec());
-            req
+            chained.with_request(&req);
+            chained.finalize()
         }
     },
     "iptables/ip6tables -D/--delete": [FLAGS, MAY_TABLE, CHAIN, RULE_NUM],
@@ -177,7 +180,8 @@ command! {
             #tok
             let mut req = nftables::Request::new().op_delrule_do(&header);
             req.encode().as_vec_mut().extend_from_slice(attrs.as_vec());
-            req
+            chained.with_request(&req);
+            chained.finalize()
         }
     },
     "iptables/ip6tables -R/--replace": [FLAGS, MAY_TABLE, CHAIN, RULE_NUM, RULE_SPEC]:
@@ -203,7 +207,8 @@ command! {
             #tok
             let mut req = nftables::Request::new().op_delrule_do(&header);
             req.encode().as_vec_mut().extend_from_slice(attrs.as_vec());
-            req
+            chained.with_request(&req);
+            chained.finalize()
         }
     },
     "iptables/ip6tables -N/--new": [FLAGS, MAY_TABLE, CHAIN_NAME]:
@@ -216,7 +221,8 @@ command! {
             #tok
             let mut req = nftables::Request::new().set_excl().op_newchain_do(&header);
             req.encode().as_vec_mut().extend_from_slice(attrs.as_vec());
-            req
+            chained.with_request(&req);
+            chained.finalize()
         }
     },
     "iptables/ip6tables -D/--delete": [FLAGS, MAY_TABLE, CHAIN_NAME]:
@@ -229,7 +235,8 @@ command! {
             #tok
             let mut req = nftables::Request::new().op_delchain_do(&header);
             req.encode().as_vec_mut().extend_from_slice(attrs.as_vec());
-            req
+            chained.with_request(&req);
+            chained.finalize()
         }
     },
     "iptables/ip6tables -E/--rename": [ANY.star()]: |_tok| => {

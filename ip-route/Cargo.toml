@@ -19,6 +19,7 @@ ipnet = "2"
 netlink-socket2 = { workspace = true, features = [ "std" ] }
 netlink-bindings = { workspace = true, features = [ "rt-link", "rt-route", "rt-rule", "rt-addr", "nftables" ] }
 
+rand = { version = "0", default-features = false, features = [ "thread_rng" ] }
 quote = "1"
 proc-macro2 = "1"
 scopeguard = "1"

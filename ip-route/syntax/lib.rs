@@ -174,7 +174,7 @@ impl Command {
                 quote! {{
                     let req = { #toks };
                     use ip_route::utils::IptablesDo;
-                    (#sock).iptables_request(&req)
+                    (#sock).iptables_request_chained(&req)
                 }}
             }
         } else {
