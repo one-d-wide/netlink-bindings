@@ -1,5 +1,6 @@
 use std::fmt;
 
+use crate::builtin::Nlmsghdr;
 pub use crate::primitives::*;
 pub use crate::traits::Pusher;
 pub use std::{ffi::CStr, fmt::Debug, iter::Iterator};
@@ -326,6 +327,86 @@ pub fn finalize_nested_header(buf: &mut Vec<u8>, offset: usize) {
 
     let len = (buf.len() - offset) as u16;
     buf[offset..(offset + 2)].copy_from_slice(&len.to_ne_bytes());
+}
+
+/// Split Netlink messages apart, returning both header and body
+#[derive(Debug, Clone, Copy, Default)]
+pub struct IterableMessages<'buf> {
+    /// A buffer given to [`Self::new()`]
+    pub buf: &'buf [u8],
+    /// Offset of the next attribute in [`Self::buf`]
+    pub pos: usize,
+}
+
+impl<'buf> IterableMessages<'buf> {
+    pub fn new(buf: &'buf [u8]) -> Self {
+        Self { buf, pos: 0 }
+    }
+    pub fn is_empty(&self) -> bool {
+        self.buf.len() == self.pos
+    }
+}
+
+impl<'buf> Iterator for IterableMessages<'buf> {
+    type Item = (&'buf Nlmsghdr, &'buf [u8]);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos + Nlmsghdr::len() > self.buf.len() {
+            self.pos = self.buf.len();
+            return None;
+        }
+
+        let header = Nlmsghdr::from_slice(&self.buf[self.pos..]);
+        let len = header.len as usize;
+        if len < Nlmsghdr::len() {
+            self.pos = self.buf.len();
+            return None;
+        }
+
+        let new_pos = nla_align_up(self.pos + len as usize).min(self.buf.len());
+        let body = &self.buf[(self.pos + Nlmsghdr::len())..new_pos];
+        self.pos = new_pos;
+        Some((header, body))
+    }
+}
+
+/// Split Netlink messages apart, returning both header and body
+#[derive(Debug, Default)]
+pub struct IterableMessagesMut<'buf> {
+    /// A buffer given to [`Self::new()`]
+    pub buf: &'buf mut [u8],
+}
+
+impl<'buf> IterableMessagesMut<'buf> {
+    pub fn new(buf: &'buf mut [u8]) -> Self {
+        Self { buf }
+    }
+    pub fn is_empty(&self) -> bool {
+        self.buf.is_empty()
+    }
+}
+
+impl<'buf> Iterator for IterableMessagesMut<'buf> {
+    type Item = (&'buf mut Nlmsghdr, &'buf mut [u8]);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.buf.len() < Nlmsghdr::len() {
+            self.buf = &mut [];
+            return None;
+        }
+
+        let len = parse_u32(&self.buf[..4]).unwrap() as usize;
+        if len < Nlmsghdr::len() {
+            self.buf = &mut [];
+            return None;
+        }
+        let new_pos = nla_align_up(len as usize).min(self.buf.len());
+
+        let message;
+        (message, self.buf) = std::mem::take(&mut self.buf).split_at_mut(new_pos);
+
+        let (header, body) = message.split_at_mut(Nlmsghdr::len());
+
+        Some((Nlmsghdr::from_slice_mut(header), body))
+    }
 }
 
 /// A convenience wrapper on top of [`chop_header()`]
