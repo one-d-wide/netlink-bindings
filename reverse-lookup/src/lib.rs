@@ -495,6 +495,8 @@ fn read(
                 write!(out, " ")?;
                 print_request_flags(&mut out, header.flags)?;
                 write!(out, " ")?;
+                write!(out, "seq={}", header.seq)?;
+                write!(out, " ")?;
                 if let Some(op) = value_str.first() {
                     let op = op
                         .strip_suffix("Do")
