@@ -182,7 +182,7 @@ fn main() {
     tokens.extend(quote! {
         use crate::{
             consts,
-            traits::{NetlinkRequest, Protocol},
+            traits::{self, NetlinkRequest, Protocol},
             utils::*,
         };
     });

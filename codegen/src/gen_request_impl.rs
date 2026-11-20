@@ -89,6 +89,7 @@ pub fn gen_request(tokens: &mut TokenStream, _ctx: &mut Context, spec: &Spec, re
         op_funcs.extend(quote! {
             pub fn #op(self #op_args) -> #req<'buf> {
                 let mut res = #req::new(self #new_args);
+                // TODO: Consider swapping #name with std::any::type_name::<#req>() here and elsewhere
                 res.request.do_writeback(res.protocol(), #name, #req::lookup);
                 res
             }
@@ -547,6 +548,13 @@ pub fn gen_request_chained(tokens: &mut TokenStream, requests: &[OpInfo]) {
             inner: Chained<'a>,
         }
 
+        impl<'a> std::ops::Deref for ChainedFinal<'a> {
+            type Target = Chained<'a>;
+            fn deref(&self) -> &Self::Target {
+                &self.inner
+            }
+        }
+
         #[derive(Debug)]
         pub struct Chained<'a> {
             buf: RequestBuf<'a>,
@@ -668,6 +676,43 @@ pub fn gen_request_chained(tokens: &mut TokenStream, requests: &[OpInfo]) {
                 request
             }
 
+            pub fn with_request<R: NetlinkRequest + ?Sized>(&mut self, request: &R) -> &mut Self {
+                self.update_header();
+
+                self.last_header_offset = self.buf().len();
+                self.buf_mut().extend_from_slice(Nlmsghdr::new().as_slice());
+                self.buf_mut().extend_from_slice(request.payload());
+
+                self.last_kind = Some(RequestInfo {
+                    protocol: request.protocol(),
+                    flags: request.flags(),
+                    name: std::any::type_name::<R>(),
+                    lookup: R::lookup,
+                });
+
+                self
+            }
+
+            pub fn with_chained(&mut self, chain: &Self) -> &mut Self {
+                self.update_header();
+
+                let chain_off = self.buf().len();
+                let chain_seq = self.first_seq.wrapping_add(self.lookups.len() as u32);
+
+                self.buf_mut().extend_from_slice(chain.buf());
+
+                for (i, (header, _)) in
+                    IterableMessagesMut::new(&mut self.buf_mut()[chain_off..]).enumerate()
+                {
+                    header.seq = chain_seq.wrapping_add(i as u32);
+                }
+
+                self.lookups.extend_from_slice(&chain.lookups);
+                self.last_header_offset = chain_off + chain.last_header_offset;
+                self.last_kind = chain.last_kind.clone();
+                self
+            }
+
             pub fn buf(&self) -> &Vec<u8> {
                 self.buf.buf()
             }
@@ -677,8 +722,8 @@ pub fn gen_request_chained(tokens: &mut TokenStream, requests: &[OpInfo]) {
             }
 
             fn update_header(&mut self) {
-                let Some(RequestInfo { protocol, flags, name, lookup }) = self.last_kind else {
-                    if !self.buf().is_empty() {
+                let Some(RequestInfo { protocol, flags, name, lookup }) = self.last_kind.take() else {
+                    if !self.buf().is_empty() && self.buf().len() != self.last_header_offset {
                         // Remove reserved space if request wasn't written
                         assert_eq!(self.last_header_offset + Nlmsghdr::len(), self.buf().len());
                         self.buf.buf_mut().truncate(self.last_header_offset);
@@ -708,6 +753,8 @@ pub fn gen_request_chained(tokens: &mut TokenStream, requests: &[OpInfo]) {
                 };
 
                 buf[header_offset..(header_offset+16)].clone_from_slice(header.as_slice());
+
+                self.last_header_offset = buf.len();
             }
         }
     });
