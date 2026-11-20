@@ -42,7 +42,9 @@ impl NetlinkSocket {
 
         Ok(NetlinkReplyChained {
             sock,
-            buf: &mut self.buf,
+            buf: self
+                .buf
+                .get_or_insert_with(|| Arc::new([0u8; RECV_BUF_SIZE])),
             request,
             inner: NetlinkReplyInner {
                 buf_offset: 0,

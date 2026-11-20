@@ -18,7 +18,7 @@ use netlink_bindings::{
 };
 
 pub struct NetlinkSocket {
-    pub(crate) buf: Arc<[u8; RECV_BUF_SIZE]>,
+    pub(crate) buf: Option<Arc<[u8; RECV_BUF_SIZE]>>,
     pub(crate) cache: HashMap<&'static [u8], u16>,
     pub(crate) sock: HashMap<u16, Socket>,
     pub(crate) seq: u32,
@@ -33,7 +33,7 @@ impl Default for NetlinkSocket {
 impl NetlinkSocket {
     pub fn new() -> Self {
         Self {
-            buf: Arc::new([0u8; RECV_BUF_SIZE]),
+            buf: None,
             cache: HashMap::default(),
             sock: HashMap::new(),
             seq: 1,
@@ -145,7 +145,7 @@ impl NetlinkSocket {
     {
         match self.request(request).await?.recv_inner().await {
             None => Err(io::Error::other("Reply didn't contain data").into()),
-            Some(Ok((l, r))) => Ok(Request::decode_reply(&self.buf[l..r])),
+            Some(Ok((l, r))) => Ok(Request::decode_reply(&self.buf.as_mut().unwrap()[l..r])),
             Some(Err(err)) => Err(err),
         }
     }
@@ -213,7 +213,9 @@ impl NetlinkSocket {
 
         Ok(NetlinkReply {
             sock,
-            buf: &mut self.buf,
+            buf: self
+                .buf
+                .get_or_insert_with(|| Arc::new([0u8; RECV_BUF_SIZE])),
             inner: NetlinkReplyInner {
                 buf_offset: 0,
                 buf_read: 0,

@@ -14,7 +14,7 @@ pub struct MulticastRecv {
 }
 
 pub struct MulticastSocketRaw {
-    buf: Arc<[u8; RECV_BUF_SIZE]>,
+    buf: Option<Arc<[u8; RECV_BUF_SIZE]>>,
     sock: Socket,
     reply: NetlinkReplyInner,
     last_group: Option<u32>,
@@ -59,7 +59,7 @@ impl MulticastSocketRaw {
         }
 
         Ok(Self {
-            buf: Arc::new([0u8; RECV_BUF_SIZE]),
+            buf: None,
             sock,
             reply: NetlinkReplyInner {
                 buf_offset: 0,
@@ -88,7 +88,10 @@ impl MulticastSocketRaw {
 
     #[super::strip_async]
     pub async fn recv(&mut self) -> Result<(MulticastRecv, &[u8]), ReplyError> {
-        let buf = Arc::make_mut(&mut self.buf);
+        let buf = Arc::make_mut(
+            self.buf
+                .get_or_insert_with(|| Arc::new([0u8; RECV_BUF_SIZE])),
+        );
 
         loop {
             if self.reply.buf_offset == self.reply.buf_read {
@@ -118,7 +121,7 @@ impl MulticastSocketRaw {
                                     multicast_group,
                                     message_type,
                                 },
-                                &self.buf[l..r],
+                                &self.buf.as_ref().unwrap()[l..r],
                             ));
                         }
                         Err(mut err) => {
@@ -128,7 +131,7 @@ impl MulticastSocketRaw {
 
                             if err.has_context() {
                                 // err.lookup = Request::lookup;
-                                err.reply_buf = Some(self.buf.clone());
+                                err.reply_buf = Some(self.buf.as_ref().unwrap().clone());
                             }
 
                             return Err(err);
