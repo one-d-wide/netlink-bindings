@@ -30,6 +30,7 @@ pub mod std {
     use crate::keep as not_tokio;
     use crate::skip as only_async;
     use crate::skip as only_tokio;
+    use crate::skip as only_smol;
 
     use crate::strip_async;
 
@@ -42,12 +43,14 @@ pub mod std {
     pub(crate) mod multicast;
     pub(crate) mod reply;
     pub(crate) mod sock;
+    pub(crate) mod sock_raw;
 
     pub use {
         chained::NetlinkReplyChained,
         multicast::{MulticastRecv, MulticastSocketRaw},
         reply::NetlinkReply,
         sock::NetlinkSocket,
+        sock_raw::NetlinkSocketRaw,
     };
 }
 
@@ -59,6 +62,7 @@ pub mod tokio {
     use crate::keep as only_tokio;
     use crate::skip as only_sync;
     use crate::skip as not_tokio;
+    use crate::skip as only_smol;
 
     use crate::keep as strip_async;
 
@@ -71,12 +75,14 @@ pub mod tokio {
     pub(crate) mod multicast;
     pub(crate) mod reply;
     pub(crate) mod sock;
+    pub(crate) mod sock_raw;
 
     pub use {
         chained::NetlinkReplyChained,
         multicast::{MulticastRecv, MulticastSocketRaw},
         reply::NetlinkReply,
         sock::NetlinkSocket,
+        sock_raw::NetlinkSocketRaw,
     };
 }
 
@@ -86,6 +92,7 @@ pub mod tokio {
 pub mod smol {
     use crate::keep as only_async;
     use crate::keep as not_tokio;
+    use crate::keep as only_smol;
     use crate::skip as only_tokio;
     use crate::skip as only_sync;
 
@@ -98,11 +105,13 @@ pub mod smol {
     pub(crate) mod multicast;
     pub(crate) mod reply;
     pub(crate) mod sock;
+    pub(crate) mod sock_raw;
 
     pub use {
         chained::NetlinkReplyChained,
         multicast::{MulticastRecv, MulticastSocketRaw},
         reply::NetlinkReply,
         sock::NetlinkSocket,
+        sock_raw::NetlinkSocketRaw,
     };
 }

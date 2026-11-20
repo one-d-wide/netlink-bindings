@@ -7,13 +7,15 @@ use std::{
 };
 
 #[allow(unused_imports)]
-use super::{reply::NetlinkReplyInner, NetlinkReply, Read, Socket, Write};
+use super::{
+    chained::NetlinkReplyChained, reply::NetlinkReplyInner, NetlinkReply, Read, Socket, Write,
+};
 use crate::{ReplyError, RECV_BUF_SIZE};
 
 use netlink_bindings::{
     builtin::Nlmsghdr,
     nlctrl,
-    traits::{NetlinkRequest, Protocol},
+    traits::{NetlinkChained, NetlinkRequest, Protocol},
 };
 
 pub struct NetlinkSocket {
@@ -21,6 +23,8 @@ pub struct NetlinkSocket {
     pub(crate) cache: HashMap<&'static [u8], u16>,
     pub(crate) sock: HashMap<u16, Socket>,
     pub(crate) seq: u32,
+    /// Protonum of NetlinkSocketRaw. If set, it is the only socket created.
+    pub(crate) protonum: Option<u16>,
 }
 
 impl Default for NetlinkSocket {
@@ -33,16 +37,27 @@ impl NetlinkSocket {
     pub fn new() -> Self {
         Self {
             buf: None,
-            cache: HashMap::default(),
+            cache: HashMap::new(),
             sock: HashMap::new(),
             seq: 1,
+            protonum: None,
         }
     }
 
-    pub(crate) fn get_socket_cached(
-        cache: &mut HashMap<u16, Socket>,
+    pub(crate) fn get_socket_cached<'a>(
+        cache: &'a mut HashMap<u16, Socket>,
+        sock_protonum: &Option<u16>,
         protonum: u16,
-    ) -> io::Result<&mut Socket> {
+    ) -> io::Result<&'a mut Socket> {
+        if let Some(sock_protonum) = sock_protonum {
+            if *sock_protonum != protonum {
+                return Err(io::Error::other(format!(
+                    "Can't send a request. Requested protonum is {protonum}, while NetlinkSocketRaw protonum is {sock_protonum}",
+                ))
+                .into());
+            }
+        }
+
         match cache.entry(protonum) {
             Entry::Occupied(sock) => Ok(sock.into_mut()),
             Entry::Vacant(ent) => {
@@ -149,6 +164,60 @@ impl NetlinkSocket {
         }
     }
 
+    /// Execute a chained request
+    ///
+    /// Some subsystems have special requirements for related requests,
+    /// expecting certain types of messages to be sent within a single write
+    /// operation. For example transactions in nftables subsystem.
+    ///
+    /// Chained requests currently don't support replies carrying data.
+    #[super::strip_async]
+    pub async fn request_chained<'a, Chained>(
+        &'a mut self,
+        request: &'a Chained,
+    ) -> io::Result<NetlinkReplyChained<'a>>
+    where
+        Chained: NetlinkChained + Send + Sync,
+    {
+        let sock = Self::get_socket_cached(&mut self.sock, &self.protonum, request.protonum())?;
+
+        Self::write_buf(sock, &[IoSlice::new(request.payload())]).await?;
+
+        let mut done = super::chained::Bits::with_len(request.chain_len());
+        for i in 0..request.chain_len() {
+            let Some(has_ack) = request.supports_ack(i) else {
+                break;
+            };
+            if !has_ack {
+                done.set(i);
+            }
+        }
+
+        Ok(NetlinkReplyChained {
+            sock,
+            buf: self
+                .buf
+                .get_or_insert_with(|| Arc::new([0u8; RECV_BUF_SIZE])),
+            request,
+            inner: NetlinkReplyInner {
+                buf_offset: 0,
+                buf_read: 0,
+            },
+            done,
+        })
+    }
+
+    #[super::strip_async]
+    pub async fn request_chained_all<Chained>(
+        &mut self,
+        request: &Chained,
+    ) -> Result<(), ReplyError>
+    where
+        Chained: NetlinkChained + Send + Sync,
+    {
+        self.request_chained(request).await?.recv_all().await
+    }
+
     #[super::strip_async]
     async fn resolve(&mut self, family_name: &'static [u8]) -> io::Result<u16> {
         if let Some(id) = self.cache.get(family_name) {
@@ -191,7 +260,7 @@ impl NetlinkSocket {
         Request: NetlinkRequest + ?Sized,
     {
         let seq = self.reserve_seq(1);
-        let sock = Self::get_socket_cached(&mut self.sock, protonum)?;
+        let sock = Self::get_socket_cached(&mut self.sock, &self.protonum, protonum)?;
 
         let header = Nlmsghdr {
             len: Nlmsghdr::len() as u32 + request.payload().len() as u32,
@@ -219,7 +288,7 @@ impl NetlinkSocket {
                 buf_offset: 0,
                 buf_read: 0,
             },
-            seq: header.seq,
+            seq,
             done: false,
             phantom: PhantomData,
         })

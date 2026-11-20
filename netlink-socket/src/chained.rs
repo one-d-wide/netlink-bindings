@@ -1,78 +1,21 @@
 use std::{
     fmt,
-    io::{self, IoSlice},
     marker::{Send, Sync},
     sync::Arc,
 };
 
 use netlink_bindings::traits::NetlinkChained;
 
-use super::{reply::NetlinkReplyInner, NetlinkSocket, Socket};
+use super::{reply::NetlinkReplyInner, Socket};
 use crate::{ReplyError, RECV_BUF_SIZE};
-
-impl NetlinkSocket {
-    /// Execute a chained request (experimental)
-    ///
-    /// Some subsystems have special requirements for related requests,
-    /// expecting certain types of messages to be sent within a single write
-    /// operation. For example transactions in nftables subsystem.
-    ///
-    /// Chained requests currently don't support replies carrying data.
-    #[super::strip_async]
-    pub async fn request_chained<'a, Chained>(
-        &'a mut self,
-        request: &'a Chained,
-    ) -> io::Result<NetlinkReplyChained<'a>>
-    where
-        Chained: NetlinkChained + Send + Sync,
-    {
-        let sock = Self::get_socket_cached(&mut self.sock, request.protonum())?;
-
-        Self::write_buf(sock, &[IoSlice::new(request.payload())]).await?;
-
-        let mut done = Bits::with_len(request.chain_len());
-        for i in 0..request.chain_len() {
-            let Some(has_ack) = request.supports_ack(i) else {
-                break;
-            };
-            if !has_ack {
-                done.set(i);
-            }
-        }
-
-        Ok(NetlinkReplyChained {
-            sock,
-            buf: self
-                .buf
-                .get_or_insert_with(|| Arc::new([0u8; RECV_BUF_SIZE])),
-            request,
-            inner: NetlinkReplyInner {
-                buf_offset: 0,
-                buf_read: 0,
-            },
-            done,
-        })
-    }
-
-    #[super::strip_async]
-    pub async fn request_chained_all<Chained>(
-        &mut self,
-        request: &Chained,
-    ) -> Result<(), ReplyError>
-    where
-        Chained: NetlinkChained + Send + Sync,
-    {
-        self.request_chained(request).await?.recv_all().await
-    }
-}
 
 #[must_use = "The request is sent, but not acknowledged. Consider .recv_all() or .recv()"]
 pub struct NetlinkReplyChained<'sock> {
-    inner: NetlinkReplyInner,
-    request: &'sock (dyn NetlinkChained + Send + Sync),
-    sock: &'sock mut Socket,
-    buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
-    done: Bits,
+    pub(crate) inner: NetlinkReplyInner,
+    pub(crate) request: &'sock (dyn NetlinkChained + Send + Sync),
+    pub(crate) sock: &'sock mut Socket,
+    pub(crate) buf: &'sock mut Arc<[u8; RECV_BUF_SIZE]>,
+    pub(crate) done: Bits,
 }
 
 impl NetlinkReplyChained<'_> {
@@ -127,7 +70,7 @@ impl NetlinkReplyChained<'_> {
 }
 
 #[derive(Clone)]
-enum Bits {
+pub(crate) enum Bits {
     Inline(u64),
     Vec(Vec<u64>),
 }
@@ -140,7 +83,7 @@ impl fmt::Debug for Bits {
 }
 
 impl Bits {
-    fn with_len(len: usize) -> Self {
+    pub(crate) fn with_len(len: usize) -> Self {
         if len < 64 {
             Self::Inline(u64::MAX << (len % 64))
         } else {
@@ -150,28 +93,28 @@ impl Bits {
         }
     }
 
-    fn set(&mut self, index: usize) {
+    pub(crate) fn set(&mut self, index: usize) {
         match self {
             Self::Inline(w) => *w |= 1u64 << index,
             Self::Vec(bits) => bits[index / 64] |= 1u64 << (index % 64),
         }
     }
 
-    fn is_all(&self) -> bool {
+    pub(crate) fn is_all(&self) -> bool {
         match self {
             Self::Inline(w) => *w == u64::MAX,
             Self::Vec(bits) => bits.iter().all(|w| *w == u64::MAX),
         }
     }
 
-    fn set_all(&mut self) {
+    pub(crate) fn set_all(&mut self) {
         match self {
             Self::Inline(w) => *w = u64::MAX,
             Self::Vec(bits) => bits.iter_mut().for_each(|w| *w = u64::MAX),
         }
     }
 
-    fn count_zeros(&self) -> usize {
+    pub(crate) fn count_zeros(&self) -> usize {
         match self {
             Self::Inline(w) => w.count_zeros() as usize,
             Self::Vec(bits) => bits.iter().map(|s| s.count_zeros() as usize).sum(),
