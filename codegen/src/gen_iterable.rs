@@ -279,9 +279,10 @@ pub fn gen_iterable_parse(spec: &Spec, attr: &AttrProp) -> TokenStream {
         AttrType::S16 => "i16",
         AttrType::S32 => "i32",
         AttrType::S64 => "i64",
+        // IPv6 addresses are always in network byte order, regardless of
+        // `byte-order`, which most specs leave unset on binary attributes.
         AttrType::Binary { .. } if attr.is_ipv6() => {
-            let parse = format_ident!("parse{ord}_u128");
-            return quote! { #parse(#buf_name).map(Ipv6Addr::from_bits) };
+            return quote! { parse_ipv6(#buf_name) };
         }
         AttrType::Binary { .. } if attr.is_ip() => {
             let parse = format_ident!("parse_ip");
