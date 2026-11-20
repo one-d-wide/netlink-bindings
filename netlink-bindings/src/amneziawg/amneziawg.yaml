@@ -1,0 +1,536 @@
+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
+---
+name: amneziawg
+protocol: genetlink-legacy
+version: 3
+
+doc: |
+  **Netlink protocol to control AmneziaWG network devices.**
+
+  AmneziaWG is a fork of WireGuard which adds traffic-obfuscation features
+  (junk packets, magic header rewriting, handshake header protection, and
+  extra decoy handshake packets) meant to make the protocol harder to
+  fingerprint on the wire. Its netlink attribute space is a superset of
+  upstream WireGuard's: everything documented in the ``wireguard`` subsystem
+  applies here too, plus the additional attributes below.
+
+  The below enums and macros are for interfacing with AmneziaWG, using generic
+  netlink, with family ``WG_GENL_NAME`` and version ``WG_GENL_VERSION``. It
+  defines three commands: get, set, and an asynchronous notification for
+  unknown peers. Note that while ``get`` and ``set`` share many common
+  attributes, these two commands actually accept a slightly different set of
+  inputs and outputs. These differences are noted under the individual
+  attributes.
+c-family-name: wg-genl-name
+c-version-name: wg-genl-version
+max-by-define: true
+
+definitions:
+  -
+    name-prefix: wg-
+    name: key-len
+    type: const
+    value: 32
+  -
+    name-prefix: wg-
+    name: header-protection-key-len
+    type: const
+    value: 32
+    doc: Length, in bytes, of ``WGDEVICE_A_HEADER_PROTECTION_KEY`` (a ChaCha20 key).
+  -
+    name: --kernel-timespec
+    type: struct
+    header: linux/time_types.h
+    members:
+      -
+        name: sec
+        type: u64
+        doc: Number of seconds, since UNIX epoch.
+      -
+        name: nsec
+        type: u64
+        doc: Number of nanoseconds, after the second began.
+  -
+    name: wgdevice-flags
+    name-prefix: wgdevice-f-
+    enum-name: wgdevice-flag
+    type: flags
+    entries:
+      - replace-peers
+  -
+    name: wgpeer-flags
+    name-prefix: wgpeer-f-
+    enum-name: wgpeer-flag
+    type: flags
+    entries:
+      - remove-me
+      - replace-allowedips
+      - update-only
+      - has-advanced-security
+  -
+    name: wgallowedip-flags
+    name-prefix: wgallowedip-f-
+    enum-name: wgallowedip-flag
+    type: flags
+    entries:
+      - remove-me
+
+attribute-sets:
+  -
+    name: wgdevice
+    enum-name: wgdevice-attribute
+    name-prefix: wgdevice-a-
+    attr-cnt-name: --wgdevice-a-last
+    attributes:
+      -
+        name: unspec
+        type: unused
+        value: 0
+      -
+        name: ifindex
+        type: u32
+      -
+        name: ifname
+        type: string
+        checks:
+          max-len: 15
+      -
+        name: private-key
+        type: binary
+        doc: Set to all zeros to remove.
+        display-hint: hex
+        checks:
+          exact-len: wg-key-len
+      -
+        name: public-key
+        type: binary
+        display-hint: hex
+        checks:
+          exact-len: wg-key-len
+      -
+        name: flags
+        type: u32
+        doc: |
+          ``0`` or ``WGDEVICE_F_REPLACE_PEERS`` if all current peers should be
+          removed prior to adding the list below.
+        enum: wgdevice-flags
+      -
+        name: listen-port
+        type: u16
+        doc: Set as ``0`` to choose randomly.
+      -
+        name: fwmark
+        type: u32
+        doc: Set as ``0`` to disable.
+      -
+        name: peers
+        type: indexed-array
+        sub-type: nest
+        nested-attributes: wgpeer
+        doc: |
+          The index/type parameter is unused on ``SET_DEVICE`` operations and is
+          zero on ``GET_DEVICE`` operations.
+      -
+        name: jc
+        type: u16
+        doc: |
+          Number of junk packets to send before the handshake initiation.
+          Recommended range is ``4`` to ``12``. Client and server may use
+          different values.
+      -
+        name: jmin
+        type: u16
+        doc: Minimum size, in bytes, of a junk packet. Recommended value is ``8``.
+      -
+        name: jmax
+        type: u16
+        doc: Maximum size, in bytes, of a junk packet. Recommended value is ``80``.
+      -
+        name: s1
+        type: u16
+        doc: |
+          Extra bytes of padding appended to the handshake initiation message
+          (``init``). Must not make ``S1 + 56`` equal to ``S2``.
+      -
+        name: s2
+        type: u16
+        doc: |
+          Extra bytes of padding appended to the handshake response message
+          (``resp``).
+      -
+        name: h1
+        type: u64
+        doc: |
+          Replacement magic header value range for handshake initiation
+          packets. Packs two ``u32`` values, low 32 bits first: a random value
+          is picked from ``[lo, hi]`` per-packet. Set ``lo == hi`` for a fixed
+          value. Must not overlap with ``H2``-``H4``.
+      -
+        name: h2
+        type: u64
+        doc: |
+          Replacement magic header value range for handshake response
+          packets. Packs two ``u32`` values, low 32 bits first. Must not
+          overlap with ``H1``, ``H3``, ``H4``.
+      -
+        name: h3
+        type: u64
+        doc: |
+          Replacement magic header value range for cookie reply packets.
+          Packs two ``u32`` values, low 32 bits first. Must not overlap with
+          ``H1``, ``H2``, ``H4``.
+      -
+        name: h4
+        type: u64
+        doc: |
+          Replacement magic header value range for transport data packets.
+          Packs two ``u32`` values, low 32 bits first. Must not overlap with
+          ``H1``-``H3``.
+      -
+        name: peer
+        type: nest
+        nested-attributes: wgpeer
+        doc: |
+          A single peer, used only in the ``WG_CMD_UNKNOWN_PEER`` notification
+          to describe the peer that sent an initiation from an unrecognized
+          public key. Not used by ``GET_DEVICE`` or ``SET_DEVICE``.
+      -
+        name: s3
+        type: u16
+        doc: Extra bytes of padding appended to cookie reply packets.
+      -
+        name: s4
+        type: u16
+        doc: Extra bytes of padding appended to transport data packets.
+      -
+        name: i1
+        type: string
+        doc: |
+          Extra handshake decoy/junk packet specification, sent before the
+          handshake initiation.
+      -
+        name: i2
+        type: string
+        doc: Extra handshake decoy/junk packet specification.
+      -
+        name: i3
+        type: string
+        doc: Extra handshake decoy/junk packet specification.
+      -
+        name: i4
+        type: string
+        doc: Extra handshake decoy/junk packet specification.
+      -
+        name: i5
+        type: string
+        doc: Extra handshake decoy/junk packet specification.
+      -
+        name: header-protection-key
+        type: binary
+        doc: |
+          Symmetric key used to encrypt/authenticate the magic header field of
+          every packet (handshake header protection). Requires ``S1``-``S4``
+          to each be at least the header-protection nonce size. Set to all
+          zeros to remove.
+        display-hint: hex
+        checks:
+          exact-len: wg-header-protection-key-len
+      -
+        name: content-padding-addition
+        type: u32
+        doc: Extra bytes of padding added to the encrypted contents of transport data packets.
+      -
+        name: rekey-after-time
+        type: u32
+        doc: |
+          Override, in seconds, for how long a session key is used before a
+          new handshake is initiated. Upstream WireGuard default is ``120``.
+      -
+        name: rekey-timeout
+        type: u32
+        doc: |
+          Override, in seconds, for how long to wait for a handshake response
+          before retrying. Upstream WireGuard default is ``5``.
+      -
+        name: reject-after-time
+        type: u32
+        doc: |
+          Override, in seconds, for how long a session key is used before
+          traffic using it is rejected. Upstream WireGuard default is ``180``.
+      -
+        name: keepalive-timeout
+        type: u32
+        doc: |
+          Override, in seconds, for the default persistent-keepalive interval
+          used to keep NAT/firewall mappings open. Upstream WireGuard default
+          is ``10``.
+      -
+        name: max-handshake-attempts
+        type: u32
+        doc: Override for the maximum number of handshake retries before giving up.
+      -
+        name: random-trailers
+        type: u8
+        doc: Set to a non-zero value to append random-length trailers to outgoing packets.
+      -
+        name: disable-cookies
+        type: u8
+        doc: Set to a non-zero value to disable the cookie-reply DoS mitigation mechanism.
+  -
+    name: wgpeer
+    enum-name: wgpeer-attribute
+    name-prefix: wgpeer-a-
+    attr-cnt-name: --wgpeer-a-last
+    attributes:
+      -
+        name: unspec
+        type: unused
+        value: 0
+      -
+        name: public-key
+        type: binary
+        display-hint: hex
+        checks:
+          exact-len: wg-key-len
+      -
+        name: preshared-key
+        type: binary
+        doc: Set as all zeros to remove.
+        display-hint: hex
+        checks:
+          exact-len: wg-key-len
+      -
+        name: flags
+        type: u32
+        doc: |
+          ``0`` and/or ``WGPEER_F_REMOVE_ME`` if the specified peer should not
+          exist at the end of the operation, rather than added/updated and/or
+          ``WGPEER_F_REPLACE_ALLOWEDIPS`` if all current allowed IPs of this
+          peer should be removed prior to adding the list below and/or
+          ``WGPEER_F_UPDATE_ONLY`` if the peer should only be set if it already
+          exists. ``WGPEER_F_HAS_ADVANCED_SECURITY`` is set by the kernel on
+          ``GET_DEVICE`` to indicate the peer is using AmneziaWG's advanced
+          security/obfuscation features.
+        enum: wgpeer-flags
+      -
+        name: endpoint
+        type: binary
+        doc: struct sockaddr_in or struct sockaddr_in6
+        display-hint: sockaddr_in-or-sockaddr_in6
+        checks:
+          min-len: 16
+      -
+        name: persistent-keepalive-interval
+        type: u32
+        doc: |
+          Packs two ``u16`` values, low 16 bits first: a random interval is
+          picked from ``[lo, hi]`` for each keepalive. Set ``lo == hi`` for a
+          fixed interval, matching upstream WireGuard's single-value
+          behavior. Set as ``0`` to disable.
+      -
+        name: last-handshake-time
+        type: binary
+        struct: --kernel-timespec
+        checks:
+          exact-len: 16
+      -
+        name: rx-bytes
+        type: u64
+      -
+        name: tx-bytes
+        type: u64
+      -
+        name: allowedips
+        type: indexed-array
+        sub-type: nest
+        nested-attributes: wgallowedip
+        doc: |
+          The index/type parameter is unused on ``SET_DEVICE`` operations and is
+          zero on ``GET_DEVICE`` operations.
+      -
+        name: protocol-version
+        type: u32
+        doc: |
+          Should not be set or used at all by most users of this API, as the
+          most recent protocol will be used when this is unset. Otherwise,
+          must be set to ``1``.
+      -
+        name: advanced-security
+        type: flag
+        doc: |
+          Present when AmneziaWG's advanced security techniques (obfuscation)
+          are in use for this peer. Sent by the kernel; ignored when set by
+          userspace on ``SET_DEVICE``.
+  -
+    name: wgallowedip
+    enum-name: wgallowedip-attribute
+    name-prefix: wgallowedip-a-
+    attr-cnt-name: --wgallowedip-a-last
+    attributes:
+      -
+        name: unspec
+        type: unused
+        value: 0
+      -
+        name: family
+        type: u16
+        doc: IP family, either ``AF_INET`` or ``AF_INET6``.
+      -
+        name: ipaddr
+        type: binary
+        doc: Either ``struct in_addr`` or ``struct in6_addr``.
+        display-hint: ipv4-or-v6
+        checks:
+          min-len: 4
+      -
+        name: cidr-mask
+        type: u8
+      -
+        name: flags
+        type: u32
+        doc: |
+          ``WGALLOWEDIP_F_REMOVE_ME`` if the specified IP should be removed;
+          otherwise, this IP will be added if it is not already present.
+        enum: wgallowedip-flags
+
+operations:
+  enum-name: wg-cmd
+  name-prefix: wg-cmd-
+  list:
+    -
+      name: get-device
+      value: 0
+      doc: |
+        Retrieve AmneziaWG device
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The command should be called with one but not both of:
+
+        - ``WGDEVICE_A_IFINDEX``
+        - ``WGDEVICE_A_IFNAME``
+
+        The kernel will then return several messages (``NLM_F_MULTI``). It is
+        possible that all of the allowed IPs of a single peer will not fit
+        within a single netlink message. In that case, the same peer will be
+        written in the following message, except it will only contain
+        ``WGPEER_A_PUBLIC_KEY`` and ``WGPEER_A_ALLOWEDIPS``. This may occur
+        several times in a row for the same peer. It is then up to the receiver
+        to coalesce adjacent peers. Likewise, it is possible that all peers will
+        not fit within a single message. So, subsequent peers will be sent in
+        following messages, except those will only contain ``WGDEVICE_A_IFNAME``
+        and ``WGDEVICE_A_PEERS``. It is then up to the receiver to coalesce
+        these messages to form the complete list of peers.
+
+        Since this is an ``NLA_F_DUMP`` command, the final message will always
+        be ``NLMSG_DONE``, even if an error occurs. However, this ``NLMSG_DONE``
+        message contains an integer error code. It is either zero or a negative
+        error code corresponding to the errno.
+      attribute-set: wgdevice
+      flags: [uns-admin-perm]
+
+      dump:
+        pre: wg-get-device-start
+        post: wg-get-device-done
+        request:
+          attributes:
+            - ifindex
+            - ifname
+        reply: &all-attrs
+          attributes:
+            - ifindex
+            - ifname
+            - private-key
+            - public-key
+            - flags
+            - listen-port
+            - fwmark
+            - peers
+            - jc
+            - jmin
+            - jmax
+            - s1
+            - s2
+            - s3
+            - s4
+            - h1
+            - h2
+            - h3
+            - h4
+            - i1
+            - i2
+            - i3
+            - i4
+            - i5
+            - header-protection-key
+            - content-padding-addition
+            - rekey-after-time
+            - rekey-timeout
+            - reject-after-time
+            - keepalive-timeout
+            - max-handshake-attempts
+            - random-trailers
+            - disable-cookies
+    -
+      name: set-device
+      value: 1
+      doc: |
+        Set AmneziaWG device
+        ~~~~~~~~~~~~~~~~~~~~
+
+        This command should be called with a wgdevice set, containing one but
+        not both of ``WGDEVICE_A_IFINDEX`` and ``WGDEVICE_A_IFNAME``.
+
+        It is possible that the amount of configuration data exceeds that of the
+        maximum message length accepted by the kernel. In that case, several
+        messages should be sent one after another, with each successive one
+        filling in information not contained in the prior. Note that if
+        ``WGDEVICE_F_REPLACE_PEERS`` is specified in the first message, it
+        probably should not be specified in fragments that come after, so that
+        the list of peers is only cleared the first time but appended after.
+        Likewise for peers, if ``WGPEER_F_REPLACE_ALLOWEDIPS`` is specified in
+        the first message of a peer, it likely should not be specified in
+        subsequent fragments.
+
+        The obfuscation parameters (``WGDEVICE_A_JC``, ``WGDEVICE_A_JMIN``,
+        ``WGDEVICE_A_JMAX``, ``WGDEVICE_A_S1``-``WGDEVICE_A_S4``,
+        ``WGDEVICE_A_H1``-``WGDEVICE_A_H4``, ``WGDEVICE_A_I1``-``WGDEVICE_A_I5``,
+        and ``WGDEVICE_A_HEADER_PROTECTION_KEY``) must match between both ends
+        of a tunnel, with the exception of ``WGDEVICE_A_JC``,
+        ``WGDEVICE_A_JMIN``, and ``WGDEVICE_A_JMAX``, which may differ.
+
+        If an error occurs, ``NLMSG_ERROR`` will reply containing an errno.
+      attribute-set: wgdevice
+      flags: [uns-admin-perm]
+
+      do:
+        request: *all-attrs
+    -
+      name: unknown-peer
+      value: 2
+      doc: |
+        Notify about an unrecognized peer
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Sent on the ``auth`` multicast group when a handshake initiation
+        message is received from a peer with a public key unknown to this
+        device. The kernel sends a single message containing:
+
+        - ``WGDEVICE_A_IFINDEX``
+        - ``WGDEVICE_A_IFNAME``
+        - ``WGDEVICE_A_PEER``, itself containing:
+
+          - ``WGPEER_A_PUBLIC_KEY``
+          - ``WGPEER_A_ENDPOINT``
+          - ``WGPEER_A_ADVANCED_SECURITY``
+      attribute-set: wgdevice
+      mcgrp: auth
+      event:
+        attributes:
+          - ifindex
+          - ifname
+          - peer
+
+mcast-groups:
+  list:
+    -
+      name: auth
