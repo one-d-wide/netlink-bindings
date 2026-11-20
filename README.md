@@ -125,8 +125,7 @@ let mut request = rt_addr::Request::new()
 request.encode()
     .push_local(addr);
 
-sock.request(&request).unwrap()
-    .recv_ack().unwrap();
+sock.request_ack(&request).unwrap();
 ```
 
 You may also notice ".set_change()" setting a flag. Similar to the

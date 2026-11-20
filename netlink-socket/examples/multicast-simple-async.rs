@@ -83,8 +83,7 @@ async fn resolve_genl_group_id(
     let mut request = nlctrl::Request::new().op_getfamily_do();
     request.encode().push_family_name_bytes(family.as_bytes());
 
-    let mut iter = sock.request(&request).await?;
-    let attrs = iter.recv_one().await?;
+    let attrs = sock.request_one(&request).await?;
 
     for group in attrs.get_mcast_groups()? {
         if group.get_name()?.to_bytes() == group_name.as_bytes() {
@@ -107,8 +106,7 @@ async fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn 
         .nested_linkinfo()
         .push_kind(c"dummy");
 
-    let mut iter = sock.request(&request).await?;
-    let _ = iter.recv_ack().await?;
+    let _ = sock.request_ack(&request).await;
     Ok(())
 }
 
@@ -122,7 +120,6 @@ async fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn 
         .push_ifname_bytes(ifname.as_bytes());
     let request = request.finalize();
 
-    let mut iter = sock.request_chained(&request).await?;
-    let _ = iter.recv_all().await;
+    let _ = sock.request_chained_all(&request).await;
     Ok(())
 }

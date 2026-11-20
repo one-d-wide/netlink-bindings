@@ -79,8 +79,7 @@ fn resolve_genl_group_id(
     let mut request = nlctrl::Request::new().op_getfamily_do();
     request.encode().push_family_name_bytes(family.as_bytes());
 
-    let mut iter = sock.request(&request)?;
-    let attrs = iter.recv_one()?;
+    let attrs = sock.request_one(&request)?;
 
     for group in attrs.get_mcast_groups()? {
         if group.get_name()?.to_bytes() == group_name.as_bytes() {
@@ -104,8 +103,7 @@ fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>
         .nested_linkinfo()
         .push_kind(c"dummy");
 
-    let mut iter = sock.request(&request)?;
-    if let Err(err) = iter.recv_ack() {
+    if let Err(err) = sock.request_ack(&request) {
         eprintln!("Error creating interface {ifname:?}: {err}");
     }
     Ok(())
@@ -117,7 +115,6 @@ fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request)?;
-    let _ = iter.recv_ack();
+    let _ = sock.request_ack(&request);
     Ok(())
 }

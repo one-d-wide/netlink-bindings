@@ -77,8 +77,7 @@ struct GenerationId(u32);
 impl GenerationId {
     fn new_latest(sock: &mut NetlinkSocket) -> Result<Self, ReplyError> {
         let request = nftables::Request::new().op_getgen_do(&Nfgenmsg::new());
-        let mut iter = sock.request(&request)?;
-        let (_, attrs) = iter.recv_one()?;
+        let (_, attrs) = sock.request_one(&request)?;
 
         Ok(GenerationId(attrs.get_id()?))
     }
@@ -169,7 +168,7 @@ impl Transaction {
 
         let c = self.inner.finalize();
 
-        let res = sock.request_chained(&c)?.recv_all();
+        let res = sock.request_chained_all(&c);
 
         if let Err(err) = &res {
             if let Some(err) = err.as_io_error().raw_os_error() {

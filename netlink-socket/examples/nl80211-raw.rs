@@ -143,8 +143,7 @@ fn wiphy_add_interface(
         // ...
         ;
 
-    let mut iter = sock.request(&request)?;
-    let (_genl_header, attrs) = iter.recv_one()?.split_at(BuiltinNfgenmsg::len());
+    let (_genl_header, attrs) = sock.request_one(&request)?.split_at(BuiltinNfgenmsg::len());
     let attrs = Nl80211Attrs::new(attrs);
 
     // dbg!(attrs);
@@ -161,7 +160,7 @@ fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) -> Result<(), Box
 
     PushNl80211Attrs::new(&mut request.buf).push_ifindex(ifindex);
 
-    sock.request(&request)?.recv_ack()?;
+    sock.request_ack(&request)?;
 
     Ok(())
 }

@@ -50,7 +50,6 @@ fn get_ifname(ifindex: u32) -> Result<String, Box<dyn Error>> {
     });
 
     let mut sock = NetlinkSocket::new();
-    let mut iter = sock.request(&req)?;
-    let (_, attrs) = iter.recv_one()?;
+    let (_, attrs) = sock.request_one(&req)?;
     Ok(attrs.get_ifname()?.to_string_lossy().to_string())
 }

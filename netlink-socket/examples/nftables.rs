@@ -106,15 +106,14 @@ fn append_rule(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) -> Result<(
 
     c.request().op_batch_end_do(&batch_header());
 
-    sock.request_chained(&c.finalize())?.recv_all()?;
+    sock.request_chained_all(&c.finalize())?;
 
     Ok(())
 }
 
 fn get_latest_genid(sock: &mut NetlinkSocket) -> Result<u32, Box<dyn Error>> {
     let request = nftables::Request::new().op_getgen_do(&Nfgenmsg::new());
-    let mut iter = sock.request(&request)?;
-    let (_, attrs) = iter.recv_one()?;
+    let (_, attrs) = sock.request_one(&request)?;
 
     Ok(attrs.get_id()?)
 }
@@ -148,7 +147,7 @@ fn del_chain(sock: &mut NetlinkSocket, table: &CStr, chain: &CStr) -> Result<(),
 
     let c = c.finalize();
 
-    sock.request_chained(&c)?.recv_all()?;
+    sock.request_chained_all(&c)?;
 
     Ok(())
 }

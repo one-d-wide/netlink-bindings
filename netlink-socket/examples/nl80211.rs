@@ -80,16 +80,13 @@ fn wiphy_add_interface(
         // ...
         ;
 
-    let mut iter = sock.request(&request)?;
-    let attrs = iter.recv_one()?;
-
-    Ok(attrs.get_ifindex()?)
+    Ok(sock.request_one(&request)?.get_ifindex()?)
 }
 
 fn wiphy_del_interface(sock: &mut NetlinkSocket, ifindex: u32) -> Result<(), Box<dyn Error>> {
     let mut request = nl80211::Request::new().op_do(Commands::DelInterface as u8);
     request.encode().push_ifindex(ifindex);
-    sock.request(&request)?.recv_ack()?;
+    sock.request_ack(&request)?;
     Ok(())
 }
 

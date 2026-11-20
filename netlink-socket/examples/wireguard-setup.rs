@@ -108,7 +108,7 @@ fn wg_set(
         .end_nested()
         .end_array();
 
-    sock.request(&request)?.recv_ack()?;
+    sock.request_ack(&request)?;
 
     Ok(())
 }
@@ -132,7 +132,7 @@ fn addr_add(
 
     request.encode().push_local(addr);
 
-    sock.request(&request)?.recv_ack()?;
+    sock.request_ack(&request)?;
 
     Ok(())
 }
@@ -150,7 +150,7 @@ fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>
         .nested_linkinfo()
         .push_kind(c"wireguard");
 
-    sock.request(&request)?.recv_ack()?;
+    sock.request_ack(&request)?;
 
     Ok(())
 }
@@ -160,8 +160,7 @@ fn link_get_ifindex(sock: &mut NetlinkSocket, ifname: &str) -> Result<u32, Box<d
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request)?;
-    let (header, _attrs) = iter.recv_one()?;
+    let (header, _attrs) = sock.request_one(&request)?;
 
     Ok(header.ifi_index as u32)
 }
@@ -172,7 +171,7 @@ fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    sock.request(&request)?.recv_ack()?;
+    sock.request_ack(&request)?;
 
     Ok(())
 }

@@ -263,8 +263,7 @@ fn link_add(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>
         .nested_linkinfo()
         .push_kind(c"dummy");
 
-    let mut iter = sock.request(&request)?;
-    let _ = iter.recv_ack()?;
+    let _ = sock.request_ack(&request);
     Ok(())
 }
 
@@ -274,7 +273,6 @@ fn link_del(sock: &mut NetlinkSocket, ifname: &str) -> Result<(), Box<dyn Error>
 
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request)?;
-    let _ = iter.recv_ack();
+    let _ = sock.request_ack(&request);
     Ok(())
 }

@@ -61,7 +61,7 @@ fn tc_prio_add(sock: &mut NetlinkSocket, ifi: i32, handle: u32) -> Result<(), Bo
 
     req.encode().nested_options_prio(&tc_prio_opt);
 
-    sock.request(&req)?.recv_ack()?;
+    sock.request_ack(&req)?;
 
     println!("tc prio add on ifi {} OK", ifi);
 
@@ -110,7 +110,7 @@ fn tc_prio_del(
         ..Default::default()
     });
 
-    sock.request(&req)?.recv_ack()?;
+    sock.request_ack(&req)?;
 
     println!("tc prio del on ifi {} OK", ifi);
 
@@ -121,8 +121,7 @@ fn link_get_ifindex(sock: &mut NetlinkSocket, ifname: &str) -> Result<i32, Box<d
     let mut request = rt_link::Request::new().op_getlink_do(&Default::default());
     request.encode().push_ifname_bytes(ifname.as_bytes());
 
-    let mut iter = sock.request(&request)?;
-    let (header, _attrs) = iter.recv_one()?;
+    let (header, _attrs) = sock.request_one(&request)?;
 
     Ok(header.ifi_index)
 }

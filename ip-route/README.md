@@ -42,7 +42,7 @@ ip!(sock, "ip link set dev {} up", ifname).unwrap();
 
 // ...equivalent to
 let req = ip!("ip link set dev {ifname} up");
-sock.request(&req).unwrap().recv_ack().unwrap();
+sock.request_ack(&req).unwrap();
 
 // A query with a single reply
 // ip_dump!(sock, ...) simply sends the request
