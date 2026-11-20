@@ -1,8 +1,7 @@
 use netlink_bindings::{
-    builtin::Nlmsghdr,
     nftables::{self, Nfgenmsg},
     rt_link::{self, RtextFilter},
-    traits::{NetlinkChained, NetlinkRequest, Protocol},
+    traits::NetlinkRequest,
     utils::{self, Rec},
 };
 use netlink_socket2::{ReplyError, std::NetlinkSocket};
@@ -46,43 +45,13 @@ pub fn iptables_get_latest_gen_id(sock: &mut NetlinkSocket) -> Result<u32, Reply
     Ok(attrs.get_id()?)
 }
 
-/// A dyn-compatible version of NetlinkRequest.
-///
-/// It doesn't support decoding replies and doesn't do attribute lookup for extended-ack error info
-/// (not like it's that widely supported in the kernel anyway).
-pub trait NetlinkRequestAcked {
-    fn protocol(&self) -> Protocol;
-    fn flags(&self) -> u16;
-    fn payload(&self) -> &[u8];
-}
-
-impl<T: NetlinkRequest> NetlinkRequestAcked for T {
-    fn protocol(&self) -> Protocol {
-        self.protocol()
-    }
-    fn flags(&self) -> u16 {
-        self.flags()
-    }
-    fn payload(&self) -> &[u8] {
-        self.payload()
-    }
-}
-
 pub trait IptablesDo {
-    fn iptables_request(&mut self, req: &dyn NetlinkRequestAcked) -> Result<(), ReplyError>;
-    fn iptables_request_chained(&mut self, chained: &dyn NetlinkChained) -> Result<(), ReplyError>;
-    fn iptables_request_raw(&mut self, req: &[u8]) -> Result<(), ReplyError>;
+    fn iptables_request_chained(&mut self, chained: &nftables::Chained) -> Result<(), ReplyError>;
 }
 
 impl IptablesDo for NetlinkSocket {
-    fn iptables_request(&mut self, req: &dyn NetlinkRequestAcked) -> Result<(), ReplyError> {
-        iptables_request(self, req)
-    }
-    fn iptables_request_chained(&mut self, chained: &dyn NetlinkChained) -> Result<(), ReplyError> {
+    fn iptables_request_chained(&mut self, chained: &nftables::Chained) -> Result<(), ReplyError> {
         iptables_request_chained(self, chained)
-    }
-    fn iptables_request_raw(&mut self, req: &[u8]) -> Result<(), ReplyError> {
-        iptables_request_raw(self, req)
     }
 }
 
@@ -94,9 +63,9 @@ impl IptablesDo for NetlinkSocket {
 /// consistent while a program inspects the current nftables state and executes a request that
 /// modifies it. In such cases you may want write this loop yourself, ensuring that both your
 /// queries and subsequent changes are performed against the same genid, retrying if necessary.
-pub fn iptables_request(
+pub fn iptables_request<R: NetlinkRequest + ?Sized>(
     sock: &mut NetlinkSocket,
-    req: &dyn NetlinkRequestAcked,
+    req: &R,
 ) -> Result<(), ReplyError> {
     if req.flags() & libc::NLM_F_DUMP as u16 == libc::NLM_F_DUMP as u16 {
         *WARN_DUMP_ONCE;
@@ -106,10 +75,6 @@ pub fn iptables_request(
     batch_header.set_res_id(10);
 
     let mut buf = Vec::new();
-
-    let Protocol::Raw { request_type, .. } = req.protocol() else {
-        unreachable!()
-    };
 
     loop {
         let gen_id = iptables_get_latest_gen_id(sock)?;
@@ -121,12 +86,7 @@ pub fn iptables_request(
             .encode()
             .push_genid(gen_id);
 
-        c.request()
-            .set_flags(req.flags())
-            .op_do(request_type, &Nfgenmsg::new_from_zeroed(req.payload()))
-            .encode()
-            .as_vec_mut()
-            .extend_from_slice(&req.payload()[nftables::Nfgenmsg::len()..]);
+        c.with_request(req);
 
         c.request().op_batch_end_do(&batch_header);
 
@@ -140,17 +100,18 @@ pub fn iptables_request(
 
 pub fn iptables_request_chained(
     sock: &mut NetlinkSocket,
-    chained: &dyn NetlinkChained,
+    chained: &nftables::Chained,
 ) -> Result<(), ReplyError> {
-    iptables_request_raw(sock, chained.payload())
-}
+    for (h, _) in utils::IterableMessages::new(chained.buf()) {
+        if h.r#flags & libc::NLM_F_DUMP as u16 == libc::NLM_F_DUMP as u16 {
+            *WARN_DUMP_ONCE;
+        }
+    }
 
-pub fn iptables_request_raw(sock: &mut NetlinkSocket, req: &[u8]) -> Result<(), ReplyError> {
     let mut batch_header = nftables::Nfgenmsg::new();
     batch_header.set_res_id(10);
 
     let mut buf = Vec::new();
-
     loop {
         let gen_id = iptables_get_latest_gen_id(sock)?;
 
@@ -161,23 +122,46 @@ pub fn iptables_request_raw(sock: &mut NetlinkSocket, req: &[u8]) -> Result<(), 
             .encode()
             .push_genid(gen_id);
 
-        let mut buf = req;
-        while !buf.is_empty() {
-            let h = Nlmsghdr::new_from_zeroed(buf);
-            let len = (h.len as usize).min(buf.len());
+        c.with_chained(chained);
 
-            if h.r#flags & libc::NLM_F_DUMP as u16 == libc::NLM_F_DUMP as u16 {
-                *WARN_DUMP_ONCE;
-            }
+        c.request().op_batch_end_do(&batch_header);
 
+        match sock.request_chained(&c.finalize())?.recv_all() {
+            Ok(()) => return Ok(()),
+            Err(err) if err.as_io_error().kind() == ErrorKind::Interrupted => continue,
+            Err(err) => return Err(err),
+        }
+    }
+}
+
+pub fn iptables_request_raw(sock: &mut NetlinkSocket, req: &[u8]) -> Result<(), ReplyError> {
+    for (h, _) in utils::IterableMessages::new(req) {
+        if h.r#flags & libc::NLM_F_DUMP as u16 == libc::NLM_F_DUMP as u16 {
+            *WARN_DUMP_ONCE;
+        }
+    }
+
+    let mut batch_header = nftables::Nfgenmsg::new();
+    batch_header.set_res_id(10);
+
+    let mut buf = Vec::new();
+    loop {
+        let gen_id = iptables_get_latest_gen_id(sock)?;
+
+        let mut c = nftables::Chained::new_with_buf(&mut buf, sock.reserve_seq(256));
+
+        c.request()
+            .op_batch_begin_do(&batch_header)
+            .encode()
+            .push_genid(gen_id);
+
+        for (h, r) in utils::IterableMessages::new(req) {
             c.request()
                 .set_flags(h.flags)
-                .op_do(h.r#type, &Nfgenmsg::new_from_zeroed(&buf[16..]))
+                .op_do(h.r#type, &Nfgenmsg::new_from_zeroed(&r))
                 .encode()
                 .as_vec_mut()
-                .extend_from_slice(&req[16 + nftables::Nfgenmsg::len()..]);
-
-            buf = &buf[utils::nla_align_up(len)..];
+                .extend_from_slice(&r[Nfgenmsg::len()..]);
         }
 
         c.request().op_batch_end_do(&batch_header);
