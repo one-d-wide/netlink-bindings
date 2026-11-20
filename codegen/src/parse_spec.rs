@@ -28,6 +28,9 @@ impl ByteOrder {
     pub fn is_host(&self) -> bool {
         matches!(self, Self::Host)
     }
+    pub fn is_big(&self) -> bool {
+        matches!(self, Self::Big)
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

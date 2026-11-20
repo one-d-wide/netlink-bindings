@@ -430,6 +430,12 @@ pub fn gen_writable_type(spec: &Spec, next: &AttrProp) -> WritableType {
             size_expr: quote!(0),
             align: 0,
         },
+        AttrType::U32 if next.is_ipv4() && !next.byte_order.is_big() => {
+            panic!(
+                "Attribute {:?} has display-hint: ipv4, but no byte-order: big-endian. Likely an error",
+                next.name
+            );
+        }
         AttrType::U32 if next.is_ipv4() => WritableType {
             rust_type: quote!(std::net::Ipv4Addr),
             encode_expr: quote! { &#value_name.to_bits().#encode() },

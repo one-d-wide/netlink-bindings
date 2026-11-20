@@ -269,6 +269,12 @@ pub fn gen_iterable_parse(spec: &Spec, attr: &AttrProp) -> TokenStream {
     let rust_type = match &attr.r#type {
         AttrType::U8 => "u8",
         AttrType::U16 => "u16",
+        AttrType::U32 if attr.is_ipv4() && !attr.byte_order.is_big() => {
+            panic!(
+                "Attribute {:?} has display-hint: ipv4, but no byte-order: big-endian. Likely an error",
+                attr.name
+            );
+        }
         AttrType::U32 if attr.is_ipv4() => {
             let parse = format_ident!("parse{ord}_u32");
             return quote! { #parse(#buf_name).map(Ipv4Addr::from_bits) };
